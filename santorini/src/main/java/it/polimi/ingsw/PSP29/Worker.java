@@ -7,7 +7,7 @@ public class Worker {
 
     public Worker(int id, String nickP){
         ID=id;
-        IDplayer=idp;
+        IDplayer=nickP;
     }
 
     public Coordinate getPosition(){
@@ -19,7 +19,7 @@ public class Worker {
         return ID;
     }
 
-    public int getIDplayer() {
+    public String getIDplayer() {
         return IDplayer;
     }
 
