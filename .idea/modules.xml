@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/inging-sw-2019-Grassi-Manco-Martiri.iml" filepath="$PROJECT_DIR$/inging-sw-2019-Grassi-Manco-Martiri.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ing-sw-2019-Grassi-Manco-Martiri.iml" filepath="$PROJECT_DIR$/ing-sw-2019-Grassi-Manco-Martiri.iml" />
       <module fileurl="file://$PROJECT_DIR$/santorini/santorini.iml" filepath="$PROJECT_DIR$/santorini/santorini.iml" />
     </modules>
   </component>
