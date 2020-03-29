@@ -3,7 +3,7 @@ package it.polimi.ingsw.PSP29;
 public class Worker {
     private int ID;
     private String IDplayer;
-    private Coordinate position;
+    private Coordinate position = null;
 
     public Worker(int id, String nickP){
         ID=id;

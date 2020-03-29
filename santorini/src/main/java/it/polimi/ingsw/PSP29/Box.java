@@ -38,7 +38,17 @@ public class Box {
     }
 
     //aggiorna il livello della casella
-    public void upgradeLevel(){
+    public boolean upgradeLevel(){
         level++;
+        return true;
+    }
+
+    public void printEmpty() {
+        if(isEmpty()) System.out.println("0");
+        else System.out.println("1");
+    }
+
+    public void printLevel() {
+        System.out.println(level);
     }
 }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.PSP29;
 
+import javax.naming.CompositeName;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -11,8 +12,6 @@ public class Match {
     private static int rows = 5;
     private Box board[][];
     private ArrayList<Player> players;
-    //provvisorio
-    private ArrayList<God> gods;
 
     public Match() {
         board = new Box[rows][columns];
@@ -27,47 +26,52 @@ public class Match {
         return players;
     }
 
+    public void inizializeBoard(){
+        for(int i=0; i<rows;i++){
+            for(int j=0; j<columns;j++)
+                board[i][j] = new Box(i,j);
+        }
+    }
+
     public boolean updateMovement(Player p, int id, Box[][] board, Coordinate c){
         if(p.putWorker(id, board, c)) return true;
         else return false;
     }
 
-    public boolean updateBuilding(Player p, int id, Box[][] board, Coordinate c){
-        if(c.isNear(p.getWorker(id).getPosition()) && board[c.getX()][c.getY()].isEmpty()){
-            if(board[c.getX()][c.getY()].upgradeLevel()) return true;
-            else return false;
-        }else{
-            return false;
-        }
+    public boolean updateBuilding(Coordinate c){
+        if(board[c.getX()][c.getY()].upgradeLevel()) return true;
+        else return false;
     }
 
     public boolean removeWorkers(Player p, Box[][] brd){
         Coordinate c1 = p.getWorker(0).getPosition();
-        brd[c1.getX()][c1.getY()].changeState();
-        p.getWorker(0).setPosition(null);
+        if(c1 != null){
+            brd[c1.getX()][c1.getY()].changeState();
+            p.getWorker(0).setPosition(null);
+        }
         Coordinate c2 = p.getWorker(1).getPosition();
-        brd[c2.getX()][c2.getY()].changeState();
-        p.getWorker(1).setPosition(null);
+        if(c2 != null){
+            brd[c2.getX()][c2.getY()].changeState();
+            p.getWorker(1).setPosition(null);
+        }
         return true;
     }
 
-    //metodo provvisorio per caricare tutte le divinità
-
-    public ArrayList<God> loadGods() throws IOException {
-        String i , n;
-        ArrayList<God> g;
-        int id;
-        BufferedReader reader = new BufferedReader(new FileReader("ing-sw-2019-Grassi-Manco-Martiri\\santorini\\src\\main\\java\\it\\polimi\\ingsw\\PSP29\\gods.txt"));
-        while(true){
-            i=reader.readLine();
-            if(i==null){
-                break;
+    public void printBoard(Box[][] b){
+        for(int i=0; i<rows;i++){
+            for(int j=0; j<columns;j++) {
+                b[i][j].printEmpty();
+                System.out.println("\t");
             }
-            id=Integer.parseInt(i);
-            n=reader.readLine();
-            g.add(new God(id, n));
+            System.out.println("\n");
         }
-        return g;
     }
 
+    public static int getColumns() {
+        return columns;
+    }
+
+    public static int getRows() {
+        return rows;
+    }
 }
