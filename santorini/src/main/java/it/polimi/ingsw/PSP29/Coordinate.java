@@ -23,4 +23,9 @@ public class Coordinate {
                 ", y=" + y +
                 '}';
     }
+
+    //da fare
+    public boolean isNear(Coordinate c){
+        return true
+    }
 }

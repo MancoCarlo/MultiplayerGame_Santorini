@@ -19,6 +19,7 @@ public class Box {
         return location;
     }
 
+    //restituisce lo stato della casella
     public boolean isEmpty(){
         if(empty){
             return true;
@@ -26,6 +27,7 @@ public class Box {
         return false;
     }
 
+    //aggiorna lo stato della casella
     public void changeState() {
         if(empty){
             empty=false;
@@ -35,6 +37,7 @@ public class Box {
         }
     }
 
+    //aggiorna il livello della casella
     public void upgradeLevel(){
         level++;
     }

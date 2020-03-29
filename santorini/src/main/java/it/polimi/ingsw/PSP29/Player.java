@@ -1,12 +1,14 @@
 package it.polimi.ingsw.PSP29;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Player {
     private int ID;
     private String nickname;
     private int age;
-    // God card;
-    public Worker w1;
-    public Worker w2;
+    God card;
+    ArrayList<Worker> workers;
 
     public Player(int id, String nick, int a) {
         ID = id;
@@ -26,26 +28,32 @@ public class Player {
         return nickname;
     }
 
-    public Worker getWorker1(){
-        return w1;
+    public Worker getWorker(int id){
+        return workers.get(id);
     }
 
-    public Worker getWorker2(){
-        return w2;
+    //modifica la posizione del worker e cambia lo stato della casella in cui si trova
+    public boolean putWorker(int id, Box[][] b, Coordinate c) {
+        if(workers.get(id).getPosition().isNear(c)){
+            b[c.x][c.y].changeState();
+            workers.get(id).setPosition(c);
+            return true;
+        }
+        return false;
     }
-
-    public void putWorkers(Worker w, Box[][] b, Coordinate c) {
-        b[c.x][c.y].changeState();
-        w.setPosition(c);
-    }
-
+    
     public String toString() {
         return "Player{" +
                 "ID=" + ID +
                 ", nickname='" + nickname + '\'' +
                 ", age=" + age +
-                ", w1=" + w1 +
-                ", w2=" + w2 +
+                ", card=" + card +
+                ", workers=" + workers +
                 '}';
+    }
+
+    //pesca una divinità tra quelle presenti
+    public void drawGod(ArrayList<God> g, int i){
+        card=g.get(i);
     }
 }

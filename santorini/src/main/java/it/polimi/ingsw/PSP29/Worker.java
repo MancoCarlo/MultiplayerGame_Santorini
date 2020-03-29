@@ -23,6 +23,7 @@ public class Worker {
         return IDplayer;
     }
 
+    //aggiorna la posizione del worker
     public void setPosition(Coordinate c){
         position=c;
     }
