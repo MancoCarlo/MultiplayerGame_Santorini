@@ -38,7 +38,12 @@ public class Box {
     }
 
     //aggiorna il livello della casella
-    public void upgradeLevel(){
-        level++;
+    public boolean upgradeLevel(){
+        if(level<4){
+            level++;
+            return true;
+        }
+        return false;
+
     }
 }

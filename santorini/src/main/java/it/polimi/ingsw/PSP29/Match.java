@@ -1,9 +1,5 @@
 package it.polimi.ingsw.PSP29;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Match {
@@ -49,25 +45,6 @@ public class Match {
         brd[c2.getX()][c2.getY()].changeState();
         p.getWorker(1).setPosition(null);
         return true;
-    }
-
-    //metodo provvisorio per caricare tutte le divinità
-
-    public ArrayList<God> loadGods() throws IOException {
-        String i , n;
-        ArrayList<God> g;
-        int id;
-        BufferedReader reader = new BufferedReader(new FileReader("ing-sw-2019-Grassi-Manco-Martiri\\santorini\\src\\main\\java\\it\\polimi\\ingsw\\PSP29\\gods.txt"));
-        while(true){
-            i=reader.readLine();
-            if(i==null){
-                break;
-            }
-            id=Integer.parseInt(i);
-            n=reader.readLine();
-            g.add(new God(id, n));
-        }
-        return g;
     }
 
 }

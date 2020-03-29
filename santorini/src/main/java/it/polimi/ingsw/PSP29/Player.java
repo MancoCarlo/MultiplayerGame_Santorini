@@ -1,19 +1,21 @@
 package it.polimi.ingsw.PSP29;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Player {
     private int ID;
     private String nickname;
     private int age;
     God card;
-    ArrayList<Worker> workers;
+    ArrayList<Worker> workers=new ArrayList<Worker>();
 
     public Player(int id, String nick, int a) {
         ID = id;
         nickname = nick;
         age = a;
+        for(int i=0; i<2; i++){
+            workers.add(new Worker(i, nickname));
+        }
     }
 
     public int getID() {
@@ -34,7 +36,12 @@ public class Player {
 
     //modifica la posizione del worker e cambia lo stato della casella in cui si trova
     public boolean putWorker(int id, Box[][] b, Coordinate c) {
-        if(workers.get(id).getPosition().isNear(c)){
+        if(workers.get(id).getPosition()==null && b[c.getX()][c.getY()].isEmpty()){
+            b[c.getX()][c.getY()].changeState();
+            workers.get(id).setPosition(c);
+            return true;
+        }
+        else if(workers.get(id).getPosition().isNear(c) && b[c.getX()][c.getY()].isEmpty()){
             b[c.getX()][c.getY()].changeState();
             workers.get(id).setPosition(c);
             return true;
