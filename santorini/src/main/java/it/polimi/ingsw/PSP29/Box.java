@@ -1,7 +1,7 @@
 package it.polimi.ingsw.PSP29;
 
 public class Box {
-    public Coordinate location;
+    private Coordinate location;
     private int level;
     private boolean empty;
 

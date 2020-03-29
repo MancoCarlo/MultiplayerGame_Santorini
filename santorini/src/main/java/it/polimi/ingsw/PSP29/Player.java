@@ -35,7 +35,7 @@ public class Player {
     //modifica la posizione del worker e cambia lo stato della casella in cui si trova
     public boolean putWorker(int id, Box[][] b, Coordinate c) {
         if(workers.get(id).getPosition().isNear(c)){
-            b[c.x][c.y].changeState();
+            b[c.getX()][c.getY()].changeState();
             workers.get(id).setPosition(c);
             return true;
         }
