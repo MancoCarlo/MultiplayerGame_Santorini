@@ -27,28 +27,28 @@ public class Match {
         return players;
     }
 
-    public int addWorkers(ArrayList<Player> players, Box[][] board){
-        for (Player p:players) {
-            Worker w1 = new Worker(1, p.getNickname());
-            Worker w2 = new Worker(2, p.getNickname());
-            try {
-                while (!p.putWorkers(w1, w2, board)); //1 solo worker alla volta
-            } catch (Exception e) {
-                e.printStackTrace();
-                return 0;
-            }
-        }
-        return 1;
+    public boolean updateMovement(Player p, int id, Box[][] board, Coordinate c){
+        if(p.putWorker(id, board, c)) return true;
+        else return false;
     }
 
-    public int removeWorkers(Player p, Box[][] brd){
-        Coordinate c1 = p.getWorker1().getPosition();
+    public boolean updateBuilding(Player p, int id, Box[][] board, Coordinate c){
+        if(c.isNear(p.getWorker(id).getPosition()) && board[c.getX()][c.getY()].isEmpty()){
+            if(board[c.getX()][c.getY()].upgradeLevel()) return true;
+            else return false;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean removeWorkers(Player p, Box[][] brd){
+        Coordinate c1 = p.getWorker(0).getPosition();
         brd[c1.getX()][c1.getY()].changeState();
-        p.w1 = null;
-        Coordinate c2 = p.getWorker2().getPosition();
+        p.getWorker(0).setPosition(null);
+        Coordinate c2 = p.getWorker(1).getPosition();
         brd[c2.getX()][c2.getY()].changeState();
-        p.w2 = null;
-        return 1;
+        p.getWorker(1).setPosition(null);
+        return true;
     }
 
     //metodo provvisorio per caricare tutte le divinità
