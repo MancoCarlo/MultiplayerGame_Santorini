@@ -26,7 +26,7 @@ public class Match {
             Worker w1 = new Worker(1, p.getNickname());
             Worker w2 = new Worker(2, p.getNickname());
             try {
-                while (!p.putWorkers(w1, w2, board));
+                while (!p.putWorkers(w1, w2, board)); //1 solo worker alla volta
             } catch (Exception e) {
                 e.printStackTrace();
                 return 0;
@@ -38,10 +38,10 @@ public class Match {
     public int removeWorkers(Player p, Box[][] brd){
         Coordinate c1 = p.getWorker1().getPosition();
         brd[c1.getX()][c1.getY()].changeState();
-        w1 = null;
+        p.w1 = null;
         Coordinate c2 = p.getWorker2().getPosition();
         brd[c2.getX()][c2.getY()].changeState();
-        w2 = null;
+        p.w2 = null;
         return 1;
     }
 }

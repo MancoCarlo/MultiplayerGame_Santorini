@@ -1,9 +1,9 @@
 package it.polimi.ingsw.PSP29;
 
 public class Worker {
-    int ID;
-    String IDplayer;
-    Coordinate position;
+    private int ID;
+    private String IDplayer;
+    private Coordinate position;
 
     public Worker(int id, String nickP){
         ID=id;

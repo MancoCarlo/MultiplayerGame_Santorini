@@ -1,17 +1,12 @@
 package it.polimi.ingsw.PSP29;
 
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 public class Player {
-    int ID;
-    String nickname;
-    int age;
+    private int ID;
+    private String nickname;
+    private int age;
     // God card;
-    Worker w1;
-    Worker w2;
+    public Worker w1;
+    public Worker w2;
 
     public Player(int id, String nick, int a) {
         ID = id;
@@ -31,31 +26,26 @@ public class Player {
         return nickname;
     }
 
-    public Worker getW1(){
+    public Worker getWorker1(){
         return w1;
     }
 
-    public Worker getW2(){
+    public Worker getWorker2(){
         return w2;
     }
-    /*
-    public boolean putWorkers(Box[][] B){
 
-    }*/
-
-    public boolean putWorkers(Worker w, Board b) throws IOException {
-        int i;
-        BufferedInputStream reader = new BufferedInputStream(System.in);
-        System.out.println("Coordinate primo worker:");
-        i=reader.read();
-
-
+    public void putWorkers(Worker w, Box[][] b, Coordinate c) {
+        b[c.x][c.y].changeState();
+        w.setPosition(c);
     }
 
     public String toString() {
-        return "\n\tPlayer{" +
-                "nickname='" + nickname + '\'' +
-                ", age=" + age + " " + workers.toString() +
-                "\n\t}";
+        return "Player{" +
+                "ID=" + ID +
+                ", nickname='" + nickname + '\'' +
+                ", age=" + age +
+                ", w1=" + w1 +
+                ", w2=" + w2 +
+                '}';
     }
 }
