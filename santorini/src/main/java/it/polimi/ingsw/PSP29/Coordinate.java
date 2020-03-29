@@ -16,7 +16,7 @@ public class Coordinate {
     public int getX() {
         return x;
     }
-
+    @Override
     public String toString() {
         return "Coordinate{" +
                 "x=" + x +
