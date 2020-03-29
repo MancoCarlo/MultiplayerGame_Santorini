@@ -8,6 +8,7 @@ public class Worker {
     public Worker(int id, String nickP){
         ID=id;
         IDplayer=nickP;
+        position=null;
     }
 
     public Coordinate getPosition(){
@@ -27,7 +28,7 @@ public class Worker {
     public void setPosition(Coordinate c){
         position=c;
     }
-
+    /*
     public String toString() {
         return "\n\t\tWorker{" +
                 "ID=" + ID +
@@ -35,4 +36,5 @@ public class Worker {
                 ", position=" + position.toString() +
                 '}';
     }
+    */
 }
