@@ -26,6 +26,14 @@ public class Match {
         return players;
     }
 
+    public static int getColumns() {
+        return columns;
+    }
+
+    public static int getRows() {
+        return rows;
+    }
+
     public void inizializeBoard(){
         for(int i=0; i<rows;i++){
             for(int j=0; j<columns;j++)
@@ -43,20 +51,19 @@ public class Match {
         else return false;
     }
 
-    public boolean removeWorkers(Player p, Box[][] brd){
+    public void removeWorkers(Player p, Box[][] brd){
         Coordinate c1 = p.getWorker(0).getPosition();
-        if(c1 != null){
+        Coordinate c2 = p.getWorker(1).getPosition();
+        if(c1 != null) {
             brd[c1.getX()][c1.getY()].changeState();
             p.getWorker(0).setPosition(null);
         }
-        Coordinate c2 = p.getWorker(1).getPosition();
         if(c2 != null){
             brd[c2.getX()][c2.getY()].changeState();
             p.getWorker(1).setPosition(null);
         }
-        return true;
     }
-
+/*
     public void printBoard(Box[][] b){
         for(int i=0; i<rows;i++){
             for(int j=0; j<columns;j++) {
@@ -66,12 +73,5 @@ public class Match {
             System.out.println("\n");
         }
     }
-
-    public static int getColumns() {
-        return columns;
-    }
-
-    public static int getRows() {
-        return rows;
-    }
+*/
 }

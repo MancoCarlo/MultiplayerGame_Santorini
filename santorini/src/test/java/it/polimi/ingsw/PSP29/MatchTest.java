@@ -53,6 +53,24 @@ public class MatchTest {
     }
 
     @Test
+    public void updateBuilding_MaxLevel_NotUpdateBoard() {
+        Coordinate c = new Coordinate(1,1);
+        Box[][] b1;
+        b1= m.getBoard();
+        b1[1][1].upgradeLevel();
+        b1[1][1].upgradeLevel();
+        b1[1][1].upgradeLevel();
+        b1[1][1].upgradeLevel();
+        assertFalse(m.updateBuilding(c));
+        for(int i=0; i<m.getRows(); i++){
+            for(int j=0;j<m.getColumns();j++){
+                if(i == c.getX() && j==c.getY()) assertEquals(b1[i][j].getLevel(), 4);
+                else assertEquals(b1[i][j].getLevel(), 0);
+            }
+        }
+    }
+
+    @Test
     public void removeWorkers_ExistingWorkers_UpdateBoard(){
         Coordinate c1 = new Coordinate(0,1);
         Coordinate c2 = new Coordinate(4,2);
