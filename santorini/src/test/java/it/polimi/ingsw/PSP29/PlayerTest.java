@@ -10,7 +10,7 @@ public class PlayerTest {
 
     @Before
     public void setUp(){
-        player=new Player(1, "Luca", 22);
+        player=new Player(1, "Luca", 21);
     }
 
     @After
@@ -18,8 +18,6 @@ public class PlayerTest {
 
     @Test
     public void newPlayer_correctInput(){
-        //player=new Player(1, "Luca", 21);
-        //Worker worker = new Worker(0, player.getNickname());
         assertNotNull(player.workers.get(0));
         assertEquals(player.workers.get(0).getID(), 0);
         assertEquals(player.workers.get(0).getIDplayer(), "Luca");
@@ -62,6 +60,22 @@ public class PlayerTest {
     }
 
     @Test
+    public void putWorker_workerAlreadyPlaced_EmptyBox(){
+        Coordinate c=new Coordinate(1, 4);
+        Coordinate c1= new Coordinate(1, 3);
+        Box[][] board = new Box[5][5];
+        for(int i=0; i<5; i++){
+            for(int j=0; j<5; j++){
+                board[i][j]=new Box(i, j);
+            }
+        }
+        player.workers.get(0).setPosition(c1);
+        boolean b = player.putWorker(0, board, c);
+        assertEquals(player.getWorker(0).getPosition(), c);
+        assertTrue(b);
+    }
+
+    @Test
     public void getID_correctOutput(){
         assertEquals(player.getID(), 1);
     }
@@ -71,4 +85,14 @@ public class PlayerTest {
         assertEquals(player.getNickname(), "Luca");
     }
 
+    @Test
+    public void getAge_correctOutput(){
+        assertEquals(player.getAge(), 21);
+    }
+
+    @Test
+    public void getWorker_correctOutput(){
+        assertEquals(player.getWorker(0), player.workers.get(0));
+        assertEquals(player.getWorker(1), player.workers.get(1));
+    }
 }

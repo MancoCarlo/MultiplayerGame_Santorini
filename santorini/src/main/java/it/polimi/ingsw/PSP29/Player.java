@@ -7,7 +7,7 @@ public class Player {
     private int ID;
     private String nickname;
     private int age;
-    God card;
+    //God card;
     ArrayList<Worker> workers;
 
     public Player(int id, String nick, int a) {
@@ -50,19 +50,5 @@ public class Player {
             return true;
         }else return false;
     }
-    
-    public String toString() {
-        return "Player{" +
-                "ID=" + ID +
-                ", nickname='" + nickname + '\'' +
-                ", age=" + age +
-                ", card=" + card +
-                ", workers=" + workers +
-                '}';
-    }
 
-    //pesca una divinità tra quelle presenti
-    public void drawGod(ArrayList<God> g, int i){
-        card=g.get(i);
-    }
 }

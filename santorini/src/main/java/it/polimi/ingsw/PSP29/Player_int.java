@@ -14,14 +14,4 @@ public interface Player_int {
      * @return true if the worker has been put in the coordinate c, else return false
      */
     public boolean putWorker(int id, Box[][] b, Coordinate c);
-
-
-    /**
-     *
-     * let the player draw a god from god list
-     *
-     * @param g the list of gods
-     * @param i the position in wich the god is draw
-     */
-    public void drawGod(ArrayList<God> g, int i);
 }
