@@ -25,7 +25,7 @@ public class Coordinate {
     }
 
     public boolean isNear(Coordinate a){ //due coordinate coincidenti non sono vicine
-        if(!a.equals(this) && ((a.x-x<=1) && (a.x-x>=-1)) && (a.y-y<=1)&&(a.y-y>=-1))
+        if(!this.equals(a) && ((a.x-x<=1) && (a.x-x>=-1)) && (a.y-y<=1)&&(a.y-y>=-1))
             return true;
         else
             return false;

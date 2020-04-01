@@ -37,4 +37,14 @@ public class CoordinateTest {
         c2= new Coordinate(1,2);
         assertFalse(c1.isNear(c2));
     }
+    @Test
+    public void equals_nullInput_falseOutput(){
+        assertFalse(c1.equals(null));
+    }
+    @Test
+    public void equals_wrongInput_falseOutput(){
+        int x= 1;
+        assertFalse(c1.equals(x));
+    }
+
 }
