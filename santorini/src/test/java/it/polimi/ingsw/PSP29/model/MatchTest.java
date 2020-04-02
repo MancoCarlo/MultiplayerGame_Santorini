@@ -1,4 +1,4 @@
-package it.polimi.ingsw.PSP29;
+package it.polimi.ingsw.PSP29.model;
 
 import org.junit.Before;
 import org.junit.Test;
