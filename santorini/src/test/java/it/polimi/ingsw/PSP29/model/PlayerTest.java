@@ -37,42 +37,8 @@ public class PlayerTest {
                 board[i][j]=new Box(i, j);
             }
         }
-        boolean b = player.putWorker(0, board, c);
+        player.putWorker(0, board, c);
         assertEquals(player.getWorker(0).getPosition(), c);
-        assertTrue(b);
-    }
-
-    @Test
-    public void putWorker_correctInput_notEmptyBox(){
-        Coordinate c=new Coordinate(1, 4);
-        Coordinate c1= new Coordinate(1, 3);
-        Box[][] board = new Box[5][5];
-        for(int i=0; i<5; i++){
-            for(int j=0; j<5; j++){
-                board[i][j]=new Box(i, j);
-            }
-        }
-        player.workers.get(0).setPosition(c1);
-        board[c.getX()][c.getY()].changeState();
-        boolean b = player.putWorker(0, board, c);
-        assertNotEquals(player.getWorker(0).getPosition(), c);
-        assertFalse(b);
-    }
-
-    @Test
-    public void putWorker_workerAlreadyPlaced_EmptyBox(){
-        Coordinate c=new Coordinate(1, 4);
-        Coordinate c1= new Coordinate(1, 3);
-        Box[][] board = new Box[5][5];
-        for(int i=0; i<5; i++){
-            for(int j=0; j<5; j++){
-                board[i][j]=new Box(i, j);
-            }
-        }
-        player.workers.get(0).setPosition(c1);
-        boolean b = player.putWorker(0, board, c);
-        assertEquals(player.getWorker(0).getPosition(), c);
-        assertTrue(b);
     }
 
     @Test

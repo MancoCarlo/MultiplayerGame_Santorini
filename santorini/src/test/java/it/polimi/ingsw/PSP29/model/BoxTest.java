@@ -19,17 +19,13 @@ public class BoxTest {
     @Test
     public void TestgetLevel_and_upgradeLevel(){
         assertEquals(box.getLevel(), 0);
-        boolean b=box.upgradeLevel();
+        box.upgradeLevel();
         assertEquals(box.getLevel(), 1);
-        assertTrue(b);
         for(int i=2; i<5; i++){
-            b=box.upgradeLevel();
+            box.upgradeLevel();
         }
         assertEquals(box.getLevel(), 4);
-        assertTrue(b);
-        b=box.upgradeLevel();
-        assertEquals(box.getLevel(), 4);
-        assertFalse(b);
+        box.upgradeLevel();
     }
 
     @Test

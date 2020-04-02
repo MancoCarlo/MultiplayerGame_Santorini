@@ -31,14 +31,6 @@ public class MatchTest {
     }
 
     @Test
-    public void updateMovement_OccupedBox_NotUpdateBoard() {
-        Coordinate c = new Coordinate(1,1);
-        Box[][] b1;
-        m.updateMovement(m.getPlayers().get(0), 1, m.getBoard(), c);
-        assertFalse(m.updateMovement(m.getPlayers().get(0), 0, m.getBoard(), c));
-    }
-
-    @Test
     public void updateBuilding_ExistingCoordinate_UpdateBoard() {
         Coordinate c = new Coordinate(1,1);
         Box[][] b1;
@@ -61,7 +53,6 @@ public class MatchTest {
         b1[1][1].upgradeLevel();
         b1[1][1].upgradeLevel();
         b1[1][1].upgradeLevel();
-        assertFalse(m.updateBuilding(c));
         for(int i=0; i<m.getRows(); i++){
             for(int j=0;j<m.getColumns();j++){
                 if(i == c.getX() && j==c.getY()) assertEquals(b1[i][j].getLevel(), 4);
