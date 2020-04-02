@@ -20,12 +20,7 @@ public class Box {
     }
 
     //restituisce lo stato della casella
-    public boolean isEmpty(){
-        if(empty){
-            return true;
-        }
-        return false;
-    }
+    public boolean isEmpty(){ return empty; }
 
     //aggiorna lo stato della casella
     public void changeState() {
@@ -38,13 +33,13 @@ public class Box {
     }
 
     //aggiorna il livello della casella
-    public boolean upgradeLevel(){
-        if(level < 4){
-            level++;
-            return true;
-        }else return false;
+    public void upgradeLevel(){
+        level++;
     }
 
+    public int level_diff(Box b){ return this.getLevel()-b.getLevel(); }
+
+    /*
     public void printEmpty() {
         if(isEmpty()) System.out.println("0");
         else System.out.println("1");
@@ -53,4 +48,5 @@ public class Box {
     public void printLevel() {
         System.out.println(level);
     }
+    */
 }

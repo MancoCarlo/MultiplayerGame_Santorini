@@ -1,21 +1,21 @@
 package it.polimi.ingsw.PSP29.model;
 
-import javax.naming.CompositeName;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Match {
     private static int columns = 5;
     private static int rows = 5;
     private Box board[][];
     private ArrayList<Player> players;
+    private ArrayList<God> gods;
 
     public Match() {
         board = new Box[rows][columns];
         players = new ArrayList<Player>();
+        gods = new ArrayList<God>();
     }
 
     public Box[][] getBoard() {
@@ -41,14 +41,12 @@ public class Match {
         }
     }
 
-    public boolean updateMovement(Player p, int id, Box[][] board, Coordinate c){
-        if(p.putWorker(id, board, c)) return true;
-        else return false;
+    public void updateMovement(Player p, int id, Box[][] board, Coordinate c){
+        p.putWorker(id, board, c);
     }
 
-    public boolean updateBuilding(Coordinate c){
-        if(board[c.getX()][c.getY()].upgradeLevel()) return true;
-        else return false;
+    public void updateBuilding(Coordinate c){
+        board[c.getX()][c.getY()].upgradeLevel();
     }
 
     public void removeWorkers(Player p, Box[][] brd){
@@ -64,6 +62,22 @@ public class Match {
         }
     }
 
+    public void loadGods() throws FileNotFoundException {
+        FileReader f = new FileReader("src/main/java/it/polimi/ingsw/PSP29/gods.txt");
+        Scanner scanner = new Scanner(f);
+        int i;
+        String id, n, d;
+        while(true){
+            id=scanner.nextLine();
+            if(id==null){
+                break;
+            }
+            n=scanner.nextLine();
+            d=scanner.nextLine();
+            i=Integer.parseInt(id);
+            gods.add(new God(i, n, d));
+        }
+    }
 /*
     public void printBoard(Box[][] b){
         for(int i=0; i<rows;i++){

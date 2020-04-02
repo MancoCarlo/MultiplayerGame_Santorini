@@ -1,13 +1,12 @@
 package it.polimi.ingsw.PSP29.model;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Player {
     private int ID;
     private String nickname;
     private int age;
-    //God card;
+    God card;
     ArrayList<Worker> workers;
 
     public Player(int id, String nick, int a) {
@@ -32,23 +31,28 @@ public class Player {
         return nickname;
     }
 
+    public God getCard() { return card; }
+
     public Worker getWorker(int id){
         return workers.get(id);
     }
 
+    public ArrayList<Worker> getWorkers() { return workers; }
+
     //modifica la posizione del worker e cambia lo stato della casella in cui si trova
-    public boolean putWorker(int id, Box[][] b, Coordinate c) {
-        if (workers.get(id).getPosition() == null){
-            if(b[c.getX()][c.getY()].isEmpty()){
-                b[c.getX()][c.getY()].changeState();
-                workers.get(id).setPosition(c);
-                return true;
-            }else return false;
-        }else if(workers.get(id).getPosition().isNear(c) && b[c.getX()][c.getY()].isEmpty()) {
+    public void putWorker(int id, Box[][] b, Coordinate c) {
+        if (workers.get(id).getPosition() == null) {
             b[c.getX()][c.getY()].changeState();
             workers.get(id).setPosition(c);
-            return true;
-        }else return false;
+        } else {
+            b[workers.get(id).getPrev_position().getX()][workers.get(id).getPrev_position().getY()].changeState();
+            workers.get(id).setPrev_position(workers.get(id).getPosition());
+            b[c.getX()][c.getY()].changeState();
+            workers.get(id).setPosition(c);
+        }
     }
 
+    public void drawCard(ArrayList<God> g, int i){
+        card=g.get(i);
+    }
 }

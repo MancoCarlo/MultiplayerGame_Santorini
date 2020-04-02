@@ -4,17 +4,16 @@ public class Worker {
     private int ID;
     private String IDplayer;
     private Coordinate position = null;
+    private Coordinate prev_position = null;
+    private boolean moved;
 
     public Worker(int id, String nickP){
         ID=id;
         IDplayer=nickP;
         position=null;
+        prev_position=null;
+        moved = false;
     }
-
-    public Coordinate getPosition(){
-        return position;
-    }
-
 
     public int getID() {
         return ID;
@@ -24,17 +23,18 @@ public class Worker {
         return IDplayer;
     }
 
-    //aggiorna la posizione del worker
+    public Coordinate getPosition(){
+        return position;
+    }
+
+    public Coordinate getPrev_position() { return prev_position; }
+
+    public boolean getMoved(){ return moved; }
+
     public void setPosition(Coordinate c){
         position=c;
     }
-    /*
-    public String toString() {
-        return "\n\t\tWorker{" +
-                "ID=" + ID +
-                ", IDplayer=" + IDplayer +
-                ", position=" + position.toString() +
-                '}';
-    }
-    */
+
+    public void setPrev_position(Coordinate c) { prev_position=c; }
+
 }

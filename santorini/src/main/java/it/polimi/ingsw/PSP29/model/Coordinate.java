@@ -16,13 +16,6 @@ public class Coordinate {
     public int getX() {
         return x;
     }
-    @Override
-    public String toString() {
-        return "Coordinate{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
-    }
 
     public boolean isNear(Coordinate a){ //due coordinate coincidenti non sono vicine
         if(!this.equals(a) && ((a.x-x<=1) && (a.x-x>=-1)) && (a.y-y<=1)&&(a.y-y>=-1))
