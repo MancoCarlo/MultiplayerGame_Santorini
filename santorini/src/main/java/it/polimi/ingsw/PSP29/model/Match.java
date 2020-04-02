@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Match {
     private static int columns = 5;
     private static int rows = 5;
-    private Box board[][];
+    private Box[][] board;
     private ArrayList<Player> players;
     private ArrayList<God> gods;
 
@@ -24,6 +24,15 @@ public class Match {
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+
+    public Player getPlayer(String n){
+        for(Player p : this.players){
+            if(p.getNickname().equals(n)){
+                return p;
+            }
+        }
+        return null;
     }
 
     public static int getColumns() {

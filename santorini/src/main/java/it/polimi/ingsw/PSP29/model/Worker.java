@@ -6,6 +6,7 @@ public class Worker {
     private Coordinate position = null;
     private Coordinate prev_position = null;
     private boolean moved;
+    private boolean built;
 
     public Worker(int id, String nickP){
         ID=id;
@@ -13,6 +14,7 @@ public class Worker {
         position=null;
         prev_position=null;
         moved = false;
+        built = false;
     }
 
     public int getID() {
@@ -30,6 +32,17 @@ public class Worker {
     public Coordinate getPrev_position() { return prev_position; }
 
     public boolean getMoved(){ return moved; }
+
+    public void changeMoved(){
+        moved= !moved;
+    }
+
+    public void changeBuilt() {
+        built= !built;
+    }
+
+    public boolean getBuilt(){ return built; }
+
 
     public void setPosition(Coordinate c){
         position=c;
