@@ -38,7 +38,7 @@ public abstract class TurnDecorator implements Turn {
             return false;
         }
         else{
-            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), m.getBoard(), c);
+            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
             w.changeMoved();
             return true;
         }
@@ -50,7 +50,7 @@ public abstract class TurnDecorator implements Turn {
             return false;
         }
         else{
-            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), m.getBoard(), c);
+            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
             w.changeMoved();
             return true;
         }

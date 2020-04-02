@@ -30,11 +30,11 @@ public class BaseTurn implements Turn {
 
     @Override
     public boolean move(Match m, Worker w, Coordinate c) {
-        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
+        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c.getX()][c.getY()].getLevel()==4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
             return false;
         }
         else{
-            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), m.getBoard(), c);
+            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
             w.changeMoved();
             return true;
         }
@@ -42,11 +42,11 @@ public class BaseTurn implements Turn {
 
     @Override
     public boolean limited_move(Match m, Worker w, Coordinate c) {
-        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
+        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c.getX()][c.getY()].getLevel()==4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
             return false;
         }
         else{
-            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), m.getBoard(), c);
+            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
             w.changeMoved();
             return true;
         }

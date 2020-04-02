@@ -50,7 +50,7 @@ public class Match {
         }
     }
 
-    public void updateMovement(Player p, int id, Box[][] board, Coordinate c){
+    public void updateMovement(Player p, int id, Coordinate c){
         p.putWorker(id, board, c);
     }
 
@@ -58,21 +58,21 @@ public class Match {
         board[c.getX()][c.getY()].upgradeLevel();
     }
 
-    public void removeWorkers(Player p, Box[][] brd){
+    public void removeWorkers(Player p){
         Coordinate c1 = p.getWorker(0).getPosition();
         Coordinate c2 = p.getWorker(1).getPosition();
         if(c1 != null) {
-            brd[c1.getX()][c1.getY()].changeState();
+            board[c1.getX()][c1.getY()].changeState();
             p.getWorker(0).setPosition(null);
         }
         if(c2 != null){
-            brd[c2.getX()][c2.getY()].changeState();
+            board[c2.getX()][c2.getY()].changeState();
             p.getWorker(1).setPosition(null);
         }
     }
 
     public void loadGods() throws FileNotFoundException {
-        FileReader f = new FileReader("src/main/java/it/polimi/ingsw/PSP29/gods.txt");
+        FileReader f = new FileReader("src/main/java/it/polimi/ingsw/PSP29/model/gods.txt");
         Scanner scanner = new Scanner(f);
         int i;
         String id, n, d;

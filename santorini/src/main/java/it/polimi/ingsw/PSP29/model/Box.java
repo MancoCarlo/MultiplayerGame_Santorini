@@ -4,11 +4,13 @@ public class Box {
     private Coordinate location;
     private int level;
     private boolean empty;
+    private Worker workerBox;
 
     public Box(int x, int y){
         location=new Coordinate(x, y);
         level=0;
         empty=true;
+        workerBox = null;
     }
 
     public int getLevel() {
@@ -38,6 +40,14 @@ public class Box {
     }
 
     public int level_diff(Box b){ return this.getLevel()-b.getLevel(); }
+
+    public Worker getWorkerBox() {
+        return workerBox;
+    }
+
+    public void setWorkerBox(Worker w){
+        workerBox = w;
+    }
 
     /*
     public void printEmpty() {

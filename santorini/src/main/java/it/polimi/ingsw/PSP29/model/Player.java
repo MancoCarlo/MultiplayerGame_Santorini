@@ -43,11 +43,15 @@ public class Player {
     public void putWorker(int id, Box[][] b, Coordinate c) {
         if (workers.get(id).getPosition() == null) {
             b[c.getX()][c.getY()].changeState();
+            b[c.getX()][c.getY()].setWorkerBox(workers.get(id));
             workers.get(id).setPosition(c);
+            workers.get(id).setPrev_position(null);
         } else {
-            b[workers.get(id).getPrev_position().getX()][workers.get(id).getPrev_position().getY()].changeState();
             workers.get(id).setPrev_position(workers.get(id).getPosition());
+            b[workers.get(id).getPrev_position().getX()][workers.get(id).getPrev_position().getY()].changeState();
+            b[workers.get(id).getPrev_position().getX()][workers.get(id).getPrev_position().getY()].setWorkerBox(null);
             b[c.getX()][c.getY()].changeState();
+            b[c.getX()][c.getY()].setWorkerBox(workers.get(id));
             workers.get(id).setPosition(c);
         }
     }
