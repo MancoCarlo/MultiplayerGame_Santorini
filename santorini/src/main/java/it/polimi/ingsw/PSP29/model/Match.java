@@ -1,4 +1,4 @@
-package it.polimi.ingsw.PSP29;
+package it.polimi.ingsw.PSP29.model;
 
 import javax.naming.CompositeName;
 import java.io.BufferedReader;
@@ -63,6 +63,7 @@ public class Match {
             p.getWorker(1).setPosition(null);
         }
     }
+
 /*
     public void printBoard(Box[][] b){
         for(int i=0; i<rows;i++){

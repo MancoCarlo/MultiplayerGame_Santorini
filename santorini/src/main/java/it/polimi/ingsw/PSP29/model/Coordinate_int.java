@@ -1,4 +1,4 @@
-package it.polimi.ingsw.PSP29;
+package it.polimi.ingsw.PSP29.model;
 
 public interface Coordinate_int {
 
