@@ -35,11 +35,19 @@ public class Match {
         return null;
     }
 
-    public static int getColumns() {
+    public void removePlayer(Player p){
+        for(Player player : players){
+            if(player.equals(p)){
+                players.remove(player);
+            }
+        }
+    }
+
+    public int getColumns() {
         return columns;
     }
 
-    public static int getRows() {
+    public int getRows() {
         return rows;
     }
 

@@ -2,7 +2,7 @@ package it.polimi.ingsw.PSP29.model;
 
 public class GodTurn extends TurnDecorator{
 
-    protected GodTurn(Turn turn) { super(turn);}
+    public GodTurn(Turn turn) { super(turn);}
 
     @Override
     public boolean winCondition(Match m, Player p) {

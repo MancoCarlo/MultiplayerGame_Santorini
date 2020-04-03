@@ -8,6 +8,12 @@ public interface Match_int {
 
     /**
      *
+     * @param p player to be removed
+     */
+    public void removePlayer(Player p);
+
+    /**
+     *
      * @param p owner of the worker that make the move
      * @param id identifier's worker
      * @param board game chessboard

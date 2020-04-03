@@ -43,11 +43,21 @@ public class Worker {
 
     public boolean getBuilt(){ return built; }
 
-
     public void setPosition(Coordinate c){
         position=c;
     }
 
     public void setPrev_position(Coordinate c) { prev_position=c; }
+
+    public boolean cantMove(Match match){
+        for(int i=0; i<match.getRows(); i++){
+            for(int j=0; j<match.getColumns(); j++){
+                if(match.getBoard()[i][j].isEmpty() && position.isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[position.getX()][position.getY()].level_diff(match.getBoard()[i][j])<2){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 }
