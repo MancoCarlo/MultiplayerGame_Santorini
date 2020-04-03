@@ -63,10 +63,12 @@ public class Match {
         Coordinate c2 = p.getWorker(1).getPosition();
         if(c1 != null) {
             board[c1.getX()][c1.getY()].changeState();
+            board[c1.getX()][c1.getY()].setWorkerBox(null);
             p.getWorker(0).setPosition(null);
         }
         if(c2 != null){
             board[c2.getX()][c2.getY()].changeState();
+            board[c1.getX()][c1.getY()].setWorkerBox(null);
             p.getWorker(1).setPosition(null);
         }
     }

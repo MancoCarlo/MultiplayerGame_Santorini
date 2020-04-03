@@ -19,7 +19,7 @@ public class MatchTest {
     public void updateMovement_ExistingInputs_UpdateBoard() {
         Coordinate c = new Coordinate(1,1);
         Box[][] b1;
-        m.updateMovement(m.getPlayers().get(0), 1, m.getBoard(), c);
+        m.updateMovement(m.getPlayers().get(0), 1, c);
         b1= m.getBoard();
         assertEquals(m.getPlayers().get(0).getWorker(1).getPosition(),c);
         for(int i=0; i<m.getRows(); i++){
@@ -65,9 +65,9 @@ public class MatchTest {
     public void removeWorkers_ExistingWorkers_UpdateBoard(){
         Coordinate c1 = new Coordinate(0,1);
         Coordinate c2 = new Coordinate(4,2);
-        m.updateMovement(m.getPlayers().get(0), 0, m.getBoard(), c1);
-        m.updateMovement(m.getPlayers().get(0), 1, m.getBoard(), c2);
-        m.removeWorkers(m.getPlayers().get(0), m.getBoard());
+        m.updateMovement(m.getPlayers().get(0), 0,c1);
+        m.updateMovement(m.getPlayers().get(0), 1,c2);
+        m.removeWorkers(m.getPlayers().get(0));
         assertEquals(m.getPlayers().get(0).getWorker(0).getPosition(),null);
         assertEquals(m.getPlayers().get(0).getWorker(1).getPosition(),null);
         for(int i=0; i<m.getRows(); i++){
@@ -79,7 +79,7 @@ public class MatchTest {
 
     @Test
     public void removeWorkers_NotExistingWorkers_NotUpdateBoard(){
-        m.removeWorkers(m.getPlayers().get(0), m.getBoard());
+        m.removeWorkers(m.getPlayers().get(0));
         assertEquals(m.getPlayers().get(0).getWorker(0).getPosition(),null);
         assertEquals(m.getPlayers().get(0).getWorker(1).getPosition(),null);
         for(int i=0; i<m.getRows(); i++){
