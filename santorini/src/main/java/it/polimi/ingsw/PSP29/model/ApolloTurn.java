@@ -23,7 +23,7 @@ public class ApolloTurn extends GodTurn{
         if(m.getBoard()[c.getX()][c.getY()].isEmpty()){
             return super.move(m, w, c);
         }else{
-            if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
+            if(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()==w.getIDplayer() || !w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
                 return false;
             }
             else{
@@ -41,7 +41,7 @@ public class ApolloTurn extends GodTurn{
         if(m.getBoard()[c.getX()][c.getY()].isEmpty()){
             return super.limited_move(m, w, c);
         }else{
-            if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
+            if(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()==w.getIDplayer() || !w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
                 return false;
             }
             else{

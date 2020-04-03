@@ -40,7 +40,7 @@ public class GameController {
     }
 
     public boolean loseControl(Player player){
-        if(player.getWorker(0).cantMove(match) && player.getWorker(1).cantMove(match){
+        if(player.getWorker(0).cantMove(match) && player.getWorker(1).cantMove(match)){
             return true;
         }
         return false;
@@ -66,7 +66,6 @@ public class GameController {
                     return turnExe(p, turn1);
                     break;
                 case 2 :
-                    athenaOn=true;
                     AthenaTurn turn2 = new AthenaTurn(new GodTurn(new BaseTurn()));
                     return turnExe(p, turn2);
                     break;
@@ -123,6 +122,14 @@ public class GameController {
         while(!turn.build(match, p.getWorker(id), c)){
             System.out.println("Coordinate inserite non valide");
             askCoordinate(c, "costruire");
+        }
+        //Condizione attivazione AthenaON
+        if(p.getCard().getName().equals("Athena")){
+            Coordinate oldPos = p.getWorker(id).getPrev_position();
+            Coordinate newPos = p.getWorker(id).getPrev_position();
+            if(match.getBoard()[oldPos.getX()][oldPos.getY()].getLevel() < match.getBoard()[newPos.getX()][newPos.getY()].getLevel()){
+                athenaOn = true;
+            }
         }
         return turn.winCondition(match, p);
     }

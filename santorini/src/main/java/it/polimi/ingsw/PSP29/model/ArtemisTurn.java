@@ -23,11 +23,14 @@ public class ArtemisTurn extends GodTurn{
     @Override
     public boolean move(Match m, Worker w, Coordinate c){
         Scanner scanner = new Scanner(System.in);
+        String x, y;
         Coordinate cx = w.getPosition();
         super.move(m,w,c);
-        System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
-        String x=scanner.nextLine();
-        String y=scanner.nextLine();
+        do{
+            System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
+            x=scanner.nextLine();
+            y=scanner.nextLine();
+        }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
         Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
         if(c1.equals(cx) || !w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()){
             return false;
@@ -41,11 +44,14 @@ public class ArtemisTurn extends GodTurn{
 
     public boolean limited_move(Match m, Worker w, Coordinate c){
         Scanner scanner = new Scanner(System.in);
+        String x, y;
         Coordinate cx = w.getPosition();
         super.limited_move(m,w,c);
-        System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
-        String x=scanner.nextLine();
-        String y=scanner.nextLine();
+        do{
+            System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
+            x=scanner.nextLine();
+            y=scanner.nextLine();
+        }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
         Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
         if(c1.equals(cx) || !w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()){
             return false;
