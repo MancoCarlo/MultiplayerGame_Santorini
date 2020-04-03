@@ -1,6 +1,5 @@
 package it.polimi.ingsw.PSP29.model;
 
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -25,41 +24,27 @@ public class ArtemisTurn extends GodTurn{
         Scanner scanner = new Scanner(System.in);
         String x, y;
         Coordinate cx = w.getPosition();
-        super.move(m,w,c);
+        if(!super.move(m,w,c)) return false;
         do{
             System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
             x=scanner.nextLine();
             y=scanner.nextLine();
-        }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
+        }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()) );
         Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-        if(c1.equals(cx) || !w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()){
-            return false;
-        }
-        else{
-            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c1);
-            w.changeMoved();
-            return true;
-        }
+        return super.move(m,w,c1);
     }
 
     public boolean limited_move(Match m, Worker w, Coordinate c){
         Scanner scanner = new Scanner(System.in);
         String x, y;
         Coordinate cx = w.getPosition();
-        super.limited_move(m,w,c);
+        if(!super.limited_move(m,w,c)) return false;
         do{
             System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
             x=scanner.nextLine();
             y=scanner.nextLine();
-        }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
+        }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()));
         Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-        if(c1.equals(cx) || !w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()){
-            return false;
-        }
-        else{
-            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c1);
-            w.changeMoved();
-            return true;
-        }
+        return super.limited_move(m,w,c1);
     }
 }
