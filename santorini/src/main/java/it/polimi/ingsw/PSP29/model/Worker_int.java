@@ -10,8 +10,15 @@ public interface Worker_int {
 
     /**
      *
-     * @param match the match in wich the worker is in
+     * @param match the match in which the worker is in
      * @return true if the worker can't move
      */
     public boolean cantMove(Match match);
+
+    /**
+     *
+     * @param match the match in which the worker is in
+     * @return true if the worker can upgrade his level
+     */
+     public boolean canLevelUp (Match match);
 }
