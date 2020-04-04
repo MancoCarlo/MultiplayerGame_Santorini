@@ -30,5 +30,18 @@ public class Coordinate {
         Coordinate c = (Coordinate) o;
         return x == c.x && y == c.y;
     }
+    public Coordinate nextCoordinate(Coordinate c){//restituisce la casella successiva a c verso la direzione di spostamento. se c è nel bordo restituisce c stessa
+        int a=c.x;
+        int b=c.y;
+        if(x - c.x == 1)
+            a = c.x+1;
+        if(x - c.x == -1)
+            a = x+1;
+        if(y - c.y == 1)
+            b = c.y -1;
+        if(y - c.y == -1)
+            b = y + 1;
+        return new Coordinate(a, b);
+    }
 
 }
