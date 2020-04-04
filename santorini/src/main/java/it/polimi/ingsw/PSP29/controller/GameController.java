@@ -2,6 +2,8 @@ package it.polimi.ingsw.PSP29.controller;
 
 import it.polimi.ingsw.PSP29.model.*;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GameController {
@@ -18,7 +20,8 @@ public class GameController {
         godOn=false;
     }
 
-    public void gameExe() throws NotValidInputException {
+    public void gameExe() throws NotValidInputException, FileNotFoundException {
+        firstTurn();
         while(!end){
             for(Player p : match.getPlayers()){
                 if(loseControl(p)){
@@ -36,6 +39,60 @@ public class GameController {
                     }
                 }
             }
+        }
+    }
+
+    public void firstTurn() throws FileNotFoundException {
+        match.addPlayers();
+        match.sortPlayers();
+        match.inizializeBoard();
+        match.loadGods();
+        godSelection();
+        Coordinate c=null;
+        for(Player player : match.getPlayers()){
+            for(int i=0; i<2; i++){
+                askCoordinate(c, "posizionarti");
+                while(!match.getBoard()[c.getX()][c.getY()].isEmpty()){
+                    askCoordinate(c, "posizionarti");
+                }
+                player.putWorker(i, match.getBoard(), c);
+            }
+        }
+    }
+
+    public void godSelection(){
+        Player p = match.getPlayers().get(0);
+
+        ArrayList<God> godlist = new ArrayList<God>();
+        System.out.println("Player " + p.getNickname() + " inserisci " + match.getPlayers().size() + " divinità");
+        for(int i=0; i<match.getGods().size(); i++){
+            System.out.println(i + ") " + match.getGod(i).getName() + " - " + match.getGod(i).getDescription());
+        }
+        createGodList(godlist, match.getGods());
+        for(Player player : match.getPlayers()){
+            System.out.println("Player " + player.getNickname() + " pesca la tua divinità tra le rimanenti :");
+            for(int i=0; i<godlist.size(); i++){
+                System.out.println(i + ") " + godlist.get(i).getName() + " - " + godlist.get(i).getDescription());
+            }
+            p.selectGod(godlist);
+        }
+    }
+
+    public void createGodList(ArrayList<God> gods, ArrayList<God> matchGods){
+        Scanner scanner = new Scanner(System.in);
+        int i;
+        try{
+            i=Integer.parseInt(scanner.nextLine());
+            if(i<0 || i>gods.size()-1){
+                throw new NotValidInputException(0, gods.size());
+            }
+            else{
+                gods.add(matchGods.get(i));
+                matchGods.remove(i);
+            }
+        }
+        catch (NotValidInputException e){
+            createGodList(gods, matchGods);
         }
     }
 

@@ -35,6 +35,21 @@ public class Match {
         return null;
     }
 
+    public void addPlayers(){
+        Scanner scanner = new Scanner(System.in);
+        String name, age;
+        int i=0, a;
+        while(true){
+            name=scanner.nextLine();
+            if(name==null){
+                break;
+            }
+            age=scanner.nextLine();
+            a=Integer.parseInt(age);
+            players.add(new Player(i, name, a));
+        }
+    }
+
     public void removePlayer(Player p){
         for(Player player : players){
             if(player.equals(p)){
@@ -49,6 +64,14 @@ public class Match {
 
     public int getRows() {
         return rows;
+    }
+
+    public ArrayList<God> getGods(){
+        return gods;
+    }
+
+    public God getGod(int id){
+        return gods.get(id);
     }
 
     public void inizializeBoard(){
@@ -78,6 +101,22 @@ public class Match {
             board[c2.getX()][c2.getY()].changeState();
             board[c1.getX()][c1.getY()].setWorkerBox(null);
             p.getWorker(1).setPosition(null);
+        }
+    }
+
+    public void sortPlayers(){
+        boolean change=true;
+        Player p;
+        while(change){
+            change=false;
+            for(int i=0; i<players.size()-1; i++){
+                if(players.get(i).getAge()>players.get(i+1).getAge()){
+                    p=players.get(i);
+                    players.set(i, players.get(i+1));
+                    players.set(i+1, p);
+                    change=true;
+                }
+            }
         }
     }
 

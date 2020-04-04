@@ -1,6 +1,9 @@
 package it.polimi.ingsw.PSP29.model;
 
+import it.polimi.ingsw.PSP29.controller.NotValidInputException;
+
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Player {
     private int ID;
@@ -53,6 +56,24 @@ public class Player {
             b[c.getX()][c.getY()].changeState();
             b[c.getX()][c.getY()].setWorkerBox(workers.get(id));
             workers.get(id).setPosition(c);
+        }
+    }
+
+    public void selectGod(ArrayList<God> gods){
+        Scanner scanner = new Scanner(System.in);
+        int i;
+        try {
+            i=Integer.parseInt(scanner.nextLine());
+            if(i<0 || i>gods.size()-1){
+                throw new NotValidInputException(0, gods.size()-1);
+            }
+            else{
+                drawCard(gods, i);
+                gods.remove(i);
+            }
+        }
+        catch (NotValidInputException e){
+            selectGod(gods);
         }
     }
 

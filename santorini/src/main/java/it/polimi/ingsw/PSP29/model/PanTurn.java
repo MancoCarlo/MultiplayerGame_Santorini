@@ -2,7 +2,7 @@ package it.polimi.ingsw.PSP29.model;
 
 public class PanTurn extends GodTurn {
 
-    protected PanTurn(Turn turn) {
+    public PanTurn(Turn turn) {
         super(turn);
     }
 

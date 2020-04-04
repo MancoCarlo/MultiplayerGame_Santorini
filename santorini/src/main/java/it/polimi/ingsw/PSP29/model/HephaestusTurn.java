@@ -1,7 +1,7 @@
 package it.polimi.ingsw.PSP29.model;
 
 public class HephaestusTurn extends GodTurn {
-    protected HephaestusTurn(Turn turn) {
+    public HephaestusTurn(Turn turn) {
         super(turn);
     }
 

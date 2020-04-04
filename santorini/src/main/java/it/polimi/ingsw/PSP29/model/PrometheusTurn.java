@@ -3,7 +3,7 @@ package it.polimi.ingsw.PSP29.model;
 import java.util.Scanner;
 
 public class PrometheusTurn extends GodTurn {
-    protected PrometheusTurn(Turn turn) {
+    public PrometheusTurn(Turn turn) {
         super(turn);
     }
 
