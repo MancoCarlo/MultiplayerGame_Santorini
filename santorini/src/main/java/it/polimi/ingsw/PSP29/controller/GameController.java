@@ -97,7 +97,7 @@ public class GameController {
     }
 
     public boolean loseControl(Player player){
-        if(player.getWorker(0).cantMove(match) && player.getWorker(1).cantMove(match)){
+        if(player.getWorker(0).cantMove(match, athenaOn) && player.getWorker(1).cantMove(match, athenaOn)){
             return true;
         }
         return false;
