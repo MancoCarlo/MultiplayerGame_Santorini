@@ -35,4 +35,13 @@ public interface ApolloTurn_int {
      * @return true if w can be moved in c, else false
      */
     public boolean limited_move(Match m, Worker w, Coordinate c);
+
+    /**
+     *
+     * @param match match played
+     * @param w worker that must be moved
+     * @param athena true if the athena power is on, else false
+     * @return true if w can't move to another location, else false
+     */
+    public boolean cantMove(Match match,Worker w, boolean athena);
 }

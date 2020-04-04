@@ -54,5 +54,27 @@ public class ApolloTurn extends GodTurn{
             }
         }
     }
+
+    public boolean cantMove(Match match,Worker w, boolean athena){
+        if(athena){
+            for(int i=0; i<match.getRows(); i++){
+                for(int j=0; j<match.getColumns(); j++){
+                    if(w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[i][j])<1){
+                        return false;
+                    }
+                }
+            }
+        }
+        else{
+            for(int i=0; i<match.getRows(); i++){
+                for(int j=0; j<match.getColumns(); j++){
+                    if(w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[i][j])<2){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }
 
