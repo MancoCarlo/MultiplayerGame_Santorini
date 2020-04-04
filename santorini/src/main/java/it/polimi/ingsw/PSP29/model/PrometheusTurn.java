@@ -19,7 +19,7 @@ public class PrometheusTurn extends GodTurn {
 
     @Override
     public boolean move(Match m, Worker w, Coordinate c) {
-        if(!canLevelUp(m,w)) {
+        if(!w.canLevelUp(m)) {
             Scanner scanner = new Scanner(System.in);
             String x, y;
             do {
@@ -64,21 +64,5 @@ public class PrometheusTurn extends GodTurn {
             return true;
         }
     }
-    public boolean canLevelUp (Match m, Worker w) { //controllo se il worker puo salire di livello
-        for(int i=-1; i<=1; i++)
-        {
-            if(w.getPosition().getX() + i==-1 || w.getPosition().getX() + i == m.getRows()) //condizione per le caselle sul bordo
-                continue;
-            for(int j=-1; j<=1; j++)
-            {
-                if(w.getPosition().getY()+j==-1 || w.getPosition().getY() + j ==m.getColumns()) //condizione per le caselle sul bordo
-                    continue;
-                if(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(m.getBoard()[w.getPosition().getX()+i][w.getPosition().getY()+j])==1)
-                    return true;
 
-            }
-        }
-        return false;
-
-    }
 }
