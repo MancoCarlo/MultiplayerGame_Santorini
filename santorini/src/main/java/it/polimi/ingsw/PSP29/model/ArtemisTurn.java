@@ -24,27 +24,29 @@ public class ArtemisTurn extends GodTurn{
         Scanner scanner = new Scanner(System.in);
         String x, y;
         Coordinate cx = w.getPosition();
-        if(!super.move(m,w,c)) return false;
+        boolean nopower = super.move(m,w,c);
+        if(!nopower) return false;
         do{
             System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
             x=scanner.nextLine();
             y=scanner.nextLine();
         }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()) );
         Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-        return super.move(m,w,c1);
+        return super.move(m,w,c1) || nopower;
     }
 
     public boolean limited_move(Match m, Worker w, Coordinate c){
         Scanner scanner = new Scanner(System.in);
         String x, y;
         Coordinate cx = w.getPosition();
-        if(!super.limited_move(m,w,c)) return false;
+        boolean nopower = super.limited_move(m,w,c);
+        if(!nopower) return false;
         do{
             System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
             x=scanner.nextLine();
             y=scanner.nextLine();
         }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()));
         Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-        return super.limited_move(m,w,c1);
+        return super.limited_move(m,w,c1) || nopower;
     }
 }

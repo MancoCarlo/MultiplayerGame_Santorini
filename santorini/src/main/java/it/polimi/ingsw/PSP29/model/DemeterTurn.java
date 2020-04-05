@@ -16,14 +16,15 @@ public class DemeterTurn extends GodTurn {
         Scanner scanner = new Scanner(System.in);
         Coordinate cx = c;
         String x,y;
-        if(!super.build(m,w,c)) return false;
+        boolean nopower = !super.build(m,w,c);
+        if(!nopower) return false;
         do{
             System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
             x=scanner.nextLine();
             y=scanner.nextLine();
         }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()));
         Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-        return (super.build(m,w,c));
+        return (super.build(m,w,c) || nopower);
     }
 
     public boolean move(Match m, Worker w, Coordinate c) { return super.move(m, w, c); }

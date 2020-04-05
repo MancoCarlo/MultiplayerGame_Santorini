@@ -1,5 +1,7 @@
 package it.polimi.ingsw.PSP29.model;
 
+import java.util.Scanner;
+
 public class AtlasTurn extends GodTurn{
 
     public AtlasTurn(Turn turn) {
@@ -11,16 +13,18 @@ public class AtlasTurn extends GodTurn{
     }
 
     public boolean build(Match m, Worker w, Coordinate c){
-        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
-            return false;
-        }
-        else{
+        Scanner scanner = new Scanner(System.in);
+        String answer;
+        boolean nopower = super.build(m,w,c);
+        if(!nopower) return false;
+        System.out.println("Vuoi usare il potere di Atlas? 1) SI 2) NO\n");
+        answer = scanner.nextLine();
+        if(answer == "1"){
             while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){
                 m.updateBuilding(c);
             }
-            w.changeBuilt();
-            return true;
         }
+        return true;
     }
 
     public boolean move(Match m, Worker w, Coordinate c) { return super.move(m, w, c); }
