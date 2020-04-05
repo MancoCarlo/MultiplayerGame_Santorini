@@ -58,7 +58,7 @@ public class Worker {
             {
                 if(this.getPosition().getY()+j==-1 || this.getPosition().getY() + j ==match.getColumns()) //condizione per le caselle sul bordo
                     continue;
-                if(match.getBoard()[this.getPosition().getX()][this.getPosition().getY()].level_diff(match.getBoard()[this.getPosition().getX()+i][this.getPosition().getY()+j])==1)
+                if(match.getBoard()[this.getPosition().getX()][this.getPosition().getY()].level_diff(match.getBoard()[this.getPosition().getX()+i][this.getPosition().getY()+j])==-1 && match.getBoard()[this.getPosition().getX()][this.getPosition().getY()].getLevel() <3)
                     return true;
 
             }

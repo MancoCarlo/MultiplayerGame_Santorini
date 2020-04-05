@@ -8,13 +8,13 @@ public class PanTurn extends GodTurn {
 
     @Override
     public boolean winCondition(Match m, Player p) {
-        for(Worker w : p.getWorkers()) {
+        for (Worker w : p.getWorkers()) {
             if (w.getMoved() && w.getBuilt()) {
                 w.changeMoved();
                 w.changeBuilt();
                 if (m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel() == 2)
                     return true;
-                if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >=2)
+                if (m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >= 2)
                     return true;
             }
         }
@@ -35,4 +35,7 @@ public class PanTurn extends GodTurn {
     public boolean limited_move(Match m, Worker w, Coordinate c) {
         return super.limited_move(m, w, c);
     }
+
+    @Override
+    public boolean cantMove(Match match, Worker w, boolean athena) { return super.cantMove(match, w, athena); }
 }
