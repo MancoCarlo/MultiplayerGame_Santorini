@@ -19,17 +19,16 @@ public class PrometheusTurn extends GodTurn {
 
     @Override
     public boolean move(Match m, Worker w, Coordinate c) {
-        if(!w.canLevelUp(m)) {
             Scanner scanner = new Scanner(System.in);
             String x, y;
             do {
-                System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
+                System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata dove vuoi costruire: \t");
                 x = scanner.nextLine();
                 y = scanner.nextLine();
-            }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
+            } while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
             Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-            if(!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || !w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) > 1 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()) {
-                return false; //se non riesco a costruire e muovermi. in questo modo non costruisco se non riesco a muovermi
+            if(!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || !w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()) {
+                return false;
             }
             else{
                 m.updateBuilding(c1);
@@ -37,24 +36,21 @@ public class PrometheusTurn extends GodTurn {
                 w.changeMoved();
                 return true;
             }
-        }
-        else
-            return false; //return false perchè non uso il potere della divinità
-
     }
 
+
     @Override
-    public boolean limited_move(Match m, Worker w, Coordinate c) { //stesso codice del move senza controllo con canLevelUp
+    public boolean limited_move(Match m, Worker w, Coordinate c) {
         Scanner scanner = new Scanner(System.in);
         String x, y;
         do {
-            System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata: \t");
+            System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata dove vuoi costruire: \t");
             x = scanner.nextLine();
             y = scanner.nextLine();
         }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
         Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-        //controllo anche se le due coordinate sono uguali perche nel limitedTurn non si può salire di livello
-        if(c1==c || !w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || !w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) > 1 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()) {
+        //controllo anche se la casella dove voglio costruire è quella dove voglio muovermi
+        if( !w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || !w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) > 0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty() || (m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) ==0 && c1.equals(c))) {
             return false;
         }
         else{
@@ -64,5 +60,49 @@ public class PrometheusTurn extends GodTurn {
             return true;
         }
     }
+    public boolean cantMove(Match match,Worker w, boolean athena){
+        int count = 0;
+        if(!athena){
+            for(int i=0; i<match.getRows(); i++){
+                for(int j=0; j<match.getColumns(); j++){
+                    if(match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].getLevel()!=4 && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[i][j])==-1){
+                        //se esiste una casella che è vuota, è vicina al mio operaio, la cui torre non è completa e il mio operaio puo salire di livello
+                        return true;//non si può usare la divinità
+                    }
+                    else { // devo controllare che costruendo poi riesca a muoversi
+                        if (!w.canLevelUp(match) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() < 3 && match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].getLevel() <= match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())
+                            //se il worker non puo salire di livello ed è a livello inferiore a 3 e se esiste una casella che è vuota e vicina al mio operaio, il cui livello è inferirore o uguale a quello del mio worker
+                            return false;
+                        else {
+                            if (!w.canLevelUp(match) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].getLevel() < match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())
+                                return false;//se il worker non puo salire di livello ed è al terzo livello e c'è almeno una casella vuota e adiacente che è ha un livello inferiore
+                            if (!w.canLevelUp(match) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].getLevel() != 4)//almeno due caselle che non sono al 4 livello
+                                count =count +1;//se worker non può salire di livello ed è al terzo livello e ci sono almeno due caselle che non sono al 4 livello
+                        }
+                    }
+                }
+            }
+            if(count >=2)
+                return false;
+            else
+                return true;
+        }
+        else {
+            for(int i=0; i<match.getRows(); i++){
+                for(int j=0; j<match.getColumns(); j++) {
+                    if (match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() <= 3 && match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].getLevel() < match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())
+                        //se il worker è a livello inferiore o uguale a 3 e se esiste una casella che è vuota e vicina al mio operaio, il cui livello è inferirore a quello del mio worker
+                        return false;
+                    if (match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].getLevel() != 4)//almeno due caselle che non sono al 4 livello
+                        count =count +1;//se worker è al terzo livello e ci sono almeno due caselle che non sono al 4 livello
 
+                }
+            }
+            if(count >=2)
+                return false;
+            else
+                return true;
+
+        }
+    }
 }
