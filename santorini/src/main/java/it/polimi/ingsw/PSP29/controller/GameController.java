@@ -24,22 +24,58 @@ public class GameController {
         firstTurn();
         while(!end){
             for(Player p : match.getPlayers()){
-                if(loseControl(p)){
-                    match.removePlayer(p);
-                    if(match.getPlayers().size()==1){
-                        //vince perchè è rimasto solo
-                        break;
-                    }
+                if(match.getPlayers().size()==1){
+                    //è rimasto uno solo
+                    break;
                 }
-                else{
+                if(playerCanMove(p)){
                     end=!newTurn(p);
                     if(end){
                         //vittoria
                         break;
                     }
                 }
+                else{
+                    System.out.println("Hai perso");
+                    match.removePlayer(p);
+                    end=false;
+                }
             }
         }
+    }
+
+    public boolean playerCanMove(Player p){
+        BaseTurn turn = new BaseTurn();
+        switch (p.getCard().getID()){
+            case 0 :
+                ApolloTurn turn0 = new ApolloTurn(new GodTurn(new BaseTurn()));
+                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn0.cantMove(match, p.getWorker(0), athenaOn) || !turn0.cantMove(match, p.getWorker(1), athenaOn));
+            case 1 :
+                ArtemisTurn turn1 = new ArtemisTurn(new GodTurn(new BaseTurn()));
+                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn1.cantMove(match, p.getWorker(0), athenaOn) || !turn1.cantMove(match, p.getWorker(1), athenaOn));
+            case 2 :
+                AthenaTurn turn2 = new AthenaTurn(new GodTurn(new BaseTurn()));
+                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn2.cantMove(match, p.getWorker(0), athenaOn) || !turn2.cantMove(match, p.getWorker(1), athenaOn));
+            case 3 :
+                AtlasTurn turn3 = new AtlasTurn(new GodTurn(new BaseTurn()));
+                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn3.cantMove(match, p.getWorker(0), athenaOn) || !turn3.cantMove(match, p.getWorker(1), athenaOn));
+            case 4 :
+                DemeterTurn turn4 = new DemeterTurn(new GodTurn(new BaseTurn()));
+                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn4.cantMove(match, p.getWorker(0), athenaOn) || !turn4.cantMove(match, p.getWorker(1), athenaOn));
+            case 5 :
+                HephaestusTurn turn5 = new HephaestusTurn(new GodTurn(new BaseTurn()));
+                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn5.cantMove(match, p.getWorker(0), athenaOn) || !turn5.cantMove(match, p.getWorker(1), athenaOn));
+            case 6 :
+                MinotaurTurn turn6 = new MinotaurTurn(new GodTurn(new BaseTurn()));
+                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn6.cantMove(match, p.getWorker(0), athenaOn) || !turn6.cantMove(match, p.getWorker(1), athenaOn));
+            case 7 :
+                PanTurn turn7 = new PanTurn(new GodTurn(new BaseTurn()));
+                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn7.cantMove(match, p.getWorker(0), athenaOn) || !turn7.cantMove(match, p.getWorker(1), athenaOn));
+            case 8 :
+                PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
+                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn8.cantMove(match, p.getWorker(0), athenaOn) || !turn8.cantMove(match, p.getWorker(1), athenaOn));
+        }
+        return false;
     }
 
     public void firstTurn() throws FileNotFoundException {
@@ -96,60 +132,114 @@ public class GameController {
         }
     }
 
-    public boolean loseControl(Player player){
-        if(player.getWorker(0).cantMove(match, athenaOn) && player.getWorker(1).cantMove(match, athenaOn)){
-            return true;
-        }
-        return false;
-    }
-
-    public boolean newTurn(Player p) throws NotValidInputException {
+    public boolean newTurn(Player p) {
         if(athenaOn && p.getCard().getName().equals("Athena")){
             athenaOn=false;
         }
         askGod();
         if(!godOn){
             BaseTurn turn = new BaseTurn();
-            return turnExe(p, turn);
+            if(!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn)){
+                return turnExe(p, turn);
+            }
+            else{
+                System.out.println("Hai perso");
+                match.removePlayer(p);
+                return false;
+            }
         }
         else{
             switch (p.getCard().getID()){
                 case 0 :
                     ApolloTurn turn0 = new ApolloTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(p, turn0);
-                    break;
+                    if(!turn0.cantMove(match, p.getWorker(0), athenaOn) || !turn0.cantMove(match, p.getWorker(1), athenaOn)){
+                        return turnExe(p, turn0);
+                    }
+                    else{
+                        System.out.println("Hai perso");
+                        match.removePlayer(p);
+                        return false;
+                    }
                 case 1 :
                     ArtemisTurn turn1 = new ArtemisTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(p, turn1);
-                    break;
+                    if(!turn1.cantMove(match, p.getWorker(0), athenaOn) || !turn1.cantMove(match, p.getWorker(1), athenaOn)){
+                        return turnExe(p, turn1);
+                    }
+                    else{
+                        System.out.println("Hai perso");
+                        match.removePlayer(p);
+                        return false;
+                    }
                 case 2 :
                     AthenaTurn turn2 = new AthenaTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(p, turn2);
-                    break;
+                    if(!turn2.cantMove(match, p.getWorker(0), athenaOn) || !turn2.cantMove(match, p.getWorker(1), athenaOn)){
+                        return turnExe(p, turn2);
+                    }
+                    else{
+                        System.out.println("Hai perso");
+                        match.removePlayer(p);
+                        return false;
+                    }
                 case 3 :
                     AtlasTurn turn3 = new AtlasTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(p, turn3);
-                    break;
+                    if(!turn3.cantMove(match, p.getWorker(0), athenaOn) || !turn3.cantMove(match, p.getWorker(1), athenaOn)){
+                        return turnExe(p, turn3);
+                    }
+                    else{
+                        System.out.println("Hai perso");
+                        match.removePlayer(p);
+                        return false;
+                    }
                 case 4 :
                     DemeterTurn turn4 = new DemeterTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(p, turn4);
-                    break;
+                    if(!turn4.cantMove(match, p.getWorker(0), athenaOn) || !turn4.cantMove(match, p.getWorker(1), athenaOn)){
+                        return turnExe(p, turn4);
+                    }
+                    else{
+                        System.out.println("Hai perso");
+                        match.removePlayer(p);
+                        return false;
+                    }
                 case 5 :
                     HephaestusTurn turn5 = new HephaestusTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(p, turn5);
-                    break;
+                    if(!turn5.cantMove(match, p.getWorker(0), athenaOn) || !turn5.cantMove(match, p.getWorker(1), athenaOn)){
+                        return turnExe(p, turn5);
+                    }
+                    else{
+                        System.out.println("Hai perso");
+                        match.removePlayer(p);
+                        return false;
+                    }
                 case 6 :
                     MinotaurTurn turn6 = new MinotaurTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(p, turn6);
-                    break;
+                    if(!turn6.cantMove(match, p.getWorker(0), athenaOn) || !turn6.cantMove(match, p.getWorker(1), athenaOn)){
+                        return turnExe(p, turn6);
+                    }
+                    else{
+                        System.out.println("Hai perso");
+                        match.removePlayer(p);
+                        return false;
+                    }
                 case 7 :
                     PanTurn turn7 = new PanTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(p, turn7);
-                    break;
+                    if(!turn7.cantMove(match, p.getWorker(0), athenaOn) || !turn7.cantMove(match, p.getWorker(1), athenaOn)){
+                        return turnExe(p, turn7);
+                    }
+                    else{
+                        System.out.println("Hai perso");
+                        match.removePlayer(p);
+                        return false;
+                    }
                 case 8 :
                     PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(p, turn8);
-                    break;
+                    if(!turn8.cantMove(match, p.getWorker(0), athenaOn) || !turn8.cantMove(match, p.getWorker(1), athenaOn)){
+                        return turnExe(p, turn8);
+                    }
+                    else{
+                        System.out.println("Hai perso");
+                        match.removePlayer(p);
+                        return false;
+                    }
             }
         }
         return false;

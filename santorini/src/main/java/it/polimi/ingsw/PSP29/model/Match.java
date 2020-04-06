@@ -53,6 +53,7 @@ public class Match {
     public void removePlayer(Player p){
         for(Player player : players){
             if(player.equals(p)){
+                removeWorkers(player);
                 players.remove(player);
             }
         }

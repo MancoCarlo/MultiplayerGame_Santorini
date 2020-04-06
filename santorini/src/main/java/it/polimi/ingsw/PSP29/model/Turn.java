@@ -17,4 +17,6 @@ public interface Turn {
     public boolean winCondition(Match m, Player p);
 
 
+    public boolean cantMove(Match m,Worker w, boolean athena);
+
 }
