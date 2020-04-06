@@ -24,7 +24,7 @@ public class DemeterTurn extends GodTurn {
             y=scanner.nextLine();
         }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()));
         Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-        return (super.build(m,w,c) || nopower);
+        return true;
     }
 
     public boolean move(Match m, Worker w, Coordinate c) { return super.move(m, w, c); }
