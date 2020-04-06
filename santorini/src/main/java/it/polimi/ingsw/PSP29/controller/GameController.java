@@ -111,23 +111,28 @@ public class GameController {
 
         ArrayList<God> godlist = new ArrayList<God>();
         System.out.println("Player " + p.getNickname() + " inserisci " + match.getPlayers().size() + " divinità");
-        for(int i=0; i<match.getGods().size(); i++){
-            System.out.println(i + ") " + match.getGod(i).getName() + " - " + match.getGod(i).getDescription());
-        }
         createGodList(godlist, match.getGods(), match.getPlayers().size());
-        for(Player player : match.getPlayers()){
-            System.out.println("Player " + player.getNickname() + " pesca la tua divinità tra le rimanenti :");
-            for(int i=0; i<godlist.size(); i++){
-                System.out.println(i + ") " + godlist.get(i).getName() + " - " + godlist.get(i).getDescription());
+        for(int i=1; i<match.getPlayers().size(); i++){
+            System.out.println("Player " + match.getPlayers().get(i).getNickname() + " pesca la tua divinità tra le rimanenti :");
+            for(int j=0; j<godlist.size(); j++){
+                System.out.println(j + ") " + godlist.get(j).getName() + " - " + godlist.get(j).getDescription());
             }
-            p.selectGod(godlist);
+            match.getPlayers().get(i).selectGod(godlist);
         }
+        System.out.println("Player " + match.getPlayers().get(0).getNickname() + " pesca la tua divinità tra le rimanenti :");
+        for(int i=0; i<godlist.size(); i++){
+            System.out.println(i + ") " + godlist.get(i).getName() + " - " + godlist.get(i).getDescription());
+        }
+        p.selectGod(godlist);
     }
 
     public void createGodList(ArrayList<God> gods, ArrayList<God> matchGods, int dim){
         Scanner scanner = new Scanner(System.in);
         int i;
         if(dim>0){
+            for(int j=0; j<match.getGods().size(); j++){
+                System.out.println(j + ") " + match.getGod(j).getName() + " - " + match.getGod(j).getDescription());
+            }
             try{
                 i=Integer.parseInt(scanner.nextLine());
                 if(i<0 || i>matchGods.size()-1){
@@ -137,11 +142,6 @@ public class GameController {
                     gods.add(matchGods.get(i));
                     matchGods.remove(i);
                     dim--;
-                    if(dim>1){
-                        for(int j=0; j<match.getGods().size(); j++){
-                            System.out.println(j + ") " + match.getGod(j).getName() + " - " + match.getGod(j).getDescription());
-                        }
-                    }
                     createGodList(gods, matchGods, dim);
                 }
             }
@@ -152,6 +152,7 @@ public class GameController {
     }
 
     public boolean newTurn(Player p) {
+        System.out.println("Turno di " + p.getNickname());
         if(athenaOn && p.getCard().getName().equals("Athena")){
             athenaOn=false;
         }
@@ -298,6 +299,8 @@ public class GameController {
             }
         }
         match.printBoard(match.getBoard());
+        System.out.println(p.getWorker(0).toString());
+        System.out.println(p.getWorker(1).toString());
         return turn.winCondition(match, p);
     }
 

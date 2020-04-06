@@ -33,9 +33,7 @@ public class Worker {
 
     public boolean getMoved(){ return moved; }
 
-    public void changeMoved(){
-        moved= !moved;
-    }
+    public void changeMoved(){ moved= !moved; }
 
     public void changeBuilt() {
         built= !built;
