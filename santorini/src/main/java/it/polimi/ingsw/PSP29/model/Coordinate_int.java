@@ -12,8 +12,9 @@ public interface Coordinate_int {
 
     /**
      * calculate the next coordinate following the direction of movement
-     * @param c coordinate in which I want to move
-     * @return the next coordinate after c or c if there's no following coordinate
+     * @param m the match
+     * @param c adjacent coordinate to c in which I want to move
+     * @return the next coordinate after c or c if there's no following coordinate or c isn't adjacent
      */
-    public Coordinate nextCoordinate(Coordinate c);
+    public Coordinate nextCoordinate(Match m, Coordinate c);
 }
