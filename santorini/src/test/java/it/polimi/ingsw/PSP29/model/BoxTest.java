@@ -39,5 +39,22 @@ public class BoxTest {
         assertTrue(box.isEmpty());
         box.changeState();
         assertFalse(box.isEmpty());
+        box.changeState();
+        assertTrue(box.isEmpty());
+    }
+
+    @Test
+    public void TestgetWorker(){
+        Worker w1 = new Worker(1,"paolo");
+        box.setWorkerBox(w1);
+        assertEquals(box.getWorkerBox(), w1);
+    }
+
+    @Test
+    public void Testlevel_diff(){
+        Box b = new Box(2,3);
+        b.upgradeLevel();
+        assertEquals(b.level_diff(box), 1);
+
     }
 }
