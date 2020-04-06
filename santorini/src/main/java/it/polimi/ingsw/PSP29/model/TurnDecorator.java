@@ -23,7 +23,7 @@ public abstract class TurnDecorator implements Turn {
 
     @Override
     public boolean build(Match m, Worker w, Coordinate c) {
-        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
+        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].getLevel()==4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
             return false;
         }
         else{
