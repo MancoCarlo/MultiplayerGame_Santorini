@@ -18,4 +18,12 @@ public class God {
 
     public String getDescription() { return description; }
 
+    @Override
+    public String toString() {
+        return "{" +
+                "ID=" + ID +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

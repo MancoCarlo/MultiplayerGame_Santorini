@@ -80,4 +80,21 @@ public class Player {
     public void drawCard(ArrayList<God> g, int i){
         card=g.get(i);
     }
+
+    public void printWorkers(){
+        System.out.println("lista worker:");
+        for (Worker w : workers){
+            System.out.println("- " + w.toString());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "ID=" + ID +
+                ", nickname='" + nickname + '\'' +
+                ", age=" + age +
+                ", card=" + card +
+                '}';
+    }
 }

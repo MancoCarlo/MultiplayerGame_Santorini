@@ -40,13 +40,16 @@ public class Match {
         String name, age;
         int i=0, a;
         while(true){
+            System.out.print("Giocatore n." + (i+1) + " inserisci il tuo nome: ");
             name=scanner.nextLine();
-            if(name==null){
+            if(name.equals("")){
                 break;
             }
+            System.out.print(name + ", inserisci la tua età: ");
             age=scanner.nextLine();
             a=Integer.parseInt(age);
             players.add(new Player(i, name, a));
+            i++;
         }
     }
 
@@ -122,13 +125,13 @@ public class Match {
     }
 
     public void loadGods() throws FileNotFoundException {
-        FileReader f = new FileReader("src/main/java/it/polimi/ingsw/PSP29/model/gods.txt");
+        FileReader f = new FileReader("santorini/src/main/java/it/polimi/ingsw/PSP29/model/gods.txt");
         Scanner scanner = new Scanner(f);
         int i;
         String id, n, d;
         while(true){
             id=scanner.nextLine();
-            if(id==null){
+            if(id.equals(".")){
                 break;
             }
             n=scanner.nextLine();
@@ -137,15 +140,28 @@ public class Match {
             gods.add(new God(i, n, d));
         }
     }
-/*
+
     public void printBoard(Box[][] b){
         for(int i=0; i<rows;i++){
             for(int j=0; j<columns;j++) {
                 b[i][j].printEmpty();
-                System.out.println("\t");
+                System.out.print("\t");
             }
-            System.out.println("\n");
+            System.out.println("");
         }
     }
-*/
+
+    public void printGodlist(){
+        System.out.println("lista:");
+        for (God g : gods){
+            System.out.println("- " + g.toString());
+        }
+    }
+
+    public void printPlayers(){
+        System.out.println("lista giocatori:");
+        for (Player p : players){
+            System.out.println("- " + p.toString());
+        }
+    }
 }

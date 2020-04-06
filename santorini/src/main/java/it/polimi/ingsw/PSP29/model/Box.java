@@ -49,14 +49,15 @@ public class Box {
         workerBox = w;
     }
 
-    /*
     public void printEmpty() {
-        if(isEmpty()) System.out.println("0");
-        else System.out.println("1");
+        if(isEmpty()) System.out.print("0" + level);
+        else{
+            System.out.print(workerBox.getIDplayer().charAt(0));
+            System.out.print(level);
+        }
     }
 
     public void printLevel() {
         System.out.println(level);
     }
-    */
 }

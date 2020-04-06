@@ -67,4 +67,15 @@ public class Worker {
 
     }
 
+    @Override
+    public String toString() {
+        return "Worker{" +
+                "ID=" + ID +
+                ", IDplayer='" + IDplayer + '\'' +
+                ", position=" + position +
+                ", prev_position=" + prev_position +
+                ", moved=" + moved +
+                ", built=" + built +
+                '}';
+    }
 }

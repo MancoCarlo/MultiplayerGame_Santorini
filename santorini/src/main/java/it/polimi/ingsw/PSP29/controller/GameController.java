@@ -12,6 +12,8 @@ public class GameController {
     boolean end;
     boolean athenaOn;
     boolean godOn;
+    int id;
+    Coordinate c = null;
 
     public GameController(){
         match = new Match();
@@ -22,6 +24,7 @@ public class GameController {
 
     public void gameExe() throws NotValidInputException, FileNotFoundException {
         firstTurn();
+        match.printBoard(match.getBoard());
         while(!end){
             for(Player p : match.getPlayers()){
                 if(match.getPlayers().size()==1){
@@ -29,7 +32,8 @@ public class GameController {
                     break;
                 }
                 if(playerCanMove(p)){
-                    end=!newTurn(p);
+                    end=newTurn(p);
+                    match.printBoard(match.getBoard());
                     if(end){
                         //vittoria
                         break;
@@ -38,6 +42,7 @@ public class GameController {
                 else{
                     System.out.println("Hai perso");
                     match.removePlayer(p);
+                    match.printBoard(match.getBoard());
                     end=false;
                 }
             }
@@ -80,18 +85,23 @@ public class GameController {
 
     public void firstTurn() throws FileNotFoundException {
         match.addPlayers();
+        match.printPlayers();
         match.sortPlayers();
+        match.printPlayers();
         match.inizializeBoard();
+        match.printBoard(match.getBoard());
         match.loadGods();
+        match.printGodlist();
         godSelection();
-        Coordinate c=null;
         for(Player player : match.getPlayers()){
             for(int i=0; i<2; i++){
-                askCoordinate(c, "posizionarti");
+                System.out.print(player.getNickname());
+                c=askCoordinate("posizionarti");
                 while(!match.getBoard()[c.getX()][c.getY()].isEmpty()){
-                    askCoordinate(c, "posizionarti");
+                    c=askCoordinate("posizionarti");
                 }
                 player.putWorker(i, match.getBoard(), c);
+                match.printBoard(match.getBoard());
             }
         }
     }
@@ -104,7 +114,7 @@ public class GameController {
         for(int i=0; i<match.getGods().size(); i++){
             System.out.println(i + ") " + match.getGod(i).getName() + " - " + match.getGod(i).getDescription());
         }
-        createGodList(godlist, match.getGods());
+        createGodList(godlist, match.getGods(), match.getPlayers().size());
         for(Player player : match.getPlayers()){
             System.out.println("Player " + player.getNickname() + " pesca la tua divinità tra le rimanenti :");
             for(int i=0; i<godlist.size(); i++){
@@ -114,21 +124,30 @@ public class GameController {
         }
     }
 
-    public void createGodList(ArrayList<God> gods, ArrayList<God> matchGods){
+    public void createGodList(ArrayList<God> gods, ArrayList<God> matchGods, int dim){
         Scanner scanner = new Scanner(System.in);
         int i;
-        try{
-            i=Integer.parseInt(scanner.nextLine());
-            if(i<0 || i>gods.size()-1){
-                throw new NotValidInputException(0, gods.size());
+        if(dim>0){
+            try{
+                i=Integer.parseInt(scanner.nextLine());
+                if(i<0 || i>matchGods.size()-1){
+                    throw new NotValidInputException(0, matchGods.size()-1);
+                }
+                else{
+                    gods.add(matchGods.get(i));
+                    matchGods.remove(i);
+                    dim--;
+                    if(dim>1){
+                        for(int j=0; j<match.getGods().size(); j++){
+                            System.out.println(j + ") " + match.getGod(j).getName() + " - " + match.getGod(j).getDescription());
+                        }
+                    }
+                    createGodList(gods, matchGods, dim);
+                }
             }
-            else{
-                gods.add(matchGods.get(i));
-                matchGods.remove(i);
+            catch (NotValidInputException e){
+                createGodList(gods, matchGods, dim);
             }
-        }
-        catch (NotValidInputException e){
-            createGodList(gods, matchGods);
         }
     }
 
@@ -136,7 +155,7 @@ public class GameController {
         if(athenaOn && p.getCard().getName().equals("Athena")){
             athenaOn=false;
         }
-        askGod();
+        godOn=askGod();
         if(!godOn){
             BaseTurn turn = new BaseTurn();
             if(!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn)){
@@ -246,29 +265,29 @@ public class GameController {
     }
 
     public boolean turnExe(Player p, Turn turn){
-        Coordinate c = null;
-        int id=0;
-        askWorker(id, p);
-        askCoordinate(c, "muoverti");
+        match.printBoard(match.getBoard());
+        id=askWorker(p);
+        c=askCoordinate("muoverti");
         if(athenaOn){
             while(!turn.limited_move(match, p.getWorker(id), c)){
                 System.out.println("Il potere di Athena è attivo, non puoi salire di livello");
                 System.out.println("Coordinate inserite non valide");
-                askWorker(id, p);
-                askCoordinate(c, "muoverti");
+                id=askWorker(p);
+                c=askCoordinate("muoverti");
             }
         }
         else{
             while(!turn.move(match, p.getWorker(id), c)){
                 System.out.println("Coordinate inserite non valide");
-                askWorker(id, p);
-                askCoordinate(c, "muoverti");
+                id=askWorker(p);
+                c=askCoordinate("muoverti");
             }
         }
-        askCoordinate(c, "costruire");
+        match.printBoard(match.getBoard());
+        c=askCoordinate("costruire");
         while(!turn.build(match, p.getWorker(id), c)){
             System.out.println("Coordinate inserite non valide");
-            askCoordinate(c, "costruire");
+            c=askCoordinate("costruire");
         }
         //Condizione attivazione AthenaON
         if(p.getCard().getName().equals("Athena")){
@@ -278,19 +297,20 @@ public class GameController {
                 athenaOn = true;
             }
         }
+        match.printBoard(match.getBoard());
         return turn.winCondition(match, p);
     }
 
-    public void askCoordinate(Coordinate c, String str){
+    public Coordinate askCoordinate(String str){
         int x=0, y=0;
-        System.out.println("Inserisci la X dove vuoi " + str + ": ");
-        ask_x_y(x);
-        System.out.println("Inserisci la Y dove voui " + str + ": ");
-        ask_x_y(y);
-        c=new Coordinate(x, y);
+        System.out.println(" inserisci la X dove vuoi " + str + ": ");
+        x=ask_x_y();
+        System.out.println(" inserisci la Y dove voui " + str + ": ");
+        y=ask_x_y();
+        return new Coordinate(x, y);
     }
 
-    public void ask_x_y(int c){
+    public int ask_x_y(){
         Scanner scanner = new Scanner(System.in);
         String s;
         int i;
@@ -301,15 +321,15 @@ public class GameController {
                 throw (new NotValidInputException(0, 4));
             }
             else{
-                c=i;
+                return i;
             }
         }
         catch(NotValidInputException e){
-            ask_x_y(c);
+            return ask_x_y();
         }
     }
 
-    public void askWorker(int id, Player p){
+    public int askWorker(Player p){
         Scanner scanner = new Scanner(System.in);
         String s;
         int i;
@@ -323,15 +343,15 @@ public class GameController {
                 throw (new NotValidInputException(0, 1));
             }
             else{
-                id=i;
+                return i;
             }
         }
         catch (NotValidInputException e){
-            askWorker(id, p);
+            return askWorker(p);
         }
     }
 
-    public void askGod(){
+    public boolean askGod(){
         Scanner scanner = new Scanner(System.in);
         String s;
         int i;
@@ -344,11 +364,11 @@ public class GameController {
                 throw (new NotValidInputException(1, 2));
             }
             else{
-                godOn=(i == 1);
+                return(i == 1);
             }
         }
         catch(NotValidInputException e){
-            askGod();
+            return askGod();
         }
     }
 }
