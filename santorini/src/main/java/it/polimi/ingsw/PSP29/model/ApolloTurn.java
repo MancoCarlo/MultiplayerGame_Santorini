@@ -28,10 +28,14 @@ public class ApolloTurn extends GodTurn{
             }
             else{
                 Worker w2 = m.getBoard()[c.getX()][c.getY()].getWorkerBox();
+                w2.setPosition(null);
+                w2.setPrev_position(null);
+                m.getBoard()[c.getX()][c.getY()].setWorkerBox(null);
+                m.getBoard()[c.getX()][c.getY()].changeState();
+                Coordinate cx = w.getPosition();
+                super.move(m,w,c);
+                m.getPlayer(w2.getIDplayer()).putWorker(w2.getID(), m.getBoard(), cx);
                 w2.setPrev_position(c);
-                w2.setPosition(w.getPosition());
-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved();
                 return true;
             }
         }
@@ -46,10 +50,14 @@ public class ApolloTurn extends GodTurn{
             }
             else{
                 Worker w2 = m.getBoard()[c.getX()][c.getY()].getWorkerBox();
+                w2.setPosition(null);
+                w2.setPrev_position(null);
+                m.getBoard()[c.getX()][c.getY()].setWorkerBox(null);
+                m.getBoard()[c.getX()][c.getY()].changeState();
+                Coordinate cx = w.getPosition();
+                super.limited_move(m,w,c);
+                m.getPlayer(w2.getIDplayer()).putWorker(w2.getID(), m.getBoard(), cx);
                 w2.setPrev_position(c);
-                w2.setPosition(w.getPosition());
-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved();
                 return true;
             }
         }
