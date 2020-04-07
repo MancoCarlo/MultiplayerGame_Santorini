@@ -33,5 +33,5 @@ public class HephaestusTurn extends GodTurn {
     }
 
     @Override
-    public boolean cantMove(Match match, Worker w, boolean athena) { return super.cantMove(match, w, athena); }
+    public boolean cantMove(Match m, Worker w, boolean athena) { return super.cantMove(m, w, athena); }
 }
