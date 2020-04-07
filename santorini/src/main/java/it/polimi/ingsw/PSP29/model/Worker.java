@@ -65,6 +65,17 @@ public class Worker {
 
     }
 
+    public boolean canBuild(Match m){
+        for(int i=0; i<m.getRows(); i++){
+            for(int j=0; j<m.getColumns(); j++){
+                if(m.getBoard()[i][j].getLocation().isNear(position) && m.getBoard()[i][j].isEmpty() && m.getBoard()[i][j].getLevel()!=4){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "Worker{" +

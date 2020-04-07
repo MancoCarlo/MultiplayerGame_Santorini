@@ -285,23 +285,30 @@ public class GameController {
             }
         }
         match.printBoard(match.getBoard());
-        c=askCoordinate("costruire");
-        while(!turn.build(match, p.getWorker(id), c)){
-            System.out.println("Coordinate inserite non valide");
+        if(p.getWorker(id).canBuild(match)){
             c=askCoordinate("costruire");
-        }
-        //Condizione attivazione AthenaON
-        if(p.getCard().getName().equals("Athena")){
-            Coordinate oldPos = p.getWorker(id).getPrev_position();
-            Coordinate newPos = p.getWorker(id).getPrev_position();
-            if(match.getBoard()[oldPos.getX()][oldPos.getY()].getLevel() < match.getBoard()[newPos.getX()][newPos.getY()].getLevel()){
-                athenaOn = true;
+            while(!turn.build(match, p.getWorker(id), c)){
+                System.out.println("Coordinate inserite non valide");
+                c=askCoordinate("costruire");
             }
+            //Condizione attivazione AthenaON
+            if(p.getCard().getName().equals("Athena")){
+                Coordinate oldPos = p.getWorker(id).getPrev_position();
+                Coordinate newPos = p.getWorker(id).getPrev_position();
+                if(match.getBoard()[oldPos.getX()][oldPos.getY()].getLevel() < match.getBoard()[newPos.getX()][newPos.getY()].getLevel()){
+                    athenaOn = true;
+                }
+            }
+            match.printBoard(match.getBoard());
+            System.out.println(p.getWorker(0).toString());
+            System.out.println(p.getWorker(1).toString());
+            return turn.winCondition(match, p);
         }
-        match.printBoard(match.getBoard());
-        System.out.println(p.getWorker(0).toString());
-        System.out.println(p.getWorker(1).toString());
-        return turn.winCondition(match, p);
+        else{
+            System.out.println("Non puoi costruire, hai perso");
+            match.removePlayer(p);
+            return false;
+        }
     }
 
     public Coordinate askCoordinate(String str){
