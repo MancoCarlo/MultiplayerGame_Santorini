@@ -19,8 +19,13 @@ public class MinotaurTurn extends GodTurn {
     @Override
     public boolean move(Match m, Worker w, Coordinate c) {
         if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){//se la casella è adiacente ma non coincidente e se la torre non è completa
+            if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <= 1) {
+                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
+                w.changeMoved();
+                return true;
+            }
             Coordinate c1 = w.getPosition().nextCoordinate(m, c); //ottengo la coordinata seguente oppure c
-            if(c1.equals(c) || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<-1 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4){
+            if(c1.equals(c) || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4){
                 //se la casella c non ha una successiva oppure se la casella successiva non è vuota oppure se la casella indicata non contiene un operaio oppure se l'operaio nella casella è dello stesso giocatore oppure se la casella in cui mi voglio spostare è alta di più di 1 livello oppure se la casella successiva è completa
                 return false;
             }
@@ -38,8 +43,13 @@ public class MinotaurTurn extends GodTurn {
     @Override
     public boolean limited_move(Match m, Worker w, Coordinate c) {
         if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){//se la casella è adiacente ma non coincidente e se la torre non è completa
+            if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <=0) {
+                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
+                w.changeMoved();
+                return true;
+            }
             Coordinate c1 = w.getPosition().nextCoordinate(m, c); //ottengo la coordinata seguente oppure c
-            if(c1.equals(c) || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<0 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4)
+            if(c1.equals(c) || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4)
                 //se la casella c non ha una successiva oppure se la casella successiva non è vuota oppure se la casella indicata non contiene un operaio oppure se l'operaio nella casella è dello stesso giocatore oppure se la casella in cui mi voglio spostare è piu alta della mia casella oppure se la casella successiva è completa
                 return false;
             else {
@@ -54,13 +64,13 @@ public class MinotaurTurn extends GodTurn {
     }
 
     @Override
-    public boolean cantMove(Match match, Worker w, boolean athena) {
+    public boolean cantMove(Match m, Worker w, boolean athena) {
         if (athena) {
-            for (int i = 0; i < match.getRows(); i++) {
-                for (int j = 0; j < match.getColumns(); j++) {
-                    if (w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].getLevel() != 4) { //se la casella è adiacente ma non coincidente e se la torre non è completa
-                        Coordinate c1 = w.getPosition().nextCoordinate(match, match.getBoard()[i][j].getLocation());//restituisce la casella stessa se non ha una successiva
-                        if (!match.getBoard()[i][j].getLocation().equals(c1) && match.getBoard()[c1.getX()][c1.getY()].isEmpty() && !match.getBoard()[i][j].isEmpty() && !match.getBoard()[i][j].getWorkerBox().getIDplayer().equals(w.getIDplayer()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[i][j]) >= 0 && match.getBoard()[c1.getX()][c1.getY()].getLevel() != 4) {
+            for (int i = 0; i < m.getRows(); i++) {
+                for (int j = 0; j < m.getColumns(); j++) {
+                    if (w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() != 4) { //se la casella è adiacente ma non coincidente e se la torre non è completa
+                        Coordinate c1 = w.getPosition().nextCoordinate(m, m.getBoard()[i][j].getLocation());//restituisce la casella stessa se non ha una successiva
+                        if (!m.getBoard()[i][j].getLocation().equals(c1) && m.getBoard()[c1.getX()][c1.getY()].isEmpty() && !m.getBoard()[i][j].isEmpty() && !m.getBoard()[i][j].getWorkerBox().getIDplayer().equals(w.getIDplayer()) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(m.getBoard()[i][j]) >= 0 && m.getBoard()[c1.getX()][c1.getY()].getLevel() != 4) {
                             //se la casella c ha una successiva e se la casella successiva  è vuota e se la casella indicata contiene un operaio e se l'operaio nella casella non è dello stesso giocatore e se la casella in cui mi voglio spostare non è piu alta del mio livello e se la casella successiva non è completa
                             return false; //si puo usare la divinità
                         }
@@ -68,11 +78,11 @@ public class MinotaurTurn extends GodTurn {
                 }
             }
         } else {
-            for (int i = 0; i < match.getRows(); i++) {
-                for (int j = 0; j < match.getColumns(); j++) {
-                    if (w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].getLevel() != 4) { //se la casella è adiacente ma non coincidente e se la torre non è completa
-                        Coordinate c1 = w.getPosition().nextCoordinate(match, match.getBoard()[i][j].getLocation());//restituisce la casella stessa se non ha una successiva
-                        if (!match.getBoard()[i][j].getLocation().equals(c1) && match.getBoard()[c1.getX()][c1.getY()].isEmpty() && !match.getBoard()[i][j].isEmpty() && !match.getBoard()[i][j].getWorkerBox().getIDplayer().equals(w.getIDplayer()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[i][j]) >= -1 && match.getBoard()[c1.getX()][c1.getY()].getLevel() != 4) {
+            for (int i = 0; i < m.getRows(); i++) {
+                for (int j = 0; j < m.getColumns(); j++) {
+                    if (w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() != 4) { //se la casella è adiacente ma non coincidente e se la torre non è completa
+                        Coordinate c1 = w.getPosition().nextCoordinate(m, m.getBoard()[i][j].getLocation());//restituisce la casella stessa se non ha una successiva
+                        if (!m.getBoard()[i][j].getLocation().equals(c1) && m.getBoard()[c1.getX()][c1.getY()].isEmpty() && !m.getBoard()[i][j].isEmpty() && !m.getBoard()[i][j].getWorkerBox().getIDplayer().equals(w.getIDplayer()) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(m.getBoard()[i][j]) >= -1 && m.getBoard()[c1.getX()][c1.getY()].getLevel() != 4) {
                             //se la casella c ha una successiva e se la casella successiva  è vuota e se la casella indicata contiene un operaio e se l'operaio nella casella è dello stesso giocatore e se la casella in cui mi voglio spostare non è alta di più di 1 livello e se la casella successiva non è completa
                             return false;
                         }
