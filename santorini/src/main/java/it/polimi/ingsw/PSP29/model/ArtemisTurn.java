@@ -26,7 +26,7 @@ public class ArtemisTurn extends GodTurn{
         Coordinate cx = w.getPosition();
         boolean nopower = super.move(m,w,c);
         if(!nopower) return false;
-        System.out.println("Vuoi usare il potere di Artemis? 1) SI 2) NO\n");
+        System.out.println("Vuoi usare il potere di Artemis? 1) SI 2) NO");
         answer = scanner.nextLine();
         if(answer.equals("1")){
             if(!super.cantMove(m,w,false)){

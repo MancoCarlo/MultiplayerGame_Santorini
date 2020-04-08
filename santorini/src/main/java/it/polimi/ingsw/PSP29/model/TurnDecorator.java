@@ -13,6 +13,7 @@ public abstract class TurnDecorator implements Turn {
             if(w.getMoved() && w.getBuilt()){
                 w.changeMoved();
                 w.changeBuilt();
+                System.out.println("Turno completato");
                 if(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel()==3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==2){
                     return true;
                 }

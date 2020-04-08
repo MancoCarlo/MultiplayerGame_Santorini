@@ -17,7 +17,7 @@ public class AtlasTurn extends GodTurn{
         String answer;
         boolean nopower = super.build(m,w,c);
         if(!nopower) return false;
-        System.out.println("Vuoi usare il potere di Atlas? 1) SI 2) NO\n");
+        System.out.println("Vuoi usare il potere di Atlas? 1) SI 2) NO");
         answer = scanner.nextLine();
         if(answer.equals("1")){
             while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){

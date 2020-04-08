@@ -1,6 +1,5 @@
 package it.polimi.ingsw.PSP29.model;
 
-import apple.laf.JRSUIConstants;
 
 import java.util.Scanner;
 

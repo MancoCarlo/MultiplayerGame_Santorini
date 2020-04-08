@@ -8,6 +8,7 @@ public class BaseTurn implements Turn {
             if(w.getMoved() && w.getBuilt()){
                 w.changeMoved();
                 w.changeBuilt();
+                System.out.println("Turno completato");
                 if(m.getBoard()[w.getPosition().getX()][w.getPosition().getX()].getLevel()==3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getX()].getLevel()==2){
                     return true;
                 }

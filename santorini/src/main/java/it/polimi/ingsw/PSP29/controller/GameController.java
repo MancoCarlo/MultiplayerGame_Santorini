@@ -286,22 +286,21 @@ public class GameController {
         }
         match.printBoard(match.getBoard());
         if(p.getWorker(id).canBuild(match)){
+            //Condizione attivazione AthenaON
+            if(p.getCard().getName().equals("Athena")){
+                Coordinate oldPos = p.getWorker(id).getPrev_position();
+                Coordinate newPos = p.getWorker(id).getPosition();
+                if(match.getBoard()[oldPos.getX()][oldPos.getY()].getLevel() < match.getBoard()[newPos.getX()][newPos.getY()].getLevel()){
+                    athenaOn = true;
+                    System.out.println("Atena attivata");
+                }
+            }
             c=askCoordinate("costruire");
             while(!turn.build(match, p.getWorker(id), c)){
                 System.out.println("Coordinate inserite non valide");
                 c=askCoordinate("costruire");
             }
-            //Condizione attivazione AthenaON
-            if(p.getCard().getName().equals("Athena")){
-                Coordinate oldPos = p.getWorker(id).getPrev_position();
-                Coordinate newPos = p.getWorker(id).getPrev_position();
-                if(match.getBoard()[oldPos.getX()][oldPos.getY()].getLevel() < match.getBoard()[newPos.getX()][newPos.getY()].getLevel()){
-                    athenaOn = true;
-                }
-            }
             match.printBoard(match.getBoard());
-            System.out.println(p.getWorker(0).toString());
-            System.out.println(p.getWorker(1).toString());
             return turn.winCondition(match, p);
         }
         else{
@@ -366,16 +365,16 @@ public class GameController {
         String s;
         int i;
         try{
-            System.out.println("Vuoi usare la tua divinità: ");
-            System.out.println("1) Sì\n2) No");
-            s=scanner.nextLine();
-            i=Integer.parseInt(s);
-            if(i!=1 && i!=2){
-                throw (new NotValidInputException(1, 2));
-            }
-            else{
-                return(i == 1);
-            }
+                System.out.println("Vuoi usare la tua divinità: ");
+                System.out.println("1) Sì\n2) No");
+                s=scanner.nextLine();
+                i=Integer.parseInt(s);
+                if(i!=1 && i!=2){
+                    throw (new NotValidInputException(1, 2));
+                }
+                else{
+                    return(i == 1);
+                }
         }
         catch(NotValidInputException e){
             return askGod();
