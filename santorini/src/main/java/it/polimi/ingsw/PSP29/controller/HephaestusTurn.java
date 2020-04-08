@@ -29,7 +29,7 @@ public class HephaestusTurn extends GodTurn {
     public boolean build(Match m, Worker w, Coordinate c) {
         if(w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].getLevel()!=4 || m.getBoard()[c.getX()][c.getY()].isEmpty()){
             m.updateBuilding(c);
-            m.getBoard()[c.getX()][c.getY()].setLevelledUp();
+            m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);
             w.changeBuilt(true);
             if(m.getBoard()[c.getX()][c.getY()].getLevel()<3)//non posso costruire una cupola
                 m.updateBuilding(c);

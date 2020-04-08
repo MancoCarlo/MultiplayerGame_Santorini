@@ -41,7 +41,7 @@ public class AtlasTurn extends GodTurn{
         if(answer.equals("1")){
             while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){
                 m.updateBuilding(c);
-                m.getBoard()[c.getX()][c.getY()].setLevelledUp();
+                m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);
             }
         }
         return true;

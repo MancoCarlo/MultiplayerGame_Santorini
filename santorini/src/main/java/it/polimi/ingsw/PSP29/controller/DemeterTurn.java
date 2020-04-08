@@ -1,5 +1,6 @@
 package it.polimi.ingsw.PSP29.controller;
 
+import it.polimi.ingsw.PSP29.InputControl.Input;
 import it.polimi.ingsw.PSP29.model.*;
 import java.util.Scanner;
 
@@ -30,7 +31,7 @@ public class DemeterTurn extends GodTurn {
     public boolean build(Match m, Worker w, Coordinate c){
         Scanner scanner = new Scanner(System.in);
         Coordinate cx = c;
-        String x,y, answer;
+        String answer;
         boolean nopower = super.build(m,w,c);
         if(!nopower) return false;
         if(w.canBuild(m)){
@@ -39,12 +40,10 @@ public class DemeterTurn extends GodTurn {
             if(answer.equals("1")) {
                 Coordinate c1;
                 do {
-                    System.out.println("Potere Demeter attivato!!\nInserisci una nuova coordinata x: \t");
-                    x = scanner.nextLine();
-                    System.out.println("Inserisci una nuova coordinata y: ");
-                    y = scanner.nextLine();
-                    c1 = new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-                } while (Integer.parseInt(x) > m.getRows() - 1 || Integer.parseInt(y) > m.getRows() - 1 || Integer.parseInt(x) < 0 || Integer.parseInt(y) < 0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()) || !super.build(m,w,c1));
+                    Input i = new Input();
+                    c1 = i.askCoordinate("(Potere Demeter)");
+                } while ((c1.getX() == cx.getX() && c1.getY() == cx.getY()) || !super.build(m,w,c1));
+                m.getBoard()[c1.getX()][c1.getY()].setLevelledUp(true);
             }
         }
         return true;

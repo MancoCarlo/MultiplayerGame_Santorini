@@ -55,7 +55,7 @@ public abstract class TurnDecorator implements Turn {
         }
         else{
             m.updateBuilding(c);
-            m.getBoard()[c.getX()][c.getY()].setLevelledUp();
+            m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);
             w.changeBuilt(true);
             return true;
         }

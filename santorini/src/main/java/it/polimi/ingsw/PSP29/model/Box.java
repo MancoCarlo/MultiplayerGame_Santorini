@@ -55,8 +55,8 @@ public class Box {
     /**
      * change the state of the box if a worker build in the box
      */
-    public void setLevelledUp() {
-        levelledUp=!levelledUp;
+    public void setLevelledUp(boolean l) {
+        levelledUp=l;
     }
 
     /**
