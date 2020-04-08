@@ -43,7 +43,7 @@ public class MinotaurTurn extends GodTurn {
         if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){//se la casella è adiacente ma non coincidente e se la torre non è completa
             if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <= 1) {
                 m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved();
+                w.changeMoved(true);
                 return true;
             }
             Coordinate c1 = w.getPosition().nextCoordinate(m, c); //ottengo la coordinata seguente oppure c
@@ -54,7 +54,7 @@ public class MinotaurTurn extends GodTurn {
             else {
                 m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c1);//costringo il worker a spostarsi
                 m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c); //muovo il mio worker
-                w.changeMoved();
+                w.changeMoved(true);
                 return true;
             }
         }
@@ -74,7 +74,7 @@ public class MinotaurTurn extends GodTurn {
         if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){//se la casella è adiacente ma non coincidente e se la torre non è completa
             if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <=0) {
                 m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved();
+                w.changeMoved(true);
                 return true;
             }
             Coordinate c1 = w.getPosition().nextCoordinate(m, c); //ottengo la coordinata seguente oppure c
@@ -84,7 +84,7 @@ public class MinotaurTurn extends GodTurn {
             else {
                 m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c1);//costringo il worker a spostarsi
                 m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c); //muovo il mio worker
-                w.changeMoved();
+                w.changeMoved(true);
                 return true;
             }
         }

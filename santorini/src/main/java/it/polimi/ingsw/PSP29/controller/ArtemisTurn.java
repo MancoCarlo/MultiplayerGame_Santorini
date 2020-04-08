@@ -50,15 +50,15 @@ public class ArtemisTurn extends GodTurn{
         System.out.println("Vuoi usare il potere di Artemis? 1) SI 2) NO");
         answer = scanner.nextLine();
         if(answer.equals("1")){
+            Coordinate c1;
             if(!super.cantMove(m,w,false)){
                 do{
                     System.out.println("Potere Artemis attivato!!\nInserisci una nuova coordinata x: \t");
                     x=scanner.nextLine();
                     System.out.println("Inserisci una nuova coordinata y: ");
                     y=scanner.nextLine();
-                }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()) );
-                Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-                return super.move(m,w,c1) || nopower;
+                    c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
+                }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()) || !super.move(m,w,c1) );
             }else{
                 System.out.println("Non puoi utilizzare il potere di Artemis");
             }
@@ -77,20 +77,21 @@ public class ArtemisTurn extends GodTurn{
         Scanner scanner = new Scanner(System.in);
         String x, y, answer;
         Coordinate cx = w.getPosition();
+
         boolean nopower = super.limited_move(m,w,c);
         if(!nopower) return false;
         System.out.println("Vuoi usare il potere di Artemis? 1) SI 2) NO\n");
         answer = scanner.nextLine();
         if(answer.equals("1")){
+            Coordinate c1;
             if(!super.cantMove(m,w,false)){
                 do{
                     System.out.println("Potere Artemis attivato!!\nInserisci una nuova coordinata x: \t");
                     x=scanner.nextLine();
                     System.out.println("Inserisci una nuova coordinata y: ");
                     y=scanner.nextLine();
-                }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()) );
-                Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-                return super.limited_move(m,w,c1) || nopower;
+                    c1 = new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
+                }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0 || (Integer.parseInt(x) == cx.getX() && Integer.parseInt(y) == cx.getY()) || !super.limited_move(m,w,c1));
             }else{
                 System.out.println("Non puoi utilizzare il potere di Artemis");
             }

@@ -18,8 +18,8 @@ public class PanTurn extends GodTurn {
     public boolean winCondition(Match m, Player p) {
         for (Worker w : p.getWorkers()) {
             if (w.getMoved() && w.getBuilt()) {
-                w.changeMoved();
-                w.changeBuilt();
+                w.changeMoved(false);
+                w.changeBuilt(false);
                 if (m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel() == 2)
                     return true;
                 if (m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >= 2)

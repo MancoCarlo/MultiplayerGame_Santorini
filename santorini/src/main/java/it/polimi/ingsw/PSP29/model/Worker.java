@@ -36,14 +36,12 @@ public class Worker {
     /**
      * change if the worker has been moved in this turn
      */
-    public void changeMoved(){ moved= !moved; }
+    public void changeMoved(boolean m){ moved = m; }
 
     /**
      * change if the worker has built in this turn
      */
-    public void changeBuilt() {
-        built= !built;
-    }
+    public void changeBuilt(boolean b) { built=b;    }
 
     public boolean getBuilt(){ return built; }
 

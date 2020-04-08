@@ -19,8 +19,8 @@ public abstract class TurnDecorator implements Turn {
     public boolean winCondition(Match m, Player p) {
         for(Worker w : p.getWorkers()){
             if(w.getMoved() && w.getBuilt()){
-                w.changeMoved();
-                w.changeBuilt();
+                w.changeMoved(false);
+                w.changeBuilt(false);
                 if(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel()==3){
                     if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==3){
                         m.resetBoard();
@@ -56,7 +56,7 @@ public abstract class TurnDecorator implements Turn {
         else{
             m.updateBuilding(c);
             m.getBoard()[c.getX()][c.getY()].setLevelledUp();
-            w.changeBuilt();
+            w.changeBuilt(true);
             return true;
         }
     }
@@ -75,7 +75,7 @@ public abstract class TurnDecorator implements Turn {
         }
         else{
             m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-            w.changeMoved();
+            w.changeMoved(true);
             return true;
         }
     }
@@ -94,7 +94,7 @@ public abstract class TurnDecorator implements Turn {
         }
         else{
             m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-            w.changeMoved();
+            w.changeMoved(true);
             return true;
         }
     }
