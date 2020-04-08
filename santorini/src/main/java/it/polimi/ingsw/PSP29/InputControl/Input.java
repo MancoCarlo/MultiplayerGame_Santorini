@@ -52,14 +52,18 @@ public class Input {
      *
      * @param p the player that plays the turn
      */
-    public int askWorker(Player p){
+    public int askWorker(Match m, Player p, Turn turn, boolean Athena){
         Scanner scanner = new Scanner(System.in);
         String s;
         int i;
         try{
             System.out.println(p.getNickname() + " con che worker vuoi muoverti e costruire: ");
-            System.out.println("0) Worker in posizione " + p.getWorker(0).getPosition().getX() + "," + p.getWorker(0).getPosition().getY() );
-            System.out.println("1) Worker in posizione " + p.getWorker(1).getPosition().getX() + "," + p.getWorker(1).getPosition().getY() );
+            if(!turn.cantMove(m, p.getWorker(0), Athena)){
+                System.out.println("0) Worker in posizione " + p.getWorker(0).getPosition().getX() + "," + p.getWorker(0).getPosition().getY() );
+            }
+            if(!turn.cantMove(m, p.getWorker(1), Athena)){
+                System.out.println("1) Worker in posizione " + p.getWorker(1).getPosition().getX() + "," + p.getWorker(1).getPosition().getY() );
+            }
             s=scanner.nextLine();
             i=Integer.parseInt(s);
             if(i!=0 && i!=1){
@@ -70,7 +74,7 @@ public class Input {
             }
         }
         catch (NotValidInputException e){
-            return askWorker(p);
+            return askWorker(m, p, turn, Athena);
         }
     }
 

@@ -9,6 +9,11 @@ public class AtlasTurn extends GodTurn{
         super(turn);
     }
 
+    @Override
+    public boolean cantMove(Match m, Worker w, boolean athena) {
+        return super.cantMove(m, w, athena);
+    }
+
     /**
      * call winCondition() of the superclass
      * @param m match played
@@ -36,6 +41,7 @@ public class AtlasTurn extends GodTurn{
         if(answer.equals("1")){
             while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){
                 m.updateBuilding(c);
+                m.getBoard()[c.getX()][c.getY()].setLevelledUp();
             }
         }
         return true;

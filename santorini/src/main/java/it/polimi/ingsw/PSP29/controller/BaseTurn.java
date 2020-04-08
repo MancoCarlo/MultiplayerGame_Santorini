@@ -16,9 +16,21 @@ public class BaseTurn implements Turn {
             if(w.getMoved() && w.getBuilt()){
                 w.changeMoved();
                 w.changeBuilt();
-                if(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel()==3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==2){
-                    return true;
+                if(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel()==3){
+                    if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==3){
+                        m.resetBoard();
+                        return true;
+                    }
+                    else if(!m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==2){
+                        m.resetBoard();
+                        return true;
+                    }
+                    else{
+                        m.resetBoard();
+                        return false;
+                    }
                 }
+                return false;
             }
         }
         return false;
@@ -38,6 +50,7 @@ public class BaseTurn implements Turn {
         }
         else{
             m.updateBuilding(c);
+            m.getBoard()[c.getX()][c.getY()].setLevelledUp();
             w.changeBuilt();
             return true;
         }
@@ -92,7 +105,7 @@ public class BaseTurn implements Turn {
         if(athena){
             for(int i=0; i<match.getRows(); i++){
                 for(int j=0; j<match.getColumns(); j++){
-                    if(match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[i][j])<1){
+                    if(match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1){
                         return false;
                     }
                 }
@@ -101,7 +114,7 @@ public class BaseTurn implements Turn {
         else{
             for(int i=0; i<match.getRows(); i++){
                 for(int j=0; j<match.getColumns(); j++){
-                    if(match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[i][j])<2){
+                    if(match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<2){
                         return false;
                     }
                 }

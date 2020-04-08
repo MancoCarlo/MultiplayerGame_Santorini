@@ -62,4 +62,11 @@ public class Coordinate {
         return new Coordinate(a,b);
     }
 
+    @Override
+    public String toString() {
+        return "Coordinate{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

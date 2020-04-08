@@ -96,6 +96,19 @@ public class Match {
     }
 
     /**
+     * reset the levelledUp variable in every box at the end of the turn
+     */
+    public void resetBoard(){
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<columns; j++){
+                if(board[i][j].getlevelledUp()){
+                    board[i][j].setLevelledUp();
+                }
+            }
+        }
+    }
+
+    /**
      *
      * @param p owner of the worker that make the move
      * @param id identifier's worker

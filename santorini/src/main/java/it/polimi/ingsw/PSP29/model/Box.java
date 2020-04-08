@@ -5,12 +5,14 @@ public class Box {
     private int level;
     private boolean empty;
     private Worker workerBox;
+    boolean levelledUp;
 
     public Box(int x, int y){
         location=new Coordinate(x, y);
         level=0;
         empty=true;
         workerBox = null;
+        levelledUp=false;
     }
 
     public int getLevel() {
@@ -41,10 +43,20 @@ public class Box {
 
     /**
      * upgrade level of box
-     * @return false if tower is already completed
      */
     public void upgradeLevel(){
         level++;
+    }
+
+    public boolean getlevelledUp(){
+        return levelledUp;
+    }
+
+    /**
+     * change the state of the box if a worker build in the box
+     */
+    public void setLevelledUp() {
+        levelledUp=!levelledUp;
     }
 
     /**

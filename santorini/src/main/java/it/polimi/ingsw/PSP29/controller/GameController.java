@@ -38,13 +38,14 @@ public class GameController {
             for(Player p : match.getPlayers()){
                 if(match.getPlayers().size()==1){
                     //è rimasto uno solo
+                    System.out.println(match.getPlayers().get(0).getNickname() + " hai vinto");
                     break;
                 }
                 if(playerCanMove(p)){
                     end=newTurn(p);
                     match.printBoard(match.getBoard());
                     if(end){
-                        //vittoria
+                        System.out.println(p.getNickname() + " hai vinto");
                         break;
                     }
                 }
@@ -309,20 +310,20 @@ public class GameController {
      */
     public boolean turnExe(Player p, Turn turn){
         match.printBoard(match.getBoard());
-        id=input.askWorker(p);
+        id=input.askWorker(match, p, turn, athenaOn);
         c=input.askCoordinate("muoverti");
         if(athenaOn){
             while(!turn.limited_move(match, p.getWorker(id), c)){
                 System.out.println("Il potere di Athena è attivo, non puoi salire di livello");
                 System.out.println("Coordinate inserite non valide");
-                id=input.askWorker(p);
+                id=input.askWorker(match, p, turn, athenaOn);
                 c=input.askCoordinate("muoverti");
             }
         }
         else{
             while(!turn.move(match, p.getWorker(id), c)){
                 System.out.println("Coordinate inserite non valide");
-                id=input.askWorker(p);
+                id=input.askWorker(match, p, turn, athenaOn);
                 c=input.askCoordinate("muoverti");
             }
         }
