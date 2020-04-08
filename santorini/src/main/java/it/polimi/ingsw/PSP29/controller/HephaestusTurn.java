@@ -1,4 +1,6 @@
-package it.polimi.ingsw.PSP29.model;
+package it.polimi.ingsw.PSP29.controller;
+
+import it.polimi.ingsw.PSP29.model.*;
 
 public class HephaestusTurn extends GodTurn {
     public HephaestusTurn(Turn turn) {
