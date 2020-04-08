@@ -53,6 +53,10 @@ public class Match {
         }
     }
 
+    /**
+     *
+     * @param p player to be removed
+     */
     public void removePlayer(Player p){
         for(Player player : players){
             if(player.equals(p)){
@@ -78,6 +82,9 @@ public class Match {
         return gods.get(id);
     }
 
+    /**
+     * instantiates each box of the board and assigns the coordinate
+     */
     public void inizializeBoard(){
         for(int i=0; i<rows;i++){
             for(int j=0; j<columns;j++)
@@ -85,14 +92,27 @@ public class Match {
         }
     }
 
+    /**
+     *
+     * @param p owner of the worker that make the move
+     * @param id identifier's worker
+     * @param c destination of the worker
+     */
     public void updateMovement(Player p, int id, Coordinate c){
         p.putWorker(id, board, c);
     }
 
+    /**
+     * @param c position of the box that must be upgraded
+     */
     public void updateBuilding(Coordinate c){
         board[c.getX()][c.getY()].upgradeLevel();
     }
 
+    /**
+     *
+     * @param p looser player
+     */
     public void removeWorkers(Player p){
         Coordinate c1 = p.getWorker(0).getPosition();
         Coordinate c2 = p.getWorker(1).getPosition();
@@ -141,6 +161,10 @@ public class Match {
         }
     }
 
+    /**
+     * print the board on monitor
+     * @param b the board
+     */
     public void printBoard(Box[][] b){
         for(int i=0; i<rows;i++){
             for(int j=0; j<columns;j++) {

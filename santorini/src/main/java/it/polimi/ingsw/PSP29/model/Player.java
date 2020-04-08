@@ -42,7 +42,15 @@ public class Player {
 
     public ArrayList<Worker> getWorkers() { return workers; }
 
-    //modifica la posizione del worker e cambia lo stato della casella in cui si trova
+    /**
+     *
+     * put the worker in the coordinate c of the board
+     *
+     * @param id the worker identifier
+     * @param b the gameboard
+     * @param c the coordinate in wich the worker had to be put
+     * @return true if the worker has been put in the coordinate c, else return false
+     */
     public void putWorker(int id, Box[][] b, Coordinate c) {
         if (workers.get(id).getPosition() == null) {
             b[c.getX()][c.getY()].changeState();
@@ -59,6 +67,10 @@ public class Player {
         }
     }
 
+    /**
+     * let the player draw a card from the list of gods
+     * @param gods the list of gods
+     */
     public void selectGod(ArrayList<God> gods){
         Scanner scanner = new Scanner(System.in);
         int i;
@@ -77,6 +89,11 @@ public class Player {
         }
     }
 
+    /**
+     * draw a god from the list
+     * @param g the list of gods
+     * @param i the position of the card in the list
+     */
     public void drawCard(ArrayList<God> g, int i){
         card=g.get(i);
     }

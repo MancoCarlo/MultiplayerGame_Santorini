@@ -22,6 +22,12 @@ public class GameController {
         godOn=false;
     }
 
+    /**
+     *
+     * used for the execution of the game
+     *
+     * @throws NotValidInputException
+     */
     public void gameExe() throws NotValidInputException, FileNotFoundException {
         firstTurn();
         match.printBoard(match.getBoard());
@@ -49,6 +55,11 @@ public class GameController {
         }
     }
 
+    /**
+     * control if the player can move in this turn
+     * @param p the player
+     * @return true if player can move
+     */
     public boolean playerCanMove(Player p){
         BaseTurn turn = new BaseTurn();
         switch (p.getCard().getID()){
@@ -83,6 +94,10 @@ public class GameController {
         return false;
     }
 
+    /**
+     * execution of the first turn of the game
+     * @throws FileNotFoundException
+     */
     public void firstTurn() throws FileNotFoundException {
         match.addPlayers();
         match.printPlayers();
@@ -106,6 +121,9 @@ public class GameController {
         }
     }
 
+    /**
+     * let the player choose their gods
+     */
     public void godSelection(){
         Player p = match.getPlayers().get(0);
 
@@ -126,6 +144,12 @@ public class GameController {
         p.selectGod(godlist);
     }
 
+    /**
+     * creates the list of god that will be used during the game
+     * @param gods the list of gods used in the game
+     * @param matchGods the list of all gods
+     * @param dim the number of player
+     */
     public void createGodList(ArrayList<God> gods, ArrayList<God> matchGods, int dim){
         Scanner scanner = new Scanner(System.in);
         int i;
@@ -151,6 +175,13 @@ public class GameController {
         }
     }
 
+    /**
+     *
+     * used to create a new turn
+     *
+     * @param p the player that plays the turn
+     * @return true if player win
+     */
     public boolean newTurn(Player p) {
         System.out.println("Turno di " + p.getNickname());
         if(athenaOn && p.getCard().getName().equals("Athena")){
@@ -265,6 +296,14 @@ public class GameController {
         return false;
     }
 
+    /**
+     *
+     * used for the execution of the turn
+     *
+     * @param p the player that plays the turn
+     * @param turn the turn, can be BaseTurn or one of the gods' turn
+     * @return the result of winCondition
+     */
     public boolean turnExe(Player p, Turn turn){
         match.printBoard(match.getBoard());
         id=askWorker(p);
@@ -311,6 +350,12 @@ public class GameController {
         }
     }
 
+    /**
+     *
+     * read the Coordinate from the player input
+     *
+     * @param str used for output line
+     */
     public Coordinate askCoordinate(String str){
         int x=0, y=0;
         System.out.println(" inserisci la X dove vuoi " + str + ": ");
@@ -320,6 +365,10 @@ public class GameController {
         return new Coordinate(x, y);
     }
 
+    /**
+     *
+     * used to ask to the player the x or the y of the coordinate
+     */
     public int ask_x_y(){
         Scanner scanner = new Scanner(System.in);
         String s;
@@ -339,6 +388,12 @@ public class GameController {
         }
     }
 
+    /**
+     *
+     * used to ask to the player wich of his workers he wants to move
+     *
+     * @param p the player that plays the turn
+     */
     public int askWorker(Player p){
         Scanner scanner = new Scanner(System.in);
         String s;
@@ -361,6 +416,9 @@ public class GameController {
         }
     }
 
+    /**
+     * used to ask if the player wants to use his god
+     */
     public boolean askGod(){
         Scanner scanner = new Scanner(System.in);
         String s;
