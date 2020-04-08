@@ -17,6 +17,12 @@ public class Coordinate {
         return x;
     }
 
+    /**
+     * check if two coordinates are adjacent
+     * two adjacent coordinates can't be coincident
+     * @param a coordinate to analyze
+     * @return true when this and a are adjacent
+     */
     public boolean isNear(Coordinate a){ //due coordinate coincidenti non sono vicine
         if(!this.equals(a) && ((a.x-x<=1) && (a.x-x>=-1)) && (a.y-y<=1)&&(a.y-y>=-1))
             return true;
@@ -30,6 +36,13 @@ public class Coordinate {
         Coordinate c = (Coordinate) o;
         return x == c.x && y == c.y;
     }
+
+    /**
+     * calculate the next coordinate following the direction of movement
+     * @param m the match
+     * @param c adjacent coordinate to c in which I want to move
+     * @return the next coordinate after c or c if there's no following coordinate or c isn't adjacent
+     */
     public Coordinate nextCoordinate(Match m, Coordinate c){
         int a = c.x;
         int b=c.y;

@@ -21,10 +21,15 @@ public class Box {
         return location;
     }
 
-    //restituisce lo stato della casella
+    /**
+     * check if box is not occupied by a worker
+     * @return true if empty
+     */
     public boolean isEmpty(){ return empty; }
 
-    //aggiorna lo stato della casella
+    /**
+     *change state of box from empty to occupied and vice-versa
+     */
     public void changeState() {
         if(empty){
             empty=false;
@@ -34,11 +39,19 @@ public class Box {
         }
     }
 
-    //aggiorna il livello della casella
+    /**
+     * upgrade level of box
+     * @return false if tower is already completed
+     */
     public void upgradeLevel(){
         level++;
     }
 
+    /**
+     * calculate level difference between two boxes
+     * @param b box given
+     * @return number of level difference between this and b
+     */
     public int level_diff(Box b){ return this.getLevel()-b.getLevel(); }
 
     public Worker getWorkerBox() {
@@ -49,6 +62,9 @@ public class Box {
         workerBox = w;
     }
 
+    /**
+     * print on monitor the state of box: 0 if empty else 1
+     */
     public void printEmpty() {
         if(isEmpty()) System.out.print("0" + level);
         else{
@@ -57,6 +73,9 @@ public class Box {
         }
     }
 
+    /**
+     * print level of box on monitor
+     */
     public void printLevel() {
         System.out.println(level);
     }

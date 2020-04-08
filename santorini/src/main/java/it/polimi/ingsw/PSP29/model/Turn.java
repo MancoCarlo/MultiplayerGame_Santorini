@@ -1,6 +1,5 @@
 package it.polimi.ingsw.PSP29.model;
 
-import it.polimi.ingsw.PSP29.controller.NotValidInputException;
 
 public interface Turn {
 

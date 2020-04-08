@@ -33,20 +33,39 @@ public class Worker {
 
     public boolean getMoved(){ return moved; }
 
+    /**
+     * change if the worker has been moved in this turn
+     */
     public void changeMoved(){ moved= !moved; }
 
+    /**
+     * change if the worker has built in this turn
+     */
     public void changeBuilt() {
         built= !built;
     }
 
     public boolean getBuilt(){ return built; }
 
+    /**
+     *  set the position of the worker in the coordinate c
+     * @param c the coordinate
+     */
     public void setPosition(Coordinate c){
         position=c;
     }
 
+    /**
+     * set the previous position of the worker in the coordinate c
+     * @param c the coordinate
+     */
     public void setPrev_position(Coordinate c) { prev_position=c; }
 
+    /**
+     *
+     * @param match the match in which the worker is in
+     * @return true if the worker can upgrade his level
+     */
     public boolean canLevelUp (Match match) {
         for(int i=-1; i<=1; i++)
         {
@@ -65,6 +84,11 @@ public class Worker {
 
     }
 
+    /**
+     * control if the worker can build
+     * @param m the match
+     * @return true if the worker can build
+     */
     public boolean canBuild(Match m){
         for(int i=0; i<m.getRows(); i++){
             for(int j=0; j<m.getColumns(); j++){
