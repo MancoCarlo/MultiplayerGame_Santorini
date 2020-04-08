@@ -337,7 +337,7 @@ public class GameController {
             //Condizione attivazione AthenaON
             if(p.getCard().getName().equals("Athena")){
                 Coordinate oldPos = p.getWorker(id).getPrev_position();
-                Coordinate newPos = p.getWorker(id).getPrev_position();
+                Coordinate newPos = p.getWorker(id).getPosition();
                 if(match.getBoard()[oldPos.getX()][oldPos.getY()].getLevel() < match.getBoard()[newPos.getX()][newPos.getY()].getLevel()){
                     athenaOn = true;
                 }
