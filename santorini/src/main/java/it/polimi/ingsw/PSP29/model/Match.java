@@ -35,6 +35,9 @@ public class Match {
         return null;
     }
 
+    /**
+     * add players to the match
+     */
     public void addPlayers(){
         Scanner scanner = new Scanner(System.in);
         String name, age;
@@ -128,6 +131,9 @@ public class Match {
         }
     }
 
+    /**
+     * sort the player by their age
+     */
     public void sortPlayers(){
         boolean change=true;
         Player p;
@@ -144,21 +150,19 @@ public class Match {
         }
     }
 
-    public void loadGods() throws FileNotFoundException {
-        FileReader f = new FileReader("santorini/src/main/java/it/polimi/ingsw/PSP29/model/gods.txt");
-        Scanner scanner = new Scanner(f);
-        int i;
-        String id, n, d;
-        while(true){
-            id=scanner.nextLine();
-            if(id.equals(".")){
-                break;
-            }
-            n=scanner.nextLine();
-            d=scanner.nextLine();
-            i=Integer.parseInt(id);
-            gods.add(new God(i, n, d));
-        }
+    /**
+     * creates the list of gods
+     */
+    public void loadGods() {
+        gods.add(new God(0, "Apollo", "Il Dio della musica"));
+        gods.add(new God(1, "Arthemis", "La Dea della caccia"));
+        gods.add(new God(2, "Atena", "La Dea della saggezza"));
+        gods.add(new God(3, "Atlas", "Il titano che regge sulle spalle la volta celeste"));
+        gods.add(new God(4, "Demeter", "La dea del raccolto"));
+        gods.add(new God(5, "Hephaestus", "Il dio delle fucine"));
+        gods.add(new God(6, "Minotaur", "Il mostro dalla testa di toro"));
+        gods.add(new God(7, "Pan", "Il dio della natura selvaggia"));
+        gods.add(new God(8, "Prometheus", "Il titano benefattore dell'umanità"));
     }
 
     /**

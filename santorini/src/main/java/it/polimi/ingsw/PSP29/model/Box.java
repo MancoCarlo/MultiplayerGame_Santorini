@@ -58,6 +58,10 @@ public class Box {
         return workerBox;
     }
 
+    /**
+     * set the worker to the box
+     * @param w the worker
+     */
     public void setWorkerBox(Worker w){
         workerBox = w;
     }

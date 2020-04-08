@@ -1,6 +1,7 @@
 package it.polimi.ingsw.PSP29.controller;
 
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.InputControl.*;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -14,12 +15,14 @@ public class GameController {
     boolean godOn;
     int id;
     Coordinate c = null;
+    Input input;
 
     public GameController(){
         match = new Match();
         end=false;
         athenaOn=false;
         godOn=false;
+        input=new Input();
     }
 
     /**
@@ -111,9 +114,9 @@ public class GameController {
         for(Player player : match.getPlayers()){
             for(int i=0; i<2; i++){
                 System.out.print(player.getNickname());
-                c=askCoordinate("posizionarti");
+                c=input.askCoordinate("posizionarti");
                 while(!match.getBoard()[c.getX()][c.getY()].isEmpty()){
-                    c=askCoordinate("posizionarti");
+                    c=input.askCoordinate("posizionarti");
                 }
                 player.putWorker(i, match.getBoard(), c);
                 match.printBoard(match.getBoard());
@@ -187,7 +190,7 @@ public class GameController {
         if(athenaOn && p.getCard().getName().equals("Athena")){
             athenaOn=false;
         }
-        godOn=askGod();
+        godOn=input.askGod();
         if(!godOn){
             BaseTurn turn = new BaseTurn();
             if(!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn)){
@@ -306,40 +309,41 @@ public class GameController {
      */
     public boolean turnExe(Player p, Turn turn){
         match.printBoard(match.getBoard());
-        id=askWorker(p);
-        c=askCoordinate("muoverti");
+        id=input.askWorker(p);
+        c=input.askCoordinate("muoverti");
         if(athenaOn){
             while(!turn.limited_move(match, p.getWorker(id), c)){
                 System.out.println("Il potere di Athena è attivo, non puoi salire di livello");
                 System.out.println("Coordinate inserite non valide");
-                id=askWorker(p);
-                c=askCoordinate("muoverti");
+                id=input.askWorker(p);
+                c=input.askCoordinate("muoverti");
             }
         }
         else{
             while(!turn.move(match, p.getWorker(id), c)){
                 System.out.println("Coordinate inserite non valide");
-                id=askWorker(p);
-                c=askCoordinate("muoverti");
+                id=input.askWorker(p);
+                c=input.askCoordinate("muoverti");
             }
         }
         match.printBoard(match.getBoard());
         if(p.getWorker(id).canBuild(match)){
+            c=input.askCoordinate("costruire");
+            while(!turn.build(match, p.getWorker(id), c)){
+                System.out.println("Coordinate inserite non valide");
+                c=input.askCoordinate("costruire");
+            }
             //Condizione attivazione AthenaON
             if(p.getCard().getName().equals("Athena")){
                 Coordinate oldPos = p.getWorker(id).getPrev_position();
-                Coordinate newPos = p.getWorker(id).getPosition();
+                Coordinate newPos = p.getWorker(id).getPrev_position();
                 if(match.getBoard()[oldPos.getX()][oldPos.getY()].getLevel() < match.getBoard()[newPos.getX()][newPos.getY()].getLevel()){
                     athenaOn = true;
-                    System.out.println("Atena attivata");
                 }
             }
-            c=askCoordinate("costruire");
-            while(!turn.build(match, p.getWorker(id), c)){
-                System.out.println("Coordinate inserite non valide");
-                c=askCoordinate("costruire");
-            }
             match.printBoard(match.getBoard());
+            System.out.println(p.getWorker(0).toString());
+            System.out.println(p.getWorker(1).toString());
             return turn.winCondition(match, p);
         }
         else{
@@ -349,93 +353,5 @@ public class GameController {
         }
     }
 
-    /**
-     *
-     * read the Coordinate from the player input
-     *
-     * @param str used for output line
-     */
-    public Coordinate askCoordinate(String str){
-        int x=0, y=0;
-        System.out.println(" inserisci la X dove vuoi " + str + ": ");
-        x=ask_x_y();
-        System.out.println(" inserisci la Y dove voui " + str + ": ");
-        y=ask_x_y();
-        return new Coordinate(x, y);
-    }
 
-    /**
-     *
-     * used to ask to the player the x or the y of the coordinate
-     */
-    public int ask_x_y(){
-        Scanner scanner = new Scanner(System.in);
-        String s;
-        int i;
-        try{
-            s=scanner.nextLine();
-            i=Integer.parseInt(s);
-            if(i<0 || i>4){
-                throw (new NotValidInputException(0, 4));
-            }
-            else{
-                return i;
-            }
-        }
-        catch(NotValidInputException e){
-            return ask_x_y();
-        }
-    }
-
-    /**
-     *
-     * used to ask to the player wich of his workers he wants to move
-     *
-     * @param p the player that plays the turn
-     */
-    public int askWorker(Player p){
-        Scanner scanner = new Scanner(System.in);
-        String s;
-        int i;
-        try{
-            System.out.println(p.getNickname() + " con che worker vuoi muoverti e costruire: ");
-            System.out.println("0) Worker in posizione " + p.getWorker(0).getPosition().getX() + "," + p.getWorker(0).getPosition().getY() );
-            System.out.println("1) Worker in posizione " + p.getWorker(1).getPosition().getX() + "," + p.getWorker(1).getPosition().getY() );
-            s=scanner.nextLine();
-            i=Integer.parseInt(s);
-            if(i!=0 && i!=1){
-                throw (new NotValidInputException(0, 1));
-            }
-            else{
-                return i;
-            }
-        }
-        catch (NotValidInputException e){
-            return askWorker(p);
-        }
-    }
-
-    /**
-     * used to ask if the player wants to use his god
-     */
-    public boolean askGod(){
-        Scanner scanner = new Scanner(System.in);
-        String s;
-        int i;
-        try{
-                System.out.println("Vuoi usare la tua divinità: ");
-                System.out.println("1) Sì\n2) No");
-                s=scanner.nextLine();
-                i=Integer.parseInt(s);
-                if(i!=1 && i!=2){
-                    throw (new NotValidInputException(1, 2));
-                }
-                else{
-                    return(i == 1);
-                }
-        }
-        catch(NotValidInputException e){
-            return askGod();
-        }
-    }
 }
