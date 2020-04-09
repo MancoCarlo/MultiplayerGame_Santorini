@@ -56,7 +56,7 @@ public class Player {
             b[c.getX()][c.getY()].changeState();
             b[c.getX()][c.getY()].setWorkerBox(workers.get(id));
             workers.get(id).setPosition(c);
-            workers.get(id).setPrev_position(null);
+            workers.get(id).setPrev_position(c);
         } else {
             workers.get(id).setPrev_position(workers.get(id).getPosition());
             b[workers.get(id).getPrev_position().getX()][workers.get(id).getPrev_position().getY()].changeState();

@@ -43,6 +43,7 @@ public class GameController {
                 }
                 if(playerCanMove(p)){
                     end=newTurn(p);
+                    match.resetBoard();
                     match.printBoard(match.getBoard());
                     if(end){
                         System.out.println(p.getNickname() + " hai vinto");
@@ -344,7 +345,13 @@ public class GameController {
             }
             match.printBoard(match.getBoard());
             System.out.println(p.getWorker(0).toString());
+            if(match.getBoard()[p.getWorker(0).getPrev_position().getX()][p.getWorker(0).getPrev_position().getY()].getlevelledUp())
+                System.out.println("true");
+            else System.out.println("false");
             System.out.println(p.getWorker(1).toString());
+            if(match.getBoard()[p.getWorker(1).getPrev_position().getX()][p.getWorker(1).getPrev_position().getY()].getlevelledUp())
+                System.out.println("true");
+            else System.out.println("false");
             return turn.winCondition(match, p);
         }
         else{

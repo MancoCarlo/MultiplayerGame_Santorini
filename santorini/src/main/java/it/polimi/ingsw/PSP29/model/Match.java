@@ -42,7 +42,7 @@ public class Match {
         Scanner scanner = new Scanner(System.in);
         String name, age;
         int i=0, a;
-        while(true){
+        while(i<3){
             System.out.print("Giocatore n." + (i+1) + " inserisci il tuo nome: ");
             name=scanner.nextLine();
             if(name.equals("")){
@@ -101,9 +101,7 @@ public class Match {
     public void resetBoard(){
         for(int i=0; i<rows; i++){
             for(int j=0; j<columns; j++){
-                if(board[i][j].getlevelledUp()){
                     board[i][j].setLevelledUp(false);
-                }
             }
         }
     }

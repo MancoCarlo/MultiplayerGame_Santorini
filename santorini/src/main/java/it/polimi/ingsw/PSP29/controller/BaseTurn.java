@@ -18,15 +18,12 @@ public class BaseTurn implements Turn {
                 w.changeBuilt(false);
                 if(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel()==3){
                     if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==3){
-                        m.resetBoard();
                         return true;
                     }
                     else if(!m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==2){
-                        m.resetBoard();
                         return true;
                     }
                     else{
-                        m.resetBoard();
                         return false;
                     }
                 }
