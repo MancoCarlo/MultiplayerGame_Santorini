@@ -167,7 +167,7 @@ public class Match {
     public void loadGods() {
         gods.add(new God(0, "Apollo", "Il Dio della musica"));
         gods.add(new God(1, "Arthemis", "La Dea della caccia"));
-        gods.add(new God(2, "Atena", "La Dea della saggezza"));
+        gods.add(new God(2, "Athena", "La Dea della saggezza"));
         gods.add(new God(3, "Atlas", "Il titano che regge sulle spalle la volta celeste"));
         gods.add(new God(4, "Demeter", "La dea del raccolto"));
         gods.add(new God(5, "Hephaestus", "Il dio delle fucine"));

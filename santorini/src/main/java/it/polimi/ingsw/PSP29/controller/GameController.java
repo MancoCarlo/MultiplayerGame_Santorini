@@ -336,10 +336,15 @@ public class GameController {
                 c=input.askCoordinate("costruire");
             }
             //Condizione attivazione AthenaON
-            if(p.getCard().getName().equals("Athena")){
+            if(p.getCard().getName().equals("Athena") && godOn){
                 Coordinate oldPos = p.getWorker(id).getPrev_position();
                 Coordinate newPos = p.getWorker(id).getPosition();
                 if(match.getBoard()[oldPos.getX()][oldPos.getY()].getLevel() < match.getBoard()[newPos.getX()][newPos.getY()].getLevel()){
+                    System.out.println("Athena attiva");
+                    athenaOn = true;
+                }
+                else if((match.getBoard()[oldPos.getX()][oldPos.getY()].getLevel() == match.getBoard()[newPos.getX()][newPos.getY()].getLevel()) && match.getBoard()[oldPos.getX()][oldPos.getY()].getlevelledUp()){
+                    System.out.println("Athena attiva");
                     athenaOn = true;
                 }
             }
