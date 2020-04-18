@@ -14,8 +14,8 @@ public class ApolloTurnTest {
     public void setUp() throws Exception {
         m = new Match();
         m.inizializeBoard();
-        m.getPlayers().add(new Player(1,"Luca", 21));
-        m.getPlayers().add(new Player(2,"Letizia", 21));
+        m.getPlayers().add(new Player("Luca", 21));
+        m.getPlayers().add(new Player("Letizia", 21));
         turn = new ApolloTurn(new GodTurn(new BaseTurn()));
     }
 

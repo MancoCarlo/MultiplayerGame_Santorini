@@ -10,7 +10,7 @@ public class PlayerTest {
 
     @Before
     public void setUp(){
-        player=new Player(1, "Luca", 21);
+        player=new Player("Luca", 21);
     }
 
     @After
@@ -39,11 +39,6 @@ public class PlayerTest {
         }
         player.putWorker(0, board, c);
         assertEquals(player.getWorker(0).getPosition(), c);
-    }
-
-    @Test
-    public void getID_correctOutput(){
-        assertEquals(player.getID(), 1);
     }
 
     @Test

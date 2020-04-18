@@ -51,7 +51,7 @@ public class Match {
             System.out.print(name + ", inserisci la tua età: ");
             age=scanner.nextLine();
             a=Integer.parseInt(age);
-            players.add(new Player(i, name, a));
+            players.add(new Player(name, a));
             i++;
         }
     }

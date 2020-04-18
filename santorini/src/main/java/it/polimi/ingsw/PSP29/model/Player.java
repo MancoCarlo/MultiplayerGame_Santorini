@@ -6,24 +6,18 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Player {
-    private int ID;
     private String nickname;
     private int age;
     God card;
     ArrayList<Worker> workers;
 
-    public Player(int id, String nick, int a) {
-        ID = id;
+    public Player(String nick, int a) {
         nickname = nick;
         age = a;
         workers = new ArrayList<Worker>();
         for(int i = 0;i<2;i++){
             workers.add(new Worker(i,nick));
         }
-    }
-
-    public int getID() {
-        return ID;
     }
 
     public int getAge() {
@@ -108,7 +102,6 @@ public class Player {
     @Override
     public String toString() {
         return "Player{" +
-                "ID=" + ID +
                 ", nickname='" + nickname + '\'' +
                 ", age=" + age +
                 ", card=" + card +

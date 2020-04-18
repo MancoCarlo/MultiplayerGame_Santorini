@@ -11,8 +11,8 @@ public class MatchTest {
     public void setUp() throws Exception {
         m = new Match();
         m.inizializeBoard();
-        m.getPlayers().add(new Player(1,"Luca", 21));
-        m.getPlayers().add(new Player(2,"Letizia", 21));
+        m.getPlayers().add(new Player("Luca", 21));
+        m.getPlayers().add(new Player("Letizia", 21));
     }
 
     @Test
