@@ -1,6 +1,8 @@
 package it.polimi.ingsw.PSP29.model;
 
-public class God {
+import java.io.Serializable;
+
+public class God implements Serializable {
     private int ID;
     private String name;
     private String description;

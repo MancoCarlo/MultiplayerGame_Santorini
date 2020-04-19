@@ -1,6 +1,8 @@
 package it.polimi.ingsw.PSP29.model;
 
-public class Box {
+import java.io.Serializable;
+
+public class Box implements Serializable {
     private Coordinate location;
     private int level;
     private boolean empty;

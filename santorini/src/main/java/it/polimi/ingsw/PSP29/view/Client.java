@@ -5,6 +5,7 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -12,7 +13,6 @@ public class Client implements Runnable, ServerObserver
 {
     /* auxiliary variable used for implementing the consumer-producer pattern*/
     private String response = null;
-
 
     public static void main( String[] args )
     {
@@ -32,8 +32,8 @@ public class Client implements Runnable, ServerObserver
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("IP address of server?");
-        String ip = scanner.nextLine();
+        //System.out.println("IP address of server?");
+        String ip = "127.0.0.8";
 
         /* open a connection to the server */
         Socket server;
@@ -52,43 +52,44 @@ public class Client implements Runnable, ServerObserver
         Thread serverAdapterThread = new Thread(serverAdapter);
         serverAdapterThread.start();
 
+        System.out.print("Inserisci nome e eta: ");
+        String name = scanner.nextLine();
+        int eta = Integer.parseInt(scanner.nextLine());
         while (true) {
 
             synchronized (this) {
-                /* reset the variable that contains the next string to be consumed
-                 * from the server */
                 response = null;
+                Player p = new Player(name, eta);
+                serverAdapter.login(p);
 
-                try {
-                    serverAdapter.login();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+
+                int seconds = 0;
+                while (response == null) {
+                    System.out.println("been waiting for " + seconds + " seconds");
+                    try {
+                        wait(1000);
+                    } catch (InterruptedException e) { }
+                    seconds++;
                 }
 
-                /* While we wait for the server to respond, we can do whatever we want.
-                 * In this case we print a count-up of the number of seconds since we
-                 * requested the conversion to the server. */
-                int seconds = 0;
+                if(response!=null){
+                    System.out.println(response);
+                }
 
-                /* we have the response, print it */
-                System.out.println(response);
+                System.out.print("Inserisci nome e eta: ");
+                name = scanner.nextLine();
+                eta = Integer.parseInt(scanner.nextLine());
             }
         }
     }
 
 
     @Override
-    public synchronized void didLogin(Player p)
+    public synchronized void didLogin(Player p1, Player p2)
     {
-        /*
-         * WARNING: this method executes IN THE CONTEXT OF `serverAdapterThread`
-         * because it is called from inside the `run` method of ServerAdapter!
-         */
+        response = p2.toString();
 
-        /* Save the string and notify the main thread */
-        response = p.toString();
         notifyAll();
     }
+
 }

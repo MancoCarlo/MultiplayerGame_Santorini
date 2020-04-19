@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public final static int SOCKET_PORT = 6776;
+    public final static int SOCKET_PORT = 7777;
     private static int numPlayer = 0;
 
     public static void main(String[] args)

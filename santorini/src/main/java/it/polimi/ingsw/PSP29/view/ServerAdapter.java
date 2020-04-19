@@ -18,7 +18,7 @@ public class ServerAdapter implements Runnable
         STOP
     }
     private Commands nextCommand;
-
+    private Player player;
     private Socket server;
     private ObjectOutputStream outputStm;
     private ObjectInputStream inputStm;
@@ -55,8 +55,9 @@ public class ServerAdapter implements Runnable
     }
 
 
-    public synchronized void login() throws IOException, ClassNotFoundException {
+    public synchronized void login(Player p) {
         nextCommand = Commands.LOGIN;
+        player=p;
         notifyAll();
     }
 
@@ -106,14 +107,9 @@ public class ServerAdapter implements Runnable
 
     private synchronized void doLogin() throws IOException, ClassNotFoundException
     {
-        String s = (String)inputStm.readObject();
-        System.out.println(s);
-        Scanner scanner = new Scanner(System.in);
-        String username = scanner.nextLine();
-        int eta = scanner.nextInt();
-        Player p = new Player(username, eta);
-        outputStm.writeObject(p);
-        outputStm.flush();
+        outputStm.writeObject(player);
+        Player p2 = (Player)inputStm.readObject();
+        //System.out.println(p.toString());
         /* copy the list of observers in case some observers changes it from inside
          * the notification method */
         List<ServerObserver> observersCpy;
@@ -123,7 +119,7 @@ public class ServerAdapter implements Runnable
 
         /* notify the observers that we got the string */
         for (ServerObserver observer: observersCpy) {
-            observer.didLogin(p);
+            observer.didLogin(player, p2);
         }
     }
 

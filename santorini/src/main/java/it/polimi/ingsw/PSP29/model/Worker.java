@@ -1,6 +1,8 @@
 package it.polimi.ingsw.PSP29.model;
 
-public class Worker {
+import java.io.Serializable;
+
+public class Worker implements Serializable {
     private int ID;
     private String IDplayer;
     private Coordinate position = null;

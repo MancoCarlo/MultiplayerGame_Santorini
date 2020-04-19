@@ -1,11 +1,10 @@
 package it.polimi.ingsw.PSP29.model;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Match {
+public class Match implements Serializable {
     private static int columns = 5;
     private static int rows = 5;
     private Box[][] board;

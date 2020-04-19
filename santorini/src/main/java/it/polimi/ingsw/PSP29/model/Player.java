@@ -2,10 +2,11 @@ package it.polimi.ingsw.PSP29.model;
 
 import it.polimi.ingsw.PSP29.controller.NotValidInputException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Player {
+public class Player implements Serializable {
     private String nickname;
     private int age;
     God card;
@@ -102,7 +103,7 @@ public class Player {
     @Override
     public String toString() {
         return "Player{" +
-                ", nickname='" + nickname + '\'' +
+                " nickname='" + nickname + '\'' +
                 ", age=" + age +
                 ", card=" + card +
                 '}';

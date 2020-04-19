@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -31,27 +33,21 @@ public class ClientHandler implements Runnable
     }
 
 
-    private void handleClientConnection() throws IOException
-    {
+    private void handleClientConnection() throws IOException {
         System.out.println("Connected to " + client.getInetAddress());
 
         ObjectOutputStream output = new ObjectOutputStream(client.getOutputStream());
         ObjectInputStream input = new ObjectInputStream(client.getInputStream());
-
-        try {
-            while (true) {
-                try{
-                    output.writeObject("Inserire prima Username e poi eta': \n");
-                    output.flush();
-                    Player p = (Player)input.readObject();
-                    p.toString();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.out.println("Dio bastardo");
-                }
+        try{
+            while(true){
+                Object next = input.readObject();
+                Player player = (Player)next;
+                System.out.println(player.toString());
+                output.writeObject(player);
             }
-        } catch (ClassNotFoundException | ClassCastException e) {
-            System.out.println("invalid stream from client");
+
+        } catch (ClassCastException | ClassNotFoundException e) {
+            System.out.println("non valido");
         }
 
         client.close();
