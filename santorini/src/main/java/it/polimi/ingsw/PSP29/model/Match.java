@@ -37,22 +37,8 @@ public class Match implements Serializable {
     /**
      * add players to the match
      */
-    public void addPlayers(){
-        Scanner scanner = new Scanner(System.in);
-        String name, age;
-        int i=0, a;
-        while(i<3){
-            System.out.print("Giocatore n." + (i+1) + " inserisci il tuo nome: ");
-            name=scanner.nextLine();
-            if(name.equals("")){
-                break;
-            }
-            System.out.print(name + ", inserisci la tua età: ");
-            age=scanner.nextLine();
-            a=Integer.parseInt(age);
-            players.add(new Player(name, a));
-            i++;
-        }
+    public void addPlayer(Player player){
+            players.add(player);
     }
 
     /**

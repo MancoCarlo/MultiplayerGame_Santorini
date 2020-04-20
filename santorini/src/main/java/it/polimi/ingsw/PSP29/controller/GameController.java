@@ -2,8 +2,10 @@ package it.polimi.ingsw.PSP29.controller;
 
 import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.InputControl.*;
+import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -16,6 +18,7 @@ public class GameController {
     int id;
     Coordinate c = null;
     Input input;
+    Server server;
 
     public GameController(){
         match = new Match();
@@ -23,6 +26,11 @@ public class GameController {
         athenaOn=false;
         godOn=false;
         input=new Input();
+        server=new Server();
+    }
+
+    public Match getMatch() {
+        return match;
     }
 
     /**
@@ -31,7 +39,7 @@ public class GameController {
      *
      * @throws NotValidInputException
      */
-    public void gameExe() throws NotValidInputException, FileNotFoundException {
+    public void gameExe() throws IOException, InterruptedException {
         firstTurn();
         match.printBoard(match.getBoard());
         while(!end){
@@ -103,16 +111,17 @@ public class GameController {
      * execution of the first turn of the game
      * @throws FileNotFoundException
      */
-    public void firstTurn() throws FileNotFoundException {
-        match.addPlayers();
-        match.printPlayers();
+    public void firstTurn() throws InterruptedException {
+        server.serverExe(this);
         match.sortPlayers();
         match.printPlayers();
         match.inizializeBoard();
         match.printBoard(match.getBoard());
+
         match.loadGods();
         match.printGodlist();
         godSelection();
+
         for(Player player : match.getPlayers()){
             for(int i=0; i<2; i++){
                 System.out.print(player.getNickname());
@@ -125,6 +134,7 @@ public class GameController {
             }
         }
     }
+
 
     /**
      * let the player choose their gods

@@ -15,6 +15,7 @@ public class ServerAdapter implements Runnable
 {
     private enum Commands {
         LOGIN,
+        PRINT_BOARD,
         STOP
     }
     private Commands nextCommand;
@@ -22,6 +23,7 @@ public class ServerAdapter implements Runnable
     private Socket server;
     private ObjectOutputStream outputStm;
     private ObjectInputStream inputStm;
+    private Object lockClient = new Object();
 
     private List<ServerObserver> observers = new ArrayList<>();
 
@@ -48,17 +50,29 @@ public class ServerAdapter implements Runnable
     }
 
 
-    public synchronized void stop()
+    public void stop()
     {
         nextCommand = Commands.STOP;
-        notifyAll();
+        synchronized (lockClient){
+            lockClient.notifyAll();
+        }
+    }
+
+    public void printBoard()
+    {
+        nextCommand = Commands.PRINT_BOARD;
+        synchronized (lockClient){
+            lockClient.notifyAll();
+        }
     }
 
 
-    public synchronized void login(Player p) {
+    public void login(Player p) {
         nextCommand = Commands.LOGIN;
         player=p;
-        notifyAll();
+        synchronized (lockClient){
+            lockClient.notifyAll();
+        }
     }
 
 
@@ -81,13 +95,16 @@ public class ServerAdapter implements Runnable
     }
 
 
-    private synchronized void handleServerConnection() throws IOException, ClassNotFoundException
+    private void handleServerConnection() throws IOException, ClassNotFoundException
     {
         /* wait for commands */
         while (true) {
             nextCommand = null;
             try {
-                wait();
+                synchronized (lockClient){
+                    lockClient.wait();
+                }
+
             } catch (InterruptedException e) { }
 
             if (nextCommand == null)
@@ -96,6 +113,10 @@ public class ServerAdapter implements Runnable
             switch (nextCommand) {
                 case LOGIN:
                     doLogin();
+                    break;
+
+                case PRINT_BOARD:
+                    doPrintBoard();
                     break;
 
                 case STOP:
@@ -123,4 +144,19 @@ public class ServerAdapter implements Runnable
         }
     }
 
+    private synchronized void doPrintBoard() throws IOException, ClassNotFoundException
+    {
+        Object obj = inputStm.readObject();
+        String board = (String)obj;
+
+        List<ServerObserver> observersCpy;
+        synchronized (observers) {
+            observersCpy = new ArrayList<>(observers);
+        }
+
+        /* notify the observers that we got the string */
+        for (ServerObserver observer: observersCpy) {
+            observer.didReceiveBoard(board);
+        }
+    }
 }

@@ -55,31 +55,26 @@ public class Client implements Runnable, ServerObserver
         System.out.print("Inserisci nome e eta: ");
         String name = scanner.nextLine();
         int eta = Integer.parseInt(scanner.nextLine());
-        while (true) {
-
-            synchronized (this) {
-                response = null;
-                Player p = new Player(name, eta);
-                serverAdapter.login(p);
-
-
-                int seconds = 0;
-                while (response == null) {
-                    System.out.println("been waiting for " + seconds + " seconds");
-                    try {
-                        wait(1000);
-                    } catch (InterruptedException e) { }
-                    seconds++;
-                }
-
-                if(response!=null){
-                    System.out.println(response);
-                }
-
-                System.out.print("Inserisci nome e eta: ");
-                name = scanner.nextLine();
-                eta = Integer.parseInt(scanner.nextLine());
+        synchronized (this) {
+            response = null;
+            Player p = new Player(name, eta);
+            serverAdapter.login(p);
+            int seconds = 0;
+            while (response == null) {
+                System.out.println("been waiting for " + seconds + " seconds");
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) { }
+                seconds++;
             }
+            System.out.println(response);
+            serverAdapter.printBoard();
+            System.out.println("Gameboard:");
+            System.out.println(response);
+        }
+
+        while(true){
+
         }
     }
 
@@ -88,6 +83,14 @@ public class Client implements Runnable, ServerObserver
     public synchronized void didLogin(Player p1, Player p2)
     {
         response = p2.toString();
+
+        notifyAll();
+    }
+
+    @Override
+    public synchronized void didReceiveBoard(String str)
+    {
+        response = str;
 
         notifyAll();
     }
