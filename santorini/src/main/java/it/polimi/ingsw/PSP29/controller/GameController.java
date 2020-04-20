@@ -112,10 +112,10 @@ public class GameController {
      * @throws FileNotFoundException
      */
     public void firstTurn() throws InterruptedException {
+        match.inizializeBoard();
         server.serverExe(this);
         match.sortPlayers();
         match.printPlayers();
-        match.inizializeBoard();
         match.printBoard(match.getBoard());
 
         match.loadGods();

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.PSP29.view;
 
-import it.polimi.ingsw.PSP29.model.Player;
+import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.io.IOException;
@@ -13,6 +13,8 @@ public class Client implements Runnable, ServerObserver
 {
     /* auxiliary variable used for implementing the consumer-producer pattern*/
     private String response = null;
+    private Player player;
+    private Box[][] gameboard;
 
     public static void main( String[] args )
     {
@@ -57,20 +59,24 @@ public class Client implements Runnable, ServerObserver
         int eta = Integer.parseInt(scanner.nextLine());
         synchronized (this) {
             response = null;
+            player = null;
+            gameboard = null;
             Player p = new Player(name, eta);
             serverAdapter.login(p);
             int seconds = 0;
-            while (response == null) {
-                System.out.println("been waiting for " + seconds + " seconds");
+            while (player == null) {
                 try {
-                    wait(1000);
-                } catch (InterruptedException e) { }
-                seconds++;
+                    wait();
+                } catch (InterruptedException e) {  }
             }
-            System.out.println(response);
+            System.out.println("You've been accepted");
             serverAdapter.printBoard();
-            System.out.println("Gameboard:");
-            System.out.println(response);
+            while (gameboard == null) {
+                try {
+                    wait();
+                } catch (InterruptedException e) { }
+            }
+            outputBoard();
         }
 
         while(true){
@@ -82,17 +88,34 @@ public class Client implements Runnable, ServerObserver
     @Override
     public synchronized void didLogin(Player p1, Player p2)
     {
-        response = p2.toString();
+        player = p2;
 
         notifyAll();
     }
 
     @Override
-    public synchronized void didReceiveBoard(String str)
+    public synchronized void didReceiveBoard(Box[][] board)
     {
-        response = str;
+        gameboard = board;
 
         notifyAll();
+    }
+
+    private synchronized void outputBoard(){
+        System.out.println("Gameboard");
+        System.out.print("  \t");
+        for(int i=0; i<5; i++){
+            System.out.print(i + " \t");
+        }
+        System.out.println();
+        for(int i=0; i<5; i++){
+            System.out.print(i + " \t");
+            for(int j=0; j<5; j++){
+                gameboard[i][j].printEmpty();
+                System.out.print("\t");
+            }
+            System.out.println();
+        }
     }
 
 }

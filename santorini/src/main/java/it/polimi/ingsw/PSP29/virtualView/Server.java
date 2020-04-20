@@ -43,6 +43,15 @@ public class Server
                 }
             }
             while(countPlayers==3 && !(clientHandlers.get(0).didAccept() && clientHandlers.get(1).didAccept() && clientHandlers.get(2).didAccept())){  }
+            System.out.println("All players are in");
+            for(ClientHandler cH : clientHandlers){
+                cH.doPrintBoard();
+            }
+            while(countPlayers==3 && !(clientHandlers.get(0).didPrintBoard() && clientHandlers.get(1).didPrintBoard() && clientHandlers.get(2).didPrintBoard())){  }
+            for(ClientHandler cH : clientHandlers){
+                cH.resetBoardPrinted();
+            }
+            System.out.println("Gameboard printed" + "\n\n\n");
             break;
         }
     }

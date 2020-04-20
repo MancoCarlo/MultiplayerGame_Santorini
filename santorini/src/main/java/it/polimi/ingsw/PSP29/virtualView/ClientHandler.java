@@ -1,7 +1,7 @@
 package it.polimi.ingsw.PSP29.virtualView;
 
 import it.polimi.ingsw.PSP29.controller.GameController;
-import it.polimi.ingsw.PSP29.model.Player;
+import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.view.ServerAdapter;
 import it.polimi.ingsw.PSP29.view.ServerObserver;
 
@@ -26,6 +26,7 @@ public class ClientHandler implements Runnable
     private GameController GC;
     private boolean connection;
     private boolean accept;
+    private boolean boardPrinted;
 
     ObjectOutputStream output;
     ObjectInputStream input;
@@ -37,7 +38,6 @@ public class ClientHandler implements Runnable
 
     public synchronized  void accept() {
         nextCommand = Commands.ACCEPT;
-        System.out.println("accept");
         notifyAll();
     }
 
@@ -55,6 +55,7 @@ public class ClientHandler implements Runnable
             input = new ObjectInputStream(client.getInputStream());
             connection=false;
             accept=false;
+            boardPrinted=false;
             handleClientConnection();
         } catch (IOException e) {
             System.out.println("client " + client.getInetAddress() + " connection dropped");
@@ -63,23 +64,23 @@ public class ClientHandler implements Runnable
 
 
     private synchronized void handleClientConnection(){
-        System.out.println("handleclientconnection");
         connection=true;
         while (true) {
             nextCommand = null;
             try {
                 wait();
             } catch (InterruptedException e) { }
-            System.out.println("svegliato");
             if (nextCommand == null){
-                System.out.println("nextCommand null");
                 continue;
             }
 
-            System.out.println("case");
             switch (nextCommand) {
                 case ACCEPT:
                     doAccept();
+                    break;
+
+                case PRINT_BOARD:
+                    doPrintBoard();
                     break;
             }
         }
@@ -89,11 +90,10 @@ public class ClientHandler implements Runnable
     public synchronized void doAccept(){
         accept=true;
         try{
-            System.out.println("doaccept");
-                Object next = input.readObject();
-                Player player = (Player) next;
-                output.writeObject(player);
-                GC.getMatch().addPlayer(player);
+            Object next = input.readObject();
+            Player player = (Player) next;
+            output.writeObject(player);
+            GC.getMatch().addPlayer(player);
         } catch (ClassCastException | ClassNotFoundException | IOException e) {
             System.out.println("non valido");
         }
@@ -101,22 +101,28 @@ public class ClientHandler implements Runnable
     }
 
     public synchronized void doPrintBoard(){
+        boardPrinted=true;
         try{
-            String b = GC.getMatch().getBoard().toString();
-            output.writeObject(b);
+            Box board[][] = GC.getMatch().getBoard();
+            output.writeObject(board);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public synchronized boolean didHandleConnection(){
-        if(connection){
-            System.out.println("connected");
-        }
         return connection;
     }
 
     public synchronized boolean didAccept(){
         return accept;
+    }
+
+    public synchronized boolean didPrintBoard(){
+        return boardPrinted;
+    }
+
+    public synchronized void resetBoardPrinted(){
+        boardPrinted=false;
     }
 }

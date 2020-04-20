@@ -1,6 +1,6 @@
 package it.polimi.ingsw.PSP29.view;
 
-import it.polimi.ingsw.PSP29.model.Player;
+import it.polimi.ingsw.PSP29.model.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -58,21 +58,17 @@ public class ServerAdapter implements Runnable
         }
     }
 
-    public void printBoard()
+    public synchronized void printBoard()
     {
         nextCommand = Commands.PRINT_BOARD;
-        synchronized (lockClient){
-            lockClient.notifyAll();
-        }
+        notifyAll();
     }
 
 
-    public void login(Player p) {
+    public synchronized void login(Player p) {
         nextCommand = Commands.LOGIN;
         player=p;
-        synchronized (lockClient){
-            lockClient.notifyAll();
-        }
+        notifyAll();
     }
 
 
@@ -95,15 +91,13 @@ public class ServerAdapter implements Runnable
     }
 
 
-    private void handleServerConnection() throws IOException, ClassNotFoundException
+    private synchronized void handleServerConnection() throws IOException, ClassNotFoundException
     {
         /* wait for commands */
         while (true) {
             nextCommand = null;
             try {
-                synchronized (lockClient){
-                    lockClient.wait();
-                }
+                wait();
 
             } catch (InterruptedException e) { }
 
@@ -147,7 +141,7 @@ public class ServerAdapter implements Runnable
     private synchronized void doPrintBoard() throws IOException, ClassNotFoundException
     {
         Object obj = inputStm.readObject();
-        String board = (String)obj;
+        Box[][] board = (Box[][])obj;
 
         List<ServerObserver> observersCpy;
         synchronized (observers) {
