@@ -41,6 +41,10 @@ public class PrometheusTurn extends GodTurn {
      */
     @Override
     public boolean move(Match m, Worker w, Coordinate c) {
+        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
+            return false; //se la mossa non è valida
+        }
+        else {
             Scanner scanner = new Scanner(System.in);
             String x, y;
             do {
@@ -49,22 +53,18 @@ public class PrometheusTurn extends GodTurn {
                 y = scanner.nextLine();
             } while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
             Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-            if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
-                return false; //se la mossa non è valida
+            if((!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()) || (c.equals(c1) && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0)){
+                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
+                w.changeMoved();
+                return true; //mi muovo ma non costruisco
             }
-            else {
-                if((!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()) || (c.equals(c1) && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0)){
-                    m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                    w.changeMoved(true);
-                    return true; //mi muovo ma non costruisco
-                }
-                else{
-                    m.updateBuilding(c1);
-                    m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                    w.changeMoved(true); //costruisco e mi muovo
-                    return true;
-                }
+            else{
+                m.updateBuilding(c1);
+                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
+                w.changeMoved(); //costruisco e mi muovo
+                return true;
             }
+        }
     }
 
     /**
@@ -90,13 +90,13 @@ public class PrometheusTurn extends GodTurn {
         else {
             if((!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()) || (c.equals(c1) && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >=0)){
                 m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved(true);
+                w.changeMoved();
                 return true; //mi muovo ma non costruisco
             }
             else{
                 m.updateBuilding(c1);
                 m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved(true); //costruisco e mi muovo
+                w.changeMoved(); //costruisco e mi muovo
                 return true;
             }
         }
