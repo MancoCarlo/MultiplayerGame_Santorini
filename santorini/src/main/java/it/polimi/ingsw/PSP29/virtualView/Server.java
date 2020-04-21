@@ -25,9 +25,29 @@ public class Server
             return;
         }
         int countPlayers = 0;
+        int maxPlayers = 0;
         System.out.println("server ready");
+
         while(true){
-            while(countPlayers<3){
+            if(countPlayers==0){
+                try {
+                    Socket client = socket.accept();
+                    ClientHandler clientHandler = new ClientHandler(client, gameController);
+                    Thread thread = new Thread(clientHandler , "server_" + client.getInetAddress());
+                    thread.start();
+                    while(!clientHandler.didHandleConnection()){ }
+                    clientHandler.accept(true);
+                    while (!clientHandler.didAccept()){  }
+                    maxPlayers = clientHandler.doCreateLobby();
+                    while(!clientHandler.didCreateLobby()){  }
+                    clientHandlers.add(clientHandler);
+                    System.out.println(gameController.getMatch().getPlayers().toString());
+                    countPlayers++;
+                } catch (IOException e) {
+                    System.out.println("non valido");
+                }
+            }
+            while(countPlayers<maxPlayers){
                 try {
                     Socket client = socket.accept();
                     ClientHandler clientHandler = new ClientHandler(client, gameController);
@@ -35,19 +55,27 @@ public class Server
                     thread.start();
                     while(!clientHandler.didHandleConnection()){
                     }
-                    clientHandler.accept();
+                    clientHandler.accept(false);
                     clientHandlers.add(clientHandler);
                     countPlayers++;
                 } catch (IOException e) {
                     System.out.println("non valido");
                 }
             }
-            while(countPlayers==3 && !(clientHandlers.get(0).didAccept() && clientHandlers.get(1).didAccept() && clientHandlers.get(2).didAccept())){  }
+            if(countPlayers==maxPlayers){
+                for(ClientHandler clientHandler : clientHandlers){
+                    while(!clientHandler.didAccept()){  }
+                }
+            }
             System.out.println("All players are in");
             for(ClientHandler cH : clientHandlers){
                 cH.doPrintBoard();
             }
-            while(countPlayers==3 && !(clientHandlers.get(0).didPrintBoard() && clientHandlers.get(1).didPrintBoard() && clientHandlers.get(2).didPrintBoard())){  }
+            if(countPlayers==maxPlayers){
+                for(ClientHandler clientHandler : clientHandlers){
+                    while(!clientHandler.didPrintBoard()){  }
+                }
+            }
             for(ClientHandler cH : clientHandlers){
                 cH.resetBoardPrinted();
             }

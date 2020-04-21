@@ -15,6 +15,7 @@ public class ServerAdapter implements Runnable
 {
     private enum Commands {
         LOGIN,
+        LOBBY,
         PRINT_BOARD,
         STOP
     }
@@ -64,6 +65,11 @@ public class ServerAdapter implements Runnable
         notifyAll();
     }
 
+    public synchronized void lobby()
+    {
+        nextCommand = Commands.LOBBY;
+        notifyAll();
+    }
 
     public synchronized void login(Player p) {
         nextCommand = Commands.LOGIN;
@@ -109,6 +115,10 @@ public class ServerAdapter implements Runnable
                     doLogin();
                     break;
 
+                case LOBBY:
+                    createLobby();
+                    break;
+
                 case PRINT_BOARD:
                     doPrintBoard();
                     break;
@@ -124,6 +134,7 @@ public class ServerAdapter implements Runnable
     {
         outputStm.writeObject(player);
         Player p2 = (Player)inputStm.readObject();
+        boolean f = (boolean)inputStm.readObject();
         //System.out.println(p.toString());
         /* copy the list of observers in case some observers changes it from inside
          * the notification method */
@@ -134,9 +145,29 @@ public class ServerAdapter implements Runnable
 
         /* notify the observers that we got the string */
         for (ServerObserver observer: observersCpy) {
-            observer.didLogin(player, p2);
+            observer.didLogin(player, p2, f);
         }
     }
+
+    private synchronized void createLobby() throws IOException, ClassNotFoundException
+    {
+        System.out.println("Quanti giocatori vuoi nella partita: 2 o 3 ?");
+        Scanner scanner = new Scanner(System.in);
+        int numP = scanner.nextInt();
+        outputStm.writeObject(numP);
+
+        List<ServerObserver> observersCpy;
+        synchronized (observers) {
+            observersCpy = new ArrayList<>(observers);
+        }
+
+        /* notify the observers that we got the string */
+        for (ServerObserver observer: observersCpy) {
+            observer.didLobby();
+        }
+    }
+
+
 
     private synchronized void doPrintBoard() throws IOException, ClassNotFoundException
     {

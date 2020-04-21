@@ -18,6 +18,7 @@ public class ClientHandler implements Runnable
 {
     private enum Commands{
         ACCEPT,
+        LOBBY,
         PRINT_BOARD
     }
 
@@ -25,8 +26,10 @@ public class ClientHandler implements Runnable
     private Socket client;
     private GameController GC;
     private boolean connection;
+    private boolean first;
     private boolean accept;
     private boolean boardPrinted;
+    private boolean lobbyCreated;
 
     ObjectOutputStream output;
     ObjectInputStream input;
@@ -36,13 +39,19 @@ public class ClientHandler implements Runnable
         GC = gameController;
     }
 
-    public synchronized  void accept() {
+    public synchronized  void accept(boolean f) {
         nextCommand = Commands.ACCEPT;
+        first=f;
         notifyAll();
     }
 
     public synchronized void printBoard() {
         nextCommand = Commands.PRINT_BOARD;
+        notifyAll();
+    }
+
+    public synchronized void createLobby() {
+        nextCommand = Commands.LOBBY;
         notifyAll();
     }
 
@@ -54,6 +63,7 @@ public class ClientHandler implements Runnable
             output = new ObjectOutputStream(client.getOutputStream());
             input = new ObjectInputStream(client.getInputStream());
             connection=false;
+            lobbyCreated=false;
             accept=false;
             boardPrinted=false;
             handleClientConnection();
@@ -82,6 +92,10 @@ public class ClientHandler implements Runnable
                 case PRINT_BOARD:
                     doPrintBoard();
                     break;
+
+                case LOBBY:
+                    doCreateLobby();
+                    break;
             }
         }
 
@@ -93,6 +107,7 @@ public class ClientHandler implements Runnable
             Object next = input.readObject();
             Player player = (Player) next;
             output.writeObject(player);
+            output.writeObject(first);
             GC.getMatch().addPlayer(player);
         } catch (ClassCastException | ClassNotFoundException | IOException e) {
             System.out.println("non valido");
@@ -110,6 +125,17 @@ public class ClientHandler implements Runnable
         }
     }
 
+    public synchronized int doCreateLobby(){
+        lobbyCreated=true;
+        try{
+            Object obj = input.readObject();
+            return (int)obj;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public synchronized boolean didHandleConnection(){
         return connection;
     }
@@ -120,6 +146,10 @@ public class ClientHandler implements Runnable
 
     public synchronized boolean didPrintBoard(){
         return boardPrinted;
+    }
+
+    public synchronized boolean didCreateLobby(){
+        return lobbyCreated;
     }
 
     public synchronized void resetBoardPrinted(){

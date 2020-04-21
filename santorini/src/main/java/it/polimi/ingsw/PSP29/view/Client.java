@@ -5,16 +5,16 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class Client implements Runnable, ServerObserver
 {
     /* auxiliary variable used for implementing the consumer-producer pattern*/
-    private String response = null;
     private Player player;
     private Box[][] gameboard;
+    private boolean first;
+    private boolean lobbyCreated;
 
     public static void main( String[] args )
     {
@@ -53,23 +53,31 @@ public class Client implements Runnable, ServerObserver
         serverAdapter.addObserver(this);
         Thread serverAdapterThread = new Thread(serverAdapter);
         serverAdapterThread.start();
-
+        System.out.println("---Welcome to Santorini---\n");
         System.out.print("Inserisci nome e eta: ");
         String name = scanner.nextLine();
         int eta = Integer.parseInt(scanner.nextLine());
+        lobbyCreated=false;
         synchronized (this) {
-            response = null;
             player = null;
             gameboard = null;
             Player p = new Player(name, eta);
             serverAdapter.login(p);
-            int seconds = 0;
             while (player == null) {
                 try {
                     wait();
                 } catch (InterruptedException e) {  }
             }
-            System.out.println("You've been accepted");
+            System.out.println("\nYou've been accepted\n");
+            if(first){
+                serverAdapter.lobby();
+                while (!lobbyCreated) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {  }
+                }
+                System.out.println("\nLobby created, wait for other players\n");
+            }
             serverAdapter.printBoard();
             while (gameboard == null) {
                 try {
@@ -86,10 +94,10 @@ public class Client implements Runnable, ServerObserver
 
 
     @Override
-    public synchronized void didLogin(Player p1, Player p2)
+    public synchronized void didLogin(Player p1, Player p2, boolean f)
     {
         player = p2;
-
+        first=f;
         notifyAll();
     }
 
@@ -117,5 +125,12 @@ public class Client implements Runnable, ServerObserver
             System.out.println();
         }
     }
+
+
+    public synchronized void didLobby(){
+        lobbyCreated=true;
+        notifyAll();
+    }
+
 
 }
