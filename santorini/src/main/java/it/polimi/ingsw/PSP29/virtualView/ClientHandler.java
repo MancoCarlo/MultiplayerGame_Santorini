@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -27,12 +28,11 @@ public class ClientHandler implements Runnable
     private Socket client;
     private GameController GC;
     private boolean connection;
-    private boolean first;
     private boolean accept;
     private boolean boardPrinted;
     private boolean lobbyCreated;
     private boolean sentMessage;
-    private String msg = null;
+    private Player player;
 
     ObjectOutputStream output;
     ObjectInputStream input;
@@ -42,17 +42,10 @@ public class ClientHandler implements Runnable
         GC = gameController;
     }
 
-    public synchronized  void sendMessage(String message) {
-        nextCommand = Commands.SEND_MESSAGE;
-        msg = message;
-        notifyAll();
+    public String getNickname(){
+        return player.getNickname();
     }
 
-    public synchronized  void accept(boolean f) {
-        nextCommand = Commands.ACCEPT;
-        first=f;
-        notifyAll();
-    }
 
     public synchronized void printBoard() {
         nextCommand = Commands.PRINT_BOARD;
@@ -83,25 +76,20 @@ public class ClientHandler implements Runnable
     }
 
 
-    private synchronized void handleClientConnection() throws IOException {
+    public synchronized boolean handleClientConnection(){
         connection=true;
         while (true) {
             nextCommand = null;
             try {
                 wait();
-            } catch (InterruptedException e) { }
+            } catch (InterruptedException e) {
+                System.out.println("disconnected");
+            }
             if (nextCommand == null){
                 continue;
             }
 
             switch (nextCommand) {
-                case ACCEPT:
-                    doAccept();
-                    break;
-
-                case SEND_MESSAGE:
-                    doSend();
-                    break;
 
                 case PRINT_BOARD:
                     doPrintBoard();
@@ -115,25 +103,31 @@ public class ClientHandler implements Runnable
 
     }
 
-    public synchronized void doAccept(){
+    public synchronized boolean doAccept(boolean bool){
         accept=true;
         try{
             Object next = input.readObject();
-            Player player = (Player) next;
-            output.writeObject(player);
-            output.writeObject(first);
+            Player p = (Player) next;
+            player=p;
+            output.writeObject(p);
+            output.writeObject(bool);
             GC.getMatch().addPlayer(player);
-        } catch (ClassCastException | ClassNotFoundException | IOException e) {
+            return true;
+        } catch (ClassCastException | ClassNotFoundException e) {
             System.out.println("non valido");
+            return false;
+        } catch (IOException e) {
+            return false;
         }
     }
 
-    public synchronized void doSend(){
+    public synchronized boolean doSend(String msg){
         sentMessage = true;
         try {
             output.writeObject(msg);
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
     }
 
@@ -152,10 +146,12 @@ public class ClientHandler implements Runnable
         try{
             Object obj = input.readObject();
             return (int)obj;
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            return 0;
+        } catch (IOException e) {
+            return 0;
         }
-        return 0;
     }
 
     public synchronized boolean didHandleConnection(){
@@ -177,6 +173,12 @@ public class ClientHandler implements Runnable
     public synchronized boolean didCreateLobby(){
         return lobbyCreated;
     }
+
+    public synchronized void resetDidAccept(){
+        accept=false;
+    }
+
+    public synchronized void resetDidSend() { sentMessage=false; }
 
     public synchronized void resetBoardPrinted(){
         boardPrinted=false;

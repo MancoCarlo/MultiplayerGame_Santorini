@@ -68,7 +68,6 @@ public class Client implements Runnable, ServerObserver
             serverAdapter.readMessage();
             while(response == null) {
                 try {
-                    System.out.println("Wait response from server");
                     wait();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -88,7 +87,6 @@ public class Client implements Runnable, ServerObserver
                     wait();
                 } catch (InterruptedException e) {  }
             }
-            System.out.println("\nYou've been accepted\n");
             if(first){
                 serverAdapter.lobby();
                 while (!lobbyCreated) {
@@ -98,6 +96,46 @@ public class Client implements Runnable, ServerObserver
                 }
                 System.out.println("\nLobby created, wait for other players\n");
             }
+            response="false";
+            while (!response.equals("true")){
+                response=null;
+                serverAdapter.readMessage();
+                while(response == null) {
+                    try {
+                        System.out.println("Waiting for server to answer");
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (response.equals("true")){
+                    break;
+                }
+                else {
+                    response=null;
+                    serverAdapter.readMessage();
+                    while(response == null) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    System.out.println(response);
+                    player=null;
+                    name = scanner.nextLine();
+                    eta = Integer.parseInt(scanner.nextLine());
+                    p = new Player(name, eta);
+                    serverAdapter.login(p);
+                    while (player == null) {
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {  }
+                    }
+                }
+            }
+
+            System.out.println("\nYou've been accepted\n");
             serverAdapter.printBoard();
             while (gameboard == null) {
                 try {
@@ -111,6 +149,7 @@ public class Client implements Runnable, ServerObserver
 
         }
     }
+
 
 
     @Override

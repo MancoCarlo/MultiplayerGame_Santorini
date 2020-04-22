@@ -187,7 +187,7 @@ public class ServerAdapter implements Runnable
 
     private synchronized void createLobby() throws IOException, ClassNotFoundException
     {
-        System.out.println("Quanti giocatori vuoi nella partita: 2 o 3 ?");
+        System.out.println("How many players: 2 or 3?");
         Scanner scanner = new Scanner(System.in);
         int numP = scanner.nextInt();
         outputStm.writeObject(numP);

@@ -54,6 +54,39 @@ public class Match implements Serializable {
         }
     }
 
+    public String findDuplicate(){
+        String duplicate=null;
+        int size=players.size();
+        if(size==2){
+            if(players.get(0).getNickname().equals(players.get(1).getNickname())){
+                duplicate = players.get(0).getNickname();
+                players.remove(1);
+            }
+        }
+        else if(size==3){
+            if(players.get(0).getNickname().equals(players.get(1).getNickname())){
+                if(players.get(1).getNickname().equals(players.get(2).getNickname())){
+                    duplicate = players.get(0).getNickname();
+                    players.remove(1);
+                    players.remove(1);
+                }
+                else {
+                    duplicate = players.get(0).getNickname();
+                    players.remove(1);
+                }
+            }
+            else if(players.get(0).getNickname().equals(players.get(2).getNickname())){
+                duplicate = players.get(0).getNickname();
+                players.remove(2);
+            }
+            else if(players.get(1).getNickname().equals(players.get(2).getNickname())){
+                duplicate = players.get(1).getNickname();
+                players.remove(2);
+            }
+        }
+        return duplicate;
+    }
+
     public int getColumns() {
         return columns;
     }
