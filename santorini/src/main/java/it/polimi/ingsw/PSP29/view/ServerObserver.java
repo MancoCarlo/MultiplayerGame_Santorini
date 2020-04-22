@@ -10,4 +10,8 @@ public interface ServerObserver
     void didReceiveBoard(Box[][] board);
 
     void didLobby();
+
+    void didRead(String message);
+
+    void didHandleConnection();
 }

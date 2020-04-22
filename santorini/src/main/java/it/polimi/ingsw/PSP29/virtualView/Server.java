@@ -27,7 +27,6 @@ public class Server
         int countPlayers = 0;
         int maxPlayers = 0;
         System.out.println("server ready");
-
         while(true){
             if(countPlayers==0){
                 try {
@@ -36,6 +35,8 @@ public class Server
                     Thread thread = new Thread(clientHandler , "server_" + client.getInetAddress());
                     thread.start();
                     while(!clientHandler.didHandleConnection()){ }
+                    clientHandler.sendMessage("\nInsert nickname and age: ");
+                    while(!clientHandler.didSend()){ }
                     clientHandler.accept(true);
                     while (!clientHandler.didAccept()){  }
                     maxPlayers = clientHandler.doCreateLobby();
@@ -53,8 +54,9 @@ public class Server
                     ClientHandler clientHandler = new ClientHandler(client, gameController);
                     Thread thread = new Thread(clientHandler , "server_" + client.getInetAddress());
                     thread.start();
-                    while(!clientHandler.didHandleConnection()){
-                    }
+                    while(!clientHandler.didHandleConnection()){ }
+                    clientHandler.sendMessage("\nInsert nickname and age: ");
+                    while(!clientHandler.didSend()){ }
                     clientHandler.accept(false);
                     clientHandlers.add(clientHandler);
                     countPlayers++;

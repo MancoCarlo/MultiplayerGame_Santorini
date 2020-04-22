@@ -19,7 +19,8 @@ public class ClientHandler implements Runnable
     private enum Commands{
         ACCEPT,
         LOBBY,
-        PRINT_BOARD
+        PRINT_BOARD,
+        SEND_MESSAGE
     }
 
     Commands nextCommand;
@@ -30,6 +31,8 @@ public class ClientHandler implements Runnable
     private boolean accept;
     private boolean boardPrinted;
     private boolean lobbyCreated;
+    private boolean sentMessage;
+    private String msg = null;
 
     ObjectOutputStream output;
     ObjectInputStream input;
@@ -37,6 +40,12 @@ public class ClientHandler implements Runnable
     public ClientHandler(Socket client, GameController gameController) {
         this.client = client;
         GC = gameController;
+    }
+
+    public synchronized  void sendMessage(String message) {
+        nextCommand = Commands.SEND_MESSAGE;
+        msg = message;
+        notifyAll();
     }
 
     public synchronized  void accept(boolean f) {
@@ -66,6 +75,7 @@ public class ClientHandler implements Runnable
             lobbyCreated=false;
             accept=false;
             boardPrinted=false;
+            sentMessage = false;
             handleClientConnection();
         } catch (IOException e) {
             System.out.println("client " + client.getInetAddress() + " connection dropped");
@@ -73,7 +83,7 @@ public class ClientHandler implements Runnable
     }
 
 
-    private synchronized void handleClientConnection(){
+    private synchronized void handleClientConnection() throws IOException {
         connection=true;
         while (true) {
             nextCommand = null;
@@ -87,6 +97,10 @@ public class ClientHandler implements Runnable
             switch (nextCommand) {
                 case ACCEPT:
                     doAccept();
+                    break;
+
+                case SEND_MESSAGE:
+                    doSend();
                     break;
 
                 case PRINT_BOARD:
@@ -112,7 +126,15 @@ public class ClientHandler implements Runnable
         } catch (ClassCastException | ClassNotFoundException | IOException e) {
             System.out.println("non valido");
         }
+    }
 
+    public synchronized void doSend(){
+        sentMessage = true;
+        try {
+            output.writeObject(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void doPrintBoard(){
@@ -142,6 +164,10 @@ public class ClientHandler implements Runnable
 
     public synchronized boolean didAccept(){
         return accept;
+    }
+
+    public synchronized boolean didSend(){
+        return sentMessage;
     }
 
     public synchronized boolean didPrintBoard(){

@@ -17,6 +17,7 @@ public class ServerAdapter implements Runnable
         LOGIN,
         LOBBY,
         PRINT_BOARD,
+        READ_MESSAGE,
         STOP
     }
     private Commands nextCommand;
@@ -59,6 +60,12 @@ public class ServerAdapter implements Runnable
         }
     }
 
+    public synchronized void readMessage()
+    {
+        nextCommand = Commands.READ_MESSAGE;
+        notifyAll();
+    }
+
     public synchronized void printBoard()
     {
         nextCommand = Commands.PRINT_BOARD;
@@ -99,9 +106,19 @@ public class ServerAdapter implements Runnable
 
     private synchronized void handleServerConnection() throws IOException, ClassNotFoundException
     {
+        List<ServerObserver> observersCpy;
+        synchronized (observers) {
+            observersCpy = new ArrayList<>(observers);
+        }
+
+        /* notify the observers that we got the string */
+        for (ServerObserver observer: observersCpy) {
+            observer.didHandleConnection();
+        }
         /* wait for commands */
         while (true) {
             nextCommand = null;
+
             try {
                 wait();
 
@@ -113,6 +130,10 @@ public class ServerAdapter implements Runnable
             switch (nextCommand) {
                 case LOGIN:
                     doLogin();
+                    break;
+
+                case READ_MESSAGE:
+                    doRead();
                     break;
 
                 case LOBBY:
@@ -146,6 +167,21 @@ public class ServerAdapter implements Runnable
         /* notify the observers that we got the string */
         for (ServerObserver observer: observersCpy) {
             observer.didLogin(player, p2, f);
+        }
+    }
+
+    private synchronized void doRead() throws IOException, ClassNotFoundException
+    {
+        Object obj = inputStm.readObject();
+        String message = (String)obj;
+
+        List<ServerObserver> observersCpy;
+        synchronized (observers) {
+            observersCpy = new ArrayList<>(observers);
+        }
+
+        for (ServerObserver observer: observersCpy) {
+            observer.didRead(message);
         }
     }
 

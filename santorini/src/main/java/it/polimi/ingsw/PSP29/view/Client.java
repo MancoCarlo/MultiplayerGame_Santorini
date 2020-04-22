@@ -15,6 +15,8 @@ public class Client implements Runnable, ServerObserver
     private Box[][] gameboard;
     private boolean first;
     private boolean lobbyCreated;
+    private String response = null;
+    private boolean connection;
 
     public static void main( String[] args )
     {
@@ -33,7 +35,8 @@ public class Client implements Runnable, ServerObserver
          */
 
         Scanner scanner = new Scanner(System.in);
-
+        response = null;
+        connection = false;
         //System.out.println("IP address of server?");
         String ip = "127.0.0.8";
 
@@ -53,12 +56,29 @@ public class Client implements Runnable, ServerObserver
         serverAdapter.addObserver(this);
         Thread serverAdapterThread = new Thread(serverAdapter);
         serverAdapterThread.start();
-        System.out.println("---Welcome to Santorini---\n");
-        System.out.print("Inserisci nome e eta: ");
-        String name = scanner.nextLine();
-        int eta = Integer.parseInt(scanner.nextLine());
-        lobbyCreated=false;
         synchronized (this) {
+            while(connection == false) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("---Welcome to Santorini---\n");
+            serverAdapter.readMessage();
+            while(response == null) {
+                try {
+                    System.out.println("Wait response from server");
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println(response);
+            response = null;
+            String name = scanner.nextLine();
+            int eta = Integer.parseInt(scanner.nextLine());
+            lobbyCreated=false;
             player = null;
             gameboard = null;
             Player p = new Player(name, eta);
@@ -102,10 +122,23 @@ public class Client implements Runnable, ServerObserver
     }
 
     @Override
+    public synchronized void didRead(String message)
+    {
+        response = message;
+        notifyAll();
+    }
+
+    @Override
+    public synchronized void didHandleConnection()
+    {
+        connection = true;
+        notifyAll();
+    }
+
+    @Override
     public synchronized void didReceiveBoard(Box[][] board)
     {
         gameboard = board;
-
         notifyAll();
     }
 
