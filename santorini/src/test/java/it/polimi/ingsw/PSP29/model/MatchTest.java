@@ -88,4 +88,29 @@ public class MatchTest {
             }
         }
     }
+
+    @Test
+    public void getPlayer_NotFoundPlayer_ReturnNull(){
+        Player p1 = m.getPlayer("Carlo");
+        assertEquals(p1, null);
+    }
+
+    @Test
+    public void addPlayer_CorrectAddPlayer_Return(){
+        Player p1 = new Player("Werner", 24);
+        m.addPlayer(p1);
+        assertEquals(p1, m.getPlayer("Werner"));
+    }
+
+    @Test
+    public void resetBoard_CorrectReset_Return(){
+        Box[][] b = m.getBoard();
+        b[1][3].setLevelledUp(true);
+        m.resetBoard();
+        for(int i = 0; i<m.getRows();i++){
+            for(int j=0;j<m.getColumns();j++){
+                assertEquals(b[i][j].getlevelledUp(), false);
+            }
+        }
+    }
 }

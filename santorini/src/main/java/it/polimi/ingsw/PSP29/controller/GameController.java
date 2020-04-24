@@ -18,7 +18,6 @@ public class GameController {
     int id;
     Coordinate c = null;
     Input input;
-    Server server;
 
     public GameController(){
         match = new Match();
@@ -26,7 +25,6 @@ public class GameController {
         athenaOn=false;
         godOn=false;
         input=new Input();
-        server=new Server();
     }
 
     public Match getMatch() {
@@ -113,7 +111,6 @@ public class GameController {
      */
     public void firstTurn() throws InterruptedException {
         match.inizializeBoard();
-        server.serverExe(this);
         match.sortPlayers();
         match.printPlayers();
         match.printBoard(match.getBoard());
@@ -369,6 +366,4 @@ public class GameController {
             return false;
         }
     }
-
-
 }

@@ -1,186 +1,141 @@
 package it.polimi.ingsw.PSP29.virtualView;
 
 import it.polimi.ingsw.PSP29.controller.GameController;
-import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.model.Player;
 import it.polimi.ingsw.PSP29.view.ServerAdapter;
-import it.polimi.ingsw.PSP29.view.ServerObserver;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
 public class ClientHandler implements Runnable
 {
-    private enum Commands{
-        ACCEPT,
-        LOBBY,
-        PRINT_BOARD,
-        SEND_MESSAGE
+    private enum Commands {
+        SEND_MESSAGE,
+        TAKE_MESSAGE,
+        STOP
     }
-
-    Commands nextCommand;
+    private Commands nextCommand;
     private Socket client;
-    private GameController GC;
-    private boolean connection;
-    private boolean accept;
-    private boolean boardPrinted;
-    private boolean lobbyCreated;
+    private boolean login;
+    private GameController gc;
+    private String message;
+    private String method;
+    private boolean connected;
     private boolean sentMessage;
-    private Player player;
-
+    private boolean readMessage;
     ObjectOutputStream output;
     ObjectInputStream input;
 
-    public ClientHandler(Socket client, GameController gameController) {
+    ClientHandler(Socket client, GameController gc)
+    {
         this.client = client;
-        GC = gameController;
+        this.gc = gc;
     }
 
-    public String getNickname(){
-        return player.getNickname();
-    }
-
-
-    public synchronized void printBoard() {
-        nextCommand = Commands.PRINT_BOARD;
-        notifyAll();
-    }
-
-    public synchronized void createLobby() {
-        nextCommand = Commands.LOBBY;
-        notifyAll();
-    }
 
     @Override
     public void run()
     {
         try {
-            System.out.println("Connected to " + client.getInetAddress());
+            login = false;
             output = new ObjectOutputStream(client.getOutputStream());
             input = new ObjectInputStream(client.getInputStream());
-            connection=false;
-            lobbyCreated=false;
-            accept=false;
-            boardPrinted=false;
-            sentMessage = false;
             handleClientConnection();
         } catch (IOException e) {
             System.out.println("client " + client.getInetAddress() + " connection dropped");
         }
     }
 
+    public synchronized void takeMessage()
+    {
+        nextCommand = Commands.TAKE_MESSAGE;
+        notifyAll();
+    }
 
-    public synchronized boolean handleClientConnection(){
-        connection=true;
+    public synchronized void sendMessage(String meth, String msg)
+    {
+        nextCommand = Commands.SEND_MESSAGE;
+        method = meth;
+        message = msg;
+        notifyAll();
+    }
+
+
+    private synchronized void handleClientConnection() throws IOException
+    {
+        connected = true;
         while (true) {
             nextCommand = null;
             try {
                 wait();
-            } catch (InterruptedException e) {
-                System.out.println("disconnected");
-            }
-            if (nextCommand == null){
+            } catch (InterruptedException e) { }
+
+            if (nextCommand == null)
                 continue;
-            }
 
             switch (nextCommand) {
-
-                case PRINT_BOARD:
-                    doPrintBoard();
+                case TAKE_MESSAGE:
+                    doTakeMessage();
                     break;
 
-                case LOBBY:
-                    doCreateLobby();
+                case SEND_MESSAGE:
+                    doSendMessage();
                     break;
+
+                case STOP:
+                    return;
             }
         }
 
     }
 
-    public synchronized boolean doAccept(boolean bool){
-        accept=true;
-        try{
-            Object next = input.readObject();
-            Player p = (Player) next;
-            player=p;
-            output.writeObject(p);
-            output.writeObject(bool);
-            GC.getMatch().addPlayer(player);
-            return true;
-        } catch (ClassCastException | ClassNotFoundException e) {
-            System.out.println("non valido");
-            return false;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    public synchronized boolean doSend(String msg){
-        sentMessage = true;
+    public synchronized void doTakeMessage(){
+        readMessage = true;
         try {
-            output.writeObject(msg);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    public synchronized void doPrintBoard(){
-        boardPrinted=true;
-        try{
-            Box board[][] = GC.getMatch().getBoard();
-            output.writeObject(board);
+            message = (String) input.readObject();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public synchronized int doCreateLobby(){
-        lobbyCreated=true;
-        try{
-            Object obj = input.readObject();
-            return (int)obj;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            return 0;
-        } catch (IOException e) {
-            return 0;
         }
     }
 
-    public synchronized boolean didHandleConnection(){
-        return connection;
+    public synchronized boolean getConnected() {
+        return connected;
     }
 
-    public synchronized boolean didAccept(){
-        return accept;
-    }
-
-    public synchronized boolean didSend(){
+    public synchronized boolean getSentMessage() {
         return sentMessage;
     }
 
-    public synchronized boolean didPrintBoard(){
-        return boardPrinted;
+    public synchronized boolean getReadMessage() {
+        return readMessage;
     }
 
-    public synchronized boolean didCreateLobby(){
-        return lobbyCreated;
+    public synchronized void doSendMessage() {
+        sentMessage = true;
+        try {
+            output.writeObject(method);
+            output.writeObject(message);
+        } catch (IOException e) {
+            System.out.println("Not valid");
+        }
     }
 
-    public synchronized void resetDidAccept(){
-        accept=false;
+    public synchronized String getMessage(){
+        return message;
     }
 
-    public synchronized void resetDidSend() { sentMessage=false; }
-
-    public synchronized void resetBoardPrinted(){
-        boardPrinted=false;
+    public synchronized void resetReadMessage(){
+        readMessage = false;
     }
+
+    public synchronized void resetSentMessage(){
+        sentMessage = false;
+    }
+
 }

@@ -1,9 +1,10 @@
 package it.polimi.ingsw.PSP29.view;
 
-import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -11,12 +12,9 @@ import java.util.Scanner;
 public class Client implements Runnable, ServerObserver
 {
     /* auxiliary variable used for implementing the consumer-producer pattern*/
-    private Player player;
-    private Box[][] gameboard;
-    private boolean first;
-    private boolean lobbyCreated;
     private String response = null;
-    private boolean connection;
+    private String method = null;
+    private boolean rsp = false;
 
     public static void main( String[] args )
     {
@@ -34,10 +32,6 @@ public class Client implements Runnable, ServerObserver
          * WARNING: this method executes IN THE CONTEXT OF THE MAIN THREAD
          */
 
-        Scanner scanner = new Scanner(System.in);
-        response = null;
-        connection = false;
-        //System.out.println("IP address of server?");
         String ip = "127.0.0.8";
 
         /* open a connection to the server */
@@ -56,153 +50,45 @@ public class Client implements Runnable, ServerObserver
         serverAdapter.addObserver(this);
         Thread serverAdapterThread = new Thread(serverAdapter);
         serverAdapterThread.start();
-        synchronized (this) {
-            while(connection == false) {
+        while(!serverAdapter.getConnected()) { }
+
+        while (true) {
+
+            synchronized (this) {
+                response = null;
+                method = null;
+                rsp = false;
+                serverAdapter.getMessage();
+                while (response == null) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) { }
+                }
+                Method method1 = null;
                 try {
-                    wait();
-                } catch (InterruptedException e) {
+                    method1 = ServerAdapter.class.getMethod(method, String.class);
+                    method1.invoke(serverAdapter, response);
+                    while(!rsp) wait();
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            System.out.println("---Welcome to Santorini---\n");
-            serverAdapter.readMessage();
-            while(response == null) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            System.out.println(response);
-            response = null;
-            String name = scanner.nextLine();
-            int eta = Integer.parseInt(scanner.nextLine());
-            lobbyCreated=false;
-            player = null;
-            gameboard = null;
-            Player p = new Player(name, eta);
-            serverAdapter.login(p);
-            while (player == null) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {  }
-            }
-            if(first){
-                serverAdapter.lobby();
-                while (!lobbyCreated) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {  }
-                }
-                System.out.println("\nLobby created, wait for other players\n");
-            }
-            response="false";
-            while (!response.equals("true")){
-                response=null;
-                serverAdapter.readMessage();
-                while(response == null) {
-                    try {
-                        System.out.println("Waiting for server to answer");
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (response.equals("true")){
-                    break;
-                }
-                else {
-                    response=null;
-                    serverAdapter.readMessage();
-                    while(response == null) {
-                        try {
-                            wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    System.out.println(response);
-                    player=null;
-                    name = scanner.nextLine();
-                    eta = Integer.parseInt(scanner.nextLine());
-                    p = new Player(name, eta);
-                    serverAdapter.login(p);
-                    while (player == null) {
-                        try {
-                            wait();
-                        } catch (InterruptedException e) {  }
-                    }
-                }
-            }
-
-            System.out.println("\nYou've been accepted\n");
-            serverAdapter.printBoard();
-            while (gameboard == null) {
-                try {
-                    wait();
-                } catch (InterruptedException e) { }
-            }
-            outputBoard();
-        }
-
-        while(true){
-
         }
     }
 
 
-
     @Override
-    public synchronized void didLogin(Player p1, Player p2, boolean f)
+    public synchronized void didReceiveMessage(String newStr1, String newStr2)
     {
-        player = p2;
-        first=f;
-        notifyAll();
-    }
-
-    @Override
-    public synchronized void didRead(String message)
-    {
-        response = message;
+        response = newStr2;
+        method = newStr1;
         notifyAll();
     }
 
     @Override
-    public synchronized void didHandleConnection()
+    public synchronized void didInvoke(boolean rsp)
     {
-        connection = true;
+        this.rsp = rsp;
         notifyAll();
     }
-
-    @Override
-    public synchronized void didReceiveBoard(Box[][] board)
-    {
-        gameboard = board;
-        notifyAll();
-    }
-
-    private synchronized void outputBoard(){
-        System.out.println("Gameboard");
-        System.out.print("  \t");
-        for(int i=0; i<5; i++){
-            System.out.print(i + " \t");
-        }
-        System.out.println();
-        for(int i=0; i<5; i++){
-            System.out.print(i + " \t");
-            for(int j=0; j<5; j++){
-                gameboard[i][j].printEmpty();
-                System.out.print("\t");
-            }
-            System.out.println();
-        }
-    }
-
-
-    public synchronized void didLobby(){
-        lobbyCreated=true;
-        notifyAll();
-    }
-
-
 }

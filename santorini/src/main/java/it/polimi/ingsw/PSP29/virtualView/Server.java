@@ -1,10 +1,13 @@
 package it.polimi.ingsw.PSP29.virtualView;
 
-
 import it.polimi.ingsw.PSP29.controller.GameController;
-import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.model.Player;
+import it.polimi.ingsw.PSP29.view.Client;
+import it.polimi.ingsw.PSP29.view.ServerAdapter;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -13,152 +16,117 @@ import java.util.ArrayList;
 public class Server
 {
     public final static int SOCKET_PORT = 7777;
-    GameController gameController;
+    private static GameController gc;
+    private int numPlayers;
 
-
-    public void serverExe(GameController gc) {
-        GameController gameController = gc;
-        ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+    public void launch()
+    {
+        gc = new GameController();
         ServerSocket socket;
         try {
             socket = new ServerSocket(SOCKET_PORT);
         } catch (IOException e) {
+            System.out.println("cannot open server socket");
+            System.exit(1);
             return;
         }
-        int countPlayers = 0;
-        int maxPlayers = 0;
-        System.out.println("server ready");
-        while(true){
-            if(countPlayers==0){
-                try {
+
+        while (true) {
+            ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+            int countPlayers = 0;
+            System.out.println("server ready");
+            while(true){
+                if(countPlayers==0){
                     ClientHandler clientHandler=null;
-                    while (maxPlayers==0){
-                        Socket client = socket.accept();
-                        clientHandler = new ClientHandler(client, gameController);
-                        Thread thread = new Thread(clientHandler , "server_" + client.getInetAddress());
-                        thread.start();
-                        while(!clientHandler.didHandleConnection()){ }
-                        clientHandler.doSend("\nInsert nickname and age: ");
-                        while(!clientHandler.didSend()){ }
-                        clientHandler.doAccept(true);
-                        while (!clientHandler.didAccept()){  }
-                        maxPlayers = clientHandler.doCreateLobby();
-                        while(!clientHandler.didCreateLobby()){  }
-                    }
-                    clientHandler.resetDidSend();
-                    clientHandler.doSend("true");
-                    while(!clientHandler.didSend()){ }
-                    clientHandlers.add(clientHandler);
-                    countPlayers++;
-                } catch (IOException e) {
-                    System.out.println("non valido");
-                }
-            }
-            boolean add;
-            boolean message;
-            boolean connection;
-            while(countPlayers<maxPlayers){
-                add=false;
-                message=false;
-                connection=false;
-                while(!add || !message || !connection){
-                    ClientHandler clientHandler=null;
-                    try{
-                        Socket client = socket.accept();
-                        clientHandler = new ClientHandler(client, gameController);
-                        Thread thread = new Thread(clientHandler , "server_" + client.getInetAddress());
-                        thread.start();
-                    } catch (IOException e){
-                        System.out.println("disconnected");
-                        continue;
-                    }
-                    connection=clientHandler.handleClientConnection();
-                    while(!clientHandler.didHandleConnection()){ }
-                    if(connection){
-                        message=clientHandler.doSend("\nInsert nickname and age: ");
-                        while(!clientHandler.didSend()){ }
-                        if(message){
-                            add=clientHandler.doAccept(false);
-                            clientHandlers.add(clientHandler);
+                    clientHandler = connection(socket, clientHandler);
+
+                    while (numPlayers == 0){
+
+                        loginPlayer(clientHandler);
+                        createLobby(clientHandler);
+                        while(numPlayers != 2 && numPlayers != 3){
+                            write(clientHandler, "serviceMessage", "Players number not valid");
+                            createLobby(clientHandler);
                         }
                     }
+                    clientHandlers.add(clientHandler);
+                    countPlayers++;
                 }
-                countPlayers++;
-            }
-            if(countPlayers==maxPlayers){
+                while(countPlayers < numPlayers){
+                    ClientHandler clientHandler=null;
+                    clientHandler = connection(socket, clientHandler);
+                    loginPlayer(clientHandler);
+                    clientHandlers.add(clientHandler);
+                    countPlayers++;
+                }
+                
                 for(ClientHandler clientHandler : clientHandlers){
-                    while(!clientHandler.didAccept()){  }
+                    write(clientHandler, "serviceMessage", "You're in");
                 }
-            }
-            System.out.println("All players are in");
-            for(ClientHandler cH : clientHandlers){
-                cH.resetDidAccept();
             }
 
-            System.out.println(gameController.getMatch().getPlayers().toString());
-            String duplicate = gameController.getMatch().findDuplicate();
-            System.out.println(duplicate);
-            boolean find=false;
-            int n=0;
-            while (duplicate!=null){
-                for(int i=1; i<clientHandlers.size(); i++){
-                    find=false;
-                    if(duplicate.equals(clientHandlers.get(i).getNickname())){
-                        find=true;
-                        clientHandlers.get(i).resetDidSend();
-                        clientHandlers.get(i).doSend("false");
-                        while(!clientHandlers.get(i).didSend()){ }
-                        clientHandlers.get(i).resetDidSend();
-                        clientHandlers.get(i).doSend("Your nickname is already used" + "\n" + "Insert new nickname and age");
-                        while(!clientHandlers.get(i).didSend()){ }
-                        clientHandlers.get(i).resetDidAccept();
-                        clientHandlers.get(i).doAccept(false);
-                        while(!clientHandlers.get(i).didAccept()){  }
-                    }
-                    if (!find){
-                        clientHandlers.get(i).resetDidSend();
-                        clientHandlers.get(i).doSend("true");
-                        while(!clientHandlers.get(i).didSend()){ }
-                        n=i;
-                    }
-                }
-                duplicate = gameController.getMatch().findDuplicate();
-            }
-            if(n==0 && clientHandlers.size()==2){
-                clientHandlers.get(1).resetDidSend();
-                clientHandlers.get(1).doSend("true");
-                while(!clientHandlers.get(1).didSend()){ }
-            }
-            else if(clientHandlers.size()==3){
-                if(n==0){
-                    clientHandlers.get(1).resetDidSend();
-                    clientHandlers.get(1).doSend("true");
-                    while(!clientHandlers.get(1).didSend()){ }
-                    clientHandlers.get(2).resetDidSend();
-                    clientHandlers.get(2).doSend("true");
-                    while(!clientHandlers.get(2).didSend()){ }
-                }
-                else{
-                    clientHandlers.get(clientHandlers.size()-n).resetDidSend();
-                    clientHandlers.get(clientHandlers.size()-n).doSend("true");
-                    while(!clientHandlers.get(clientHandlers.size()-n).didSend()){ }
-                }
-
-            }
-            for(ClientHandler cH : clientHandlers){
-                cH.doPrintBoard();
-            }
-            if(countPlayers==maxPlayers){
-                for(ClientHandler clientHandler : clientHandlers){
-                    while(!clientHandler.didPrintBoard()){  }
-                }
-            }
-            for(ClientHandler cH : clientHandlers){
-                cH.resetBoardPrinted();
-            }
-            System.out.println("Gameboard printed" + "\n\n\n");
-            break;
         }
     }
 
+    public void process(ClientHandler clientHandler, String meth){
+        try {
+            Method method1 = ClientHandler.class.getMethod(meth);
+            while(!(boolean)method1.invoke(clientHandler));
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void processReset(ClientHandler clientHandler, String meth){
+        try {
+            Method method1 = ClientHandler.class.getMethod(meth);
+            method1.invoke(clientHandler);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loginPlayer(ClientHandler clientHandler){
+        write(clientHandler,"interactionServer", "Insert username: ");
+        String username = read(clientHandler);
+
+        write(clientHandler,"interactionServer", "Insert age: ");
+        int age = Integer.parseInt(read(clientHandler));
+
+        Player player1 = new Player(username, age);
+        gc.getMatch().addPlayer(player1);
+    }
+
+    public void write(ClientHandler clientHandler, String s, String msg){
+        clientHandler.sendMessage(s, msg);
+        process(clientHandler, "getSentMessage");
+        processReset(clientHandler, "resetSentMessage");
+    }
+
+    public String read(ClientHandler clientHandler){
+        clientHandler.takeMessage();
+        process(clientHandler, "getReadMessage");
+        processReset(clientHandler, "resetReadMessage");
+        String response = clientHandler.getMessage();
+        return response;
+    }
+
+    public ClientHandler connection(ServerSocket socket,ClientHandler clientHandler){
+        Socket client = null;
+        try {
+            client = socket.accept();
+            clientHandler = new ClientHandler(client, gc);
+            Thread thread = new Thread(clientHandler , "server_" + client.getInetAddress());
+            thread.start();
+            process(clientHandler, "getConnected");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return clientHandler;
+    }
+
+    public void createLobby(ClientHandler clientHandler) {
+        write(clientHandler, "interactionServer", "How many players 2 or 3? ");
+        numPlayers = Integer.parseInt(read(clientHandler));
+    }
 }
