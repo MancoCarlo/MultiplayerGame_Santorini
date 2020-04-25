@@ -12,8 +12,9 @@ import java.util.Scanner;
 public class Client implements Runnable, ServerObserver
 {
     /* auxiliary variable used for implementing the consumer-producer pattern*/
-    private String response = null;
+    private Object response = null;
     private String method = null;
+    private String message = null;
     private boolean rsp = false;
 
     public static void main( String[] args )
@@ -42,7 +43,7 @@ public class Client implements Runnable, ServerObserver
             System.out.println("server unreachable");
             return;
         }
-        System.out.println("Connected");
+        System.out.println("Connected and waiting for a valid lobby");
 
         /* Create the adapter that will allow communication with the server
          * in background, and start running its thread */
@@ -64,11 +65,23 @@ public class Client implements Runnable, ServerObserver
                         wait();
                     } catch (InterruptedException e) { }
                 }
-                Method method1 = null;
+                Method method1;
                 try {
-                    method1 = ServerAdapter.class.getMethod(method, String.class);
-                    method1.invoke(serverAdapter, response);
-                    while(!rsp) wait();
+                    switch (method){
+                        case "serviceMessage":
+                        case "interactionServer":
+                            message = (String)response;
+                            method1 = ServerAdapter.class.getMethod(method, String.class);
+                            method1.invoke(serverAdapter, message);
+                            while(!rsp) wait();
+                            break;
+                        case "printObject":
+                            method1 = ServerAdapter.class.getMethod(method, Object.class);
+                            method1.invoke(serverAdapter, response);
+                            while(!rsp) wait();
+                            break;
+                    }
+
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -78,9 +91,9 @@ public class Client implements Runnable, ServerObserver
 
 
     @Override
-    public synchronized void didReceiveMessage(String newStr1, String newStr2)
+    public synchronized void didReceiveMessage(String newStr1, Object obj)
     {
-        response = newStr2;
+        response = obj;
         method = newStr1;
         notifyAll();
     }

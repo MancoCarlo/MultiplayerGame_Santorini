@@ -1,14 +1,13 @@
 package it.polimi.ingsw.PSP29.virtualView;
 
 import it.polimi.ingsw.PSP29.controller.GameController;
-import it.polimi.ingsw.PSP29.model.Player;
-import it.polimi.ingsw.PSP29.view.ServerAdapter;
+import it.polimi.ingsw.PSP29.model.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
 
 
 public class ClientHandler implements Runnable
@@ -16,6 +15,8 @@ public class ClientHandler implements Runnable
     private enum Commands {
         SEND_MESSAGE,
         TAKE_MESSAGE,
+        SEND_BOARD,
+        SEND_LIST,
         STOP
     }
     private Commands nextCommand;
@@ -24,9 +25,12 @@ public class ClientHandler implements Runnable
     private GameController gc;
     private String message;
     private String method;
+    private Box[][] board;
+    private ArrayList<?> list;
     private boolean connected;
     private boolean sentMessage;
     private boolean readMessage;
+    private boolean sentObject;
     ObjectOutputStream output;
     ObjectInputStream input;
 
@@ -56,16 +60,32 @@ public class ClientHandler implements Runnable
         notifyAll();
     }
 
-    public synchronized void sendMessage(String meth, String msg)
+    public synchronized void sendMessage(String met, String msg)
     {
         nextCommand = Commands.SEND_MESSAGE;
-        method = meth;
+        method = met;
         message = msg;
         notifyAll();
     }
 
+    public synchronized void sendBoard(String met, Box[][] b)
+    {
+        nextCommand = Commands.SEND_BOARD;
+        method = met;
+        board = b;
+        notifyAll();
+    }
 
-    private synchronized void handleClientConnection() throws IOException
+    public synchronized void sendList(String met, ArrayList<?> l)
+    {
+        nextCommand = Commands.SEND_LIST;
+        method = met;
+        list = l;
+        notifyAll();
+    }
+
+
+    private synchronized void handleClientConnection()
     {
         connected = true;
         while (true) {
@@ -86,6 +106,14 @@ public class ClientHandler implements Runnable
                     doSendMessage();
                     break;
 
+                case SEND_BOARD:
+                    doSendBoard();
+                    break;
+
+                case SEND_LIST:
+                    doSendList();
+                    break;
+
                 case STOP:
                     return;
             }
@@ -97,9 +125,7 @@ public class ClientHandler implements Runnable
         readMessage = true;
         try {
             message = (String) input.readObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -116,11 +142,35 @@ public class ClientHandler implements Runnable
         return readMessage;
     }
 
+    public synchronized boolean getSentObject(){
+        return sentObject;
+    }
+
     public synchronized void doSendMessage() {
         sentMessage = true;
         try {
             output.writeObject(method);
             output.writeObject(message);
+        } catch (IOException e) {
+            System.out.println("Not valid");
+        }
+    }
+
+    public synchronized void doSendBoard() {
+        sentObject = true;
+        try {
+            output.writeObject(method);
+            output.writeObject(board);
+        } catch (IOException e) {
+            System.out.println("Not valid");
+        }
+    }
+
+    public synchronized void doSendList() {
+        sentObject = true;
+        try {
+            output.writeObject(method);
+            output.writeObject(list);
         } catch (IOException e) {
             System.out.println("Not valid");
         }
@@ -138,4 +188,7 @@ public class ClientHandler implements Runnable
         sentMessage = false;
     }
 
+    public synchronized void resetSentObject(){
+        sentObject = false;
+    }
 }

@@ -1,9 +1,8 @@
 package it.polimi.ingsw.PSP29.virtualView;
 
 import it.polimi.ingsw.PSP29.controller.GameController;
+import it.polimi.ingsw.PSP29.model.Box;
 import it.polimi.ingsw.PSP29.model.Player;
-import it.polimi.ingsw.PSP29.view.Client;
-import it.polimi.ingsw.PSP29.view.ServerAdapter;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +34,7 @@ public class Server
             ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
             int countPlayers = 0;
             System.out.println("server ready");
+            System.out.println("Creating Lobby");
             while(true){
                 if(countPlayers==0){
                     ClientHandler clientHandler=null;
@@ -45,24 +45,41 @@ public class Server
                         loginPlayer(clientHandler);
                         createLobby(clientHandler);
                         while(numPlayers != 2 && numPlayers != 3){
-                            write(clientHandler, "serviceMessage", "Players number not valid");
+                            write(clientHandler, "serviceMessage", "Players number not valid\n");
                             createLobby(clientHandler);
                         }
+                        write(clientHandler, "serviceMessage", "\nWait for other players\n\n");
                     }
                     clientHandlers.add(clientHandler);
                     countPlayers++;
                 }
+                System.out.println("Adding players");
                 while(countPlayers < numPlayers){
                     ClientHandler clientHandler=null;
                     clientHandler = connection(socket, clientHandler);
                     loginPlayer(clientHandler);
+                    write(clientHandler, "serviceMessage", "\nWait for other players\n\n");
                     clientHandlers.add(clientHandler);
                     countPlayers++;
                 }
                 
                 for(ClientHandler clientHandler : clientHandlers){
-                    write(clientHandler, "serviceMessage", "You're in");
+                    write(clientHandler, "serviceMessage", "You're in\n\n");
                 }
+
+                System.out.println("printing board");
+                gc.getMatch().inizializeBoard();
+                while (gc.getMatch().getBoard() == null){ }
+                for(ClientHandler clientHandler : clientHandlers){
+                    writeObject(clientHandler, gc.getMatch().getBoard());
+                }
+
+                System.out.println("printing players");
+                for(ClientHandler clientHandler : clientHandlers){
+                    writeObject(clientHandler,gc.getMatch().getPlayers());
+                }
+
+                while(true){ }
             }
 
         }
@@ -87,8 +104,15 @@ public class Server
     }
 
     public void loginPlayer(ClientHandler clientHandler){
+        write(clientHandler, "serviceMessage", "Welcome to Santorini\n\n");
+
         write(clientHandler,"interactionServer", "Insert username: ");
         String username = read(clientHandler);
+
+        while(gc.getMatch().alreadyIn(username)){
+            write(clientHandler,"interactionServer", "Username already in, try again: ");
+            username = read(clientHandler);
+        }
 
         write(clientHandler,"interactionServer", "Insert age: ");
         int age = Integer.parseInt(read(clientHandler));
@@ -101,6 +125,23 @@ public class Server
         clientHandler.sendMessage(s, msg);
         process(clientHandler, "getSentMessage");
         processReset(clientHandler, "resetSentMessage");
+    }
+
+    public void writeObject(ClientHandler clientHandler, Object object){
+        String s="printObject";
+        if(object instanceof Box[][]){
+            Box[][] board = (Box[][])object;
+            clientHandler.sendBoard(s, board);
+            process(clientHandler, "getSentObject");
+            processReset(clientHandler, "resetSentObject");
+        }
+        else if(object instanceof ArrayList<?>){
+            ArrayList<?> list = (ArrayList<?>)object;
+            clientHandler.sendList(s, list);
+            process(clientHandler, "getSentObject");
+            processReset(clientHandler, "resetSentObject");
+        }
+
     }
 
     public String read(ClientHandler clientHandler){

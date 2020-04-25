@@ -221,4 +221,18 @@ public class Match implements Serializable {
             System.out.println("- " + p.toString());
         }
     }
+
+    public boolean alreadyIn(String username){
+        if(players.size()==0){
+            return false;
+        }
+        else{
+            for(Player player : players){
+                if(player.getNickname().equals(username)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
