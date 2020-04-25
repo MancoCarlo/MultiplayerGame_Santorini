@@ -11,8 +11,8 @@ public class MatchTest {
     public void setUp() throws Exception {
         m = new Match();
         m.inizializeBoard();
-        m.getPlayers().add(new Player("Luca", 21));
-        m.getPlayers().add(new Player("Letizia", 21));
+        m.getPlayers().add(new Player("Luca", 23));
+        m.getPlayers().add(new Player("Letizia", 22));
     }
 
     @Test
@@ -112,5 +112,50 @@ public class MatchTest {
                 assertEquals(b[i][j].getlevelledUp(), false);
             }
         }
+    }
+
+    @Test
+    public void removePlayer_CorrectRemove_Return(){
+        Player p = m.getPlayer("Luca");
+        m.removePlayer(p);
+        assertTrue(m.getPlayers().size()==1);
+    }
+
+    @Test
+    public void sortPlayers_playersSortFor_Return(){
+        m.sortPlayers();
+        Player p1 = m.getPlayer("Luca");
+        Player p2 = m.getPlayer("Letizia");
+        assertTrue(m.getPlayers().get(0)==p2);
+        assertTrue(m.getPlayers().get(1)==p1);
+    }
+
+    @Test
+    public void loadGods_vectorSizeCorrect_Return(){
+        m.loadGods();
+        assertTrue(m.getGods().size()==9);
+    }
+
+    @Test
+    public void alreadyIn_PlayerInArrayList_ReturnTrue(){
+        assertTrue(m.alreadyIn("Luca"));
+    }
+
+    @Test
+    public void alreadyIn_PlayerNotInArrayList_ReturnFalse(){
+        assertFalse(m.alreadyIn("werner"));
+    }
+
+    @Test
+    public void printMethods_OutputPrint_ReturnString(){
+        assertEquals(m.printBoard(),"Gameboard\n  \t" +
+                "0 \t1 \t2 \t3 \t4 \t\n" +
+                "0 \t00\t00\t00\t00\t00\t\n" +
+                "1 \t00\t00\t00\t00\t00\t\n" +
+                "2 \t00\t00\t00\t00\t00\t\n" +
+                "3 \t00\t00\t00\t00\t00\t\n" +
+                "4 \t00\t00\t00\t00\t00\t\n");
+        assertEquals(m.printGodlist(),"Gods: \n");
+        assertEquals(m.printPlayers(),"Players: \n"+ "- Luca, 23 years old\n" + "- Letizia, 22 years old\n");
     }
 }
