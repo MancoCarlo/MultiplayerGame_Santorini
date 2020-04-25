@@ -66,30 +66,13 @@ public class Player implements Serializable {
      * let the player draw a card from the list of gods
      * @param gods the list of gods
      */
-    public void selectGod(ArrayList<God> gods){
-        Scanner scanner = new Scanner(System.in);
-        int i;
-        try {
-            i=Integer.parseInt(scanner.nextLine());
-            if(i<0 || i>gods.size()-1){
-                throw new NotValidInputException(0, gods.size()-1);
-            }
-            else{
-                drawCard(gods, i);
-                gods.remove(i);
-            }
-        }
-        catch (NotValidInputException e){
-            selectGod(gods);
-        }
-    }
 
     /**
      * draw a god from the list
      * @param g the list of gods
      * @param i the position of the card in the list
      */
-    public void drawCard(ArrayList<God> g, int i){
+    public void setCard(ArrayList<God> g, int i){
         card=g.get(i);
     }
 

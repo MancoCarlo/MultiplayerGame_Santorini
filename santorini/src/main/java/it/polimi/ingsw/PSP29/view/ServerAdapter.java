@@ -17,14 +17,10 @@ public class ServerAdapter implements Runnable
         GET_MESSAGE,
         SERVICE_MESSAGE,
         INTERACTION_SERVER,
-        PRINT_BOARD,
-        PRINT_LIST,
-        STOP;
-
+        STOP
     }
     private Commands nextCommand;
     private String cmd;
-    private Object object;
     private boolean connected = false;
 
     private Socket server;
@@ -66,18 +62,6 @@ public class ServerAdapter implements Runnable
     {
         nextCommand = Commands.SERVICE_MESSAGE;
         this.cmd = cmd;
-        notifyAll();
-    }
-
-    public synchronized void printObject(Object obj)
-    {
-        object=obj;
-        if(object instanceof Box[][]){
-            nextCommand = Commands.PRINT_BOARD;
-        }
-        else if(object instanceof ArrayList<?>){
-            nextCommand = Commands.PRINT_LIST;
-        }
         notifyAll();
     }
 
@@ -135,14 +119,6 @@ public class ServerAdapter implements Runnable
                     doServiceMessage();
                     break;
 
-                case PRINT_BOARD:
-                    doPrintBoard();
-                    break;
-
-                case PRINT_LIST:
-                    doPrintList();
-                    break;
-
                 case STOP:
                     return;
             }
@@ -188,7 +164,7 @@ public class ServerAdapter implements Runnable
     {
         /* send the string to the server and get the new string back */
         String newStr1 = (String)inputStm.readObject();
-        Object obj = inputStm.readObject();
+        String newStr2= (String)inputStm.readObject();
         /* copy the list of observers in case some observers changes it from inside
          * the notification method */
         List<ServerObserver> observersCpy;
@@ -198,65 +174,7 @@ public class ServerAdapter implements Runnable
 
         /* notify the observers that we got the string */
         for (ServerObserver observer: observersCpy) {
-            observer.didReceiveMessage(newStr1, obj);
-        }
-    }
-
-    public synchronized void doPrintBoard(){
-        Box[][] gameboard = (Box[][])object;
-
-        System.out.println("Gameboard");
-        System.out.print("  \t");
-        for(int i=0; i<5; i++){
-            System.out.print(i + " \t");
-        }
-        System.out.println();
-        for(int i=0; i<5; i++){
-            System.out.print(i + " \t");
-            for(int j=0; j<5; j++){
-                gameboard[i][j].printEmpty();
-                System.out.print("\t");
-            }
-            System.out.println();
-        }
-
-        List<ServerObserver> observersCpy;
-        synchronized (observers) {
-            observersCpy = new ArrayList<>(observers);
-        }
-
-        /* notify the observers that we got the string */
-        for (ServerObserver observer: observersCpy) {
-            observer.didInvoke(true);
-        }
-    }
-
-    public synchronized void doPrintList(){
-        if(((ArrayList<?>)object).get(0) instanceof Player) {
-            ArrayList<Player> players = (ArrayList<Player>)object;
-            System.out.println("\nPlayers in this game");
-            for(int i=0; i<players.size(); i++){
-                System.out.println((i+1) + ") " + players.get(i).getNickname() + ", " + players.get(i).getAge() + " years old");
-            }
-        }
-        else if(((ArrayList<?>)object).get(0) instanceof Worker) {
-            //stampa lista worker
-        }
-        else if(((ArrayList<?>)object).get(0) instanceof God) {
-            //stampa lista divinità
-        }
-        else if(((ArrayList<?>)object).get(0) instanceof Coordinate) {
-            //stampa lista coordinate
-        }
-
-        List<ServerObserver> observersCpy;
-        synchronized (observers) {
-            observersCpy = new ArrayList<>(observers);
-        }
-
-        /* notify the observers that we got the string */
-        for (ServerObserver observer: observersCpy) {
-            observer.didInvoke(true);
+            observer.didReceiveMessage(newStr1, newStr2);
         }
     }
 

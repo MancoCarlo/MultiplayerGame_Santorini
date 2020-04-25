@@ -2,6 +2,8 @@ package it.polimi.ingsw.PSP29.virtualView;
 
 import it.polimi.ingsw.PSP29.controller.GameController;
 import it.polimi.ingsw.PSP29.model.Box;
+import it.polimi.ingsw.PSP29.model.Coordinate;
+import it.polimi.ingsw.PSP29.model.God;
 import it.polimi.ingsw.PSP29.model.Player;
 
 import java.io.IOException;
@@ -17,10 +19,13 @@ public class Server
     public final static int SOCKET_PORT = 7777;
     private static GameController gc;
     private int numPlayers;
+    private int myturn = 0;
+    ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
     public void launch()
     {
         gc = new GameController();
+
         ServerSocket socket;
         try {
             socket = new ServerSocket(SOCKET_PORT);
@@ -31,7 +36,6 @@ public class Server
         }
 
         while (true) {
-            ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
             int countPlayers = 0;
             System.out.println("server ready");
             System.out.println("Creating Lobby");
@@ -71,17 +75,34 @@ public class Server
                 gc.getMatch().inizializeBoard();
                 while (gc.getMatch().getBoard() == null){ }
                 for(ClientHandler clientHandler : clientHandlers){
-                    writeObject(clientHandler, gc.getMatch().getBoard());
+                    write(clientHandler, "serviceMessage",  gc.getMatch().printBoard());
                 }
 
                 System.out.println("printing players");
                 for(ClientHandler clientHandler : clientHandlers){
-                    writeObject(clientHandler,gc.getMatch().getPlayers());
+                    write(clientHandler, "serviceMessage", gc.getMatch().printPlayers());
                 }
+
+                gc.getMatch().sortPlayers();
+                sortClientHandlers();
+                gc.getMatch().loadGods();
+
+                System.out.println("Assigning gods");
+                godsAssignement();
+
+                System.out.println("Putting workers");
+                putWorkers();
 
                 while(true){ }
             }
 
+        }
+    }
+
+    public void next(){
+        myturn++;
+        if(myturn==numPlayers){
+            myturn=0;
         }
     }
 
@@ -117,6 +138,9 @@ public class Server
         write(clientHandler,"interactionServer", "Insert age: ");
         int age = Integer.parseInt(read(clientHandler));
 
+        clientHandler.setName(username);
+        clientHandler.setAge(age);
+
         Player player1 = new Player(username, age);
         gc.getMatch().addPlayer(player1);
     }
@@ -125,23 +149,6 @@ public class Server
         clientHandler.sendMessage(s, msg);
         process(clientHandler, "getSentMessage");
         processReset(clientHandler, "resetSentMessage");
-    }
-
-    public void writeObject(ClientHandler clientHandler, Object object){
-        String s="printObject";
-        if(object instanceof Box[][]){
-            Box[][] board = (Box[][])object;
-            clientHandler.sendBoard(s, board);
-            process(clientHandler, "getSentObject");
-            processReset(clientHandler, "resetSentObject");
-        }
-        else if(object instanceof ArrayList<?>){
-            ArrayList<?> list = (ArrayList<?>)object;
-            clientHandler.sendList(s, list);
-            process(clientHandler, "getSentObject");
-            processReset(clientHandler, "resetSentObject");
-        }
-
     }
 
     public String read(ClientHandler clientHandler){
@@ -169,5 +176,88 @@ public class Server
     public void createLobby(ClientHandler clientHandler) {
         write(clientHandler, "interactionServer", "How many players 2 or 3? ");
         numPlayers = Integer.parseInt(read(clientHandler));
+    }
+
+    public void sortClientHandlers(){
+        boolean change=true;
+        ClientHandler ch;
+        while(change){
+            change=false;
+            for(int i=0; i<clientHandlers.size()-1; i++){
+                if(clientHandlers.get(i).getAge()>clientHandlers.get(i+1).getAge()){
+                    ch=clientHandlers.get(i);
+                    clientHandlers.set(i, clientHandlers.get(i+1));
+                    clientHandlers.set(i+1, ch);
+                    change=true;
+                }
+            }
+        }
+    }
+
+    public void godsAssignement(){
+        write(clientHandlers.get(myturn), "serviceMessage", "Choose " + numPlayers + " gods from this list");
+        write(clientHandlers.get(myturn), "serviceMessage", gc.getMatch().printGodlist());
+        write(clientHandlers.get(myturn), "interactionServer", "Insert n°1 index: ");
+        gc.getGodIndex().add(Integer.parseInt(read(clientHandlers.get(myturn))) - 1);
+        for(int i=1; i<numPlayers; i++){
+            write(clientHandlers.get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
+            gc.getGodIndex().add(Integer.parseInt(read(clientHandlers.get(myturn))) - 1);
+        }
+        gc.godSelection();
+        int i=0;
+        while (i<clientHandlers.size()){
+            next();
+            write(clientHandlers.get(myturn), "serviceMessage", gc.getMatch().printGodlist());
+            write(clientHandlers.get(myturn), "interactionServer", "Choose one god from this list: ");
+            int id = Integer.parseInt(read(clientHandlers.get(myturn))) - 1;
+            gc.getMatch().getPlayers().get(myturn).setCard(gc.getMatch().getGods(), id);
+            gc.getMatch().getGods().remove(id);
+            i++;
+        }
+    }
+
+    public void putWorkers(){
+        int i=0;
+        while (i<numPlayers){
+            next();
+            for(int j=0; j<clientHandlers.size(); j++){
+                if(j!=myturn){
+                    write(clientHandlers.get(j), "serviceMessage", "Wait your turn\n");
+                }
+            }
+            write(clientHandlers.get(myturn), "serviceMessage",  gc.getMatch().printBoard());
+            write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°1\n");
+            write(clientHandlers.get(myturn), "interactionServer", "X: ");
+            int x=Integer.parseInt(read(clientHandlers.get(myturn)));
+            write(clientHandlers.get(myturn), "interactionServer", "Y: ");
+            int y=Integer.parseInt(read(clientHandlers.get(myturn)));
+            Coordinate c = new Coordinate(x, y);
+            while (!gc.controlMovement(gc.getMatch().getPlayers().get(myturn), 0, c)){
+                write(clientHandlers.get(myturn), "serviceMessage", "Not valid box\n");
+                write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°1\n");
+                write(clientHandlers.get(myturn), "interactionServer", "X: ");
+                x=Integer.parseInt(read(clientHandlers.get(myturn)));
+                write(clientHandlers.get(myturn), "interactionServer", "Y: ");
+                y=Integer.parseInt(read(clientHandlers.get(myturn)));
+                c = new Coordinate(x, y);
+            }
+
+            write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°2\n");
+            write(clientHandlers.get(myturn), "interactionServer", "X: ");
+            x=Integer.parseInt(read(clientHandlers.get(myturn)));
+            write(clientHandlers.get(myturn), "interactionServer", "Y: ");
+            y=Integer.parseInt(read(clientHandlers.get(myturn)));
+            c = new Coordinate(x, y);
+            while (!gc.controlMovement(gc.getMatch().getPlayers().get(myturn), 1, c)){
+                write(clientHandlers.get(myturn), "serviceMessage", "Not valid box\n");
+                write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°2\n");
+                write(clientHandlers.get(myturn), "interactionServer", "X: ");
+                x=Integer.parseInt(read(clientHandlers.get(myturn)));
+                write(clientHandlers.get(myturn), "interactionServer", "Y: ");
+                y=Integer.parseInt(read(clientHandlers.get(myturn)));
+                c = new Coordinate(x, y);
+            }
+            i++;
+        }
     }
 }

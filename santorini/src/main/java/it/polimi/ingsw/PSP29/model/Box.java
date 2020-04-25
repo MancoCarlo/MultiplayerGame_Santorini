@@ -83,18 +83,11 @@ public class Box implements Serializable {
     /**
      * print on monitor the state of box: 0 if empty else 1
      */
-    public void printEmpty() {
-        if(isEmpty()) System.out.print("0" + level);
+    public String printEmpty() {
+        if(isEmpty()) return "0" + level;
         else{
-            System.out.print(workerBox.getIDplayer().charAt(0));
-            System.out.print(level);
+            return workerBox.getIDplayer().charAt(0) + String.valueOf(level);
         }
     }
 
-    /**
-     * print level of box on monitor
-     */
-    public void printLevel() {
-        System.out.println(level);
-    }
 }

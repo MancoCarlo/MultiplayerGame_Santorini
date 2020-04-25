@@ -21,6 +21,8 @@ public class ClientHandler implements Runnable
     }
     private Commands nextCommand;
     private Socket client;
+    private String name;
+    private int age;
     private boolean login;
     private GameController gc;
     private String message;
@@ -68,22 +70,6 @@ public class ClientHandler implements Runnable
         notifyAll();
     }
 
-    public synchronized void sendBoard(String met, Box[][] b)
-    {
-        nextCommand = Commands.SEND_BOARD;
-        method = met;
-        board = b;
-        notifyAll();
-    }
-
-    public synchronized void sendList(String met, ArrayList<?> l)
-    {
-        nextCommand = Commands.SEND_LIST;
-        method = met;
-        list = l;
-        notifyAll();
-    }
-
 
     private synchronized void handleClientConnection()
     {
@@ -104,14 +90,6 @@ public class ClientHandler implements Runnable
 
                 case SEND_MESSAGE:
                     doSendMessage();
-                    break;
-
-                case SEND_BOARD:
-                    doSendBoard();
-                    break;
-
-                case SEND_LIST:
-                    doSendList();
                     break;
 
                 case STOP:
@@ -142,35 +120,11 @@ public class ClientHandler implements Runnable
         return readMessage;
     }
 
-    public synchronized boolean getSentObject(){
-        return sentObject;
-    }
-
     public synchronized void doSendMessage() {
         sentMessage = true;
         try {
             output.writeObject(method);
             output.writeObject(message);
-        } catch (IOException e) {
-            System.out.println("Not valid");
-        }
-    }
-
-    public synchronized void doSendBoard() {
-        sentObject = true;
-        try {
-            output.writeObject(method);
-            output.writeObject(board);
-        } catch (IOException e) {
-            System.out.println("Not valid");
-        }
-    }
-
-    public synchronized void doSendList() {
-        sentObject = true;
-        try {
-            output.writeObject(method);
-            output.writeObject(list);
         } catch (IOException e) {
             System.out.println("Not valid");
         }
@@ -188,7 +142,20 @@ public class ClientHandler implements Runnable
         sentMessage = false;
     }
 
-    public synchronized void resetSentObject(){
-        sentObject = false;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int a) {
+        age=a;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public void setName(String n) {
+        name=n;
     }
 }

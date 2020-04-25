@@ -54,39 +54,6 @@ public class Match implements Serializable {
         }
     }
 
-    public String findDuplicate(){
-        String duplicate=null;
-        int size=players.size();
-        if(size==2){
-            if(players.get(0).getNickname().equals(players.get(1).getNickname())){
-                duplicate = players.get(0).getNickname();
-                players.remove(1);
-            }
-        }
-        else if(size==3){
-            if(players.get(0).getNickname().equals(players.get(1).getNickname())){
-                if(players.get(1).getNickname().equals(players.get(2).getNickname())){
-                    duplicate = players.get(0).getNickname();
-                    players.remove(1);
-                    players.remove(1);
-                }
-                else {
-                    duplicate = players.get(0).getNickname();
-                    players.remove(1);
-                }
-            }
-            else if(players.get(0).getNickname().equals(players.get(2).getNickname())){
-                duplicate = players.get(0).getNickname();
-                players.remove(2);
-            }
-            else if(players.get(1).getNickname().equals(players.get(2).getNickname())){
-                duplicate = players.get(1).getNickname();
-                players.remove(2);
-            }
-        }
-        return duplicate;
-    }
-
     public int getColumns() {
         return columns;
     }
@@ -196,30 +163,37 @@ public class Match implements Serializable {
 
     /**
      * print the board on monitor
-     * @param b the board
      */
-    public void printBoard(Box[][] b){
-        for(int i=0; i<rows;i++){
-            for(int j=0; j<columns;j++) {
-                b[i][j].printEmpty();
-                System.out.print("\t");
+    public String printBoard(){
+        String gameboard = "Gameboard\n  \t";
+        for(int i=0; i<5; i++){
+            gameboard = gameboard + i + " \t";
+        }
+        gameboard = gameboard + "\n";
+        for(int i=0; i<5; i++){
+            gameboard = gameboard + i + " \t";
+            for(int j=0; j<5; j++){
+                gameboard = gameboard + board[i][j].printEmpty() + "\t";
             }
-            System.out.println("");
+            gameboard = gameboard + "\n";
         }
+        return gameboard;
     }
 
-    public void printGodlist(){
-        System.out.println("lista:");
-        for (God g : gods){
-            System.out.println("- " + g.toString());
+    public String printGodlist(){
+        String g = "Gods: \n";
+        for (int i=0; i<gods.size(); i++){
+            g = g + (i+1) + ") " + gods.get(i).getName() + ", " + gods.get(i).getDescription() + "\n";
         }
+        return g;
     }
 
-    public void printPlayers(){
-        System.out.println("lista giocatori:");
+    public String printPlayers(){
+        String pl= "Players: \n";
         for (Player p : players){
-            System.out.println("- " + p.toString());
+            pl = pl + "- " + p.getNickname() + ", " + p.getAge() + " years old\n";
         }
+        return pl;
     }
 
     public boolean alreadyIn(String username){

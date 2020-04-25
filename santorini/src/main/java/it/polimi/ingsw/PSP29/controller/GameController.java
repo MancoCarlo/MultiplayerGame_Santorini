@@ -11,12 +11,13 @@ import java.util.Scanner;
 
 public class GameController {
 
-    Match match;
-    boolean end;
-    boolean athenaOn;
-    boolean godOn;
-    int id;
-    Coordinate c = null;
+    private Match match;
+    private boolean end;
+    private boolean athenaOn;
+    private boolean godOn;
+    private ArrayList<Integer> godIndex = new ArrayList<>();
+    private int id;
+    private Coordinate c = null;
     Input input;
 
     public GameController(){
@@ -25,6 +26,10 @@ public class GameController {
         athenaOn=false;
         godOn=false;
         input=new Input();
+    }
+
+    public ArrayList<Integer> getGodIndex(){
+        return godIndex;
     }
 
     public Match getMatch() {
@@ -39,7 +44,7 @@ public class GameController {
      */
     public void gameExe() throws IOException, InterruptedException {
         firstTurn();
-        match.printBoard(match.getBoard());
+        match.printBoard();
         while(!end){
             for(Player p : match.getPlayers()){
                 if(match.getPlayers().size()==1){
@@ -50,7 +55,7 @@ public class GameController {
                 if(playerCanMove(p)){
                     end=newTurn(p);
                     match.resetBoard();
-                    match.printBoard(match.getBoard());
+                    match.printBoard();
                     if(end){
                         System.out.println(p.getNickname() + " hai vinto");
                         break;
@@ -59,7 +64,7 @@ public class GameController {
                 else{
                     System.out.println("Hai perso");
                     match.removePlayer(p);
-                    match.printBoard(match.getBoard());
+                    match.printBoard();
                     end=false;
                 }
             }
@@ -110,14 +115,6 @@ public class GameController {
      * @throws FileNotFoundException
      */
     public void firstTurn() throws InterruptedException {
-        match.inizializeBoard();
-        match.sortPlayers();
-        match.printPlayers();
-        match.printBoard(match.getBoard());
-
-        match.loadGods();
-        match.printGodlist();
-        godSelection();
 
         for(Player player : match.getPlayers()){
             for(int i=0; i<2; i++){
@@ -127,7 +124,22 @@ public class GameController {
                     c=input.askCoordinate("posizionarti");
                 }
                 player.putWorker(i, match.getBoard(), c);
-                match.printBoard(match.getBoard());
+                match.printBoard();
+            }
+        }
+    }
+
+    public boolean controlMovement(Player p, int id, Coordinate c){
+        if(c.getX()>4 || c.getY()>4 || c.getX()<0 || c.getY()<0){
+            return false;
+        }
+        else{
+            if(!match.getBoard()[c.getX()][c.getY()].isEmpty()){
+                return false;
+            }
+            else{
+                match.updateMovement(p, id, c);
+                return true;
             }
         }
     }
@@ -137,23 +149,15 @@ public class GameController {
      * let the player choose their gods
      */
     public void godSelection(){
-        Player p = match.getPlayers().get(0);
+        ArrayList<God> gods = new ArrayList<>();
+        for(Integer i : godIndex){
+            gods.add(match.getGods().get(i));
+        }
 
-        ArrayList<God> godlist = new ArrayList<God>();
-        System.out.println("Player " + p.getNickname() + " inserisci " + match.getPlayers().size() + " divinità");
-        createGodList(godlist, match.getGods(), match.getPlayers().size());
-        for(int i=1; i<match.getPlayers().size(); i++){
-            System.out.println("Player " + match.getPlayers().get(i).getNickname() + " pesca la tua divinità tra le rimanenti :");
-            for(int j=0; j<godlist.size(); j++){
-                System.out.println(j + ") " + godlist.get(j).getName() + " - " + godlist.get(j).getDescription());
-            }
-            match.getPlayers().get(i).selectGod(godlist);
+        match.getGods().clear();
+        for(God god : gods){
+            match.getGods().add(god);
         }
-        System.out.println("Player " + match.getPlayers().get(0).getNickname() + " pesca la tua divinità tra le rimanenti :");
-        for(int i=0; i<godlist.size(); i++){
-            System.out.println(i + ") " + godlist.get(i).getName() + " - " + godlist.get(i).getDescription());
-        }
-        p.selectGod(godlist);
     }
 
     /**
@@ -317,7 +321,7 @@ public class GameController {
      * @return the result of winCondition
      */
     public boolean turnExe(Player p, Turn turn){
-        match.printBoard(match.getBoard());
+        match.printBoard();
         id=input.askWorker(match, p, turn, athenaOn);
         c=input.askCoordinate("muoverti");
         if(athenaOn){
@@ -335,7 +339,7 @@ public class GameController {
                 c=input.askCoordinate("muoverti");
             }
         }
-        match.printBoard(match.getBoard());
+        match.printBoard();
         if(p.getWorker(id).canBuild(match)){
             c=input.askCoordinate("costruire");
             while(!turn.build(match, p.getWorker(id), c)){
@@ -355,7 +359,7 @@ public class GameController {
                     athenaOn = true;
                 }
             }
-            match.printBoard(match.getBoard());
+            match.printBoard();
             System.out.println(p.getWorker(0).toString());
             System.out.println(p.getWorker(1).toString());
             return turn.winCondition(match, p);
