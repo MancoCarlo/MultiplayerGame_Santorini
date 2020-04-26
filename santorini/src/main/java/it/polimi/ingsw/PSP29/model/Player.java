@@ -76,11 +76,12 @@ public class Player implements Serializable {
         card=g.get(i);
     }
 
-    public void printWorkers(){
-        System.out.println("lista worker:");
+    public String printWorkers(){
+        String s="lista worker:\n";
         for (Worker w : workers){
-            System.out.println("- " + w.toString());
+            s = s+"- " + w.toString();
         }
+        return s;
     }
 
     @Override

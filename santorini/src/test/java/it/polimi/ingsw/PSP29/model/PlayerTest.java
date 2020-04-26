@@ -3,6 +3,9 @@ package it.polimi.ingsw.PSP29.model;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class PlayerTest {
@@ -11,6 +14,11 @@ public class PlayerTest {
     @Before
     public void setUp(){
         player=new Player("Luca", 21);
+        God g = new God(0,"Carlo","a");
+        ArrayList<God> gods = new ArrayList();
+        gods.add(g);
+        player.setCard(gods, 0);
+        assertEquals(player.getCard(), g);
     }
 
     @After
@@ -55,5 +63,10 @@ public class PlayerTest {
     public void getWorker_correctOutput(){
         assertEquals(player.getWorker(0), player.workers.get(0));
         assertEquals(player.getWorker(1), player.workers.get(1));
+    }
+
+    @Test
+    public void toString_printPlayer_returnString(){
+        assertEquals(player.toString(), "Player{ nickname='Luca', age=21, card="+player.getCard().toString()+"}");
     }
 }

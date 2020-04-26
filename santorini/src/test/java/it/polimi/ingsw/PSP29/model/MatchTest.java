@@ -11,8 +11,11 @@ public class MatchTest {
     public void setUp() throws Exception {
         m = new Match();
         m.inizializeBoard();
+        God g = new God(0,"a","b");
+        m.getGods().add(g);
         m.getPlayers().add(new Player("Luca", 23));
         m.getPlayers().add(new Player("Letizia", 22));
+        assertEquals(g,m.getGod(0));
     }
 
     @Test
@@ -133,12 +136,18 @@ public class MatchTest {
     @Test
     public void loadGods_vectorSizeCorrect_Return(){
         m.loadGods();
-        assertTrue(m.getGods().size()==9);
+        assertTrue(m.getGods().size()==10);
     }
 
     @Test
     public void alreadyIn_PlayerInArrayList_ReturnTrue(){
         assertTrue(m.alreadyIn("Luca"));
+    }
+
+    @Test
+    public void alreadyIn_PlayersEmpty_ReturnFalse(){
+        m.getPlayers().clear();
+        assertFalse(m.alreadyIn("Luca"));
     }
 
     @Test
@@ -155,7 +164,7 @@ public class MatchTest {
                 "2 \t00\t00\t00\t00\t00\t\n" +
                 "3 \t00\t00\t00\t00\t00\t\n" +
                 "4 \t00\t00\t00\t00\t00\t\n");
-        assertEquals(m.printGodlist(),"Gods: \n");
+        assertEquals(m.printGodlist(),"Gods: \n1) a, b\n");
         assertEquals(m.printPlayers(),"Players: \n"+ "- Luca, 23 years old\n" + "- Letizia, 22 years old\n");
     }
 }
