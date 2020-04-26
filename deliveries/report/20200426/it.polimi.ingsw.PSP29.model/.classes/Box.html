@@ -1,0 +1,176 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Box</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Box (it.polimi.ingsw.PSP29.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Box</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96%
+  </span>
+  <span class="absValue">
+    (24/ 25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.Serializable;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;public class Box implements Serializable {
+<i>6</i>&nbsp;    private Coordinate location;
+<i>7</i>&nbsp;    private int level;
+<i>8</i>&nbsp;    private boolean empty;
+<i>9</i>&nbsp;    private Worker workerBox;
+<i>10</i>&nbsp;    boolean levelledUp;
+<i>11</i>&nbsp;
+<b class="fc"><i>12</i>&nbsp;    public Box(int x, int y){</b>
+<b class="fc"><i>13</i>&nbsp;        location=new Coordinate(x, y);</b>
+<b class="fc"><i>14</i>&nbsp;        level=0;</b>
+<b class="fc"><i>15</i>&nbsp;        empty=true;</b>
+<b class="fc"><i>16</i>&nbsp;        workerBox = null;</b>
+<b class="fc"><i>17</i>&nbsp;        levelledUp=false;</b>
+<b class="fc"><i>18</i>&nbsp;    }</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    public int getLevel() {
+<b class="fc"><i>21</i>&nbsp;        return level;</b>
+<i>22</i>&nbsp;    }
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    public Coordinate getLocation(){
+<b class="fc"><i>25</i>&nbsp;        return location;</b>
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * check if box is not occupied by a worker
+<i>30</i>&nbsp;     * @return true if empty
+<i>31</i>&nbsp;     */
+<b class="fc"><i>32</i>&nbsp;    public boolean isEmpty(){ return empty; }</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     *change state of box from empty to occupied and vice-versa
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    public void changeState() {
+<b class="fc"><i>38</i>&nbsp;        if(empty){</b>
+<b class="fc"><i>39</i>&nbsp;            empty=false;</b>
+<i>40</i>&nbsp;        }
+<i>41</i>&nbsp;        else{
+<b class="fc"><i>42</i>&nbsp;            empty=true;</b>
+<i>43</i>&nbsp;        }
+<b class="fc"><i>44</i>&nbsp;    }</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * upgrade level of box
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    public void upgradeLevel(){
+<b class="fc"><i>50</i>&nbsp;        level++;</b>
+<b class="fc"><i>51</i>&nbsp;    }</b>
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    public boolean getlevelledUp(){
+<b class="fc"><i>54</i>&nbsp;        return levelledUp;</b>
+<i>55</i>&nbsp;    }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    /**
+<i>58</i>&nbsp;     * change the state of the box if a worker build in the box
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    public void setLevelledUp(boolean l) {
+<b class="fc"><i>61</i>&nbsp;        levelledUp=l;</b>
+<b class="fc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /**
+<i>65</i>&nbsp;     * calculate level difference between two boxes
+<i>66</i>&nbsp;     * @param b box given
+<i>67</i>&nbsp;     * @return number of level difference between this and b
+<i>68</i>&nbsp;     */
+<b class="fc"><i>69</i>&nbsp;    public int level_diff(Box b){ return this.getLevel()-b.getLevel(); }</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    public Worker getWorkerBox() {
+<b class="fc"><i>72</i>&nbsp;        return workerBox;</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    /**
+<i>76</i>&nbsp;     * set the worker to the box
+<i>77</i>&nbsp;     * @param w the worker
+<i>78</i>&nbsp;     */
+<i>79</i>&nbsp;    public void setWorkerBox(Worker w){
+<b class="fc"><i>80</i>&nbsp;        workerBox = w;</b>
+<b class="fc"><i>81</i>&nbsp;    }</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /**
+<i>84</i>&nbsp;     * print on monitor the state of box: 0 if empty else 1
+<i>85</i>&nbsp;     */
+<i>86</i>&nbsp;    public String printEmpty() {
+<b class="fc"><i>87</i>&nbsp;        if(isEmpty()) return &quot;0&quot; + level;</b>
+<i>88</i>&nbsp;        else{
+<b class="nc"><i>89</i>&nbsp;            return workerBox.getIDplayer().charAt(0) + String.valueOf(level);</b>
+<i>90</i>&nbsp;        }
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-26 15:09</div>
+</div>
+</body>
+</html>

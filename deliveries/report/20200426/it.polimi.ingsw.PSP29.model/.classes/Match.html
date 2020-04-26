@@ -1,0 +1,295 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Match</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Match (it.polimi.ingsw.PSP29.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Match</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/ 22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (95/ 95)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.Serializable;
+<i>4</i>&nbsp;import java.util.ArrayList;
+<i>5</i>&nbsp;import java.util.Scanner;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;public class Match implements Serializable {
+<b class="fc"><i>8</i>&nbsp;    private static int columns = 5;</b>
+<b class="fc"><i>9</i>&nbsp;    private static int rows = 5;</b>
+<i>10</i>&nbsp;    private Box[][] board;
+<i>11</i>&nbsp;    private ArrayList&lt;Player&gt; players;
+<i>12</i>&nbsp;    private ArrayList&lt;God&gt; gods;
+<i>13</i>&nbsp;
+<b class="fc"><i>14</i>&nbsp;    public Match() {</b>
+<b class="fc"><i>15</i>&nbsp;        board = new Box[rows][columns];</b>
+<b class="fc"><i>16</i>&nbsp;        players = new ArrayList&lt;Player&gt;();</b>
+<b class="fc"><i>17</i>&nbsp;        gods = new ArrayList&lt;God&gt;();</b>
+<b class="fc"><i>18</i>&nbsp;    }</b>
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    public Box[][] getBoard() {
+<b class="fc"><i>21</i>&nbsp;        return board;</b>
+<i>22</i>&nbsp;    }
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    public ArrayList&lt;Player&gt; getPlayers() {
+<b class="fc"><i>25</i>&nbsp;        return players;</b>
+<i>26</i>&nbsp;    }
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    public Player getPlayer(String n){
+<b class="fc"><i>29</i>&nbsp;        for(Player p : this.players){</b>
+<b class="fc"><i>30</i>&nbsp;            if(p.getNickname().equals(n)){</b>
+<b class="fc"><i>31</i>&nbsp;                return p;</b>
+<i>32</i>&nbsp;            }
+<b class="fc"><i>33</i>&nbsp;        }</b>
+<b class="fc"><i>34</i>&nbsp;        return null;</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * add players to the match
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    public void addPlayer(Player player){
+<b class="fc"><i>41</i>&nbsp;            players.add(player);</b>
+<b class="fc"><i>42</i>&nbsp;    }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    /**
+<i>45</i>&nbsp;     *
+<i>46</i>&nbsp;     * @param p player to be removed
+<i>47</i>&nbsp;     */
+<i>48</i>&nbsp;    public void removePlayer(Player p){
+<b class="fc"><i>49</i>&nbsp;        for(Player player : players){</b>
+<b class="fc"><i>50</i>&nbsp;            if(player.equals(p)){</b>
+<b class="fc"><i>51</i>&nbsp;                removeWorkers(player);</b>
+<b class="fc"><i>52</i>&nbsp;                players.remove(player);</b>
+<i>53</i>&nbsp;            }
+<b class="fc"><i>54</i>&nbsp;        }</b>
+<b class="fc"><i>55</i>&nbsp;    }</b>
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    public int getColumns() {
+<b class="fc"><i>58</i>&nbsp;        return columns;</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    public int getRows() {
+<b class="fc"><i>62</i>&nbsp;        return rows;</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    public ArrayList&lt;God&gt; getGods(){
+<b class="fc"><i>66</i>&nbsp;        return gods;</b>
+<i>67</i>&nbsp;    }
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    public God getGod(int id){
+<b class="fc"><i>70</i>&nbsp;        return gods.get(id);</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    /**
+<i>74</i>&nbsp;     * instantiates each box of the board and assigns the coordinate
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    public void inizializeBoard(){
+<b class="fc"><i>77</i>&nbsp;        for(int i=0; i&lt;rows;i++){</b>
+<b class="fc"><i>78</i>&nbsp;            for(int j=0; j&lt;columns;j++)</b>
+<b class="fc"><i>79</i>&nbsp;                board[i][j] = new Box(i,j);</b>
+<i>80</i>&nbsp;        }
+<b class="fc"><i>81</i>&nbsp;    }</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /**
+<i>84</i>&nbsp;     * reset the levelledUp variable in every box at the end of the turn
+<i>85</i>&nbsp;     */
+<i>86</i>&nbsp;    public void resetBoard(){
+<b class="fc"><i>87</i>&nbsp;        for(int i=0; i&lt;rows; i++){</b>
+<b class="fc"><i>88</i>&nbsp;            for(int j=0; j&lt;columns; j++){</b>
+<b class="fc"><i>89</i>&nbsp;                    board[i][j].setLevelledUp(false);</b>
+<i>90</i>&nbsp;            }
+<i>91</i>&nbsp;        }
+<b class="fc"><i>92</i>&nbsp;    }</b>
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    /**
+<i>95</i>&nbsp;     *
+<i>96</i>&nbsp;     * @param p owner of the worker that make the move
+<i>97</i>&nbsp;     * @param id identifier&#39;s worker
+<i>98</i>&nbsp;     * @param c destination of the worker
+<i>99</i>&nbsp;     */
+<i>100</i>&nbsp;    public void updateMovement(Player p, int id, Coordinate c){
+<b class="fc"><i>101</i>&nbsp;        p.putWorker(id, board, c);</b>
+<b class="fc"><i>102</i>&nbsp;    }</b>
+<i>103</i>&nbsp;
+<i>104</i>&nbsp;    /**
+<i>105</i>&nbsp;     * @param c position of the box that must be upgraded
+<i>106</i>&nbsp;     */
+<i>107</i>&nbsp;    public void updateBuilding(Coordinate c){
+<b class="fc"><i>108</i>&nbsp;        board[c.getX()][c.getY()].upgradeLevel();</b>
+<b class="fc"><i>109</i>&nbsp;    }</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    /**
+<i>112</i>&nbsp;     *
+<i>113</i>&nbsp;     * @param p looser player
+<i>114</i>&nbsp;     */
+<i>115</i>&nbsp;    public void removeWorkers(Player p){
+<b class="fc"><i>116</i>&nbsp;        Coordinate c1 = p.getWorker(0).getPosition();</b>
+<b class="fc"><i>117</i>&nbsp;        Coordinate c2 = p.getWorker(1).getPosition();</b>
+<b class="fc"><i>118</i>&nbsp;        if(c1 != null) {</b>
+<b class="fc"><i>119</i>&nbsp;            board[c1.getX()][c1.getY()].changeState();</b>
+<b class="fc"><i>120</i>&nbsp;            board[c1.getX()][c1.getY()].setWorkerBox(null);</b>
+<b class="fc"><i>121</i>&nbsp;            p.getWorker(0).setPosition(null);</b>
+<i>122</i>&nbsp;        }
+<b class="fc"><i>123</i>&nbsp;        if(c2 != null){</b>
+<b class="fc"><i>124</i>&nbsp;            board[c2.getX()][c2.getY()].changeState();</b>
+<b class="fc"><i>125</i>&nbsp;            board[c1.getX()][c1.getY()].setWorkerBox(null);</b>
+<b class="fc"><i>126</i>&nbsp;            p.getWorker(1).setPosition(null);</b>
+<i>127</i>&nbsp;        }
+<b class="fc"><i>128</i>&nbsp;    }</b>
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;    /**
+<i>131</i>&nbsp;     * sort the player by their age
+<i>132</i>&nbsp;     */
+<i>133</i>&nbsp;    public void sortPlayers(){
+<b class="fc"><i>134</i>&nbsp;        boolean change=true;</b>
+<i>135</i>&nbsp;        Player p;
+<b class="fc"><i>136</i>&nbsp;        while(change){</b>
+<b class="fc"><i>137</i>&nbsp;            change=false;</b>
+<b class="fc"><i>138</i>&nbsp;            for(int i=0; i&lt;players.size()-1; i++){</b>
+<b class="fc"><i>139</i>&nbsp;                if(players.get(i).getAge()&gt;players.get(i+1).getAge()){</b>
+<b class="fc"><i>140</i>&nbsp;                    p=players.get(i);</b>
+<b class="fc"><i>141</i>&nbsp;                    players.set(i, players.get(i+1));</b>
+<b class="fc"><i>142</i>&nbsp;                    players.set(i+1, p);</b>
+<b class="fc"><i>143</i>&nbsp;                    change=true;</b>
+<i>144</i>&nbsp;                }
+<i>145</i>&nbsp;            }
+<i>146</i>&nbsp;        }
+<b class="fc"><i>147</i>&nbsp;    }</b>
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;    /**
+<i>150</i>&nbsp;     * creates the list of gods
+<i>151</i>&nbsp;     */
+<i>152</i>&nbsp;    public void loadGods() {
+<b class="fc"><i>153</i>&nbsp;        gods.add(new God(0, &quot;Apollo&quot;, &quot;Il Dio della musica&quot;));</b>
+<b class="fc"><i>154</i>&nbsp;        gods.add(new God(1, &quot;Arthemis&quot;, &quot;La Dea della caccia&quot;));</b>
+<b class="fc"><i>155</i>&nbsp;        gods.add(new God(2, &quot;Athena&quot;, &quot;La Dea della saggezza&quot;));</b>
+<b class="fc"><i>156</i>&nbsp;        gods.add(new God(3, &quot;Atlas&quot;, &quot;Il titano che regge sulle spalle la volta celeste&quot;));</b>
+<b class="fc"><i>157</i>&nbsp;        gods.add(new God(4, &quot;Demeter&quot;, &quot;La dea del raccolto&quot;));</b>
+<b class="fc"><i>158</i>&nbsp;        gods.add(new God(5, &quot;Hephaestus&quot;, &quot;Il dio delle fucine&quot;));</b>
+<b class="fc"><i>159</i>&nbsp;        gods.add(new God(6, &quot;Minotaur&quot;, &quot;Il mostro dalla testa di toro&quot;));</b>
+<b class="fc"><i>160</i>&nbsp;        gods.add(new God(7, &quot;Pan&quot;, &quot;Il dio della natura selvaggia&quot;));</b>
+<b class="fc"><i>161</i>&nbsp;        gods.add(new God(8, &quot;Prometheus&quot;, &quot;Il titano benefattore dell&#39;umanità&quot;));</b>
+<b class="fc"><i>162</i>&nbsp;    }</b>
+<i>163</i>&nbsp;
+<i>164</i>&nbsp;    /**
+<i>165</i>&nbsp;     * print the board on monitor
+<i>166</i>&nbsp;     */
+<i>167</i>&nbsp;    public String printBoard(){
+<b class="fc"><i>168</i>&nbsp;        String gameboard = &quot;Gameboard\n  \t&quot;;</b>
+<b class="fc"><i>169</i>&nbsp;        for(int i=0; i&lt;5; i++){</b>
+<b class="fc"><i>170</i>&nbsp;            gameboard = gameboard + i + &quot; \t&quot;;</b>
+<i>171</i>&nbsp;        }
+<b class="fc"><i>172</i>&nbsp;        gameboard = gameboard + &quot;\n&quot;;</b>
+<b class="fc"><i>173</i>&nbsp;        for(int i=0; i&lt;5; i++){</b>
+<b class="fc"><i>174</i>&nbsp;            gameboard = gameboard + i + &quot; \t&quot;;</b>
+<b class="fc"><i>175</i>&nbsp;            for(int j=0; j&lt;5; j++){</b>
+<b class="fc"><i>176</i>&nbsp;                gameboard = gameboard + board[i][j].printEmpty() + &quot;\t&quot;;</b>
+<i>177</i>&nbsp;            }
+<b class="fc"><i>178</i>&nbsp;            gameboard = gameboard + &quot;\n&quot;;</b>
+<i>179</i>&nbsp;        }
+<b class="fc"><i>180</i>&nbsp;        return gameboard;</b>
+<i>181</i>&nbsp;    }
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;    public String printGodlist(){
+<b class="fc"><i>184</i>&nbsp;        String g = &quot;Gods: \n&quot;;</b>
+<b class="fc"><i>185</i>&nbsp;        for (int i=0; i&lt;gods.size(); i++){</b>
+<b class="fc"><i>186</i>&nbsp;            g = g + (i+1) + &quot;) &quot; + gods.get(i).getName() + &quot;, &quot; + gods.get(i).getDescription() + &quot;\n&quot;;</b>
+<i>187</i>&nbsp;        }
+<b class="fc"><i>188</i>&nbsp;        return g;</b>
+<i>189</i>&nbsp;    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    public String printPlayers(){
+<b class="fc"><i>192</i>&nbsp;        String pl= &quot;Players: \n&quot;;</b>
+<b class="fc"><i>193</i>&nbsp;        for (Player p : players){</b>
+<b class="fc"><i>194</i>&nbsp;            pl = pl + &quot;- &quot; + p.getNickname() + &quot;, &quot; + p.getAge() + &quot; years old\n&quot;;</b>
+<b class="fc"><i>195</i>&nbsp;        }</b>
+<b class="fc"><i>196</i>&nbsp;        return pl;</b>
+<i>197</i>&nbsp;    }
+<i>198</i>&nbsp;
+<i>199</i>&nbsp;    public boolean alreadyIn(String username){
+<b class="fc"><i>200</i>&nbsp;        if(players.size()==0){</b>
+<b class="fc"><i>201</i>&nbsp;            return false;</b>
+<i>202</i>&nbsp;        }
+<i>203</i>&nbsp;        else{
+<b class="fc"><i>204</i>&nbsp;            for(Player player : players){</b>
+<b class="fc"><i>205</i>&nbsp;                if(player.getNickname().equals(username)){</b>
+<b class="fc"><i>206</i>&nbsp;                    return true;</b>
+<i>207</i>&nbsp;                }
+<b class="fc"><i>208</i>&nbsp;            }</b>
+<i>209</i>&nbsp;        }
+<b class="fc"><i>210</i>&nbsp;        return false;</b>
+<i>211</i>&nbsp;    }
+<i>212</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-26 15:09</div>
+</div>
+</body>
+</html>
