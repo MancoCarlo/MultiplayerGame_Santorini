@@ -15,7 +15,7 @@ public class PlayerTest {
     public void setUp(){
         player=new Player("Luca", 21);
         God g = new God(0,"Carlo","a");
-        ArrayList<God> gods = new ArrayList();
+        ArrayList<God> gods = new ArrayList<God>();
         gods.add(g);
         player.setCard(gods, 0);
         assertEquals(player.getCard(), g);

@@ -5,10 +5,10 @@ import it.polimi.ingsw.PSP29.model.*;
 public class BaseTurn implements Turn {
 
     /**
-     * control if the player win
+     * control if the player wins
      * @param m match played
      * @param p player that plays the turn
-     * @return true if p win the game, else false
+     * @return true if p wins the game, else false
      */
     @Override
     public boolean winCondition(Match m, Player p) {
@@ -24,9 +24,11 @@ public class BaseTurn implements Turn {
                         return true;
                     }
                     else{
+                        m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].setLevelledUp(false);
                         return false;
                     }
                 }
+                m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].setLevelledUp(false);
                 return false;
             }
         }

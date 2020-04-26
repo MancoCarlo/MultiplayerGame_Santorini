@@ -55,7 +55,7 @@ public class Box implements Serializable {
     }
 
     /**
-     * change the state of the box if a worker build in the box
+     * change the state of the box if a worker builds in the box during his turn
      */
     public void setLevelledUp(boolean l) {
         levelledUp=l;

@@ -23,7 +23,74 @@ public class BaseTurnTest {
     public void TearDown(){
 
     }
-
+    @Test
+    public void winCondition_notValidPreviousPositionInput_falseOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Coordinate cnext = new Coordinate(1,2);
+        Coordinate cbuild = new Coordinate(1,3);
+        m.updateBuilding(c);
+        m.updateBuilding(c);
+        m.updateBuilding(c);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        m.updateBuilding(cnext);
+        m.updateBuilding(cnext);
+        m.updateBuilding(cnext);
+        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
+        {
+            assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+        }
+    }
+    @Test
+    public void winCondition_validWinningConditionsInput_trueOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Coordinate cnext = new Coordinate(1,2);
+        Coordinate cbuild = new Coordinate(1,3);
+        m.updateBuilding(c);
+        m.updateBuilding(c); //livello 2
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        m.updateBuilding(cnext);
+        m.updateBuilding(cnext);
+        m.updateBuilding(cnext);//livello 3
+        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
+        {
+            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+        }
+    }
+    @Test
+    public void winCondition_validWinningConditionsWithSameLevelPrevPositionInput_trueOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Coordinate cnext = new Coordinate(1,2);
+        m.updateBuilding(c);
+        m.updateBuilding(c); //livello 2
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        m.updateBuilding(cnext);
+        m.updateBuilding(cnext);
+        m.updateBuilding(cnext);//livello 3
+        if(turn.move(m, wL, cnext) && turn.build(m, wL, c))
+        {
+            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+        }
+    }
+    @Test
+    public void winCondition_notValidLevelInput_falseOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        wL.changeMoved(true);
+        wL.changeBuilt(true);
+        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+    }
+    @Test
+    public void winCondition_notValidTurnInput_falseOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        wL.changeBuilt(false);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+    }
     @Test
     public void move_notValidNearBoxInput_falseOutput(){
         Coordinate c = new Coordinate(1,1);
