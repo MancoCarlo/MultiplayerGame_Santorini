@@ -1,6 +1,10 @@
 package it.polimi.ingsw.PSP29.controller;
 
-import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.model.Coordinate;
+import it.polimi.ingsw.PSP29.model.Match;
+import it.polimi.ingsw.PSP29.model.Player;
+import it.polimi.ingsw.PSP29.model.Worker;
+import java.util.Scanner;
 
 public class HephaestusTurn extends GodTurn {
     public HephaestusTurn(Turn turn) {
@@ -27,15 +31,18 @@ public class HephaestusTurn extends GodTurn {
      */
     @Override
     public boolean build(Match m, Worker w, Coordinate c) {
-        if(w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].getLevel()!=4 || m.getBoard()[c.getX()][c.getY()].isEmpty()){
-            m.updateBuilding(c);
-            m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);
-            w.changeBuilt(true);
-            if(m.getBoard()[c.getX()][c.getY()].getLevel()<3)//non posso costruire una cupola
+        boolean nopower = super.build(m,w,c);
+        if(!nopower) return false;
+        Scanner scanner = new Scanner(System.in);
+        String answer;
+        if(m.getBoard()[c.getX()][c.getY()].getLevel()<3) { //non posso costruire una cupola
+            System.out.println("Vuoi usare il potere di Hephaestus? 1) SI 2) NO\n");
+            answer = scanner.nextLine();
+            if (answer.equals("1")) {
                 m.updateBuilding(c);
-            return true;
+            }
         }
-        return false;
+        return true;
     }
 
     /**

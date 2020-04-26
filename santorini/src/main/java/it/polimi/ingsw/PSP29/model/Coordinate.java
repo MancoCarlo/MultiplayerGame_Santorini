@@ -25,7 +25,7 @@ public class Coordinate implements Serializable {
      * @param a coordinate to analyze
      * @return true when this and a are adjacent
      */
-    public boolean isNear(Coordinate a){ //due coordinate coincidenti non sono vicine
+    public boolean isNear(Coordinate a){
         if(!this.equals(a) && ((a.x-x<=1) && (a.x-x>=-1)) && (a.y-y<=1)&&(a.y-y>=-1))
             return true;
         else
