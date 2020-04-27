@@ -50,12 +50,12 @@ public class BaseTurnTest {
         Coordinate cnext = new Coordinate(1,2);
         Coordinate cbuild = new Coordinate(1,3);
         m.updateBuilding(c);
-        m.updateBuilding(c); //livello 2
+        m.updateBuilding(c);
         Worker wL = m.getPlayers().get(0).getWorker(0);
         m.updateMovement(m.getPlayers().get(0), 0, c);
         m.updateBuilding(cnext);
         m.updateBuilding(cnext);
-        m.updateBuilding(cnext);//livello 3
+        m.updateBuilding(cnext);
         if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
         {
             assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
@@ -66,12 +66,12 @@ public class BaseTurnTest {
         Coordinate c = new Coordinate(1,1);
         Coordinate cnext = new Coordinate(1,2);
         m.updateBuilding(c);
-        m.updateBuilding(c); //livello 2
+        m.updateBuilding(c);
         Worker wL = m.getPlayers().get(0).getWorker(0);
         m.updateMovement(m.getPlayers().get(0), 0, c);
         m.updateBuilding(cnext);
         m.updateBuilding(cnext);
-        m.updateBuilding(cnext);//livello 3
+        m.updateBuilding(cnext);
         if(turn.move(m, wL, cnext) && turn.build(m, wL, c))
         {
             assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
