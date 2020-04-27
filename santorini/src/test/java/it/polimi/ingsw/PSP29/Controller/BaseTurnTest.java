@@ -22,10 +22,10 @@ public class BaseTurnTest {
         m.getPlayers().add(new Player("Carlo", 21));
         turn = new BaseTurn();
     }
-    @After
-    public void TearDown(){
 
-    }
+    @After
+    public void TearDown(){ }
+
     @Test
     public void winCondition_notValidPreviousPositionInput_falseOutput(){
         Coordinate c = new Coordinate(1,1);
@@ -44,6 +44,7 @@ public class BaseTurnTest {
             assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
         }
     }
+
     @Test
     public void winCondition_validWinningConditionsInput_trueOutput(){
         Coordinate c = new Coordinate(1,1);
@@ -59,8 +60,10 @@ public class BaseTurnTest {
         if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
         {
             assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+            assertTrue(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].getLevel() == 3 && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel() == 2);
         }
     }
+
     @Test
     public void winCondition_validWinningConditionsWithSameLevelPrevPositionInput_trueOutput(){
         Coordinate c = new Coordinate(1,1);
@@ -75,8 +78,10 @@ public class BaseTurnTest {
         if(turn.move(m, wL, cnext) && turn.build(m, wL, c))
         {
             assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+            assertTrue(m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel()==3);
         }
     }
+
     @Test
     public void winCondition_notValidLevelInput_falseOutput(){
         Coordinate c = new Coordinate(1,1);
@@ -86,6 +91,7 @@ public class BaseTurnTest {
         wL.changeBuilt(true);
         assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
     }
+
     @Test
     public void winCondition_notValidTurnInput_falseOutput(){
         Coordinate c = new Coordinate(1,1);
@@ -93,6 +99,7 @@ public class BaseTurnTest {
         wL.changeBuilt(false);
         m.updateMovement(m.getPlayers().get(0), 0, c);
         assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+        assertFalse(wL.getMoved() && wL.getBuilt());
     }
     @Test
     public void move_notValidNearBoxInput_falseOutput(){
@@ -105,6 +112,7 @@ public class BaseTurnTest {
         assertFalse(wL.getMoved());
         assertTrue(wL.getPosition().equals(c));
     }
+
     @Test
     public void move_correctInput_trueOutput(){
         Coordinate c = new Coordinate(1,1);
@@ -115,6 +123,7 @@ public class BaseTurnTest {
         assertTrue(wL.getMoved());
         assertTrue(wL.getPosition().equals(c1));
     }
+
     @Test
     public void limited_move_upperLevelBoxInput_falseOutput(){
         Coordinate c = new Coordinate(1,1);
@@ -127,6 +136,7 @@ public class BaseTurnTest {
         assertFalse(wL.getMoved());
         assertTrue(wL.getPosition().equals(c));
     }
+
     @Test
     public void limited_move_correctInput_trueOutput(){
         Coordinate c = new Coordinate(1,1);
@@ -137,6 +147,7 @@ public class BaseTurnTest {
         assertTrue(wL.getMoved());
         assertTrue(wL.getPosition().equals(c1));
     }
+
     @Test
     public void build_correctInput_trueOutput(){
         Coordinate c = new Coordinate(1,1);
@@ -147,6 +158,7 @@ public class BaseTurnTest {
         assertTrue(wL.getBuilt());
         assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);
     }
+
     @Test
     public void build_notEmptyBoxInput_falseOutput(){
         Coordinate cL = new Coordinate(1,1);
@@ -158,6 +170,7 @@ public class BaseTurnTest {
         assertFalse(wL.getBuilt());
         assertEquals(m.getBoard()[cC.getX()][cC.getY()].getLevel(),0);
     }
+
     @Test
     public void cantMove_correctInput_falseOutput() {
         Coordinate c = new Coordinate(1,1);
@@ -177,6 +190,7 @@ public class BaseTurnTest {
         assertTrue(turn.cantMove(m, wL, true));
         assertTrue(wL.canLevelUp(m));
     }
+
     @Test
     public void cantMove_notValidInputWithAthenaOff_trueOutput() {
         Coordinate c = new Coordinate(0,0);
