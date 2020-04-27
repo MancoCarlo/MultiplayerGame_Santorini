@@ -27,15 +27,33 @@ public class PrometheusTurnTest {
 
     }
     @Test
+    public void winCondition_notValidLevelInput_falseOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        wL.changeMoved(true);
+        wL.changeBuilt(true);
+        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+    }
+    @Test
     public void move_notValidCoordinateInput_falseOutput() {
         Coordinate cL = new Coordinate(1,1);
         Coordinate cC = new Coordinate(0,2);
         Worker wL = m.getPlayers().get(0).getWorker(0);
-        Worker wC = m.getPlayers().get(1).getWorker(0);
         m.updateMovement(m.getPlayers().get(0), 0, cL);
         m.updateMovement(m.getPlayers().get(1), 0, cC);
         assertFalse(turn.move(m, wL, cC));
         assertFalse(wL.getMoved());
+    }
+    @Test
+    public void build_correctInput_trueOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Coordinate c1 = new Coordinate(1,0);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        assertTrue(turn.build(m, wL, c1));
+        assertTrue(wL.getBuilt());
+        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);
     }
 
 }
