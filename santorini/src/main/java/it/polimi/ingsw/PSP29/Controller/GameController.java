@@ -31,6 +31,10 @@ public class GameController {
         return godIndex;
     }
 
+    public boolean getAthenaOn() { return athenaOn; }
+
+    public void setAthenaOn(boolean b) { athenaOn = b; }
+
     public Match getMatch() {
         return match;
     }

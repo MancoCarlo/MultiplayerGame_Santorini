@@ -69,9 +69,9 @@ public class Player implements Serializable {
     }
 
     public String printWorkers(){
-        String s="lista worker:\n";
-        for (Worker w : workers){
-            s = s+"- " + w.toString();
+        String s="Workers:\n";
+        for(int i=0; i<workers.size(); i++){
+            s = s + i + ") " + workers.get(i).toString();
         }
         return s;
     }

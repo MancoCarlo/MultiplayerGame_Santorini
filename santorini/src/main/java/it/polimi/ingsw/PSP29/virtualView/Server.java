@@ -93,6 +93,9 @@ public class Server
                 System.out.println("Putting workers");
                 putWorkers();
 
+                //!!è una prova!!
+                turnExe();
+
                 while(true){ }
             }
 
@@ -288,37 +291,106 @@ public class Server
             }
             write(clientHandlers.get(myturn), "serviceMessage",  gc.getMatch().printBoard());
             write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°1\n");
-            write(clientHandlers.get(myturn), "interactionServer", "X: ");
-            int x=Integer.parseInt(read(clientHandlers.get(myturn)));
-            write(clientHandlers.get(myturn), "interactionServer", "Y: ");
-            int y=Integer.parseInt(read(clientHandlers.get(myturn)));
-            Coordinate c = new Coordinate(x, y);
+            Coordinate c = getCoordinate();
             while (!gc.controlMovement(gc.getMatch().getPlayers().get(myturn), 0, c)){
                 write(clientHandlers.get(myturn), "serviceMessage", "Not valid box\n");
                 write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°1\n");
-                write(clientHandlers.get(myturn), "interactionServer", "X: ");
-                x=Integer.parseInt(read(clientHandlers.get(myturn)));
-                write(clientHandlers.get(myturn), "interactionServer", "Y: ");
-                y=Integer.parseInt(read(clientHandlers.get(myturn)));
-                c = new Coordinate(x, y);
+                c = getCoordinate();
             }
 
             write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°2\n");
-            write(clientHandlers.get(myturn), "interactionServer", "X: ");
-            x=Integer.parseInt(read(clientHandlers.get(myturn)));
-            write(clientHandlers.get(myturn), "interactionServer", "Y: ");
-            y=Integer.parseInt(read(clientHandlers.get(myturn)));
-            c = new Coordinate(x, y);
+            c = getCoordinate();
             while (!gc.controlMovement(gc.getMatch().getPlayers().get(myturn), 1, c)){
                 write(clientHandlers.get(myturn), "serviceMessage", "Not valid box\n");
                 write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°2\n");
-                write(clientHandlers.get(myturn), "interactionServer", "X: ");
-                x=Integer.parseInt(read(clientHandlers.get(myturn)));
-                write(clientHandlers.get(myturn), "interactionServer", "Y: ");
-                y=Integer.parseInt(read(clientHandlers.get(myturn)));
-                c = new Coordinate(x, y);
+                c = getCoordinate();
             }
             i++;
         }
+    }
+
+    /**
+     * !!è una prova!!
+     * create an arrayList with all the coordinates in wich the worker can move
+     * @param id the worker id
+     * @return the list
+     */
+    public ArrayList<Coordinate> whereCanMove(int id){
+        ArrayList<Coordinate> coordinates = new ArrayList<>();
+        Player player = gc.getMatch().getPlayer(clientHandlers.get(myturn).getName());
+        for(int i=0; i<gc.getMatch().getRows(); i++){
+            for(int j=0; j<gc.getMatch().getColumns(); j++){
+                Coordinate c = new Coordinate(i, j);
+                if(player.getWorker(id).canMoveTo(c, player.getCard().getName(), gc.getMatch(), gc.getAthenaOn())){
+                    coordinates.add(new Coordinate(i, j));
+                }
+            }
+        }
+        return coordinates;
+    }
+
+    /**
+     * !!è una prova!!
+     * the turn execution
+     */
+    public void turnExe(){
+        next();
+        int wID=2;
+        ArrayList<Coordinate> coordinates0 = whereCanMove(0);
+        ArrayList<Coordinate> coordinates1 = whereCanMove(1);
+        if(coordinates0.size()!=0 && coordinates1.size()!=0){
+            write(clientHandlers.get(myturn), "serviceMessage", "It's your turn\n");
+            write(clientHandlers.get(myturn), "serviceMessage", "Choose the worker to use in this turn: \n");
+            write(clientHandlers.get(myturn), "interactionServer", gc.getMatch().getPlayer(clientHandlers.get(myturn).getName()).printWorkers());
+            wID = Integer.parseInt(read(clientHandlers.get(myturn)));
+        }
+        else if(coordinates0.size()!=0 && coordinates1.size()==0){
+            write(clientHandlers.get(myturn), "serviceMessage", "You can only move one of your worker in these positions: \n");
+            wID = 0;
+        }
+        else if(coordinates0.size()==0 && coordinates1.size()!=0){
+            write(clientHandlers.get(myturn), "serviceMessage", "You can only move one of your worker in these positions: \n");
+            wID = 1;
+        }
+        Coordinate c = null;
+        if(wID==0){
+            write(clientHandlers.get(myturn), "serviceMessage", printCoordinates(coordinates0));
+            write(clientHandlers.get(myturn), "interactionServer", "Where you want to move?\n");
+            c = coordinates0.get(Integer.parseInt(read(clientHandlers.get(myturn))));
+        }
+        else if(wID==1){
+            write(clientHandlers.get(myturn), "serviceMessage", printCoordinates(coordinates1));
+            write(clientHandlers.get(myturn), "interactionServer", "Where you want to move?\n");
+            c = coordinates1.get(Integer.parseInt(read(clientHandlers.get(myturn))));
+        }
+        System.out.println(c);
+    }
+
+    /**
+     * ask a coordinate to the client
+     * @return the coordinate
+     */
+    public Coordinate getCoordinate(){
+        Coordinate c;
+        write(clientHandlers.get(myturn), "interactionServer", "X: ");
+        int x=Integer.parseInt(read(clientHandlers.get(myturn)));
+        write(clientHandlers.get(myturn), "interactionServer", "Y: ");
+        int y=Integer.parseInt(read(clientHandlers.get(myturn)));
+        c = new Coordinate(x, y);
+        return c;
+    }
+
+    /**
+     * !!è una prova!!
+     * print the list of valids coordinate
+     * @param coordinates
+     * @return the string that print the list
+     */
+    public String printCoordinates(ArrayList<Coordinate> coordinates){
+        String c = "Valid coordinates:\n";
+        for(int i=0; i<coordinates.size(); i++){
+            c = c + i + ") " + coordinates.get(i).toString() + "\n";
+        }
+        return c;
     }
 }

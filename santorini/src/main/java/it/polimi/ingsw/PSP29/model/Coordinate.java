@@ -69,6 +69,6 @@ public class Coordinate implements Serializable {
         return "Coordinate{" +
                 "x=" + x +
                 ", y=" + y +
-                '}';
+                "}";
     }
 }

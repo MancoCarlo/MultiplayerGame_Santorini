@@ -58,6 +58,7 @@ public class Client implements Runnable, ServerObserver
                 response = null;
                 method = null;
                 rsp = false;
+                System.out.print("\033[H\033[2J");
                 serverAdapter.getMessage();
                 while (response == null) {
                     try {

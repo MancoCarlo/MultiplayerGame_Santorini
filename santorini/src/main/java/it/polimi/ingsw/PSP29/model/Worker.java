@@ -101,17 +101,85 @@ public class Worker implements Serializable {
     }
 
 
+    public boolean canMoveTo(Coordinate c, String godName, Match match, boolean athena){
+        if(!athena){
+            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<=1){
+                return true;
+            }
+            else{
+                switch (godName){
+                    case "Apollo":
+                        if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<=1){
+                            return true;
+                        }
+
+                    case "Artemis":
+                        if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<=1){
+                            if(getMoved()){
+                                if(c.equals(prev_position)){
+                                    return false;
+                                }
+                                else{
+                                    return true;
+                                }
+                            }
+                        }
+
+                    case "Minotaur":
+                        if(c.isNear(position)){
+                            Coordinate c1 = position.nextCoordinate(match, c);
+                            if(c1.equals(c) || !match.getBoard()[c1.getX()][c1.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(this.getIDplayer()) || match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])>1 || match.getBoard()[c1.getX()][c1.getY()].getLevel()==4){
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                }
+            }
+        }
+        else{
+            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<1){
+                return true;
+            }
+            else{
+                switch (godName){
+                    case "Apollo":
+                        if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<1){
+                            return true;
+                        }
+                    case "Artemis":
+                        if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<1){
+                            if(getMoved()){
+                                if(c.equals(prev_position)){
+                                    return false;
+                                }
+                                else{
+                                    return true;
+                                }
+                            }
+                        }
+
+                    case "Minotaur":
+                        if(c.isNear(position)){
+                            Coordinate c1 = position.nextCoordinate(match, c);
+                            if(c1.equals(c) || !match.getBoard()[c1.getX()][c1.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(this.getIDplayer()) || match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])>=1 || match.getBoard()[c1.getX()][c1.getY()].getLevel()==4){
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                }
+            }
+        }
+        return false;
+    }
 
 
     @Override
     public String toString() {
         return "Worker{" +
-                "ID=" + ID +
-                ", IDplayer='" + IDplayer + '\'' +
-                ", position=" + position +
-                ", prev_position=" + prev_position +
-                ", moved=" + moved +
-                ", built=" + built +
-                '}';
+                " position=" + position + " }\n";
     }
 }
