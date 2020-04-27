@@ -1,5 +1,6 @@
-package it.polimi.ingsw.PSP29.model;
+package it.polimi.ingsw.PSP29.Controller;
 
+import it.polimi.ingsw.PSP29.model.God;
 import org.junit.Before;
 import org.junit.Test;
 
