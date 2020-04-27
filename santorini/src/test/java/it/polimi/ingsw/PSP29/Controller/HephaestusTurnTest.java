@@ -46,6 +46,17 @@ public class HephaestusTurnTest {
         assertFalse(wL.getBuilt());
     }
     @Test
+    public void move_correctInput_callSuperMove_trueOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Coordinate cnext = new Coordinate(0,2);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        assertTrue(turn.move(m, wL, cnext));
+        assertTrue(wL.getMoved());
+        assertTrue(wL.getPosition().equals(cnext));
+        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
+    }
+    @Test
     public void move_notEmptyBoxInput_callSuperMove_falseOutput() {
         Coordinate cL = new Coordinate(1,1);
         Coordinate cC = new Coordinate(0,2);
@@ -58,6 +69,19 @@ public class HephaestusTurnTest {
         assertFalse(m.getBoard()[cC.getX()][cC.getY()].isEmpty());
     }
     @Test
+    public void limited_move_correctInput_callSuperLimitedMove_trueOutput(){
+        Coordinate c = new Coordinate(1,1);
+        m.updateBuilding(c);
+        Coordinate cnext = new Coordinate(0,0);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        assertTrue(turn.limited_move(m, wL, cnext));
+        assertTrue(wL.getMoved());
+        assertTrue(wL.getPosition().equals(cnext));
+        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
+        assertFalse(m.getBoard()[cnext.getX()][cnext.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);
+    }
+    @Test
     public void limited_move_upperLevelBoxInput_callSuperLimitedMove_falseOutput() {
         Coordinate c = new Coordinate(1,1);
         Coordinate c1 = new Coordinate(1,2);
@@ -68,30 +92,6 @@ public class HephaestusTurnTest {
         assertFalse(turn.limited_move(m, wL, c1));
         assertFalse(wL.getMoved());
         assertTrue(wL.getPosition().equals(c));
-    }
-    @Test
-    public void move_correctInput_callSuperMove_trueOutput(){
-        Coordinate c = new Coordinate(1,1);
-        Coordinate cnext = new Coordinate(0,2);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, c);
-        assertTrue(turn.move(m, wL, cnext));
-        assertTrue(wL.getMoved());
-        assertTrue(wL.getPosition().equals(cnext));
-        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
-    }
-    @Test
-    public void limited_move_correctInput_callSuperLimitedMove_trueOutput(){
-        Coordinate c = new Coordinate(1,1);
-        m.updateBuilding(c);
-        Coordinate cnext = new Coordinate(0,0);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, c);
-        assertTrue(turn.move(m, wL, cnext));
-        assertTrue(wL.getMoved());
-        assertTrue(wL.getPosition().equals(cnext));
-        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
-        assertFalse(m.getBoard()[cnext.getX()][cnext.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);
     }
     @Test
     public void cantMove_correctInputs_callSuperCantMove_falseOutput() {
