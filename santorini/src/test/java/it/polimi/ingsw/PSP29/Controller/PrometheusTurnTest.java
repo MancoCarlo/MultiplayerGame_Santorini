@@ -22,12 +22,14 @@ public class PrometheusTurnTest {
         m.getPlayers().add(new Player("Carlo", 21));
         turn = new PrometheusTurn(new GodTurn(new BaseTurn()));
     }
+
     @After
     public void TearDown(){
 
     }
+
     @Test
-    public void winCondition_notValidLevelInput_falseOutput(){
+    public void winCondition_notValidLevelInput_callSuperWinCondition_falseOutput(){
         Coordinate c = new Coordinate(1,1);
         Worker wL = m.getPlayers().get(0).getWorker(0);
         m.updateMovement(m.getPlayers().get(0), 0, c);
@@ -35,6 +37,18 @@ public class PrometheusTurnTest {
         wL.changeBuilt(true);
         assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
     }
+
+    @Test
+    public void build_correctInput_callSuperBuild_trueOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Coordinate c1 = new Coordinate(1,0);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        assertTrue(turn.build(m, wL, c1));
+        assertTrue(wL.getBuilt());
+        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);
+    }
+
     @Test
     public void move_notValidCoordinateInput_falseOutput() {
         Coordinate cL = new Coordinate(1,1);
@@ -44,16 +58,6 @@ public class PrometheusTurnTest {
         m.updateMovement(m.getPlayers().get(1), 0, cC);
         assertFalse(turn.move(m, wL, cC));
         assertFalse(wL.getMoved());
-    }
-    @Test
-    public void build_correctInput_trueOutput(){
-        Coordinate c = new Coordinate(1,1);
-        Coordinate c1 = new Coordinate(1,0);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, c);
-        assertTrue(turn.build(m, wL, c1));
-        assertTrue(wL.getBuilt());
-        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);
     }
 
 }

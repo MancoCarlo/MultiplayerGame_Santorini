@@ -101,6 +101,7 @@ public class BaseTurnTest {
         assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
         assertFalse(wL.getMoved() && wL.getBuilt());
     }
+
     @Test
     public void move_notValidNearBoxInput_falseOutput(){
         Coordinate c = new Coordinate(1,1);
