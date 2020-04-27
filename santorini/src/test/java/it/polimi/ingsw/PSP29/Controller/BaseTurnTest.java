@@ -100,8 +100,10 @@ public class BaseTurnTest {
         Coordinate c1 = new Coordinate(0,4);
         Worker wL = m.getPlayers().get(0).getWorker(0);
         m.updateMovement(m.getPlayers().get(0), 0, c);
+        assertFalse(c.isNear(c1));
         assertFalse(turn.move(m, wL, c1));
         assertFalse(wL.getMoved());
+        assertTrue(wL.getPosition().equals(c));
     }
     @Test
     public void move_correctInput_trueOutput(){
@@ -111,6 +113,7 @@ public class BaseTurnTest {
         m.updateMovement(m.getPlayers().get(0), 0, c);
         assertTrue(turn.move(m, wL, c1));
         assertTrue(wL.getMoved());
+        assertTrue(wL.getPosition().equals(c1));
     }
     @Test
     public void limited_move_upperLevelBoxInput_falseOutput(){
@@ -119,8 +122,10 @@ public class BaseTurnTest {
         m.updateBuilding(c1);
         Worker wL = m.getPlayers().get(0).getWorker(0);
         m.updateMovement(m.getPlayers().get(0), 0, c);
+        assertTrue(m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);
         assertFalse(turn.limited_move(m, wL, c1));
         assertFalse(wL.getMoved());
+        assertTrue(wL.getPosition().equals(c));
     }
     @Test
     public void limited_move_correctInput_trueOutput(){
@@ -130,6 +135,7 @@ public class BaseTurnTest {
         m.updateMovement(m.getPlayers().get(0), 0, c);
         assertTrue(turn.limited_move(m, wL, c1));
         assertTrue(wL.getMoved());
+        assertTrue(wL.getPosition().equals(c1));
     }
     @Test
     public void build_correctInput_trueOutput(){
@@ -139,6 +145,7 @@ public class BaseTurnTest {
         m.updateMovement(m.getPlayers().get(0), 0, c);
         assertTrue(turn.build(m, wL, c1));
         assertTrue(wL.getBuilt());
+        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);
     }
     @Test
     public void build_notEmptyBoxInput_falseOutput(){
@@ -149,6 +156,7 @@ public class BaseTurnTest {
         m.updateMovement(m.getPlayers().get(1), 0, cC);
         assertFalse(turn.build(m, wL, cC));
         assertFalse(wL.getBuilt());
+        assertEquals(m.getBoard()[cC.getX()][cC.getY()].getLevel(),0);
     }
     @Test
     public void cantMove_correctInput_falseOutput() {
