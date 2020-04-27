@@ -27,6 +27,41 @@ public class PanTurnTest {
     public void TearDown() { }
 
     @Test
+    public void winCondition_validWinningPanConditions_trueOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Coordinate cnext = new Coordinate(1,2);
+        Coordinate cbuild = new Coordinate(1,3);
+        m.updateBuilding(c);
+        m.updateBuilding(c);
+        m.updateBuilding(c);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        m.updateBuilding(cnext);
+        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
+        {
+            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+            assertTrue(!m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) >= 2);
+        }
+    }
+
+    @Test
+    public void winCondition_validWinningPanConditionsWithSameLevelPrevPositionInput_trueOutput(){
+        Coordinate c = new Coordinate(1,1);
+        Coordinate cnext = new Coordinate(1,2);
+        m.updateBuilding(c);
+        m.updateBuilding(c);
+        m.updateBuilding(c);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, c);
+        m.updateBuilding(cnext);
+        if(turn.move(m, wL, cnext) && turn.build(m, wL, c))
+        {
+            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+            assertTrue(m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) >= 3);
+        }
+    }
+
+    @Test
     public void winCondition_notValidPreviousPositionInput_falseOutput(){
         Coordinate c = new Coordinate(1,1);
         Coordinate cnext = new Coordinate(1,2);
