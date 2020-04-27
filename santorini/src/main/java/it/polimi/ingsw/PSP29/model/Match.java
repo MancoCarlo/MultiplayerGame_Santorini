@@ -180,6 +180,9 @@ public class Match implements Serializable {
         return gameboard;
     }
 
+    /**
+     * @return the string that print the list of gods
+     */
     public String printGodlist(){
         String g = "Gods: \n";
         for (int i=0; i<gods.size(); i++){
@@ -188,6 +191,9 @@ public class Match implements Serializable {
         return g;
     }
 
+    /**
+     * @return the string that print the list of players
+     */
     public String printPlayers(){
         String pl= "Players: \n";
         for (Player p : players){
@@ -196,6 +202,11 @@ public class Match implements Serializable {
         return pl;
     }
 
+    /**
+     * control if the username is already taken
+     * @param username the username
+     * @return true if the username is already taken
+     */
     public boolean alreadyIn(String username){
         if(players.size()==0){
             return false;

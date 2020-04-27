@@ -1,6 +1,6 @@
 package it.polimi.ingsw.PSP29.InputControl;
 
-import it.polimi.ingsw.PSP29.controller.*;
+import it.polimi.ingsw.PSP29.Controller.*;
 import it.polimi.ingsw.PSP29.model.*;
 
 import java.util.Scanner;

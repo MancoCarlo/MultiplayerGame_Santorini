@@ -1,0 +1,241 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PrometheusTurn</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PrometheusTurn (it.polimi.ingsw.PSP29.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PrometheusTurn</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33,3%
+  </span>
+  <span class="absValue">
+    (2/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6,7%
+  </span>
+  <span class="absValue">
+    (4/ 60)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.model.*;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.util.Scanner;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;public class PrometheusTurn extends GodTurn {
+<i>8</i>&nbsp;    public PrometheusTurn(Turn turn) {
+<b class="fc"><i>9</i>&nbsp;        super(turn);</b>
+<b class="fc"><i>10</i>&nbsp;    }</b>
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    /**
+<i>13</i>&nbsp;     * call winCondition() of the superclass
+<i>14</i>&nbsp;     * @param m match played
+<i>15</i>&nbsp;     * @param p player that plays the turn
+<i>16</i>&nbsp;     * @return true if p win the game, else false
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    @Override
+<i>19</i>&nbsp;    public boolean winCondition(Match m, Player p) {
+<b class="nc"><i>20</i>&nbsp;        return super.winCondition(m, p);</b>
+<i>21</i>&nbsp;    }
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /**
+<i>24</i>&nbsp;     * call build() of the superclass
+<i>25</i>&nbsp;     * @param m match played
+<i>26</i>&nbsp;     * @param w worker that must build
+<i>27</i>&nbsp;     * @param c location of the box where w must build
+<i>28</i>&nbsp;     * @return true if w has built in c, else false
+<i>29</i>&nbsp;     */
+<i>30</i>&nbsp;    @Override
+<i>31</i>&nbsp;    public boolean build(Match m, Worker w, Coordinate c) {
+<b class="nc"><i>32</i>&nbsp;        return super.build(m, w, c);</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    /**
+<i>36</i>&nbsp;     * allows a player to build before and after moving his worker if in this turn his worker can&#39;t level up
+<i>37</i>&nbsp;     * @param m match played
+<i>38</i>&nbsp;     * @param w worker that must be moved
+<i>39</i>&nbsp;     * @param c new position of w
+<i>40</i>&nbsp;     * @return true if is moved in c, else false
+<i>41</i>&nbsp;     */
+<i>42</i>&nbsp;    @Override
+<i>43</i>&nbsp;    public boolean move(Match m, Worker w, Coordinate c) {
+<b class="fc"><i>44</i>&nbsp;        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) &gt;0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){</b>
+<b class="fc"><i>45</i>&nbsp;            return false; //se la mossa non è valida</b>
+<i>46</i>&nbsp;        }
+<i>47</i>&nbsp;        else {
+<b class="nc"><i>48</i>&nbsp;            Scanner scanner = new Scanner(System.in);</b>
+<i>49</i>&nbsp;            String x, y;
+<i>50</i>&nbsp;            do {
+<b class="nc"><i>51</i>&nbsp;                System.out.println(&quot;Potere dio attivato!!\nInserisci una nuova coordinata dove vuoi costruire: \t&quot;);</b>
+<b class="nc"><i>52</i>&nbsp;                x = scanner.nextLine();</b>
+<b class="nc"><i>53</i>&nbsp;                y = scanner.nextLine();</b>
+<b class="nc"><i>54</i>&nbsp;            } while(Integer.parseInt(x)&gt;m.getRows()-1 || Integer.parseInt(y)&gt;m.getRows()-1 || Integer.parseInt(x)&lt;0 || Integer.parseInt(y)&lt;0);</b>
+<b class="nc"><i>55</i>&nbsp;            Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));</b>
+<b class="nc"><i>56</i>&nbsp;            if((!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()) || (c.equals(c1) &amp;&amp; m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) &gt;0)){</b>
+<b class="nc"><i>57</i>&nbsp;                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);</b>
+<b class="nc"><i>58</i>&nbsp;                w.changeMoved(true);</b>
+<b class="nc"><i>59</i>&nbsp;                return true; //mi muovo ma non costruisco</b>
+<i>60</i>&nbsp;            }
+<i>61</i>&nbsp;            else{
+<b class="nc"><i>62</i>&nbsp;                m.updateBuilding(c1);</b>
+<b class="nc"><i>63</i>&nbsp;                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);</b>
+<b class="nc"><i>64</i>&nbsp;                w.changeMoved(true); //costruisco e mi muovo</b>
+<b class="nc"><i>65</i>&nbsp;                return true;</b>
+<i>66</i>&nbsp;            }
+<i>67</i>&nbsp;        }
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /**
+<i>71</i>&nbsp;     * allows a player to build before and after moving his worker without letting him level up
+<i>72</i>&nbsp;     * @param m match played
+<i>73</i>&nbsp;     * @param w worker that must be moved
+<i>74</i>&nbsp;     * @param c new position of w
+<i>75</i>&nbsp;     * @return true if is moved in c, else false
+<i>76</i>&nbsp;     */
+<i>77</i>&nbsp;    @Override
+<i>78</i>&nbsp;    public boolean limited_move(Match m, Worker w, Coordinate c) {
+<b class="nc"><i>79</i>&nbsp;        Scanner scanner = new Scanner(System.in);</b>
+<i>80</i>&nbsp;        String x, y;
+<i>81</i>&nbsp;        do {
+<b class="nc"><i>82</i>&nbsp;            System.out.println(&quot;Potere dio attivato!!\nInserisci una nuova coordinata dove vuoi costruire: \t&quot;);</b>
+<b class="nc"><i>83</i>&nbsp;            x = scanner.nextLine();</b>
+<b class="nc"><i>84</i>&nbsp;            y = scanner.nextLine();</b>
+<b class="nc"><i>85</i>&nbsp;        }while(Integer.parseInt(x)&gt;m.getRows()-1 || Integer.parseInt(y)&gt;m.getRows()-1 || Integer.parseInt(x)&lt;0 || Integer.parseInt(y)&lt;0);</b>
+<b class="nc"><i>86</i>&nbsp;        Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));</b>
+<b class="nc"><i>87</i>&nbsp;        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) &gt;0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){</b>
+<b class="nc"><i>88</i>&nbsp;            return false; //se la mossa non è valida</b>
+<i>89</i>&nbsp;        }
+<i>90</i>&nbsp;        else {
+<b class="nc"><i>91</i>&nbsp;            if((!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()) || (c.equals(c1) &amp;&amp; m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) &gt;=0)){</b>
+<b class="nc"><i>92</i>&nbsp;                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);</b>
+<b class="nc"><i>93</i>&nbsp;                w.changeMoved(true);</b>
+<b class="nc"><i>94</i>&nbsp;                return true; //mi muovo ma non costruisco</b>
+<i>95</i>&nbsp;            }
+<i>96</i>&nbsp;            else{
+<b class="nc"><i>97</i>&nbsp;                m.updateBuilding(c1);</b>
+<b class="nc"><i>98</i>&nbsp;                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);</b>
+<b class="nc"><i>99</i>&nbsp;                w.changeMoved(true); //costruisco e mi muovo</b>
+<b class="nc"><i>100</i>&nbsp;                return true;</b>
+<i>101</i>&nbsp;            }
+<i>102</i>&nbsp;        }
+<i>103</i>&nbsp;    }
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    /**
+<i>106</i>&nbsp;     * checks if a player can&#39;t move his worker using Prometheus power
+<i>107</i>&nbsp;     * @param m match played
+<i>108</i>&nbsp;     * @param w worker that can be moved
+<i>109</i>&nbsp;     * @param athena true if the athena power is on, else false
+<i>110</i>&nbsp;     * @return true if w can&#39;t move to another location, else false
+<i>111</i>&nbsp;     */
+<i>112</i>&nbsp;    @Override
+<i>113</i>&nbsp;    public boolean cantMove(Match m,Worker w, boolean athena){
+<b class="nc"><i>114</i>&nbsp;        int count = 0;</b>
+<b class="nc"><i>115</i>&nbsp;        if(!athena){</b>
+<b class="nc"><i>116</i>&nbsp;            for(int i=0; i&lt;m.getRows(); i++){</b>
+<b class="nc"><i>117</i>&nbsp;                for(int j=0; j&lt;m.getColumns(); j++){</b>
+<b class="nc"><i>118</i>&nbsp;                    if(m.getBoard()[i][j].isEmpty() &amp;&amp; w.getPosition().isNear(m.getBoard()[i][j].getLocation()) &amp;&amp; m.getBoard()[i][j].getLevel()!=4 &amp;&amp; m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(m.getBoard()[i][j])==-1){</b>
+<i>119</i>&nbsp;                        //se esiste una casella che è vuota, è vicina al mio operaio, la cui torre non è completa e il mio operaio puo salire di livello
+<b class="nc"><i>120</i>&nbsp;                        return true;//non si può usare la divinità</b>
+<i>121</i>&nbsp;                    }
+<i>122</i>&nbsp;                    else { // devo controllare che costruendo poi riesca a muoversi
+<b class="nc"><i>123</i>&nbsp;                        if (!w.canLevelUp(m) &amp;&amp; m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() &lt; 3 &amp;&amp; m.getBoard()[i][j].isEmpty() &amp;&amp; w.getPosition().isNear(m.getBoard()[i][j].getLocation()) &amp;&amp; m.getBoard()[i][j].getLevel() &lt;= m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())</b>
+<i>124</i>&nbsp;                            //se il worker non puo salire di livello ed è a livello inferiore a 3 e se esiste una casella che è vuota e vicina al mio operaio, il cui livello è inferirore o uguale a quello del mio worker
+<b class="nc"><i>125</i>&nbsp;                            return false;</b>
+<i>126</i>&nbsp;                        else {
+<b class="nc"><i>127</i>&nbsp;                            if (!w.canLevelUp(m) &amp;&amp; m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 &amp;&amp; m.getBoard()[i][j].isEmpty() &amp;&amp; w.getPosition().isNear(m.getBoard()[i][j].getLocation()) &amp;&amp; m.getBoard()[i][j].getLevel() &lt; m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())</b>
+<b class="nc"><i>128</i>&nbsp;                                return false;//se il worker non puo salire di livello ed è al terzo livello e c&#39;è almeno una casella vuota e adiacente che è ha un livello inferiore</b>
+<b class="nc"><i>129</i>&nbsp;                            if (!w.canLevelUp(m) &amp;&amp; m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 &amp;&amp; m.getBoard()[i][j].isEmpty() &amp;&amp; w.getPosition().isNear(m.getBoard()[i][j].getLocation()) &amp;&amp; m.getBoard()[i][j].getLevel() != 4)//almeno due caselle che non sono al 4 livello</b>
+<b class="nc"><i>130</i>&nbsp;                                count =count +1;//se worker non può salire di livello ed è al terzo livello e ci sono almeno due caselle che non sono al 4 livello</b>
+<i>131</i>&nbsp;                        }
+<i>132</i>&nbsp;                    }
+<i>133</i>&nbsp;                }
+<i>134</i>&nbsp;            }
+<b class="nc"><i>135</i>&nbsp;            if(count &gt;=2)</b>
+<b class="nc"><i>136</i>&nbsp;                return false;</b>
+<i>137</i>&nbsp;            else
+<b class="nc"><i>138</i>&nbsp;                return true;</b>
+<i>139</i>&nbsp;        }
+<i>140</i>&nbsp;        else {
+<b class="nc"><i>141</i>&nbsp;            for(int i=0; i&lt;m.getRows(); i++){</b>
+<b class="nc"><i>142</i>&nbsp;                for(int j=0; j&lt;m.getColumns(); j++) {</b>
+<b class="nc"><i>143</i>&nbsp;                    if (m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() &lt;= 3 &amp;&amp; m.getBoard()[i][j].isEmpty() &amp;&amp; w.getPosition().isNear(m.getBoard()[i][j].getLocation()) &amp;&amp; m.getBoard()[i][j].getLevel() &lt; m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())</b>
+<i>144</i>&nbsp;                        //se il worker è a livello inferiore o uguale a 3 e se esiste una casella che è vuota e vicina al mio operaio, il cui livello è inferirore a quello del mio worker
+<b class="nc"><i>145</i>&nbsp;                        return false;</b>
+<b class="nc"><i>146</i>&nbsp;                    if (m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 &amp;&amp; m.getBoard()[i][j].isEmpty() &amp;&amp; w.getPosition().isNear(m.getBoard()[i][j].getLocation()) &amp;&amp; m.getBoard()[i][j].getLevel() != 4)//almeno due caselle che non sono al 4 livello</b>
+<b class="nc"><i>147</i>&nbsp;                        count =count +1;//se worker è al terzo livello e ci sono almeno due caselle che non sono al 4 livello</b>
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;                }
+<i>150</i>&nbsp;            }
+<b class="nc"><i>151</i>&nbsp;            if(count &gt;=2)</b>
+<b class="nc"><i>152</i>&nbsp;                return false;</b>
+<i>153</i>&nbsp;            else
+<b class="nc"><i>154</i>&nbsp;                return true;</b>
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;        }
+<i>157</i>&nbsp;    }
+<i>158</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-27 10:57</div>
+</div>
+</body>
+</html>

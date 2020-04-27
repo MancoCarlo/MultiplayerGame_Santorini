@@ -77,6 +77,11 @@ public class Client implements Runnable, ServerObserver
     }
 
 
+    /**
+     * control if the cliend received the message
+     * @param newStr1 the message
+     * @param newStr2 the method that will be called
+     */
     @Override
     public synchronized void didReceiveMessage(String newStr1, String newStr2)
     {
@@ -85,6 +90,10 @@ public class Client implements Runnable, ServerObserver
         notifyAll();
     }
 
+    /**
+     * control if the serverAdapter method has been executed
+     * @param rsp true if executed
+     */
     @Override
     public synchronized void didInvoke(boolean rsp)
     {

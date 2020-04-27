@@ -36,6 +36,10 @@ public class ServerAdapter implements Runnable
     }
 
 
+    /**
+     * add an observer to the list
+     * @param observer
+     */
     public void addObserver(ServerObserver observer)
     {
         synchronized (observers) {
@@ -43,7 +47,10 @@ public class ServerAdapter implements Runnable
         }
     }
 
-
+    /**
+     * remove an observer from the list
+     * @param observer
+     */
     public void removeObserver(ServerObserver observer)
     {
         synchronized (observers) {
@@ -51,6 +58,10 @@ public class ServerAdapter implements Runnable
         }
     }
 
+    /**
+     * set nextCommand to INTERACTION_SERVER
+     * @param cmd the string to print
+     */
     public synchronized void interactionServer(String cmd)
     {
         nextCommand = Commands.INTERACTION_SERVER;
@@ -58,6 +69,10 @@ public class ServerAdapter implements Runnable
         notifyAll();
     }
 
+    /**
+     * set nextCommand to SERVICE_MESSAGE
+     * @param cmd the string to print
+     */
     public synchronized void serviceMessage(String cmd)
     {
         nextCommand = Commands.SERVICE_MESSAGE;
@@ -66,6 +81,9 @@ public class ServerAdapter implements Runnable
     }
 
 
+    /**
+     * set nextCommand to GET_MESSAGE
+     */
     public synchronized void getMessage()
     {
         nextCommand = Commands.GET_MESSAGE;
@@ -91,7 +109,11 @@ public class ServerAdapter implements Runnable
         } catch (IOException e) { }
     }
 
-
+    /**
+     * control nextCommand and call the others methods
+     * @throws IOException if client disconnected
+     * @throws ClassNotFoundException
+     */
     private synchronized void handleServerConnection() throws IOException, ClassNotFoundException
     {
         /* wait for commands */
@@ -125,6 +147,9 @@ public class ServerAdapter implements Runnable
         }
     }
 
+    /**
+     * execution of the command INTERACTION_SERVER
+     */
     public synchronized void doInteractionServer(){
         Scanner s = new Scanner(System.in);
         System.out.print(cmd);
@@ -146,6 +171,9 @@ public class ServerAdapter implements Runnable
         }
     }
 
+    /**
+     * execution of the command SERVICE_MESSAGE
+     */
     public synchronized void doServiceMessage(){
         System.out.print(cmd);
 
@@ -160,6 +188,11 @@ public class ServerAdapter implements Runnable
         }
     }
 
+    /**
+     * execution of the command GET_MESSAGE
+     * @throws IOException if client disconnected
+     * @throws ClassNotFoundException if cast doesn't work
+     */
     private synchronized void doGetMessage() throws IOException, ClassNotFoundException
     {
         /* send the string to the server and get the new string back */
@@ -178,6 +211,10 @@ public class ServerAdapter implements Runnable
         }
     }
 
+    /**
+     * control if client is connected to the server
+     * @return true if connected
+     */
     public synchronized boolean getConnected(){
         return connected;
     }

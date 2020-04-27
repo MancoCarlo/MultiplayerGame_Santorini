@@ -1,0 +1,350 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ServerAdapter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.view</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ServerAdapter (it.polimi.ingsw.PSP29.view)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ServerAdapter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 70)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ServerAdapter$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">ServerAdapter$Commands</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 76)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.view;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.model.*;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.io.IOException;
+<i>6</i>&nbsp;import java.io.ObjectInputStream;
+<i>7</i>&nbsp;import java.io.ObjectOutputStream;
+<i>8</i>&nbsp;import java.net.Socket;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Scanner;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;public class ServerAdapter implements Runnable
+<i>15</i>&nbsp;{
+<b class="nc"><i>16</i>&nbsp;    private enum Commands {</b>
+<b class="nc"><i>17</i>&nbsp;        GET_MESSAGE,</b>
+<b class="nc"><i>18</i>&nbsp;        SERVICE_MESSAGE,</b>
+<b class="nc"><i>19</i>&nbsp;        INTERACTION_SERVER,</b>
+<b class="nc"><i>20</i>&nbsp;        STOP</b>
+<i>21</i>&nbsp;    }
+<i>22</i>&nbsp;    private Commands nextCommand;
+<i>23</i>&nbsp;    private String cmd;
+<b class="nc"><i>24</i>&nbsp;    private boolean connected = false;</b>
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    private Socket server;
+<i>27</i>&nbsp;    private ObjectOutputStream outputStm;
+<i>28</i>&nbsp;    private ObjectInputStream inputStm;
+<i>29</i>&nbsp;
+<b class="nc"><i>30</i>&nbsp;    private List&lt;ServerObserver&gt; observers = new ArrayList&lt;&gt;();</b>
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    public ServerAdapter(Socket server)
+<b class="nc"><i>34</i>&nbsp;    {</b>
+<b class="nc"><i>35</i>&nbsp;        this.server = server;</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    /**
+<i>40</i>&nbsp;     * add an observer to the list
+<i>41</i>&nbsp;     * @param observer
+<i>42</i>&nbsp;     */
+<i>43</i>&nbsp;    public void addObserver(ServerObserver observer)
+<i>44</i>&nbsp;    {
+<b class="nc"><i>45</i>&nbsp;        synchronized (observers) {</b>
+<b class="nc"><i>46</i>&nbsp;            observers.add(observer);</b>
+<b class="nc"><i>47</i>&nbsp;        }</b>
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    /**
+<i>51</i>&nbsp;     * remove an observer from the list
+<i>52</i>&nbsp;     * @param observer
+<i>53</i>&nbsp;     */
+<i>54</i>&nbsp;    public void removeObserver(ServerObserver observer)
+<i>55</i>&nbsp;    {
+<b class="nc"><i>56</i>&nbsp;        synchronized (observers) {</b>
+<b class="nc"><i>57</i>&nbsp;            observers.remove(observer);</b>
+<b class="nc"><i>58</i>&nbsp;        }</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * set nextCommand to INTERACTION_SERVER
+<i>63</i>&nbsp;     * @param cmd the string to print
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    public synchronized void interactionServer(String cmd)
+<i>66</i>&nbsp;    {
+<b class="nc"><i>67</i>&nbsp;        nextCommand = Commands.INTERACTION_SERVER;</b>
+<b class="nc"><i>68</i>&nbsp;        this.cmd = cmd;</b>
+<b class="nc"><i>69</i>&nbsp;        notifyAll();</b>
+<i>70</i>&nbsp;    }
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /**
+<i>73</i>&nbsp;     * set nextCommand to SERVICE_MESSAGE
+<i>74</i>&nbsp;     * @param cmd the string to print
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    public synchronized void serviceMessage(String cmd)
+<i>77</i>&nbsp;    {
+<b class="nc"><i>78</i>&nbsp;        nextCommand = Commands.SERVICE_MESSAGE;</b>
+<b class="nc"><i>79</i>&nbsp;        this.cmd = cmd;</b>
+<b class="nc"><i>80</i>&nbsp;        notifyAll();</b>
+<i>81</i>&nbsp;    }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;    /**
+<i>85</i>&nbsp;     * set nextCommand to GET_MESSAGE
+<i>86</i>&nbsp;     */
+<i>87</i>&nbsp;    public synchronized void getMessage()
+<i>88</i>&nbsp;    {
+<b class="nc"><i>89</i>&nbsp;        nextCommand = Commands.GET_MESSAGE;</b>
+<b class="nc"><i>90</i>&nbsp;        notifyAll();</b>
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    @Override
+<i>95</i>&nbsp;    public void run()
+<i>96</i>&nbsp;    {
+<i>97</i>&nbsp;        try {
+<b class="nc"><i>98</i>&nbsp;            outputStm = new ObjectOutputStream(server.getOutputStream());</b>
+<b class="nc"><i>99</i>&nbsp;            inputStm = new ObjectInputStream(server.getInputStream());</b>
+<b class="nc"><i>100</i>&nbsp;            handleServerConnection();</b>
+<b class="nc"><i>101</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>102</i>&nbsp;            System.out.println(&quot;server has died&quot;);</b>
+<b class="nc"><i>103</i>&nbsp;        } catch (ClassCastException | ClassNotFoundException e) {</b>
+<b class="nc"><i>104</i>&nbsp;            System.out.println(&quot;protocol violation&quot;);</b>
+<b class="nc"><i>105</i>&nbsp;        }</b>
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;        try {
+<b class="nc"><i>108</i>&nbsp;            server.close();</b>
+<b class="nc"><i>109</i>&nbsp;        } catch (IOException e) { }</b>
+<i>110</i>&nbsp;    }
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;    /**
+<i>113</i>&nbsp;     * control nextCommand and call the others methods
+<i>114</i>&nbsp;     * @throws IOException if client disconnected
+<i>115</i>&nbsp;     * @throws ClassNotFoundException
+<i>116</i>&nbsp;     */
+<i>117</i>&nbsp;    private synchronized void handleServerConnection() throws IOException, ClassNotFoundException
+<i>118</i>&nbsp;    {
+<i>119</i>&nbsp;        /* wait for commands */
+<b class="nc"><i>120</i>&nbsp;        connected = true;</b>
+<i>121</i>&nbsp;        while (true) {
+<b class="nc"><i>122</i>&nbsp;            nextCommand = null;</b>
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;            try {
+<b class="nc"><i>125</i>&nbsp;                wait();</b>
+<b class="nc"><i>126</i>&nbsp;            } catch (InterruptedException e) { }</b>
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;            if (nextCommand == null)</b>
+<b class="nc"><i>129</i>&nbsp;                continue;</b>
+<i>130</i>&nbsp;
+<b class="nc"><i>131</i>&nbsp;            switch (nextCommand) {</b>
+<i>132</i>&nbsp;                case GET_MESSAGE:
+<b class="nc"><i>133</i>&nbsp;                    doGetMessage();</b>
+<b class="nc"><i>134</i>&nbsp;                    break;</b>
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;                case INTERACTION_SERVER:
+<b class="nc"><i>137</i>&nbsp;                    doInteractionServer();</b>
+<b class="nc"><i>138</i>&nbsp;                    break;</b>
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;                case SERVICE_MESSAGE:
+<b class="nc"><i>141</i>&nbsp;                    doServiceMessage();</b>
+<b class="nc"><i>142</i>&nbsp;                    break;</b>
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;                case STOP:
+<i>145</i>&nbsp;                    return;
+<i>146</i>&nbsp;            }
+<i>147</i>&nbsp;        }
+<i>148</i>&nbsp;    }
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;    /**
+<i>151</i>&nbsp;     * execution of the command INTERACTION_SERVER
+<i>152</i>&nbsp;     */
+<i>153</i>&nbsp;    public synchronized void doInteractionServer(){
+<b class="nc"><i>154</i>&nbsp;        Scanner s = new Scanner(System.in);</b>
+<b class="nc"><i>155</i>&nbsp;        System.out.print(cmd);</b>
+<b class="nc"><i>156</i>&nbsp;        String rsp = s.nextLine();</b>
+<i>157</i>&nbsp;        try {
+<b class="nc"><i>158</i>&nbsp;            outputStm.writeObject(rsp);</b>
+<b class="nc"><i>159</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>160</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i>161</i>&nbsp;        }</b>
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;        List&lt;ServerObserver&gt; observersCpy;
+<b class="nc"><i>164</i>&nbsp;        synchronized (observers) {</b>
+<b class="nc"><i>165</i>&nbsp;            observersCpy = new ArrayList&lt;&gt;(observers);</b>
+<b class="nc"><i>166</i>&nbsp;        }</b>
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;        /* notify the observers that we got the string */
+<b class="nc"><i>169</i>&nbsp;        for (ServerObserver observer: observersCpy) {</b>
+<b class="nc"><i>170</i>&nbsp;            observer.didInvoke(true);</b>
+<b class="nc"><i>171</i>&nbsp;        }</b>
+<i>172</i>&nbsp;    }
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;    /**
+<i>175</i>&nbsp;     * execution of the command SERVICE_MESSAGE
+<i>176</i>&nbsp;     */
+<i>177</i>&nbsp;    public synchronized void doServiceMessage(){
+<b class="nc"><i>178</i>&nbsp;        System.out.print(cmd);</b>
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;        List&lt;ServerObserver&gt; observersCpy;
+<b class="nc"><i>181</i>&nbsp;        synchronized (observers) {</b>
+<b class="nc"><i>182</i>&nbsp;            observersCpy = new ArrayList&lt;&gt;(observers);</b>
+<b class="nc"><i>183</i>&nbsp;        }</b>
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;        /* notify the observers that we got the string */
+<b class="nc"><i>186</i>&nbsp;        for (ServerObserver observer: observersCpy) {</b>
+<b class="nc"><i>187</i>&nbsp;            observer.didInvoke(true);</b>
+<b class="nc"><i>188</i>&nbsp;        }</b>
+<i>189</i>&nbsp;    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    /**
+<i>192</i>&nbsp;     * execution of the command GET_MESSAGE
+<i>193</i>&nbsp;     * @throws IOException if client disconnected
+<i>194</i>&nbsp;     * @throws ClassNotFoundException if cast doesn&#39;t work
+<i>195</i>&nbsp;     */
+<i>196</i>&nbsp;    private synchronized void doGetMessage() throws IOException, ClassNotFoundException
+<i>197</i>&nbsp;    {
+<i>198</i>&nbsp;        /* send the string to the server and get the new string back */
+<b class="nc"><i>199</i>&nbsp;        String newStr1 = (String)inputStm.readObject();</b>
+<b class="nc"><i>200</i>&nbsp;        String newStr2= (String)inputStm.readObject();</b>
+<i>201</i>&nbsp;        /* copy the list of observers in case some observers changes it from inside
+<i>202</i>&nbsp;         * the notification method */
+<i>203</i>&nbsp;        List&lt;ServerObserver&gt; observersCpy;
+<b class="nc"><i>204</i>&nbsp;        synchronized (observers) {</b>
+<b class="nc"><i>205</i>&nbsp;            observersCpy = new ArrayList&lt;&gt;(observers);</b>
+<b class="nc"><i>206</i>&nbsp;        }</b>
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;        /* notify the observers that we got the string */
+<b class="nc"><i>209</i>&nbsp;        for (ServerObserver observer: observersCpy) {</b>
+<b class="nc"><i>210</i>&nbsp;            observer.didReceiveMessage(newStr1, newStr2);</b>
+<b class="nc"><i>211</i>&nbsp;        }</b>
+<i>212</i>&nbsp;    }
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    /**
+<i>215</i>&nbsp;     * control if client is connected to the server
+<i>216</i>&nbsp;     * @return true if connected
+<i>217</i>&nbsp;     */
+<i>218</i>&nbsp;    public synchronized boolean getConnected(){
+<b class="nc"><i>219</i>&nbsp;        return connected;</b>
+<i>220</i>&nbsp;    }
+<i>221</i>&nbsp;
+<i>222</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-27 10:57</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TurnDecorator</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TurnDecorator (it.polimi.ingsw.PSP29.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TurnDecorator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83,3%
+  </span>
+  <span class="absValue">
+    (5/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    47,5%
+  </span>
+  <span class="absValue">
+    (19/ 40)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.model.*;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;public abstract class TurnDecorator implements Turn {
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;    private final Turn turn;
+<i>9</i>&nbsp;
+<b class="fc"><i>10</i>&nbsp;    protected TurnDecorator(Turn turn){ this.turn=turn; }</b>
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    /**
+<i>13</i>&nbsp;     * control if the player win
+<i>14</i>&nbsp;     * @param m match played
+<i>15</i>&nbsp;     * @param p player that plays the turn
+<i>16</i>&nbsp;     * @return true if p win the game, else false
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    @Override
+<i>19</i>&nbsp;    public boolean winCondition(Match m, Player p) {
+<b class="fc"><i>20</i>&nbsp;        for(Worker w : p.getWorkers()){</b>
+<b class="fc"><i>21</i>&nbsp;            if(w.getMoved() &amp;&amp; w.getBuilt()){</b>
+<b class="nc"><i>22</i>&nbsp;                w.changeMoved(false);</b>
+<b class="nc"><i>23</i>&nbsp;                w.changeBuilt(false);</b>
+<b class="nc"><i>24</i>&nbsp;                if(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel()==3){</b>
+<b class="nc"><i>25</i>&nbsp;                    if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() &amp;&amp; m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==3){</b>
+<b class="nc"><i>26</i>&nbsp;                        return true;</b>
+<i>27</i>&nbsp;                    }
+<b class="nc"><i>28</i>&nbsp;                    else if(!m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() &amp;&amp; m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==2){</b>
+<b class="nc"><i>29</i>&nbsp;                        return true;</b>
+<i>30</i>&nbsp;                    }
+<i>31</i>&nbsp;                    else{
+<b class="nc"><i>32</i>&nbsp;                        return false;</b>
+<i>33</i>&nbsp;                    }
+<i>34</i>&nbsp;                }
+<b class="nc"><i>35</i>&nbsp;                return false;</b>
+<i>36</i>&nbsp;            }
+<b class="fc"><i>37</i>&nbsp;        }</b>
+<b class="fc"><i>38</i>&nbsp;        return false;</b>
+<i>39</i>&nbsp;    }
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    /**
+<i>42</i>&nbsp;     * let the worker build
+<i>43</i>&nbsp;     * @param m match played
+<i>44</i>&nbsp;     * @param w worker that must build
+<i>45</i>&nbsp;     * @param c location of the box where w can build two times
+<i>46</i>&nbsp;     * @return true if w has built at least once
+<i>47</i>&nbsp;     */
+<i>48</i>&nbsp;    @Override
+<i>49</i>&nbsp;    public boolean build(Match m, Worker w, Coordinate c) {
+<b class="fc"><i>50</i>&nbsp;        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].getLevel()==4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){</b>
+<b class="fc"><i>51</i>&nbsp;            return false;</b>
+<i>52</i>&nbsp;        }
+<i>53</i>&nbsp;        else{
+<b class="fc"><i>54</i>&nbsp;            m.updateBuilding(c);</b>
+<b class="fc"><i>55</i>&nbsp;            m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);</b>
+<b class="fc"><i>56</i>&nbsp;            w.changeBuilt(true);</b>
+<b class="fc"><i>57</i>&nbsp;            return true;</b>
+<i>58</i>&nbsp;        }
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * move the worker
+<i>63</i>&nbsp;     * @param m match played
+<i>64</i>&nbsp;     * @param w worker that must be moved
+<i>65</i>&nbsp;     * @param c new position of w
+<i>66</i>&nbsp;     * @return true if is moved in c, else false
+<i>67</i>&nbsp;     */
+<i>68</i>&nbsp;    @Override
+<i>69</i>&nbsp;    public boolean move(Match m, Worker w, Coordinate c){
+<b class="fc"><i>70</i>&nbsp;        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])&gt;1 || m.getBoard()[c.getX()][c.getY()].getLevel()==4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){</b>
+<b class="nc"><i>71</i>&nbsp;            return false;</b>
+<i>72</i>&nbsp;        }
+<i>73</i>&nbsp;        else{
+<b class="fc"><i>74</i>&nbsp;            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);</b>
+<b class="fc"><i>75</i>&nbsp;            w.changeMoved(true);</b>
+<b class="fc"><i>76</i>&nbsp;            return true;</b>
+<i>77</i>&nbsp;        }
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    /**
+<i>81</i>&nbsp;     * move the worker if athena has been used
+<i>82</i>&nbsp;     * @param m match played
+<i>83</i>&nbsp;     * @param w worker that must be moved
+<i>84</i>&nbsp;     * @param c new position of w
+<i>85</i>&nbsp;     * @return true if is moved in c, else false
+<i>86</i>&nbsp;     */
+<i>87</i>&nbsp;    @Override
+<i>88</i>&nbsp;    public boolean limited_move(Match m, Worker w, Coordinate c){
+<b class="fc"><i>89</i>&nbsp;        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])&gt;0 || m.getBoard()[c.getX()][c.getY()].getLevel()==4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){</b>
+<b class="nc"><i>90</i>&nbsp;            return false;</b>
+<i>91</i>&nbsp;        }
+<i>92</i>&nbsp;        else{
+<b class="fc"><i>93</i>&nbsp;            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);</b>
+<b class="fc"><i>94</i>&nbsp;            w.changeMoved(true);</b>
+<b class="fc"><i>95</i>&nbsp;            return true;</b>
+<i>96</i>&nbsp;        }
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    /**
+<i>100</i>&nbsp;     * control if the worker can move
+<i>101</i>&nbsp;     * @param match match played
+<i>102</i>&nbsp;     * @param w worker that can be moved
+<i>103</i>&nbsp;     * @param athena true if the athena power is on, else false
+<i>104</i>&nbsp;     * @return true if w can&#39;t move to another location, else false
+<i>105</i>&nbsp;     */
+<i>106</i>&nbsp;    public boolean cantMove(Match match,Worker w, boolean athena){
+<b class="nc"><i>107</i>&nbsp;        if(athena){</b>
+<b class="nc"><i>108</i>&nbsp;            for(int i=0; i&lt;match.getRows(); i++){</b>
+<b class="nc"><i>109</i>&nbsp;                for(int j=0; j&lt;match.getColumns(); j++){</b>
+<b class="nc"><i>110</i>&nbsp;                    if(match.getBoard()[i][j].isEmpty() &amp;&amp; w.getPosition().isNear(match.getBoard()[i][j].getLocation()) &amp;&amp; match.getBoard()[i][j].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])&lt;1){</b>
+<b class="nc"><i>111</i>&nbsp;                        return false;</b>
+<i>112</i>&nbsp;                    }
+<i>113</i>&nbsp;                }
+<i>114</i>&nbsp;            }
+<i>115</i>&nbsp;        }
+<i>116</i>&nbsp;        else{
+<b class="nc"><i>117</i>&nbsp;            for(int i=0; i&lt;match.getRows(); i++){</b>
+<b class="nc"><i>118</i>&nbsp;                for(int j=0; j&lt;match.getColumns(); j++){</b>
+<b class="nc"><i>119</i>&nbsp;                    if(match.getBoard()[i][j].isEmpty() &amp;&amp; w.getPosition().isNear(match.getBoard()[i][j].getLocation()) &amp;&amp; match.getBoard()[i][j].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])&lt;2){</b>
+<b class="nc"><i>120</i>&nbsp;                        return false;</b>
+<i>121</i>&nbsp;                    }
+<i>122</i>&nbsp;                }
+<i>123</i>&nbsp;            }
+<i>124</i>&nbsp;        }
+<b class="nc"><i>125</i>&nbsp;        return true;</b>
+<i>126</i>&nbsp;    }
+<i>127</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-27 10:57</div>
+</div>
+</body>
+</html>

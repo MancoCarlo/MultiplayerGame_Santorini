@@ -1,10 +1,7 @@
 package it.polimi.ingsw.PSP29.model;
 
-import it.polimi.ingsw.PSP29.controller.NotValidInputException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Player implements Serializable {
     private String nickname;
@@ -61,11 +58,6 @@ public class Player implements Serializable {
             workers.get(id).setPosition(c);
         }
     }
-
-    /**
-     * let the player draw a card from the list of gods
-     * @param gods the list of gods
-     */
 
     /**
      * draw a god from the list

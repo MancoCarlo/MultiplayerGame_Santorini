@@ -1,10 +1,7 @@
 package it.polimi.ingsw.PSP29.virtualView;
 
-import it.polimi.ingsw.PSP29.controller.GameController;
-import it.polimi.ingsw.PSP29.model.Box;
-import it.polimi.ingsw.PSP29.model.Coordinate;
-import it.polimi.ingsw.PSP29.model.God;
-import it.polimi.ingsw.PSP29.model.Player;
+import it.polimi.ingsw.PSP29.Controller.GameController;
+import it.polimi.ingsw.PSP29.model.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +19,9 @@ public class Server
     private int myturn = 0;
     ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
+    /**
+     * server execution
+     */
     public void launch()
     {
         gc = new GameController();
@@ -99,6 +99,9 @@ public class Server
         }
     }
 
+    /**
+     * find the index of the next player
+     */
     public void next(){
         myturn++;
         if(myturn==numPlayers){
@@ -106,6 +109,13 @@ public class Server
         }
     }
 
+    /**
+     *
+     * wait unthil the method is executed
+     *
+     * @param clientHandler
+     * @param meth the method to process
+     */
     public void process(ClientHandler clientHandler, String meth){
         try {
             Method method1 = ClientHandler.class.getMethod(meth);
@@ -115,6 +125,13 @@ public class Server
         }
     }
 
+    /**
+     *
+     * reset the variable in clienthandler linked to the method passed
+     *
+     * @param clientHandler
+     * @param meth the method to reset
+     */
     public void processReset(ClientHandler clientHandler, String meth){
         try {
             Method method1 = ClientHandler.class.getMethod(meth);
@@ -124,6 +141,12 @@ public class Server
         }
     }
 
+    /**
+     *
+     * accept a client and add him to the players list
+     *
+     * @param clientHandler
+     */
     public void loginPlayer(ClientHandler clientHandler){
         write(clientHandler, "serviceMessage", "Welcome to Santorini\n\n");
 
@@ -145,12 +168,27 @@ public class Server
         gc.getMatch().addPlayer(player1);
     }
 
+    /**
+     *
+     * write a message to the client
+     *
+     * @param clientHandler
+     * @param s the type of message
+     * @param msg the message
+     */
     public void write(ClientHandler clientHandler, String s, String msg){
         clientHandler.sendMessage(s, msg);
         process(clientHandler, "getSentMessage");
         processReset(clientHandler, "resetSentMessage");
     }
 
+    /**
+     *
+     * read a message from the client
+     *
+     * @param clientHandler
+     * @return the message
+     */
     public String read(ClientHandler clientHandler){
         clientHandler.takeMessage();
         process(clientHandler, "getReadMessage");
@@ -159,6 +197,14 @@ public class Server
         return response;
     }
 
+    /**
+     *
+     * connect a client to the server
+     *
+     * @param socket the server
+     * @param clientHandler
+     * @return the clientHandler linked to the client
+     */
     public ClientHandler connection(ServerSocket socket,ClientHandler clientHandler){
         Socket client = null;
         try {
@@ -173,11 +219,20 @@ public class Server
         return clientHandler;
     }
 
+    /**
+     *
+     * ask to the player how many players will be in the game
+     *
+     * @param clientHandler
+     */
     public void createLobby(ClientHandler clientHandler) {
         write(clientHandler, "interactionServer", "How many players 2 or 3? ");
         numPlayers = Integer.parseInt(read(clientHandler));
     }
 
+    /**
+     * sort the list of clienHandlers
+     */
     public void sortClientHandlers(){
         boolean change=true;
         ClientHandler ch;
@@ -194,6 +249,9 @@ public class Server
         }
     }
 
+    /**
+     * assign one God to each player
+     */
     public void godsAssignement(){
         write(clientHandlers.get(myturn), "serviceMessage", "Choose " + numPlayers + " gods from this list");
         write(clientHandlers.get(myturn), "serviceMessage", gc.getMatch().printGodlist());
@@ -216,6 +274,9 @@ public class Server
         }
     }
 
+    /**
+     * ask to the client where he want to put his players
+     */
     public void putWorkers(){
         int i=0;
         while (i<numPlayers){

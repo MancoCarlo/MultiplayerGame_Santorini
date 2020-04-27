@@ -1,0 +1,152 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DemeterTurn</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DemeterTurn (it.polimi.ingsw.PSP29.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DemeterTurn</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.InputControl.Input;
+<i>4</i>&nbsp;import it.polimi.ingsw.PSP29.model.*;
+<i>5</i>&nbsp;import java.util.Scanner;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;public class DemeterTurn extends GodTurn {
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    public DemeterTurn(Turn turn) {
+<b class="nc"><i>11</i>&nbsp;        super(turn);</b>
+<i>12</i>&nbsp;    }
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * call winCondition() of the superclass
+<i>16</i>&nbsp;     * @param m match played
+<i>17</i>&nbsp;     * @param p player that play the turn
+<i>18</i>&nbsp;     * @return true if p win the game, else false
+<i>19</i>&nbsp;     */
+<i>20</i>&nbsp;    public boolean winCondition(Match m, Player p){
+<b class="nc"><i>21</i>&nbsp;        return super.winCondition(m, p);</b>
+<i>22</i>&nbsp;    }
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    /**
+<i>25</i>&nbsp;     * call build() of the superclass and after call another one time build() of the superclass with a new Coordinate
+<i>26</i>&nbsp;     * @param m match played
+<i>27</i>&nbsp;     * @param w worker that must build
+<i>28</i>&nbsp;     * @param c location of the box where w must build
+<i>29</i>&nbsp;     * @return true if w can build in c, else false
+<i>30</i>&nbsp;     */
+<i>31</i>&nbsp;    public boolean build(Match m, Worker w, Coordinate c){
+<b class="nc"><i>32</i>&nbsp;        Scanner scanner = new Scanner(System.in);</b>
+<b class="nc"><i>33</i>&nbsp;        Coordinate cx = c;</b>
+<i>34</i>&nbsp;        String answer;
+<b class="nc"><i>35</i>&nbsp;        boolean nopower = super.build(m,w,c);</b>
+<b class="nc"><i>36</i>&nbsp;        if(!nopower) return false;</b>
+<b class="nc"><i>37</i>&nbsp;        if(w.canBuild(m)){</b>
+<b class="nc"><i>38</i>&nbsp;            System.out.println(&quot;Vuoi usare il potere di Demeter? 1) SI 2) NO&quot;);</b>
+<b class="nc"><i>39</i>&nbsp;            answer = scanner.nextLine();</b>
+<b class="nc"><i>40</i>&nbsp;            if(answer.equals(&quot;1&quot;)) {</b>
+<i>41</i>&nbsp;                Coordinate c1;
+<i>42</i>&nbsp;                do {
+<b class="nc"><i>43</i>&nbsp;                    Input i = new Input();</b>
+<b class="nc"><i>44</i>&nbsp;                    c1 = i.askCoordinate(&quot;(Potere Demeter)&quot;);</b>
+<b class="nc"><i>45</i>&nbsp;                } while ((c1.getX() == cx.getX() &amp;&amp; c1.getY() == cx.getY()) || !super.build(m,w,c1));</b>
+<b class="nc"><i>46</i>&nbsp;                m.getBoard()[c1.getX()][c1.getY()].setLevelledUp(true);</b>
+<i>47</i>&nbsp;            }
+<i>48</i>&nbsp;        }
+<b class="nc"><i>49</i>&nbsp;        return true;</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * call move() of the superclass
+<i>54</i>&nbsp;     * @param m match played
+<i>55</i>&nbsp;     * @param w worker that must be moved
+<i>56</i>&nbsp;     * @param c new position of w
+<i>57</i>&nbsp;     * @return true if is moved in c, else false
+<i>58</i>&nbsp;     */
+<b class="nc"><i>59</i>&nbsp;    public boolean move(Match m, Worker w, Coordinate c) { return super.move(m, w, c); }</b>
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    /**
+<i>62</i>&nbsp;     * call limited_move() of the superclass
+<i>63</i>&nbsp;     * @param m match played
+<i>64</i>&nbsp;     * @param w worker that must be moved
+<i>65</i>&nbsp;     * @param c first movement of w
+<i>66</i>&nbsp;     * @return true if is moved in c, else false
+<i>67</i>&nbsp;     */
+<b class="nc"><i>68</i>&nbsp;    public boolean limited_move(Match m, Worker w, Coordinate c){ return super.limited_move(m, w, c); }</b>
+<i>69</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-27 10:57</div>
+</div>
+</body>
+</html>

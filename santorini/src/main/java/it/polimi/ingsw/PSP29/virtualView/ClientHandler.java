@@ -1,6 +1,6 @@
 package it.polimi.ingsw.PSP29.virtualView;
 
-import it.polimi.ingsw.PSP29.controller.GameController;
+import it.polimi.ingsw.PSP29.Controller.GameController;
 import it.polimi.ingsw.PSP29.model.*;
 
 import java.io.IOException;
@@ -56,12 +56,18 @@ public class ClientHandler implements Runnable
         }
     }
 
+    /**
+     * set nextCommand to TAKE_MESSAGE
+     */
     public synchronized void takeMessage()
     {
         nextCommand = Commands.TAKE_MESSAGE;
         notifyAll();
     }
 
+    /**
+     * set nextCommand to SEND_MESSAGE
+     */
     public synchronized void sendMessage(String met, String msg)
     {
         nextCommand = Commands.SEND_MESSAGE;
@@ -70,7 +76,9 @@ public class ClientHandler implements Runnable
         notifyAll();
     }
 
-
+    /**
+     * control nextCommand and call the others methods
+     */
     private synchronized void handleClientConnection()
     {
         connected = true;
@@ -99,6 +107,9 @@ public class ClientHandler implements Runnable
 
     }
 
+    /**
+     * take a message from the client
+     */
     public synchronized void doTakeMessage(){
         readMessage = true;
         try {
@@ -108,18 +119,33 @@ public class ClientHandler implements Runnable
         }
     }
 
+    /**
+     * control if the client is connected
+     * @return true if connected
+     */
     public synchronized boolean getConnected() {
         return connected;
     }
 
+    /**
+     * control if the message has been sent
+     * @return true if sent
+     */
     public synchronized boolean getSentMessage() {
         return sentMessage;
     }
 
+    /**
+     * control if the message has been read
+     * @return true if read
+     */
     public synchronized boolean getReadMessage() {
         return readMessage;
     }
 
+    /**
+     * send a message to the client
+     */
     public synchronized void doSendMessage() {
         sentMessage = true;
         try {
@@ -130,14 +156,23 @@ public class ClientHandler implements Runnable
         }
     }
 
+    /**
+     * @return the message to the server
+     */
     public synchronized String getMessage(){
         return message;
     }
 
+    /**
+     * reset readMessage
+     */
     public synchronized void resetReadMessage(){
         readMessage = false;
     }
 
+    /**
+     * reset sentMessage
+     */
     public synchronized void resetSentMessage(){
         sentMessage = false;
     }
