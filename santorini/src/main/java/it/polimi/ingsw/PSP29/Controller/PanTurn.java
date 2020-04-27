@@ -20,9 +20,13 @@ public class PanTurn extends GodTurn {
             if (w.getMoved() && w.getBuilt()) {
                 w.changeMoved(false);
                 w.changeBuilt(false);
-                if (m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel() == 2)
+                if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel()==3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==3)
                     return true;
-                if (m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >= 2)
+                if (!m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel() == 2)
+                    return true;
+                if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >= 3)
+                    return true;
+                if (!m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >= 2)
                     return true;
             }
         }
