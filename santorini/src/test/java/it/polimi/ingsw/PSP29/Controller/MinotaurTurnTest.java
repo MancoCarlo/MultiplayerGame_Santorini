@@ -145,7 +145,29 @@ public class MinotaurTurnTest {
         assertTrue(wL.getPosition().equals(c));
     }
 
-   
+    @Test
+    public void limited_move_correctInput_notAvailableEmptyNextBox_falseOutput() {
+        Coordinate cL = new Coordinate(1,1);
+        m.updateBuilding(cL);
+        Coordinate cC1 = new Coordinate(1,2);
+        Coordinate cC2 = new Coordinate(1,3);
+        m.updateBuilding(cC2);
+        m.updateBuilding(cC2);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        Worker wC1 = m.getPlayers().get(1).getWorker(0);
+        Worker wC2 = m.getPlayers().get(1).getWorker(1);
+        m.updateMovement(m.getPlayers().get(0), 0, cL);
+        m.updateMovement(m.getPlayers().get(1), 0, cC1);
+        m.updateMovement(m.getPlayers().get(1), 1, cC2);
+        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC1);
+        assertFalse(m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() && m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 0);
+        assertTrue(cNext.equals(cC1) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);
+        assertFalse(turn.limited_move(m, wL, cC1));
+        assertFalse(wL.getMoved());
+        assertFalse(wL.getPosition().equals(cC1));
+        assertTrue(wC1.getPosition().equals(cC1));
+        assertTrue(wC2.getPosition().equals(cNext));
+    }
 
     @Test
     public void build_notValidCoordinateInput_callSuperBuild_falseOutput() {
