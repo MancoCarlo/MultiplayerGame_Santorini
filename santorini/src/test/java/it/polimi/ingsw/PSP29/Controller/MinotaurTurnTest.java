@@ -79,6 +79,75 @@ public class MinotaurTurnTest {
     }
 
     @Test
+    public void move_correctInput_notAvailableEmptyNextBox_falseOutput() {
+        Coordinate cL = new Coordinate(1,1);
+        m.updateBuilding(cL);
+        Coordinate cC1 = new Coordinate(1,2);
+        Coordinate cC2 = new Coordinate(1,3);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        Worker wC1 = m.getPlayers().get(1).getWorker(0);
+        Worker wC2 = m.getPlayers().get(1).getWorker(1);
+        m.updateMovement(m.getPlayers().get(0), 0, cL);
+        m.updateMovement(m.getPlayers().get(1), 0, cC1);
+        m.updateMovement(m.getPlayers().get(1), 1, cC2);
+        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC1);
+        assertFalse(m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() && m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 1);
+        assertTrue(cNext.equals(cC1) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);
+        assertFalse(turn.move(m, wL, cC1));
+        assertFalse(wL.getMoved());
+        assertFalse(wL.getPosition().equals(cC1));
+        assertTrue(wC1.getPosition().equals(cC1));
+        assertTrue(wC2.getPosition().equals(cNext));
+    }
+
+    @Test
+    public void limited_move_correctInput_trueOutput(){
+        Coordinate cL = new Coordinate(1,1);
+        m.updateBuilding(cL);
+        Coordinate cC = new Coordinate(2,2);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        Worker wC = m.getPlayers().get(1).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, cL);
+        m.updateMovement(m.getPlayers().get(1), 0, cC);
+        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC);
+        m.updateBuilding(cNext);
+        m.updateBuilding(cNext);
+        assertFalse(m.getBoard()[cC.getX()][cC.getY()].isEmpty() && m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 0);
+        assertFalse(cNext.equals(cC) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);
+        assertTrue(turn.limited_move(m, wL, cC));
+        assertTrue(wL.getMoved());
+        assertTrue(wL.getPosition().equals(cC));
+        assertTrue(wC.getPosition().equals(cNext));
+    }
+
+    @Test
+    public void limited_move_notNearBoxInput_falseOutput(){
+        Coordinate cL = new Coordinate(1,1);
+        Coordinate cC = new Coordinate(3,2);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        Worker wC = m.getPlayers().get(1).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, cL);
+        m.updateMovement(m.getPlayers().get(1), 0, cC);
+        assertFalse(turn.limited_move(m, wL, cC));
+        assertFalse(wL.getMoved());
+        assertFalse(wL.getPosition().equals(cC));
+    }
+
+    @Test
+    public void limited_move_emptyNearBoxInput_trueOutput(){
+        Coordinate cL = new Coordinate(1,1);
+        m.updateBuilding(cL);
+        Coordinate c = new Coordinate(0,0);
+        Worker wL = m.getPlayers().get(0).getWorker(0);
+        m.updateMovement(m.getPlayers().get(0), 0, cL);
+        assertTrue(turn.limited_move(m, wL, c));
+        assertTrue(wL.getMoved());
+        assertTrue(wL.getPosition().equals(c));
+    }
+
+   
+
+    @Test
     public void build_notValidCoordinateInput_callSuperBuild_falseOutput() {
         Coordinate cL = new Coordinate(1,1);
         Coordinate cC = new Coordinate(0,2);
