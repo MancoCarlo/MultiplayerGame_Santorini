@@ -109,7 +109,7 @@ public class Worker implements Serializable {
             else{
                 switch (godName){
                     case "Apollo":
-                        if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<=1){
+                        if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<=1 && !IDplayer.equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
                             return true;
                         }
 
@@ -128,7 +128,7 @@ public class Worker implements Serializable {
                     case "Minotaur":
                         if(c.isNear(position)){
                             Coordinate c1 = position.nextCoordinate(match, c);
-                            if(c1.equals(c) || !match.getBoard()[c1.getX()][c1.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(this.getIDplayer()) || match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])>1 || match.getBoard()[c1.getX()][c1.getY()].getLevel()==4){
+                            if(c1.equals(c) || !match.getBoard()[c1.getX()][c1.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(this.getIDplayer()) || match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])>1 || match.getBoard()[c1.getX()][c1.getY()].getLevel()==4 && !IDplayer.equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
                                 return false;
                             }
                             else {
@@ -145,7 +145,7 @@ public class Worker implements Serializable {
             else{
                 switch (godName){
                     case "Apollo":
-                        if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<1){
+                        if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && this.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])<1 && !IDplayer.equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
                             return true;
                         }
                     case "Artemis":
@@ -163,7 +163,7 @@ public class Worker implements Serializable {
                     case "Minotaur":
                         if(c.isNear(position)){
                             Coordinate c1 = position.nextCoordinate(match, c);
-                            if(c1.equals(c) || !match.getBoard()[c1.getX()][c1.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(this.getIDplayer()) || match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])>=1 || match.getBoard()[c1.getX()][c1.getY()].getLevel()==4){
+                            if(c1.equals(c) || !match.getBoard()[c1.getX()][c1.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].isEmpty() || match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(this.getIDplayer()) || match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[position.getX()][position.getY()])>=1 || match.getBoard()[c1.getX()][c1.getY()].getLevel()==4 && !IDplayer.equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
                                 return false;
                             }
                             else {

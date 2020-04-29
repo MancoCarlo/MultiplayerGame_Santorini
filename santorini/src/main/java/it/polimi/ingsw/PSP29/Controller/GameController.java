@@ -192,6 +192,12 @@ public class GameController {
         for(int i=1; i<numPlayers; i++){
             server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
             godIndex.add(Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1);
+            while(godIndex.get(1) == godIndex.get(0)){
+                godIndex.remove(1);
+                server.write(server.getClientHandlers().get(myturn), "serviceMessage", "God already selected\n");
+                server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
+                godIndex.add(Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1);
+            }
         }
         godSelection();
         int i=0;
@@ -200,6 +206,11 @@ public class GameController {
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", match.printGodlist());
             server.write(server.getClientHandlers().get(myturn), "interactionServer", "Choose one god from this list: ");
             int id = Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1;
+            while(id >= match.getGods().size()|| id < 0){
+                server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Index not valid\n");
+                server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert another index: ");
+                id = Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1;
+            }
             match.getPlayers().get(myturn).setCard(match.getGods(), id);
             match.getGods().remove(id);
             i++;
@@ -342,7 +353,7 @@ public class GameController {
         server.write(ch, "interactionServer", "Would you use your god in this turn?\n1) YES\n2) NO\n");
         String response = server.read(ch);
         boolean godOn;
-        if(response.equals('1')) godOn = true;
+        if(response.equals("1")) godOn = true;
         else godOn = false;
         if(!godOn){
             BaseTurn turn = new BaseTurn();
