@@ -97,28 +97,20 @@ public class BaseTurn implements Turn {
      * control if the worker can move
      * @param match match played
      * @param w worker that can be moved
+     * @param c coordinate that must be checked
      * @param athena true if the athena power is on, else false
      * @return true if w can't move to another location, else false
      */
-    public boolean cantMove(Match match,Worker w, boolean athena){
-        if(athena){
-            for(int i=0; i<match.getRows(); i++){
-                for(int j=0; j<match.getColumns(); j++){
-                    if(match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1){
-                        return false;
-                    }
-                }
+    public boolean canMoveTo(Match match,Worker w,Coordinate c, boolean athena){
+        if(!athena){
+            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1){
+                return true;
+            }
+        } else{
+            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1){
+                return true;
             }
         }
-        else{
-            for(int i=0; i<match.getRows(); i++){
-                for(int j=0; j<match.getColumns(); j++){
-                    if(match.getBoard()[i][j].isEmpty() && w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[i][j].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<2){
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return false;
     }
 }

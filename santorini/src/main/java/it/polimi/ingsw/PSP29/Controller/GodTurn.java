@@ -23,6 +23,6 @@ public class GodTurn extends TurnDecorator{
     public boolean limited_move(Match m, Worker w, Coordinate c){ return super.limited_move(m, w, c); }
 
     @Override
-    public boolean cantMove(Match m,Worker w, boolean athena){ return super.cantMove(m,w,athena);
+    public boolean canMoveTo(Match m,Worker w,Coordinate c, boolean athena){ return super.canMoveTo(m,w,c,athena);
     }
 }

@@ -49,7 +49,7 @@ public class ArtemisTurn extends GodTurn{
         boolean nopower = super.move(m,w,c);
         if(!nopower) return false;
         System.out.println("Vuoi usare il potere di Artemis? 1) SI 2) NO");
-        answer = scanner.nextLine();
+        /*answer = scanner.nextLine();
         if(answer.equals("1")){
             Coordinate c1;
             if(!super.cantMove(m,w,false)){
@@ -60,7 +60,7 @@ public class ArtemisTurn extends GodTurn{
             }else{
                 System.out.println("Non puoi utilizzare il potere di Artemis");
             }
-        }
+        }*/
         return true;
     }
 
@@ -80,7 +80,7 @@ public class ArtemisTurn extends GodTurn{
         if(!nopower) return false;
         System.out.println("Vuoi usare il potere di Artemis? 1) SI 2) NO\n");
         answer = scanner.nextLine();
-        if(answer.equals("1")){
+        /*if(answer.equals("1")){
             Coordinate c1;
             if(!super.cantMove(m,w,false)){
                 do{
@@ -90,7 +90,46 @@ public class ArtemisTurn extends GodTurn{
             }else{
                 System.out.println("Non puoi utilizzare il potere di Artemis");
             }
-        }
+        }*/
         return true;
+    }
+
+    /**
+     * control if the worker can move
+     * @param match match played
+     * @param w worker that can be moved
+     * @param c coordinate that must be checked
+     * @param athena true if the athena power is on, else false
+     * @return true if w can't move to another location, else false
+     */
+    public boolean canMoveTo(Match match,Worker w,Coordinate c, boolean athena){
+        if(!athena){
+            if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1){
+                if(w.getMoved()){
+                    if(c.equals(w.getPrev_position())){
+                        return false;
+                    }
+                    else{
+                        return true;
+                    }
+                }else{
+                    return true;
+                }
+            }
+        } else{
+            if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1){
+                if(w.getMoved()){
+                    if(c.equals(w.getPrev_position())){
+                        return false;
+                    }
+                    else{
+                        return true;
+                    }
+                }else{
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

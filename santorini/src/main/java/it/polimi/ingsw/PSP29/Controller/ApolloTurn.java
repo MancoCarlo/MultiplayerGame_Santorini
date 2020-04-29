@@ -43,80 +43,38 @@ public class ApolloTurn extends GodTurn{
         if(m.getBoard()[c.getX()][c.getY()].isEmpty()){
             return super.move(m, w, c);
         }else{
-            if(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()==w.getIDplayer() || !w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
-                return false;
-            }
-            else{
-                Worker w2 = m.getBoard()[c.getX()][c.getY()].getWorkerBox();
-                w2.setPosition(null);
-                w2.setPrev_position(null);
-                m.getBoard()[c.getX()][c.getY()].setWorkerBox(null);
-                m.getBoard()[c.getX()][c.getY()].changeState();
-                Coordinate cx = w.getPosition();
-                super.move(m,w,c);
-                m.getPlayer(w2.getIDplayer()).putWorker(w2.getID(), m.getBoard(), cx);
-                w2.setPrev_position(c);
-                return true;
-            }
+            Worker w2 = m.getBoard()[c.getX()][c.getY()].getWorkerBox();
+            w2.setPosition(null);
+            w2.setPrev_position(null);
+            m.getBoard()[c.getX()][c.getY()].setWorkerBox(null);
+            m.getBoard()[c.getX()][c.getY()].changeState();
+            Coordinate cx = w.getPosition();
+            super.move(m,w,c);
+            m.getPlayer(w2.getIDplayer()).putWorker(w2.getID(), m.getBoard(), cx);
+            w2.setPrev_position(c);
+            return true;
         }
     }
 
     /**
-     * move w in c, if !isEmpty() and occuped by enemy worker then w and the worker in c swap their position. oldposition of w and new position of w have the same level
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
-     * @return true if w can be moved in c, else false
-     */
-    public boolean limited_move(Match m, Worker w, Coordinate c){
-        if(m.getBoard()[c.getX()][c.getY()].isEmpty()){
-            return super.limited_move(m, w, c);
-        }else{
-            if(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()==w.getIDplayer() || !w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c.getX()][c.getY()].getLevel()==4){
-                return false;
-            }
-            else{
-                Worker w2 = m.getBoard()[c.getX()][c.getY()].getWorkerBox();
-                w2.setPosition(null);
-                w2.setPrev_position(null);
-                m.getBoard()[c.getX()][c.getY()].setWorkerBox(null);
-                m.getBoard()[c.getX()][c.getY()].changeState();
-                Coordinate cx = w.getPosition();
-                super.limited_move(m,w,c);
-                m.getPlayer(w2.getIDplayer()).putWorker(w2.getID(), m.getBoard(), cx);
-                w2.setPrev_position(c);
-                return true;
-            }
-        }
-    }
-
-    /**
-     *
+     * control if the worker can move
      * @param match match played
-     * @param w worker that must be moved
+     * @param w worker that can be moved
+     * @param c coordinate that must be checked
      * @param athena true if the athena power is on, else false
      * @return true if w can't move to another location, else false
      */
-    public boolean cantMove(Match match,Worker w, boolean athena){
-        if(athena){
-            for(int i=0; i<match.getRows(); i++){
-                for(int j=0; j<match.getColumns(); j++){
-                    if(w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[i][j])==0){
-                        return false;
-                    }
-                }
+    public boolean canMoveTo(Match match,Worker w,Coordinate c, boolean athena){
+        if(!athena){
+            if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1 && !w.getIDplayer().equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
+                return true;
+            }
+        } else{
+            if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1 && !w.getIDplayer().equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
+                return true;
             }
         }
-        else{
-            for(int i=0; i<match.getRows(); i++){
-                for(int j=0; j<match.getColumns(); j++){
-                    if(w.getPosition().isNear(match.getBoard()[i][j].getLocation()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[i][j])<2){
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return false;
     }
 }
 

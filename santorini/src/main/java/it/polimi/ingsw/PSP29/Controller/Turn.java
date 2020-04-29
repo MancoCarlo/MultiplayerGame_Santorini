@@ -44,8 +44,9 @@ public interface Turn {
      * @param m match played
      * @param w worker that can be moved
      * @param athena true if the athena power is on, else false
+     * @param c coordinate that must be checked
      * @return true if w can't move to another location, else false
      */
-    public boolean cantMove(Match m,Worker w, boolean athena);
+    public boolean canMoveTo(Match m,Worker w, Coordinate c, boolean athena);
 
 }

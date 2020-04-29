@@ -81,114 +81,18 @@ public class GameController {
     }
 
     /**
-     *
-     * used for the execution of the turn
-     *
-     * @param ch the player that plays the turn
-     * @param turn the turn, can be BaseTurn or one of the gods' turn
-     * @return the result of winCondition
-     */
-    public boolean turnExe(ClientHandler ch, Turn turn){
-        Player p = match.getPlayer(ch.getName());
-        int wID=2;
-        ArrayList<Coordinate> coordinates0 = whereCanMove(0);
-        ArrayList<Coordinate> coordinates1 = whereCanMove(1);
-        if(coordinates0.size()!=0 && coordinates1.size()!=0){
-            server.write(ch, "serviceMessage", "It's your turn\n");
-            server.write(ch, "interactionServer", match.getPlayer(ch.getName()).printWorkers());
-            server.write(ch, "serviceMessage", "Choose the worker to use in this turn: \n");
-            while(true){
-                try{
-                    wID = Integer.parseInt(server.read(ch));
-                    if(wID<0 || wID>1){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
-                }
-            }
-        }
-        else if(coordinates0.size()!=0 && coordinates1.size()==0){
-            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
-            wID = 0;
-        }
-        else if(coordinates0.size()==0 && coordinates1.size()!=0){
-            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
-            wID = 1;
-        }
-        Coordinate c = null;
-        if(wID==0){
-            server.write(ch, "serviceMessage", printCoordinates(coordinates0));
-            server.write(ch, "interactionServer", "Where you want to move?\n");
-            int id;
-            while(true){
-                try{
-                    id = Integer.parseInt(server.read(ch));
-                    if(id<0 || id>=coordinates0.size()){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
-                }
-            }
-            c = coordinates0.get(id);
-        }
-        else if(wID==1){
-            server.write(ch, "serviceMessage", printCoordinates(coordinates1));
-            server.write(ch, "interactionServer", "Where you want to move?\n");
-            int id;
-            while(true){
-                try{
-                    id = Integer.parseInt(server.read(ch));
-                    if(id<0 || id>=coordinates1.size()){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
-                }
-            }
-            c = coordinates1.get(id);
-        }
-        turn.move(match, p.getWorker(wID), c);
-        /*
-        if(p.getWorker(wID).canBuild(match)){
-            //Costruzione
-            return turn.winCondition(match, p);
-        }
-        else{
-            System.out.println("Non puoi costruire, hai perso");
-            match.removePlayer(p);
-            return false;
-        }
-        */
-        return false;
-    }
-
-    /**
      * !!è una prova!!
      * create an arrayList with all the coordinates in wich the worker can move
      * @param id the worker id
      * @return the list
      */
-    public ArrayList<Coordinate> whereCanMove(int id) {
+    public ArrayList<Coordinate> whereCanMove(int id, Turn turn) {
         ArrayList<Coordinate> coordinates = new ArrayList<>();
         Player player = match.getPlayer(server.getClientHandlers().get(myturn).getName());
         for (int i = 0; i < match.getRows(); i++) {
             for (int j = 0; j < match.getColumns(); j++) {
                 Coordinate c = new Coordinate(i, j);
-                if (player.getWorker(id).canMoveTo(c, player.getCard().getName(), match, athenaOn)) {
+                if (turn.canMoveTo(match, player.getWorker(id), c,athenaOn)) {
                     coordinates.add(new Coordinate(i, j));
                 }
             }
@@ -339,41 +243,6 @@ public class GameController {
         return c;
     }
 
-    public boolean playerCanMove(Player p){
-        BaseTurn turn = new BaseTurn();
-        switch (p.getCard().getID()){
-            case 0 :
-                ApolloTurn turn0 = new ApolloTurn(new GodTurn(new BaseTurn()));
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn0.cantMove(match, p.getWorker(0), athenaOn) || !turn0.cantMove(match, p.getWorker(1), athenaOn));
-            case 1 :
-                ArtemisTurn turn1 = new ArtemisTurn(new GodTurn(new BaseTurn()));
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn1.cantMove(match, p.getWorker(0), athenaOn) || !turn1.cantMove(match, p.getWorker(1), athenaOn));
-            case 2 :
-                AthenaTurn turn2 = new AthenaTurn(new GodTurn(new BaseTurn()));
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn2.cantMove(match, p.getWorker(0), athenaOn) || !turn2.cantMove(match, p.getWorker(1), athenaOn));
-            case 3 :
-                AtlasTurn turn3 = new AtlasTurn(new GodTurn(new BaseTurn()));
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn3.cantMove(match, p.getWorker(0), athenaOn) || !turn3.cantMove(match, p.getWorker(1), athenaOn));
-            case 4 :
-                DemeterTurn turn4 = new DemeterTurn(new GodTurn(new BaseTurn()));
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn4.cantMove(match, p.getWorker(0), athenaOn) || !turn4.cantMove(match, p.getWorker(1), athenaOn));
-            case 5 :
-                HephaestusTurn turn5 = new HephaestusTurn(new GodTurn(new BaseTurn()));
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn5.cantMove(match, p.getWorker(0), athenaOn) || !turn5.cantMove(match, p.getWorker(1), athenaOn));
-            case 6 :
-                MinotaurTurn turn6 = new MinotaurTurn(new GodTurn(new BaseTurn()));
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn6.cantMove(match, p.getWorker(0), athenaOn) || !turn6.cantMove(match, p.getWorker(1), athenaOn));
-            case 7 :
-                PanTurn turn7 = new PanTurn(new GodTurn(new BaseTurn()));
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn7.cantMove(match, p.getWorker(0), athenaOn) || !turn7.cantMove(match, p.getWorker(1), athenaOn));
-            case 8 :
-                PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn8.cantMove(match, p.getWorker(0), athenaOn) || !turn8.cantMove(match, p.getWorker(1), athenaOn));
-            default:
-                return (!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn) || !turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn));
-        }
-    }
-
     /**
      *
      * used for the execution of the game
@@ -391,25 +260,16 @@ public class GameController {
                 }
                 break;
             }
-            if(playerCanMove(match.getPlayers().get(myturn))){
-                endGame=newTurn(server.getClientHandlers().get(myturn));
-                match.resetBoard();
-                for(ClientHandler ch : server.getClientHandlers()){
-                    server.write(ch, "serviceMessage", match.printBoard());
-                }
-                if(endGame){
-                    for(int i=0; i<server.getClientHandlers().size();i++){
-                        if(i == myturn) server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Congratulations you win!\n");
-                        else server.write(server.getClientHandlers().get(i), "serviceMessage", "You lose, the winner is "+server.getClientHandlers().get(myturn).getName()+"!\n");
-                    }
-                }
+            endGame=newTurn(server.getClientHandlers().get(myturn));
+            match.resetBoard();
+            for(ClientHandler ch : server.getClientHandlers()){
+                server.write(ch, "serviceMessage", match.printBoard());
             }
-            else{
-                server.write(server.getClientHandlers().get(myturn), "serviceMessage", "You lose!!!\n\n");
-                match.removePlayer(match.getPlayer(server.getClientHandlers().get(myturn).getName()));
-                //Gestire rimozione clientHandler
-                numPlayers--;
-                endGame=false;
+            if(endGame){
+                for(int i=0; i<server.getClientHandlers().size();i++){
+                    if(i == myturn) server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Congratulations you win!\n");
+                    else server.write(server.getClientHandlers().get(i), "serviceMessage", "You lose, the winner is "+server.getClientHandlers().get(myturn).getName()+"!\n");
+                }
             }
             next();
         }
@@ -437,111 +297,138 @@ public class GameController {
         else godOn = false;
         if(!godOn){
             BaseTurn turn = new BaseTurn();
-            if(!turn.cantMove(match, p.getWorker(0), athenaOn) || !turn.cantMove(match, p.getWorker(1), athenaOn)){
-                return turnExe(ch, turn);
-            }
-            else{
-                server.write(ch, "serviceMessage", "You lose!!!\n\n");
-                match.removePlayer(p);
-                //Bisogna gestire lo spostamento del clientHandler in coda
-                numPlayers--;
-                return false;
-            }
+            return turnExe(ch, turn);
         }
         else{
             switch (p.getCard().getID()){
                 case 0 :
                     ApolloTurn turn0 = new ApolloTurn(new GodTurn(new BaseTurn()));
-                    if(!turn0.cantMove(match, p.getWorker(0), athenaOn) || !turn0.cantMove(match, p.getWorker(1), athenaOn)){
-                        return turnExe(ch, turn0);
-                    }
-                    else{
-                        System.out.println("Hai perso");
-                        match.removePlayer(p);
-                        return false;
-                    }
+                    return turnExe(ch, turn0);
                 case 1 :
                     ArtemisTurn turn1 = new ArtemisTurn(new GodTurn(new BaseTurn()));
-                    if(!turn1.cantMove(match, p.getWorker(0), athenaOn) || !turn1.cantMove(match, p.getWorker(1), athenaOn)){
-                        return turnExe(ch, turn1);
-                    }
-                    else{
-                        System.out.println("Hai perso");
-                        match.removePlayer(p);
-                        return false;
-                    }
+                    return turnExe(ch, turn1);
                 case 2 :
                     AthenaTurn turn2 = new AthenaTurn(new GodTurn(new BaseTurn()));
-                    if(!turn2.cantMove(match, p.getWorker(0), athenaOn) || !turn2.cantMove(match, p.getWorker(1), athenaOn)){
-                        return turnExe(ch, turn2);
-                    }
-                    else{
-                        System.out.println("Hai perso");
-                        match.removePlayer(p);
-                        return false;
-                    }
+                    return turnExe(ch, turn2);
                 case 3 :
                     AtlasTurn turn3 = new AtlasTurn(new GodTurn(new BaseTurn()));
-                    if(!turn3.cantMove(match, p.getWorker(0), athenaOn) || !turn3.cantMove(match, p.getWorker(1), athenaOn)){
-                        return turnExe(ch, turn3);
-                    }
-                    else{
-                        System.out.println("Hai perso");
-                        match.removePlayer(p);
-                        return false;
-                    }
+                    return turnExe(ch, turn3);
                 case 4 :
                     DemeterTurn turn4 = new DemeterTurn(new GodTurn(new BaseTurn()));
-                    if(!turn4.cantMove(match, p.getWorker(0), athenaOn) || !turn4.cantMove(match, p.getWorker(1), athenaOn)){
-                        return turnExe(ch, turn4);
-                    }
-                    else{
-                        System.out.println("Hai perso");
-                        match.removePlayer(p);
-                        return false;
-                    }
+                    return turnExe(ch, turn4);
                 case 5 :
                     HephaestusTurn turn5 = new HephaestusTurn(new GodTurn(new BaseTurn()));
-                    if(!turn5.cantMove(match, p.getWorker(0), athenaOn) || !turn5.cantMove(match, p.getWorker(1), athenaOn)){
-                        return turnExe(ch, turn5);
-                    }
-                    else{
-                        System.out.println("Hai perso");
-                        match.removePlayer(p);
-                        return false;
-                    }
+                    return turnExe(ch, turn5);
                 case 6 :
                     MinotaurTurn turn6 = new MinotaurTurn(new GodTurn(new BaseTurn()));
-                    if(!turn6.cantMove(match, p.getWorker(0), athenaOn) || !turn6.cantMove(match, p.getWorker(1), athenaOn)){
-                        return turnExe(ch, turn6);
-                    }
-                    else{
-                        System.out.println("Hai perso");
-                        match.removePlayer(p);
-                        return false;
-                    }
+                    return turnExe(ch, turn6);
                 case 7 :
                     PanTurn turn7 = new PanTurn(new GodTurn(new BaseTurn()));
-                    if(!turn7.cantMove(match, p.getWorker(0), athenaOn) || !turn7.cantMove(match, p.getWorker(1), athenaOn)){
-                        return turnExe(ch, turn7);
-                    }
-                    else{
-                        System.out.println("Hai perso");
-                        match.removePlayer(p);
-                        return false;
-                    }
+                    return turnExe(ch, turn7);
                 case 8 :
                     PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
-                    if(!turn8.cantMove(match, p.getWorker(0), athenaOn) || !turn8.cantMove(match, p.getWorker(1), athenaOn)){
-                        return turnExe(ch, turn8);
-                    }
-                    else{
-                        System.out.println("Hai perso");
-                        match.removePlayer(p);
-                        return false;
-                    }
+                    return turnExe(ch, turn8);
             }
         }
+        return false;
+    }
+
+
+    /**
+     *
+     * used for the execution of the turn
+     *
+     * @param ch the player that plays the turn
+     * @param turn the turn, can be BaseTurn or one of the gods' turn
+     * @return the result of winCondition
+     */
+    public boolean turnExe(ClientHandler ch, Turn turn){
+        Player p = match.getPlayer(ch.getName());
+        int wID=2;
+        ArrayList<Coordinate> coordinates0 = whereCanMove(0, turn);
+        ArrayList<Coordinate> coordinates1 = whereCanMove(1, turn);
+        if(coordinates0.size()!=0 && coordinates1.size()!=0){
+            server.write(ch, "serviceMessage", "It's your turn\n");
+            server.write(ch, "interactionServer", match.getPlayer(ch.getName()).printWorkers());
+            server.write(ch, "serviceMessage", "Choose the worker to use in this turn: \n");
+            while(true){
+                try{
+                    wID = Integer.parseInt(server.read(ch));
+                    if(wID<0 || wID>1){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+        }
+        else if(coordinates0.size()!=0 && coordinates1.size()==0){
+            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
+            wID = 0;
+        }
+        else if(coordinates0.size()==0 && coordinates1.size()!=0){
+            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
+            wID = 1;
+        }else if(coordinates0.size()==0 && coordinates1.size()==0){
+            //sconfittaaaaaa
+        }
+        Coordinate c = null;
+        if(wID==0){
+            server.write(ch, "serviceMessage", printCoordinates(coordinates0));
+            server.write(ch, "interactionServer", "Where you want to move?\n");
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates0.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+            c = coordinates0.get(id);
+        }
+        else if(wID==1){
+            server.write(ch, "serviceMessage", printCoordinates(coordinates1));
+            server.write(ch, "interactionServer", "Where you want to move?\n");
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates1.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+            c = coordinates1.get(id);
+        }
+        turn.move(match, p.getWorker(wID), c);
+        /*
+        if(p.getWorker(wID).canBuild(match)){
+            //Costruzione
+            return turn.winCondition(match, p);
+        }
+        else{
+            System.out.println("Non puoi costruire, hai perso");
+            match.removePlayer(p);
+            return false;
+        }
+        */
         return false;
     }
 }
