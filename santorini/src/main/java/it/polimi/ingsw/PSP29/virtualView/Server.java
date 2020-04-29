@@ -2,6 +2,7 @@ package it.polimi.ingsw.PSP29.virtualView;
 
 import it.polimi.ingsw.PSP29.Controller.*;
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.view.Client;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +16,7 @@ public class Server
 {
     public final static int SOCKET_PORT = 7777;
     private static GameController gc;
-    private int numPlayers;
+    private int numPlayers=0;
     private boolean endGame = false;
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
@@ -38,46 +39,91 @@ public class Server
             System.out.println("server ready");
             System.out.println("Creating Lobby");
             while(true){
-                if(countPlayers==0){
+                while(countPlayers==0){
                     ClientHandler clientHandler=null;
                     clientHandler = connection(socket, clientHandler);
-
-                    while (numPlayers == 0){
-                        loginPlayer(clientHandler);
-                        createLobby(clientHandler);
-                        while(numPlayers != 2 && numPlayers != 3){
-                            write(clientHandler, "serviceMessage", "Players number not valid\n");
-                            createLobby(clientHandler);
+                    if(loginPlayer(clientHandler)){
+                        if(createLobby(clientHandler)){
+                            while(numPlayers != 2 && numPlayers != 3){
+                                if(!write(clientHandler, "serviceMessage", "Players number not valid\n")){
+                                    break;
+                                }
+                                if(!createLobby(clientHandler)){
+                                    break;
+                                }
+                            }
+                            if(numPlayers==2 || numPlayers==3){
+                                write(clientHandler, "serviceMessage", "\nWait for other players\n\n");
+                                clientHandlers.add(clientHandler);
+                                countPlayers++;
+                            }
+                            else{
+                                gc.getMatch().getPlayers().remove(numPlayers);
+                            }
                         }
-                        write(clientHandler, "serviceMessage", "\nWait for other players\n\n");
                     }
-                    clientHandlers.add(clientHandler);
-                    countPlayers++;
                 }
                 System.out.println("Adding players");
                 while(countPlayers < numPlayers){
                     ClientHandler clientHandler = null;
                     clientHandler = connection(socket, clientHandler);
-                    loginPlayer(clientHandler);
-                    write(clientHandler, "serviceMessage", "\nWait for other players\n\n");
+                    if(!loginPlayer(clientHandler)){
+                        continue;
+                    }
+                    if(!write(clientHandler, "serviceMessage", "\nWait for other players\n\n")){
+                        gc.getMatch().getPlayers().remove(countPlayers);
+                        continue;
+                    }
                     clientHandlers.add(clientHandler);
                     countPlayers++;
                 }
 
                 for(ClientHandler clientHandler : clientHandlers){
-                    write(clientHandler, "serviceMessage", "You're in\n\n");
+                    if(!write(clientHandler, "serviceMessage", "You're in\n\n")){
+                        clientHandler.resetConnected();
+                    }
                 }
+
                 System.out.println("printing board");
                 gc.getMatch().inizializeBoard();
                 while (gc.getMatch().getBoard() == null){ }
                 for(ClientHandler clientHandler : clientHandlers){
-                    write(clientHandler, "serviceMessage",  gc.getMatch().printBoard());
+                    if(clientHandler.getConnected()){
+                        if(!write(clientHandler, "serviceMessage",  gc.getMatch().printBoard())){
+                            clientHandler.resetConnected();
+                        }
+                    }
+                    else{
+                        System.out.println(clientHandler.getName() + " disconnected");
+                    }
                 }
 
                 System.out.println("printing players");
                 for(ClientHandler clientHandler : clientHandlers){
-                    write(clientHandler, "serviceMessage", gc.getMatch().printPlayers());
+                    if(clientHandler.getConnected()){
+                        if(!write(clientHandler, "serviceMessage", gc.getMatch().printPlayers())){
+                            clientHandler.resetConnected();
+                        }
+                    }
+                    else{
+                        System.out.println(clientHandler.getName() + " disconnected");
+                    }
                 }
+
+                ArrayList<ClientHandler> removed = gc.getMatch().updatePlayers(gc, clientHandlers);
+                updateClientHandlers(removed);
+
+                if(gc.getMatch().getPlayers().size()==1){
+                    for(ClientHandler clientHandler : clientHandlers){
+                        if (clientHandler.getName().equals(gc.getMatch().getPlayers().get(0).getNickname())){
+                            write(clientHandler, "serviceMessage" , "\nYou win!!\n");
+                        }
+                    }
+                    break;
+                }
+
+                //fino a qui OK con le disconnessioni
+                //da qui in poi sono da sistemare nel game controller
 
                 gc.getMatch().sortPlayers();
                 sortClientHandlers();
@@ -134,25 +180,46 @@ public class Server
      *
      * @param clientHandler
      */
-    public void loginPlayer(ClientHandler clientHandler){
-        write(clientHandler, "serviceMessage", "Welcome to Santorini\n\n");
+    public boolean loginPlayer(ClientHandler clientHandler){
+        if(!write(clientHandler, "serviceMessage", "Welcome to Santorini\n\n")){
+            return false;
+        }
 
-        write(clientHandler,"interactionServer", "Insert username: ");
+        if(!write(clientHandler,"interactionServer", "Insert username: ")){
+            return false;
+        }
         String username = read(clientHandler);
 
         while(gc.getMatch().alreadyIn(username)){
-            write(clientHandler,"interactionServer", "Username already in, try again: ");
+            if(!write(clientHandler,"interactionServer", "Username already in, try again: ")){
+                return false;
+            }
             username = read(clientHandler);
         }
 
-        write(clientHandler,"interactionServer", "Insert age: ");
-        int age = Integer.parseInt(read(clientHandler));
+        int age;
+
+        while(true){
+            try{
+                if(!write(clientHandler,"interactionServer", "Insert age: ")){
+                    return false;
+                }
+                age = Integer.parseInt(read(clientHandler));
+                break;
+            } catch (NumberFormatException e){
+                if(!write(clientHandler, "serviceMessage", "Invalid input\n")){
+                    return false;
+                }
+                continue;
+            }
+        }
 
         clientHandler.setName(username);
         clientHandler.setAge(age);
 
         Player player1 = new Player(username, age);
         gc.getMatch().addPlayer(player1);
+        return true;
     }
 
     /**
@@ -163,10 +230,14 @@ public class Server
      * @param s the type of message
      * @param msg the message
      */
-    public void write(ClientHandler clientHandler, String s, String msg){
+    public boolean write(ClientHandler clientHandler, String s, String msg){
         clientHandler.sendMessage(s, msg);
         process(clientHandler, "getSentMessage");
+        if(clientHandler.getError()){
+            return false;
+        }
         processReset(clientHandler, "resetSentMessage");
+        return true;
     }
 
     /**
@@ -212,10 +283,18 @@ public class Server
      *
      * @param clientHandler
      */
-    public void createLobby(ClientHandler clientHandler) {
-        write(clientHandler, "interactionServer", "How many players 2 or 3? ");
-        numPlayers = Integer.parseInt(read(clientHandler));
+    public boolean createLobby(ClientHandler clientHandler) {
+        if(!write(clientHandler, "interactionServer", "How many players 2 or 3? ")){
+            return false;
+        }
+        try{
+            numPlayers = Integer.parseInt(read(clientHandler));
+        } catch (NumberFormatException e){
+            write(clientHandler, "serviceMessage", "Invalid input\n");
+            createLobby(clientHandler);
+        }
         gc.setNumPlayers(numPlayers);
+        return true;
     }
 
     /**
@@ -239,5 +318,11 @@ public class Server
 
     public ArrayList<ClientHandler> getClientHandlers() {
         return clientHandlers;
+    }
+
+    public void updateClientHandlers(ArrayList<ClientHandler> removed){
+        for(ClientHandler clientHandler : removed){
+            clientHandlers.remove(clientHandler);
+        }
     }
 }

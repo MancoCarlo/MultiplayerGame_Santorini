@@ -26,6 +26,7 @@ public class ClientHandler implements Runnable
     private boolean connected;
     private boolean sentMessage;
     private boolean readMessage;
+    private boolean error = false;
     ObjectOutputStream output;
     ObjectInputStream input;
 
@@ -106,7 +107,8 @@ public class ClientHandler implements Runnable
         try {
             message = (String) input.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("read - client disconnected");
+            error = true;
         }
     }
 
@@ -143,7 +145,8 @@ public class ClientHandler implements Runnable
             output.writeObject(method);
             output.writeObject(message);
         } catch (IOException e) {
-            System.out.println("Not valid");
+            System.out.println("send - client disconnected");
+            error=true;
         }
     }
 
@@ -183,5 +186,18 @@ public class ClientHandler implements Runnable
 
     public void setName(String n) {
         name=n;
+    }
+
+
+    public boolean getError() {
+        return error;
+    }
+
+    public void resetError() {
+        error = false;
+    }
+
+    public void resetConnected(){
+        connected = false;
     }
 }

@@ -95,9 +95,22 @@ public class GameController {
         ArrayList<Coordinate> coordinates1 = whereCanMove(1);
         if(coordinates0.size()!=0 && coordinates1.size()!=0){
             server.write(ch, "serviceMessage", "It's your turn\n");
-            server.write(ch, "serviceMessage", "Choose the worker to use in this turn: \n");
             server.write(ch, "interactionServer", match.getPlayer(ch.getName()).printWorkers());
-            wID = Integer.parseInt(server.read(ch));
+            server.write(ch, "serviceMessage", "Choose the worker to use in this turn: \n");
+            while(true){
+                try{
+                    wID = Integer.parseInt(server.read(ch));
+                    if(wID<0 || wID>1){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
         }
         else if(coordinates0.size()!=0 && coordinates1.size()==0){
             server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
@@ -111,15 +124,45 @@ public class GameController {
         if(wID==0){
             server.write(ch, "serviceMessage", printCoordinates(coordinates0));
             server.write(ch, "interactionServer", "Where you want to move?\n");
-            c = coordinates0.get(Integer.parseInt(server.read(ch)));
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates0.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+            c = coordinates0.get(id);
         }
         else if(wID==1){
             server.write(ch, "serviceMessage", printCoordinates(coordinates1));
             server.write(ch, "interactionServer", "Where you want to move?\n");
-            c = coordinates1.get(Integer.parseInt(server.read(ch)));
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates1.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+            c = coordinates1.get(id);
         }
         turn.move(match, p.getWorker(wID), c);
-
+        /*
         if(p.getWorker(wID).canBuild(match)){
             //Costruzione
             return turn.winCondition(match, p);
@@ -129,6 +172,8 @@ public class GameController {
             match.removePlayer(p);
             return false;
         }
+        */
+        return false;
     }
 
     /**
@@ -185,19 +230,54 @@ public class GameController {
      * assign one God to each player
      */
     public void godsAssignement(){
+        int id=0;
         server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Choose " + numPlayers + " gods from this list");
         server.write(server.getClientHandlers().get(myturn), "serviceMessage", match.printGodlist());
         server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°1 index: ");
-        godIndex.add(Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1);
+        while(true){
+            try {
+                id=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));
+                if(id<1 || id>match.getGods().size()){
+                    server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Invalid input\n");
+                    server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°1 index: ");
+                    continue;
+                }
+                break;
+            } catch (NumberFormatException e){
+                server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Invalid input\n");
+                server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°1 index: ");
+            }
+        }
+        godIndex.add(id - 1);
+        boolean find;
         for(int i=1; i<numPlayers; i++){
             server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
-            godIndex.add(Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1);
-            while(godIndex.get(1) == godIndex.get(0)){
-                godIndex.remove(1);
-                server.write(server.getClientHandlers().get(myturn), "serviceMessage", "God already selected\n");
-                server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
-                godIndex.add(Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1);
+            while(true){
+                find=false;
+                try {
+                    id=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));
+                    if(id<1 || id>match.getGods().size()){
+                        server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Invalid input\n");
+                        server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
+                        continue;
+                    }
+                    for(int j : godIndex){
+                        if(id-1==j){
+                            server.write(server.getClientHandlers().get(myturn), "serviceMessage", "God already selected\n");
+                            server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
+                            find=true;
+                        }
+                    }
+                    if(find){
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Invalid input\n");
+                    server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
+                }
             }
+            godIndex.add(id - 1);
         }
         godSelection();
         int i=0;
@@ -205,7 +285,7 @@ public class GameController {
             next();
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", match.printGodlist());
             server.write(server.getClientHandlers().get(myturn), "interactionServer", "Choose one god from this list: ");
-            int id = Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1;
+            id = Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1;
             while(id >= match.getGods().size()|| id < 0){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Index not valid\n");
                 server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert another index: ");

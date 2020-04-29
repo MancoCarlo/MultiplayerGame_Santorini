@@ -1,5 +1,9 @@
 package it.polimi.ingsw.PSP29.model;
 
+import it.polimi.ingsw.PSP29.Controller.GameController;
+import it.polimi.ingsw.PSP29.view.Client;
+import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -219,5 +223,23 @@ public class Match implements Serializable {
             }
         }
         return false;
+    }
+
+    public ArrayList<ClientHandler> updatePlayers(GameController gameController, ArrayList<ClientHandler> clientHandlers){
+        ArrayList<Player> playerArrayList = new ArrayList<>();
+        ArrayList<ClientHandler> removed = new ArrayList<>();
+        for(ClientHandler clientHandler : clientHandlers){
+            if(clientHandler.getConnected()){
+                Player p = new Player(clientHandler.getName(), clientHandler.getAge());
+                playerArrayList.add(p);
+            }
+            else{
+                removed.add(clientHandler);
+            }
+        }
+        players.clear();
+        players.addAll(playerArrayList);
+        gameController.setNumPlayers(players.size());
+        return removed;
     }
 }
