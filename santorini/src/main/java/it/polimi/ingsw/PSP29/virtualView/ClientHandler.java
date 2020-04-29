@@ -15,31 +15,23 @@ public class ClientHandler implements Runnable
     private enum Commands {
         SEND_MESSAGE,
         TAKE_MESSAGE,
-        SEND_BOARD,
-        SEND_LIST,
         STOP
     }
     private Commands nextCommand;
     private Socket client;
     private String name;
     private int age;
-    private boolean login;
-    private GameController gc;
     private String message;
     private String method;
-    private Box[][] board;
-    private ArrayList<?> list;
     private boolean connected;
     private boolean sentMessage;
     private boolean readMessage;
-    private boolean sentObject;
     ObjectOutputStream output;
     ObjectInputStream input;
 
-    ClientHandler(Socket client, GameController gc)
+    ClientHandler(Socket client)
     {
         this.client = client;
-        this.gc = gc;
     }
 
 
@@ -47,7 +39,6 @@ public class ClientHandler implements Runnable
     public void run()
     {
         try {
-            login = false;
             output = new ObjectOutputStream(client.getOutputStream());
             input = new ObjectInputStream(client.getInputStream());
             handleClientConnection();

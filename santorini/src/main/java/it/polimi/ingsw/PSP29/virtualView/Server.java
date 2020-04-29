@@ -1,6 +1,6 @@
 package it.polimi.ingsw.PSP29.virtualView;
 
-import it.polimi.ingsw.PSP29.Controller.GameController;
+import it.polimi.ingsw.PSP29.Controller.*;
 import it.polimi.ingsw.PSP29.model.*;
 
 import java.io.IOException;
@@ -16,16 +16,14 @@ public class Server
     public final static int SOCKET_PORT = 7777;
     private static GameController gc;
     private int numPlayers;
-    private int myturn = 0;
-    ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+    private boolean endGame = false;
+    private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
     /**
      * server execution
      */
     public void launch()
     {
-        gc = new GameController();
-
         ServerSocket socket;
         try {
             socket = new ServerSocket(SOCKET_PORT);
@@ -34,7 +32,7 @@ public class Server
             System.exit(1);
             return;
         }
-
+        gc = new GameController(this);
         while (true) {
             int countPlayers = 0;
             System.out.println("server ready");
@@ -45,7 +43,6 @@ public class Server
                     clientHandler = connection(socket, clientHandler);
 
                     while (numPlayers == 0){
-
                         loginPlayer(clientHandler);
                         createLobby(clientHandler);
                         while(numPlayers != 2 && numPlayers != 3){
@@ -59,18 +56,17 @@ public class Server
                 }
                 System.out.println("Adding players");
                 while(countPlayers < numPlayers){
-                    ClientHandler clientHandler=null;
+                    ClientHandler clientHandler = null;
                     clientHandler = connection(socket, clientHandler);
                     loginPlayer(clientHandler);
                     write(clientHandler, "serviceMessage", "\nWait for other players\n\n");
                     clientHandlers.add(clientHandler);
                     countPlayers++;
                 }
-                
+
                 for(ClientHandler clientHandler : clientHandlers){
                     write(clientHandler, "serviceMessage", "You're in\n\n");
                 }
-
                 System.out.println("printing board");
                 gc.getMatch().inizializeBoard();
                 while (gc.getMatch().getBoard() == null){ }
@@ -88,27 +84,15 @@ public class Server
                 gc.getMatch().loadGods();
 
                 System.out.println("Assigning gods");
-                godsAssignement();
+                gc.godsAssignement();
 
                 System.out.println("Putting workers");
-                putWorkers();
+                gc.putWorkers();
 
-                //!!è una prova!!
-                turnExe();
 
-                while(true){ }
+                gc.gameExe();
+
             }
-
-        }
-    }
-
-    /**
-     * find the index of the next player
-     */
-    public void next(){
-        myturn++;
-        if(myturn==numPlayers){
-            myturn=0;
         }
     }
 
@@ -209,10 +193,10 @@ public class Server
      * @return the clientHandler linked to the client
      */
     public ClientHandler connection(ServerSocket socket,ClientHandler clientHandler){
-        Socket client = null;
+        Socket client;
         try {
             client = socket.accept();
-            clientHandler = new ClientHandler(client, gc);
+            clientHandler = new ClientHandler(client);
             Thread thread = new Thread(clientHandler , "server_" + client.getInetAddress());
             thread.start();
             process(clientHandler, "getConnected");
@@ -231,6 +215,7 @@ public class Server
     public void createLobby(ClientHandler clientHandler) {
         write(clientHandler, "interactionServer", "How many players 2 or 3? ");
         numPlayers = Integer.parseInt(read(clientHandler));
+        gc.setNumPlayers(numPlayers);
     }
 
     /**
@@ -252,145 +237,7 @@ public class Server
         }
     }
 
-    /**
-     * assign one God to each player
-     */
-    public void godsAssignement(){
-        write(clientHandlers.get(myturn), "serviceMessage", "Choose " + numPlayers + " gods from this list");
-        write(clientHandlers.get(myturn), "serviceMessage", gc.getMatch().printGodlist());
-        write(clientHandlers.get(myturn), "interactionServer", "Insert n°1 index: ");
-        gc.getGodIndex().add(Integer.parseInt(read(clientHandlers.get(myturn))) - 1);
-        for(int i=1; i<numPlayers; i++){
-            write(clientHandlers.get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
-            gc.getGodIndex().add(Integer.parseInt(read(clientHandlers.get(myturn))) - 1);
-        }
-        gc.godSelection();
-        int i=0;
-        while (i<clientHandlers.size()){
-            next();
-            write(clientHandlers.get(myturn), "serviceMessage", gc.getMatch().printGodlist());
-            write(clientHandlers.get(myturn), "interactionServer", "Choose one god from this list: ");
-            int id = Integer.parseInt(read(clientHandlers.get(myturn))) - 1;
-            gc.getMatch().getPlayers().get(myturn).setCard(gc.getMatch().getGods(), id);
-            gc.getMatch().getGods().remove(id);
-            i++;
-        }
-    }
-
-    /**
-     * ask to the client where he want to put his players
-     */
-    public void putWorkers(){
-        int i=0;
-        while (i<numPlayers){
-            next();
-            for(int j=0; j<clientHandlers.size(); j++){
-                if(j!=myturn){
-                    write(clientHandlers.get(j), "serviceMessage", "Wait your turn\n");
-                }
-            }
-            write(clientHandlers.get(myturn), "serviceMessage",  gc.getMatch().printBoard());
-            write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°1\n");
-            Coordinate c = getCoordinate();
-            while (!gc.controlMovement(gc.getMatch().getPlayers().get(myturn), 0, c)){
-                write(clientHandlers.get(myturn), "serviceMessage", "Not valid box\n");
-                write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°1\n");
-                c = getCoordinate();
-            }
-
-            write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°2\n");
-            c = getCoordinate();
-            while (!gc.controlMovement(gc.getMatch().getPlayers().get(myturn), 1, c)){
-                write(clientHandlers.get(myturn), "serviceMessage", "Not valid box\n");
-                write(clientHandlers.get(myturn), "serviceMessage", "Insert Worker n°2\n");
-                c = getCoordinate();
-            }
-            i++;
-        }
-    }
-
-    /**
-     * !!è una prova!!
-     * create an arrayList with all the coordinates in wich the worker can move
-     * @param id the worker id
-     * @return the list
-     */
-    public ArrayList<Coordinate> whereCanMove(int id){
-        ArrayList<Coordinate> coordinates = new ArrayList<>();
-        Player player = gc.getMatch().getPlayer(clientHandlers.get(myturn).getName());
-        for(int i=0; i<gc.getMatch().getRows(); i++){
-            for(int j=0; j<gc.getMatch().getColumns(); j++){
-                Coordinate c = new Coordinate(i, j);
-                if(player.getWorker(id).canMoveTo(c, player.getCard().getName(), gc.getMatch(), gc.getAthenaOn())){
-                    coordinates.add(new Coordinate(i, j));
-                }
-            }
-        }
-        return coordinates;
-    }
-
-    /**
-     * !!è una prova!!
-     * the turn execution
-     */
-    public void turnExe(){
-        next();
-        int wID=2;
-        ArrayList<Coordinate> coordinates0 = whereCanMove(0);
-        ArrayList<Coordinate> coordinates1 = whereCanMove(1);
-        if(coordinates0.size()!=0 && coordinates1.size()!=0){
-            write(clientHandlers.get(myturn), "serviceMessage", "It's your turn\n");
-            write(clientHandlers.get(myturn), "serviceMessage", "Choose the worker to use in this turn: \n");
-            write(clientHandlers.get(myturn), "interactionServer", gc.getMatch().getPlayer(clientHandlers.get(myturn).getName()).printWorkers());
-            wID = Integer.parseInt(read(clientHandlers.get(myturn)));
-        }
-        else if(coordinates0.size()!=0 && coordinates1.size()==0){
-            write(clientHandlers.get(myturn), "serviceMessage", "You can only move one of your worker in these positions: \n");
-            wID = 0;
-        }
-        else if(coordinates0.size()==0 && coordinates1.size()!=0){
-            write(clientHandlers.get(myturn), "serviceMessage", "You can only move one of your worker in these positions: \n");
-            wID = 1;
-        }
-        Coordinate c = null;
-        if(wID==0){
-            write(clientHandlers.get(myturn), "serviceMessage", printCoordinates(coordinates0));
-            write(clientHandlers.get(myturn), "interactionServer", "Where you want to move?\n");
-            c = coordinates0.get(Integer.parseInt(read(clientHandlers.get(myturn))));
-        }
-        else if(wID==1){
-            write(clientHandlers.get(myturn), "serviceMessage", printCoordinates(coordinates1));
-            write(clientHandlers.get(myturn), "interactionServer", "Where you want to move?\n");
-            c = coordinates1.get(Integer.parseInt(read(clientHandlers.get(myturn))));
-        }
-        System.out.println(c);
-    }
-
-    /**
-     * ask a coordinate to the client
-     * @return the coordinate
-     */
-    public Coordinate getCoordinate(){
-        Coordinate c;
-        write(clientHandlers.get(myturn), "interactionServer", "X: ");
-        int x=Integer.parseInt(read(clientHandlers.get(myturn)));
-        write(clientHandlers.get(myturn), "interactionServer", "Y: ");
-        int y=Integer.parseInt(read(clientHandlers.get(myturn)));
-        c = new Coordinate(x, y);
-        return c;
-    }
-
-    /**
-     * !!è una prova!!
-     * print the list of valids coordinate
-     * @param coordinates
-     * @return the string that print the list
-     */
-    public String printCoordinates(ArrayList<Coordinate> coordinates){
-        String c = "Valid coordinates:\n";
-        for(int i=0; i<coordinates.size(); i++){
-            c = c + i + ") " + coordinates.get(i).toString() + "\n";
-        }
-        return c;
+    public ArrayList<ClientHandler> getClientHandlers() {
+        return clientHandlers;
     }
 }
