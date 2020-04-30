@@ -1,6 +1,9 @@
 package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+
+import java.util.ArrayList;
 
 public class MinotaurTurn extends GodTurn {
 
@@ -113,6 +116,16 @@ public class MinotaurTurn extends GodTurn {
         return true;
     }
 
+    @Override
+    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+        return super.whereCanMove(match,ch,id,athenaOn);
     }
+
+    @Override
+    public String printCoordinates(ArrayList<Coordinate> coordinates) {
+        return super.printCoordinates(coordinates);
+    }
+
+}
 
 

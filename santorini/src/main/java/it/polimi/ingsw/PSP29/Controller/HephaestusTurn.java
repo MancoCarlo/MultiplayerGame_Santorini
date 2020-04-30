@@ -16,9 +16,7 @@ public class HephaestusTurn extends GodTurn {
     }
 
     @Override
-    public boolean winCondition(Match m, Player p) {
-        return super.winCondition(m, p);
-    }
+    public boolean winCondition(Match m, Player p) { return super.winCondition(m, p); }
 
     /**
      * allows w to build two times but it has to be in the same box and not a dome
