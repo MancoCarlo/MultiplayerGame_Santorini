@@ -49,12 +49,12 @@ public class AtlasTurn extends GodTurn{
             }
             server.write(ch, "interactionServer", "Would you use Atlas's power?\n1) Yes\n2) No\n ");
             String response = server.read(ch);
+            c = coordinates.get(id);
             if(response.equals("1")){
                 while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){
                     m.updateBuilding(c);
                 }
             }else{
-                c = coordinates.get(id);
                 m.updateBuilding(c);
             }
             m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);

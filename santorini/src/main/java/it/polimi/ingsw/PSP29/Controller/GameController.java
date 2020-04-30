@@ -2,6 +2,7 @@ package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.InputControl.*;
+import it.polimi.ingsw.PSP29.view.Client;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
@@ -309,19 +310,16 @@ public class GameController {
      * @return the result of winCondition
      */
     public boolean turnExe(ClientHandler ch, Turn turn){
-        System.out.println("Movimento di "+ch.getName());
-        turn.move(match, ch, server, athenaOn);
-        /*
-        if(p.getWorker(wID).canBuild(match)){
-            //Costruzione
-            return turn.winCondition(match, p);
-        }
-        else{
-            System.out.println("Non puoi costruire, hai perso");
-            match.removePlayer(p);
-            return false;
-        }
-        */
+        if(!turn.move(match, ch, server, athenaOn)) losePlayer(ch);
+        if(!turn.build(match,ch,server)) losePlayer(ch);
         return false;
+    }
+
+    /**
+     * Exclude the player from the game
+     * @param ch loser player
+     */
+    public void losePlayer(ClientHandler ch){
+        //gestione sconfitta del player, attributo per ogni player che dice se è in gioco o meno? (Permette la funzione "rigioca" più semplice)
     }
 }
