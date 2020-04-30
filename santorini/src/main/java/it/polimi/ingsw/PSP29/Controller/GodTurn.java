@@ -16,8 +16,8 @@ public class GodTurn extends TurnDecorator{
     }
 
     @Override
-    public boolean build(Match m, Worker w, Coordinate c) {
-        return super.build(m, w, c);
+    public boolean build(Match m, ClientHandler ch, Server server) {
+        return super.build(m, ch, server);
     }
 
     @Override
@@ -30,9 +30,15 @@ public class GodTurn extends TurnDecorator{
     }
 
     @Override
+    public boolean canBuildIn(Match match,Worker w,Coordinate c){ return super.canBuildIn(match,w,c);}
+
+    @Override
     public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
         return super.whereCanMove(match,ch,id,athenaOn);
     }
+
+    @Override
+    public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id){ return super.whereCanBuild(match, ch,id);}
 
     @Override
     public String printCoordinates(ArrayList<Coordinate> coordinates) {

@@ -14,62 +14,55 @@ public class AtlasTurn extends GodTurn{
     }
 
     /**
-     *
+     * call build() of the superclass while level of the box in c is 4 or simply call build()
      * @param m match played
-     * @param w worker that should be moved
-     * @param c location of the box that we must check
-     * @param athena true if the power of athena is on, else false
-     * @return
-     */
-    public boolean canMoveTo(Match m, Worker w,Coordinate c, boolean athena) {
-        return super.canMoveTo(m, w, c, athena);
-    }
-
-    /**
-     * call winCondition() of the superclass
-     * @param m match played
-     * @param p player that play the turn
-     * @return true if p win the game, else false
-     */
-    public boolean winCondition(Match m, Player p){
-        return super.winCondition(m, p);
-    }
-
-    /**
-     * call build() of the superclass while level of the box in c is 4
-     * @param m match played
-     * @param w worker that must build
-     * @param c location of the box where w must build
+     * @param ch owner of the turn
+     * @param server manage the interaction with client
      * @return true if w can build in c, else false
      */
-    public boolean build(Match m, Worker w, Coordinate c){
-        Scanner scanner = new Scanner(System.in);
-        String answer;
-        boolean nopower = super.build(m,w,c);
-        if(!nopower) return false;
-        System.out.println("Vuoi usare il potere di Atlas? 1) SI 2) NO");
-        answer = scanner.nextLine();
-        if(answer.equals("1")){
-            while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){
-                m.updateBuilding(c);
-                m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);
+    @Override
+    public boolean build(Match m, ClientHandler ch, Server server){
+        int wID=2;
+        Player p = m.getPlayer(ch.getName());
+        if(p.getWorker(0).getMoved()) wID = 0;
+        if(p.getWorker(1).getMoved()) wID = 1;
+        ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
+        server.write(ch, "serviceMessage", "Build: ");
+        if(coordinates.size()!=0){
+            Coordinate c = null;
+            server.write(ch, "serviceMessage", printCoordinates(coordinates));
+            server.write(ch, "interactionServer", "Where you want to build?\n");
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
             }
+            server.write(ch, "interactionServer", "Would you use Atlas's power?\n1) Yes\n2) No\n ");
+            String response = server.read(ch);
+            if(response.equals("1")){
+                while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){
+                    m.updateBuilding(c);
+                }
+            }else{
+                c = coordinates.get(id);
+                m.updateBuilding(c);
+            }
+            m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);
+            p.getWorker(wID).changeBuilt(true);
+            server.write(ch,"serviceMessage", m.printBoard());
+            return true;
+        }else{
+            return false;
         }
-        return true;
-    }
-
-    @Override
-    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
-        return super.move(m, ch, server, athenaOn);
-    }
-
-    @Override
-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
-        return super.whereCanMove(match,ch,id,athenaOn);
-    }
-
-    @Override
-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
-        return super.printCoordinates(coordinates);
     }
 }

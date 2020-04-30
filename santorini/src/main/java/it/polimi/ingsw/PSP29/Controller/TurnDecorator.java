@@ -45,20 +45,45 @@ public abstract class TurnDecorator implements Turn {
     /**
      * let the worker build
      * @param m match played
-     * @param w worker that must build
-     * @param c location of the box where w can build two times
+     * @param ch clientHandler that must build
+     * @param server manage the interaction with client
      * @return true if w has built at least once
      */
     @Override
-    public boolean build(Match m, Worker w, Coordinate c) {
-        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].getLevel()==4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
-            return false;
-        }
-        else{
+    public boolean build(Match m, ClientHandler ch, Server server) {
+        int wID=2;
+        Player p = m.getPlayer(ch.getName());
+        if(p.getWorker(0).getMoved()) wID = 0;
+        if(p.getWorker(1).getMoved()) wID = 1;
+        ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
+        server.write(ch, "serviceMessage", "Build: ");
+        if(coordinates.size()!=0){
+            Coordinate c = null;
+            server.write(ch, "serviceMessage", printCoordinates(coordinates));
+            server.write(ch, "interactionServer", "Where you want to build?\n");
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+            c = coordinates.get(id);
             m.updateBuilding(c);
             m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);
-            w.changeBuilt(true);
+            p.getWorker(wID).changeBuilt(true);
+            server.write(ch,"serviceMessage", m.printBoard());
             return true;
+        }else{
+            return false;
         }
     }
 
@@ -160,6 +185,7 @@ public abstract class TurnDecorator implements Turn {
      * @param athena true if the athena power is on, else false
      * @return true if w can't move to another location, else false
      */
+    @Override
     public boolean canMoveTo(Match match,Worker w,Coordinate c, boolean athena){
         if(!athena){
             if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1){
@@ -174,6 +200,23 @@ public abstract class TurnDecorator implements Turn {
     }
 
     /**
+     * control if the worker can build
+     * @param match match played
+     * @param w worker that must build
+     * @param c coordinate that must be checked
+     * @return true if w can't build to another location, else false
+     */
+    @Override
+    public boolean canBuildIn(Match match,Worker w,Coordinate c){
+        if(!w.getPosition().isNear(c) || match.getBoard()[c.getX()][c.getY()].getLevel()==4 || !match.getBoard()[c.getX()][c.getY()].isEmpty()){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+    /**
      * create an arrayList with all the coordinates in wich the worker can move
      * @param match match played
      * @param ch owner of turn
@@ -181,6 +224,7 @@ public abstract class TurnDecorator implements Turn {
      * @param athenaOn true if athena is on
      * @return the list
      */
+    @Override
     public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
         ArrayList<Coordinate> coordinates = new ArrayList<>();
         Player player = match.getPlayer(ch.getName());
@@ -196,10 +240,33 @@ public abstract class TurnDecorator implements Turn {
     }
 
     /**
+     * create an arrayList with all the coordinates in wich the worker can build
+     * @param match match played
+     * @param ch owner of turn
+     * @param id the worker id
+     * @return the list
+     */
+    @Override
+    public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id) {
+        ArrayList<Coordinate> coordinates = new ArrayList<>();
+        Player player = match.getPlayer(ch.getName());
+        for (int i = 0; i < match.getRows(); i++) {
+            for (int j = 0; j < match.getColumns(); j++) {
+                Coordinate c = new Coordinate(i, j);
+                if (canBuildIn(match, player.getWorker(id), c)) {
+                    coordinates.add(new Coordinate(i, j));
+                }
+            }
+        }
+        return coordinates;
+    }
+
+    /**
      * print the list of valids coordinate
      * @param coordinates
      * @return the string that print the list
      */
+    @Override
     public String printCoordinates(ArrayList<Coordinate> coordinates){
         String c = "Valid coordinates:\n";
         for(int i=0; i<coordinates.size(); i++){

@@ -11,11 +11,11 @@ public interface Turn {
     /**
      * let the worker build
      * @param m match played
-     * @param w worker that must build
-     * @param c location of the box where w can build two times
+     * @param ch owner of the turn
+     * @param server manage the interaction with client
      * @return true if w has built at least once
      */
-    public boolean build(Match m, Worker w, Coordinate c);
+    public boolean build(Match m, ClientHandler ch, Server server);
 
     /**
      * move the worker
@@ -46,6 +46,15 @@ public interface Turn {
     public boolean canMoveTo(Match m,Worker w, Coordinate c, boolean athena);
 
     /**
+            * control if the worker can build
+     * @param match match played
+     * @param w worker that must build
+     * @param c coordinate that must be checked
+     * @return true if w can't build to another location, else false
+            */
+    public boolean canBuildIn(Match match,Worker w,Coordinate c);
+
+    /**
      * create an arrayList with all the coordinates in wich the worker can move
      * @param match match played
      * @param ch owner of turn
@@ -54,6 +63,15 @@ public interface Turn {
      * @return the list
      */
     public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn);
+
+    /**
+     * create an arrayList with all the coordinates in wich the worker can build
+     * @param match match played
+     * @param ch owner of turn
+     * @param id the worker id
+     * @return the list
+     */
+    public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id);
 
     /**
      * print the list of valids coordinate

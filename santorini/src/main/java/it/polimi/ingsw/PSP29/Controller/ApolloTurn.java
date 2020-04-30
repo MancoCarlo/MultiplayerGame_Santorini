@@ -13,29 +13,6 @@ public class ApolloTurn extends GodTurn{
     }
 
     /**
-     * call winCondition() of the superclass
-     * @param m match played
-     * @param p player that play the turn
-     * @return true if p win the game, else false
-     */
-    @Override
-    public boolean winCondition(Match m, Player p){
-        return super.winCondition(m, p);
-    }
-
-    /**
-     * call build() of the superclass
-     * @param m match played
-     * @param w worker that must build
-     * @param c location of the box where w must build
-     * @return true if w can build in c, else false
-     */
-    @Override
-    public boolean build(Match m, Worker w, Coordinate c){
-        return super.build(m, w, c);
-    }
-
-    /**
      * move the worker
      * @param m match played
      * @param ch owner of the turn
@@ -141,11 +118,6 @@ public class ApolloTurn extends GodTurn{
 
     }
 
-    @Override
-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
-        return super.whereCanMove(match,ch,id,athenaOn);
-    }
-
     /**
      * control if the worker can move
      * @param match match played
@@ -154,6 +126,7 @@ public class ApolloTurn extends GodTurn{
      * @param athenaOn true if the athena power is on, else false
      * @return true if w can't move to another location, else false
      */
+    @Override
     public boolean canMoveTo(Match match,Worker w,Coordinate c, boolean athenaOn){
         if(match.getBoard()[c.getX()][c.getY()].isEmpty())
             return super.canMoveTo(match,w,c,athenaOn);
