@@ -260,6 +260,7 @@ public class GameController {
         boolean godOn;
         if(response.equals("1")) godOn = true;
         else godOn = false;
+        System.out.println(p.getCard().toString());
         if(!godOn){
             BaseTurn turn = new BaseTurn();
             return turnExe(ch, turn);
@@ -308,10 +309,7 @@ public class GameController {
      * @return the result of winCondition
      */
     public boolean turnExe(ClientHandler ch, Turn turn){
-
-        System.out.println("Movement");
-        System.out.println(match.getPlayer(ch.getName()).printWorkers());
-        System.out.println(match.printBoard());
+        System.out.println("Movimento di "+ch.getName());
         turn.move(match, ch, server, athenaOn);
         /*
         if(p.getWorker(wID).canBuild(match)){

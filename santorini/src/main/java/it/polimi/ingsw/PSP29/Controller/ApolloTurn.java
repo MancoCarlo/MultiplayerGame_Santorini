@@ -122,6 +122,7 @@ public class ApolloTurn extends GodTurn{
         if(m.getBoard()[c.getX()][c.getY()].isEmpty()){
             m.updateMovement(p,wID,c);
             p.getWorker(wID).changeMoved(true);
+            server.write(ch,"serviceMessage", m.printBoard());
             return true;
         }else{
             Worker w2 = m.getBoard()[c.getX()][c.getY()].getWorkerBox();
@@ -134,6 +135,7 @@ public class ApolloTurn extends GodTurn{
             p.getWorker(wID).changeMoved(true);
             m.getPlayer(w2.getIDplayer()).putWorker(w2.getID(), m.getBoard(), cx);
             w2.setPrev_position(c);
+            server.write(ch,"serviceMessage", m.printBoard());
             return true;
         }
 
@@ -153,16 +155,20 @@ public class ApolloTurn extends GodTurn{
      * @return true if w can't move to another location, else false
      */
     public boolean canMoveTo(Match match,Worker w,Coordinate c, boolean athenaOn){
-        if(!athenaOn){
-            if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1 && !w.getIDplayer().equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
-                return true;
+        if(match.getBoard()[c.getX()][c.getY()].isEmpty())
+            return super.canMoveTo(match,w,c,athenaOn);
+        else{
+            if(!athenaOn){
+                if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1 && !w.getIDplayer().equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
+                    return true;
+                }
+            } else{
+                if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1 && !w.getIDplayer().equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
+                    return true;
+                }
             }
-        } else{
-            if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1 && !w.getIDplayer().equals(match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer())){
-                return true;
-            }
+            return false;
         }
-        return false;
     }
 }
 

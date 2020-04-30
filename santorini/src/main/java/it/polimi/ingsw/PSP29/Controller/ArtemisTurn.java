@@ -48,13 +48,17 @@ public class ArtemisTurn extends GodTurn{
      */
     @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
+        System.out.println("movimento base");
         boolean nopower = super.move(m,ch,server,athenaOn);
+        System.out.println("fatto");
         if(!nopower) return false;
+        server.write(ch,"serviceMessage", m.printBoard());
         server.write(ch,"interactionServer", "Would you move again?\n1) Yes\n2) No\n");
-        server.write(ch,"serviceMessage", "Insert answer: ");
         String answer = server.read(ch);
-        if(answer.equals("1")) return super.move(m,ch,server,athenaOn) || nopower;
-        else return true;
+        if(answer.equals("1")){
+            super.move(m,ch,server,athenaOn);
+        }
+        return true;
     }
 
     @Override
@@ -72,7 +76,7 @@ public class ArtemisTurn extends GodTurn{
      */
     public boolean canMoveTo(Match match,Worker w,Coordinate c, boolean athena){
         if(!athena){
-            if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1){
+            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1){
                 if(w.getMoved()){
                     if(c.equals(w.getPrev_position())){
                         return false;
@@ -80,12 +84,11 @@ public class ArtemisTurn extends GodTurn{
                     else{
                         return true;
                     }
-                }else{
-                    return false;
                 }
+                return true;
             }
         } else{
-            if(match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1){
+            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1){
                 if(w.getMoved()){
                     if(c.equals(w.getPrev_position())){
                         return false;
@@ -93,9 +96,8 @@ public class ArtemisTurn extends GodTurn{
                     else{
                         return true;
                     }
-                }else{
-                    return false;
                 }
+                return true;
             }
         }
         return false;

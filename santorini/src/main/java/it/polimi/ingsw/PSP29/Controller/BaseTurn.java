@@ -146,6 +146,7 @@ public class BaseTurn implements Turn {
         }
         m.updateMovement(p,wID,c);
         p.getWorker(wID).changeMoved(true);
+        server.write(ch,"serviceMessage", m.printBoard());
         return true;
     }
 
