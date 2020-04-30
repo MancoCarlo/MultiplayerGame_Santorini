@@ -1,6 +1,10 @@
 package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+import it.polimi.ingsw.PSP29.virtualView.Server;
+
+import java.util.ArrayList;
 
 
 public abstract class TurnDecorator implements Turn {
@@ -61,39 +65,90 @@ public abstract class TurnDecorator implements Turn {
     /**
      * move the worker
      * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
+     * @param ch owner of the turn
+     * @param server manage the interaction with client
+     * @param athenaOn true if athena is on
      * @return true if is moved in c, else false
      */
     @Override
-    public boolean move(Match m, Worker w, Coordinate c){
-        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c.getX()][c.getY()].getLevel()==4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
+    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
+        int wID=2;
+        Player p = m.getPlayer(ch.getName());
+        ArrayList<Coordinate> coordinates0 = whereCanMove(m, ch, 0, athenaOn);
+        ArrayList<Coordinate> coordinates1 = whereCanMove(m, ch, 1, athenaOn);
+        if(coordinates0.size()!=0 && coordinates1.size()!=0){
+            server.write(ch, "serviceMessage", "It's your turn\n");
+            server.write(ch, "interactionServer", m.getPlayer(ch.getName()).printWorkers());
+            server.write(ch, "serviceMessage", "Choose the worker to use in this turn: \n");
+            while(true){
+                try{
+                    wID = Integer.parseInt(server.read(ch));
+                    if(wID<0 || wID>1){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+        }
+        else if(coordinates0.size()!=0 && coordinates1.size()==0){
+            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
+            wID = 0;
+        }
+        else if(coordinates0.size()==0 && coordinates1.size()!=0){
+            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
+            wID = 1;
+        }else if(coordinates0.size()==0 && coordinates1.size()==0){
             return false;
         }
-        else{
-            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-            w.changeMoved(true);
-            return true;
+        Coordinate c = null;
+        if(wID==0){
+            server.write(ch, "serviceMessage", printCoordinates(coordinates0));
+            server.write(ch, "interactionServer", "Where you want to move?\n");
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates0.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+            c = coordinates0.get(id);
         }
-    }
-
-    /**
-     * move the worker if athena has been used
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
-     * @return true if is moved in c, else false
-     */
-    @Override
-    public boolean limited_move(Match m, Worker w, Coordinate c){
-        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c.getX()][c.getY()].getLevel()==4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
-            return false;
+        else if(wID==1){
+            server.write(ch, "serviceMessage", printCoordinates(coordinates1));
+            server.write(ch, "interactionServer", "Where you want to move?\n");
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates1.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+            c = coordinates1.get(id);
         }
-        else{
-            m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-            w.changeMoved(true);
-            return true;
-        }
+        m.updateMovement(p,wID,c);
+        p.getWorker(wID).changeMoved(true);
+        return true;
     }
 
     /**
@@ -115,5 +170,40 @@ public abstract class TurnDecorator implements Turn {
             }
         }
         return false;
+    }
+
+    /**
+     * create an arrayList with all the coordinates in wich the worker can move
+     * @param match match played
+     * @param ch owner of turn
+     * @param id the worker id
+     * @param athenaOn true if athena is on
+     * @return the list
+     */
+    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+        ArrayList<Coordinate> coordinates = new ArrayList<>();
+        Player player = match.getPlayer(ch.getName());
+        for (int i = 0; i < match.getRows(); i++) {
+            for (int j = 0; j < match.getColumns(); j++) {
+                Coordinate c = new Coordinate(i, j);
+                if (canMoveTo(match, player.getWorker(id), c,athenaOn)) {
+                    coordinates.add(new Coordinate(i, j));
+                }
+            }
+        }
+        return coordinates;
+    }
+
+    /**
+     * print the list of valids coordinate
+     * @param coordinates
+     * @return the string that print the list
+     */
+    public String printCoordinates(ArrayList<Coordinate> coordinates){
+        String c = "Valid coordinates:\n";
+        for(int i=0; i<coordinates.size(); i++){
+            c = c + i + ") " + coordinates.get(i).toString() + "\n";
+        }
+        return c;
     }
 }

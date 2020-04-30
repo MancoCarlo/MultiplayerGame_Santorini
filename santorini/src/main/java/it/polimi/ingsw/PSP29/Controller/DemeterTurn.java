@@ -2,6 +2,10 @@ package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.InputControl.Input;
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+import it.polimi.ingsw.PSP29.virtualView.Server;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class DemeterTurn extends GodTurn {
@@ -11,13 +15,8 @@ public class DemeterTurn extends GodTurn {
         super(turn);
     }
 
-    /**
-     * call winCondition() of the superclass
-     * @param m match played
-     * @param p player that play the turn
-     * @return true if p win the game, else false
-     */
-    public boolean winCondition(Match m, Player p){
+    @Override
+    public boolean winCondition(Match m, Player p) {
         return super.winCondition(m, p);
     }
 
@@ -49,21 +48,22 @@ public class DemeterTurn extends GodTurn {
         return true;
     }
 
-    /**
-     * call move() of the superclass
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
-     * @return true if is moved in c, else false
-     */
-    public boolean move(Match m, Worker w, Coordinate c) { return super.move(m, w, c); }
+    @Override
+    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
+        return super.move(m, ch, server, athenaOn);
+    }
 
-    /**
-     * call limited_move() of the superclass
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c first movement of w
-     * @return true if is moved in c, else false
-     */
-    public boolean limited_move(Match m, Worker w, Coordinate c){ return super.limited_move(m, w, c); }
+    @Override
+    public boolean canMoveTo(Match m,Worker w,Coordinate c, boolean athena){ return super.canMoveTo(m,w,c,athena);
+    }
+
+    @Override
+    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+        return super.whereCanMove(match,ch,id,athenaOn);
+    }
+
+    @Override
+    public String printCoordinates(ArrayList<Coordinate> coordinates) {
+        return super.printCoordinates(coordinates);
+    }
 }

@@ -1,6 +1,10 @@
 package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+import it.polimi.ingsw.PSP29.virtualView.Server;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class AtlasTurn extends GodTurn{
@@ -9,9 +13,16 @@ public class AtlasTurn extends GodTurn{
         super(turn);
     }
 
-    @Override
-    public boolean cantMove(Match m, Worker w, boolean athena) {
-        return super.cantMove(m, w, athena);
+    /**
+     *
+     * @param m match played
+     * @param w worker that should be moved
+     * @param c location of the box that we must check
+     * @param athena true if the power of athena is on, else false
+     * @return
+     */
+    public boolean canMoveTo(Match m, Worker w,Coordinate c, boolean athena) {
+        return super.canMoveTo(m, w, c, athena);
     }
 
     /**
@@ -47,21 +58,18 @@ public class AtlasTurn extends GodTurn{
         return true;
     }
 
-    /**
-     * call move() of the superclass
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
-     * @return true if is moved in c, else false
-     */
-    public boolean move(Match m, Worker w, Coordinate c) { return super.move(m, w, c); }
+    @Override
+    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
+        return super.move(m, ch, server, athenaOn);
+    }
 
-    /**
-     * call limited_move() of the superclass
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c first movement of w
-     * @return true if is moved in c, else false
-     */
-    public boolean limited_move(Match m, Worker w, Coordinate c){ return super.limited_move(m, w, c); }
+    @Override
+    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+        return super.whereCanMove(match,ch,id,athenaOn);
+    }
+
+    @Override
+    public String printCoordinates(ArrayList<Coordinate> coordinates) {
+        return super.printCoordinates(coordinates);
+    }
 }

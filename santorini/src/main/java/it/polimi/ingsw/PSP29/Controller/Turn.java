@@ -1,6 +1,10 @@
 package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+import it.polimi.ingsw.PSP29.virtualView.Server;
+
+import java.util.ArrayList;
 
 public interface Turn {
 
@@ -16,20 +20,12 @@ public interface Turn {
     /**
      * move the worker
      * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
+     * @param ch owner of the turn
+     * @param server manage the interaction with client
+     * @param athenaOn true if athena is on
      * @return true if is moved in c, else false
      */
-    public boolean move(Match m, Worker w, Coordinate c);
-
-    /**
-     * move the worker if athena has been used
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
-     * @return true if is moved in c, else false
-     */
-    public boolean limited_move(Match m, Worker w, Coordinate c);
+    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn);
 
     /**
      * control if the player win
@@ -48,5 +44,22 @@ public interface Turn {
      * @return true if w can't move to another location, else false
      */
     public boolean canMoveTo(Match m,Worker w, Coordinate c, boolean athena);
+
+    /**
+     * create an arrayList with all the coordinates in wich the worker can move
+     * @param match match played
+     * @param ch owner of turn
+     * @param id the worker id
+     * @param athenaOn true if athena is on
+     * @return the list
+     */
+    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn);
+
+    /**
+     * print the list of valids coordinate
+     * @param coordinates
+     * @return the string that print the list
+     */
+    public String printCoordinates(ArrayList<Coordinate> coordinates);
 
 }

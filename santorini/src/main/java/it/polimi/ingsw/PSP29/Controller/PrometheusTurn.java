@@ -39,7 +39,6 @@ public class PrometheusTurn extends GodTurn {
      * @param c new position of w
      * @return true if is moved in c, else false
      */
-    @Override
     public boolean move(Match m, Worker w, Coordinate c) {
         if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
             return false; //se la mossa non è valida
@@ -74,7 +73,6 @@ public class PrometheusTurn extends GodTurn {
      * @param c new position of w
      * @return true if is moved in c, else false
      */
-    @Override
     public boolean limited_move(Match m, Worker w, Coordinate c) {
         Scanner scanner = new Scanner(System.in);
         String x, y;
@@ -109,7 +107,7 @@ public class PrometheusTurn extends GodTurn {
      * @param athena true if the athena power is on, else false
      * @return true if w can't move to another location, else false
      */
-    @Override
+   /* @Override
     public boolean cantMove(Match m,Worker w, boolean athena){
         int count = 0;
         if(!athena){
@@ -154,5 +152,5 @@ public class PrometheusTurn extends GodTurn {
                 return true;
 
         }
-    }
+    }*/
 }

@@ -81,40 +81,6 @@ public class GameController {
     }
 
     /**
-     * !!è una prova!!
-     * create an arrayList with all the coordinates in wich the worker can move
-     * @param id the worker id
-     * @return the list
-     */
-    public ArrayList<Coordinate> whereCanMove(int id, Turn turn) {
-        ArrayList<Coordinate> coordinates = new ArrayList<>();
-        Player player = match.getPlayer(server.getClientHandlers().get(myturn).getName());
-        for (int i = 0; i < match.getRows(); i++) {
-            for (int j = 0; j < match.getColumns(); j++) {
-                Coordinate c = new Coordinate(i, j);
-                if (turn.canMoveTo(match, player.getWorker(id), c,athenaOn)) {
-                    coordinates.add(new Coordinate(i, j));
-                }
-            }
-        }
-        return coordinates;
-    }
-
-    /**
-     * !!è una prova!!
-     * print the list of valids coordinate
-     * @param coordinates
-     * @return the string that print the list
-     */
-    public String printCoordinates(ArrayList<Coordinate> coordinates){
-        String c = "Valid coordinates:\n";
-        for(int i=0; i<coordinates.size(); i++){
-            c = c + i + ") " + coordinates.get(i).toString() + "\n";
-        }
-        return c;
-    }
-
-    /**
      * find the index of the next player
      */
     public void next(){
@@ -247,7 +213,6 @@ public class GameController {
      *
      * used for the execution of the game
      *
-     * @throws NotValidInputException
     */
     public void gameExe(){
 
@@ -343,81 +308,11 @@ public class GameController {
      * @return the result of winCondition
      */
     public boolean turnExe(ClientHandler ch, Turn turn){
-        Player p = match.getPlayer(ch.getName());
-        int wID=2;
-        ArrayList<Coordinate> coordinates0 = whereCanMove(0, turn);
-        ArrayList<Coordinate> coordinates1 = whereCanMove(1, turn);
-        if(coordinates0.size()!=0 && coordinates1.size()!=0){
-            server.write(ch, "serviceMessage", "It's your turn\n");
-            server.write(ch, "interactionServer", match.getPlayer(ch.getName()).printWorkers());
-            server.write(ch, "serviceMessage", "Choose the worker to use in this turn: \n");
-            while(true){
-                try{
-                    wID = Integer.parseInt(server.read(ch));
-                    if(wID<0 || wID>1){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
-                }
-            }
-        }
-        else if(coordinates0.size()!=0 && coordinates1.size()==0){
-            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
-            wID = 0;
-        }
-        else if(coordinates0.size()==0 && coordinates1.size()!=0){
-            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
-            wID = 1;
-        }else if(coordinates0.size()==0 && coordinates1.size()==0){
-            //sconfittaaaaaa
-        }
-        Coordinate c = null;
-        if(wID==0){
-            server.write(ch, "serviceMessage", printCoordinates(coordinates0));
-            server.write(ch, "interactionServer", "Where you want to move?\n");
-            int id;
-            while(true){
-                try{
-                    id = Integer.parseInt(server.read(ch));
-                    if(id<0 || id>=coordinates0.size()){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
-                }
-            }
-            c = coordinates0.get(id);
-        }
-        else if(wID==1){
-            server.write(ch, "serviceMessage", printCoordinates(coordinates1));
-            server.write(ch, "interactionServer", "Where you want to move?\n");
-            int id;
-            while(true){
-                try{
-                    id = Integer.parseInt(server.read(ch));
-                    if(id<0 || id>=coordinates1.size()){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
-                }
-            }
-            c = coordinates1.get(id);
-        }
-        turn.move(match, p.getWorker(wID), c);
+
+        System.out.println("Movement");
+        System.out.println(match.getPlayer(ch.getName()).printWorkers());
+        System.out.println(match.printBoard());
+        turn.move(match, ch, server, athenaOn);
         /*
         if(p.getWorker(wID).canBuild(match)){
             //Costruzione

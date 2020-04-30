@@ -1,6 +1,10 @@
 package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+import it.polimi.ingsw.PSP29.virtualView.Server;
+
+import java.util.ArrayList;
 
 public class PanTurn extends GodTurn {
 
@@ -33,49 +37,28 @@ public class PanTurn extends GodTurn {
         return false;
     }
 
-    /**
-     *call build() of the superclass
-     * @param m match played
-     * @param w worker that must build
-     * @param c location of the box where w must build
-     * @return true if w has built in c, else false
-     */
+
     @Override
     public boolean build(Match m, Worker w, Coordinate c) {
         return super.build(m, w, c);
     }
 
-    /**
-     *call move() of the superclass
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
-     * @return true if is moved in c, else false
-     */
     @Override
-    public boolean move(Match m, Worker w, Coordinate c) {
-        return super.move(m, w, c);
+    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
+        return super.move(m, ch, server, athenaOn);
     }
 
-    /**
-     * call limited_move() of the superclass
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
-     * @return true if is moved in c, else false
-     */
     @Override
-    public boolean limited_move(Match m, Worker w, Coordinate c) {
-        return super.limited_move(m, w, c);
+    public boolean canMoveTo(Match m,Worker w,Coordinate c, boolean athena){ return super.canMoveTo(m,w,c,athena);
     }
 
-    /**
-     * call cantMove() of the superclass
-     * @param m match played
-     * @param w worker that can be moved
-     * @param athena true if the athena power is on, else false
-     * @return true if w can't move to another location, else false
-     */
     @Override
-    public boolean cantMove(Match m, Worker w, boolean athena) { return super.cantMove(m, w, athena); }
+    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+        return super.whereCanMove(match,ch,id,athenaOn);
+    }
+
+    @Override
+    public String printCoordinates(ArrayList<Coordinate> coordinates) {
+        return super.printCoordinates(coordinates);
+    }
 }

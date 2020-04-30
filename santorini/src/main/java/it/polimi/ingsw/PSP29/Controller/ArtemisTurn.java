@@ -2,7 +2,10 @@ package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.InputControl.Input;
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+import it.polimi.ingsw.PSP29.virtualView.Server;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ArtemisTurn extends GodTurn{
@@ -34,64 +37,29 @@ public class ArtemisTurn extends GodTurn{
         return super.build(m, w, c);
     }
 
+
     /**
-     * w can make 2 movement, but can't return in his initial position
+     * move the worker
      * @param m match played
-     * @param w worker that must be moved
-     * @param c first movement of w
-     * @return true if w can make 2 movement, else false
+     * @param ch owner of the turn
+     * @param server manage the interaction with client
+     * @param athenaOn true if athena is on
+     * @return true if is moved in c, else false
      */
     @Override
-    public boolean move(Match m, Worker w, Coordinate c){
-        Scanner scanner = new Scanner(System.in);
-        String x, y, answer;
-        Coordinate cx = w.getPosition();
-        boolean nopower = super.move(m,w,c);
+    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
+        boolean nopower = super.move(m,ch,server,athenaOn);
         if(!nopower) return false;
-        System.out.println("Vuoi usare il potere di Artemis? 1) SI 2) NO");
-        /*answer = scanner.nextLine();
-        if(answer.equals("1")){
-            Coordinate c1;
-            if(!super.cantMove(m,w,false)){
-                do{
-                    Input i = new Input();
-                    c1 = i.askCoordinate("Potere Artemis");
-                }while((c1.getX() == cx.getX() && c1.getY() == cx.getY()) || !super.move(m,w,c1) );
-            }else{
-                System.out.println("Non puoi utilizzare il potere di Artemis");
-            }
-        }*/
-        return true;
+        server.write(ch,"interactionServer", "Would you move again?\n1) Yes\n2) No\n");
+        server.write(ch,"serviceMessage", "Insert answer: ");
+        String answer = server.read(ch);
+        if(answer.equals("1")) return super.move(m,ch,server,athenaOn) || nopower;
+        else return true;
     }
 
-    /**
-     *  w can make 2 movement, but can't return in his initial position and all the box where w pass have the same level
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c first movement of w
-     * @return true if w can make 2 movement, else false
-     */
-    public boolean limited_move(Match m, Worker w, Coordinate c){
-        Scanner scanner = new Scanner(System.in);
-        String answer;
-        Coordinate cx = w.getPosition();
-
-        boolean nopower = super.limited_move(m,w,c);
-        if(!nopower) return false;
-        System.out.println("Vuoi usare il potere di Artemis? 1) SI 2) NO\n");
-        answer = scanner.nextLine();
-        /*if(answer.equals("1")){
-            Coordinate c1;
-            if(!super.cantMove(m,w,false)){
-                do{
-                    Input i = new Input();
-                    c1 = i.askCoordinate("(Potere Artemis)");
-                }while((c1.getX() == cx.getX() && c1.getY() == cx.getY()) || !super.limited_move(m,w,c1));
-            }else{
-                System.out.println("Non puoi utilizzare il potere di Artemis");
-            }
-        }*/
-        return true;
+    @Override
+    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+        return super.whereCanMove(match,ch,id,athenaOn);
     }
 
     /**
@@ -113,7 +81,7 @@ public class ArtemisTurn extends GodTurn{
                         return true;
                     }
                 }else{
-                    return true;
+                    return false;
                 }
             }
         } else{
@@ -126,10 +94,15 @@ public class ArtemisTurn extends GodTurn{
                         return true;
                     }
                 }else{
-                    return true;
+                    return false;
                 }
             }
         }
         return false;
+    }
+
+    @Override
+    public String printCoordinates(ArrayList<Coordinate> coordinates) {
+        return super.printCoordinates(coordinates);
     }
 }
