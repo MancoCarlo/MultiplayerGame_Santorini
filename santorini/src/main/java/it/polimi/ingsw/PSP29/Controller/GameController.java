@@ -318,20 +318,24 @@ public class GameController {
         for(ClientHandler clientHandler : server.getClientHandlers()){
             server.write(clientHandler, "serviceMessage", match.printBoard());
         }
+
         if(!turn.move(match, ch, server, athenaOn)){
             losePlayer(ch);
             return false;
         }
+
+        if(match.getPlayer(ch.getName()).getCard().getName().equals("Athena"))
+            athenaCondition(ch);
+
         for(ClientHandler clientHandler : server.getClientHandlers()){
             server.write(clientHandler, "serviceMessage", match.printBoard());
         }
+
         if(!turn.build(match,ch,server)){
             losePlayer(ch);
             return false;
         }
-        for(ClientHandler clientHandler : server.getClientHandlers()){
-            server.write(clientHandler, "serviceMessage", match.printBoard());
-        }
+
         if(!turn.winCondition(match, match.getPlayer(ch.getName()))){
             return false;
         }else{
@@ -347,5 +351,27 @@ public class GameController {
         server.write(ch,"serviceMessage", "You Lose!");
         match.getPlayer(ch.getName()).setInGame(false);
         match.removeWorkers(match.getPlayer(ch.getName()));
+    }
+
+    public void athenaCondition(ClientHandler ch){
+        Coordinate cprev;
+        Coordinate c;
+        for(Worker w : match.getPlayer(ch.getName()).getWorkers()){
+            if(w.getMoved()){
+                cprev = w.getPrev_position();
+                c = w.getPosition();
+                if(match.getBoard()[cprev.getX()][cprev.getY()].getlevelledUp()){
+                    if(match.getBoard()[c.getX()][c.getY()].getLevel() - match.getBoard()[cprev.getX()][cprev.getY()].getLevel() >= 0 )
+                        athenaOn = true;
+                    else
+                        athenaOn = false;
+                }else{
+                    if(match.getBoard()[c.getX()][c.getY()].getLevel() - match.getBoard()[cprev.getX()][cprev.getY()].getLevel() > 0 )
+                        athenaOn = true;
+                    else
+                        athenaOn = false;
+                }
+            }
+        }
     }
 }

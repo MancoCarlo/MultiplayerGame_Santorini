@@ -24,52 +24,46 @@ public class ArtemisTurn extends GodTurn{
      */
     @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
+        Player p = m.getPlayer(ch.getName());
+        int wID=2;
         boolean nopower = super.move(m,ch,server,athenaOn);
         if(!nopower) return false;
         server.write(ch,"serviceMessage", m.printBoard());
         server.write(ch,"interactionServer", "Would you move again?\n1) Yes\n2) No\n");
         String answer = server.read(ch);
         if(answer.equals("1")){
-            super.move(m,ch,server,athenaOn);
+            ArrayList<Coordinate> coordinates = null;
+            for(Worker w : p.getWorkers()){
+                if(w.getMoved()){
+                    coordinates = whereCanMove(m, ch, w.getID(), athenaOn);
+                    wID = w.getID();
+                    break;
+                }
+            }
+            if(coordinates.size()!=0){
+                Coordinate c;
+                int id;
+                server.write(ch, "serviceMessage", printCoordinates(coordinates));
+                server.write(ch, "interactionServer", "Where you want to move?\n");
+                while(true){
+                    try{
+                        id = Integer.parseInt(server.read(ch));
+                        if(id<0 || id>=coordinates.size()){
+                            server.write(ch, "serviceMessage", "Invalid input\n");
+                            server.write(ch, "interactionServer", "Try another index: ");
+                            continue;
+                        }
+                        break;
+                    } catch (NumberFormatException e){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                    }
+                }
+                c = coordinates.get(id);
+                m.updateMovement(p,wID,c);
+                p.getWorker(wID).changeMoved(true);
+            }
         }
         return true;
-    }
-
-    /**
-     * control if the worker can move
-     * @param match match played
-     * @param w worker that can be moved
-     * @param c coordinate that must be checked
-     * @param athena true if the athena power is on, else false
-     * @return true if w can't move to another location, else false
-     */
-    @Override
-    public boolean canMoveTo(Match match,Worker w,Coordinate c, boolean athena){
-        if(!athena){
-            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1){
-                if(w.getMoved()){
-                    if(c.equals(w.getPrev_position())){
-                        return false;
-                    }
-                    else{
-                        return true;
-                    }
-                }
-                return true;
-            }
-        } else{
-            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1){
-                if(w.getMoved()){
-                    if(c.equals(w.getPrev_position())){
-                        return false;
-                    }
-                    else{
-                        return true;
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
     }
 }
