@@ -76,7 +76,6 @@ public class BaseTurn implements Turn {
             m.updateBuilding(c);
             m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);
             p.getWorker(wID).changeBuilt(true);
-            server.write(ch,"serviceMessage", m.printBoard());
             return true;
         }else{
             return false;
@@ -169,7 +168,6 @@ public class BaseTurn implements Turn {
         }
         m.updateMovement(p,wID,c);
         p.getWorker(wID).changeMoved(true);
-        server.write(ch,"serviceMessage", m.printBoard());
         return true;
     }
 

@@ -122,6 +122,11 @@ public class Server
                     break;
                 }
 
+                for(Player p : gc.getMatch().getPlayers()){
+                    p.setInGame(true);
+                }
+
+
                 //fino a qui OK con le disconnessioni
                 //da qui in poi sono da sistemare nel game controller
 

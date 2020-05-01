@@ -242,4 +242,14 @@ public class Match implements Serializable {
         gameController.setNumPlayers(players.size());
         return removed;
     }
+
+    public int playersInGame(){
+        int count = 0;
+        for(Player p : players){
+            if(p.getInGame()){
+                count++;
+            }
+        }
+        return count;
+    }
 }

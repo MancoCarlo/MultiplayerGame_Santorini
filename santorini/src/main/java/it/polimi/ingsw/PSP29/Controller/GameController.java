@@ -216,25 +216,30 @@ public class GameController {
      *
     */
     public void gameExe(){
-
         while(!endGame){
-            if(match.getPlayers().size()==1){
-                endGame=true;
-                for(int i=0; i<server.getClientHandlers().size();i++){
-                    if(i == myturn) server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Congratulations you win!\n");
-                    else server.write(server.getClientHandlers().get(i), "serviceMessage", "You lose, the winner is "+server.getClientHandlers().get(myturn).getName()+"!\n");
+            if(match.getPlayers().get(myturn).getInGame()) {
+                if (match.playersInGame() == 1) {
+                    endGame = true;
+                    for (int i = 0; i < server.getClientHandlers().size(); i++) {
+                        if (i == myturn)
+                            server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Congratulations you win!\n");
+                        else
+                            server.write(server.getClientHandlers().get(i), "serviceMessage", "You lose, the winner is " + server.getClientHandlers().get(myturn).getName() + "!\n");
+                    }
+                    break;
                 }
-                break;
-            }
-            endGame=newTurn(server.getClientHandlers().get(myturn));
-            match.resetBoard();
-            for(ClientHandler ch : server.getClientHandlers()){
-                server.write(ch, "serviceMessage", match.printBoard());
-            }
-            if(endGame){
-                for(int i=0; i<server.getClientHandlers().size();i++){
-                    if(i == myturn) server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Congratulations you win!\n");
-                    else server.write(server.getClientHandlers().get(i), "serviceMessage", "You lose, the winner is "+server.getClientHandlers().get(myturn).getName()+"!\n");
+                endGame = newTurn(server.getClientHandlers().get(myturn));
+                match.resetBoard();
+                for (ClientHandler ch : server.getClientHandlers()) {
+                    server.write(ch, "serviceMessage", match.printBoard());
+                }
+                if (endGame) {
+                    for (int i = 0; i < server.getClientHandlers().size(); i++) {
+                        if (i == myturn)
+                            server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Congratulations you win!\n");
+                        else
+                            server.write(server.getClientHandlers().get(i), "serviceMessage", "You lose, the winner is " + server.getClientHandlers().get(myturn).getName() + "!\n");
+                    }
                 }
             }
             next();
@@ -310,16 +315,37 @@ public class GameController {
      * @return the result of winCondition
      */
     public boolean turnExe(ClientHandler ch, Turn turn){
-        if(!turn.move(match, ch, server, athenaOn)) losePlayer(ch);
-        if(!turn.build(match,ch,server)) losePlayer(ch);
-        return false;
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", match.printBoard());
+        }
+        if(!turn.move(match, ch, server, athenaOn)){
+            losePlayer(ch);
+            return false;
+        }
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", match.printBoard());
+        }
+        if(!turn.build(match,ch,server)){
+            losePlayer(ch);
+            return false;
+        }
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", match.printBoard());
+        }
+        if(!turn.winCondition(match, match.getPlayer(ch.getName()))){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     /**
-     * Exclude the player from the game
+     * Exclude the player from the game and remove his workers from the board
      * @param ch loser player
      */
     public void losePlayer(ClientHandler ch){
-        //gestione sconfitta del player, attributo per ogni player che dice se è in gioco o meno? (Permette la funzione "rigioca" più semplice)
+        server.write(ch,"serviceMessage", "You Lose!");
+        match.getPlayer(ch.getName()).setInGame(false);
+        match.removeWorkers(match.getPlayer(ch.getName()));
     }
 }

@@ -59,7 +59,6 @@ public class AtlasTurn extends GodTurn{
             }
             m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);
             p.getWorker(wID).changeBuilt(true);
-            server.write(ch,"serviceMessage", m.printBoard());
             return true;
         }else{
             return false;

@@ -8,6 +8,7 @@ public class Player implements Serializable {
     private int age;
     God card;
     ArrayList<Worker> workers;
+    private boolean inGame = false;
 
     public Player(String nick, int a) {
         nickname = nick;
@@ -16,6 +17,14 @@ public class Player implements Serializable {
         for(int i = 0;i<2;i++){
             workers.add(new Worker(i,nick));
         }
+    }
+
+    public boolean getInGame() {
+        return inGame;
+    }
+
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
     }
 
     public int getAge() {

@@ -99,7 +99,6 @@ public class ApolloTurn extends GodTurn{
         if(m.getBoard()[c.getX()][c.getY()].isEmpty()){
             m.updateMovement(p,wID,c);
             p.getWorker(wID).changeMoved(true);
-            server.write(ch,"serviceMessage", m.printBoard());
             return true;
         }else{
             Worker w2 = m.getBoard()[c.getX()][c.getY()].getWorkerBox();
@@ -112,7 +111,6 @@ public class ApolloTurn extends GodTurn{
             p.getWorker(wID).changeMoved(true);
             m.getPlayer(w2.getIDplayer()).putWorker(w2.getID(), m.getBoard(), cx);
             w2.setPrev_position(c);
-            server.write(ch,"serviceMessage", m.printBoard());
             return true;
         }
 
