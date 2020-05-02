@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Timer;
 
 
 public class Server
@@ -18,6 +19,7 @@ public class Server
     private static GameController gc;
     private int numPlayers=0;
     private boolean endGame = false;
+    private boolean timeout = false;
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
     /**
@@ -254,7 +256,15 @@ public class Server
      */
     public String read(ClientHandler clientHandler){
         clientHandler.takeMessage();
-        process(clientHandler, "getReadMessage");
+        try {
+            Method method1 = ClientHandler.class.getMethod("getReadMessage");
+            while(!(boolean)method1.invoke(clientHandler) || timeout){  }
+            if(timeout){
+
+            }
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
         processReset(clientHandler, "resetReadMessage");
         String response = clientHandler.getMessage();
         return response;
@@ -272,7 +282,7 @@ public class Server
         Socket client;
         try {
             client = socket.accept();
-            clientHandler = new ClientHandler(client);
+            clientHandler = new ClientHandler(client, this);
             Thread thread = new Thread(clientHandler , "server_" + client.getInetAddress());
             thread.start();
             process(clientHandler, "getConnected");
@@ -329,5 +339,13 @@ public class Server
         for(ClientHandler clientHandler : removed){
             clientHandlers.remove(clientHandler);
         }
+    }
+
+    public void setTimeout(boolean t){
+        timeout = t;
+    }
+
+    public boolean getTimeout(){
+        return timeout;
     }
 }

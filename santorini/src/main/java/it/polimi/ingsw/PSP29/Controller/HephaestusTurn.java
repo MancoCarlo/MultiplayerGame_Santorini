@@ -15,8 +15,6 @@ public class HephaestusTurn extends GodTurn {
         super(turn);
     }
 
-    @Override
-    public boolean winCondition(Match m, Player p) { return super.winCondition(m, p); }
 
     /**
      * allows w to build two times but it has to be in the same box and not a dome
@@ -25,7 +23,7 @@ public class HephaestusTurn extends GodTurn {
      * @param c location of the box where w can build two times
      * @return true if w has built at least once
      */
-    @Override
+   /* @Override
     public boolean build(Match m, Worker w, Coordinate c) {
         boolean nopower = super.build(m,w,c);
         if(!nopower) return false;
@@ -40,23 +38,5 @@ public class HephaestusTurn extends GodTurn {
         }
         return true;
     }
-
-    @Override
-    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
-        return super.move(m, ch, server, athenaOn);
-    }
-
-    @Override
-    public boolean canMoveTo(Match m,Worker w,Coordinate c, boolean athena){ return super.canMoveTo(m,w,c,athena);
-    }
-
-    @Override
-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
-        return super.whereCanMove(match,ch,id,athenaOn);
-    }
-
-    @Override
-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
-        return super.printCoordinates(coordinates);
-    }
+*/
 }

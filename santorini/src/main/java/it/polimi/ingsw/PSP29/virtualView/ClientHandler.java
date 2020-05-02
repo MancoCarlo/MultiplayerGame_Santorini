@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Timer;
 
 
 public class ClientHandler implements Runnable
@@ -27,12 +28,15 @@ public class ClientHandler implements Runnable
     private boolean sentMessage;
     private boolean readMessage;
     private boolean error = false;
+    private boolean timeout = false;
     ObjectOutputStream output;
     ObjectInputStream input;
+    private Server server;
 
-    ClientHandler(Socket client)
+    ClientHandler(Socket client, Server server)
     {
         this.client = client;
+        this.server = server;
     }
 
 
@@ -104,8 +108,12 @@ public class ClientHandler implements Runnable
      */
     public synchronized void doTakeMessage(){
         readMessage = true;
+        Timer timer = new Timer();
+        UserTimerTask ut = new UserTimerTask(server, this);
+        timer.schedule(ut, 0, 1000);
         try {
             message = (String) input.readObject();
+            timer.cancel();
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("read - client disconnected");
             error = true;
@@ -199,5 +207,13 @@ public class ClientHandler implements Runnable
 
     public void resetConnected(){
         connected = false;
+    }
+
+    public void closeConnection(){
+        try {
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
