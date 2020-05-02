@@ -11,7 +11,7 @@ public class WorkerTest {
 
     @Before
     public void setUp(){
-        worker=new Worker(1, "Luca");
+        worker=new Worker(1, "Luca", Color.ANSI_RED);
         m.inizializeBoard();
     }
 
