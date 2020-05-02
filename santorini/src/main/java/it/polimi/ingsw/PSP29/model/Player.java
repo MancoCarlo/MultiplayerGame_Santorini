@@ -9,13 +9,14 @@ public class Player implements Serializable {
     God card;
     ArrayList<Worker> workers;
     private boolean inGame = false;
+    public Color color;
 
     public Player(String nick, int a) {
         nickname = nick;
         age = a;
         workers = new ArrayList<Worker>();
         for(int i = 0;i<2;i++){
-            workers.add(new Worker(i,nick));
+            workers.add(new Worker(i,nick,color));
         }
     }
 

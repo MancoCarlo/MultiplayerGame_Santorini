@@ -14,11 +14,20 @@ public class Match implements Serializable {
     private Box[][] board;
     private ArrayList<Player> players;
     private ArrayList<God> gods;
+    private ArrayList<Color> colors;
 
     public Match() {
         board = new Box[rows][columns];
         players = new ArrayList<Player>();
         gods = new ArrayList<God>();
+        colors = new ArrayList<>();
+        colors.add(Color.ANSI_BLUE);
+        colors.add(Color.ANSI_RED);
+        colors.add(Color.ANSI_YELLOW);
+    }
+
+    public ArrayList<Color> getColors() {
+        return colors;
     }
 
     public Box[][] getBoard() {

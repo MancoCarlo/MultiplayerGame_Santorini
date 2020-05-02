@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
-import java.util.Scanner;
+import it.polimi.ingsw.PSP29.model.Color;
 
 
 public class Client implements Runnable, ServerObserver

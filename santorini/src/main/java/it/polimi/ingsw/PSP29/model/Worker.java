@@ -9,14 +9,24 @@ public class Worker implements Serializable {
     private Coordinate prev_position = null;
     private boolean moved;
     private boolean built;
+    private Color color;
 
-    public Worker(int id, String nickP){
+    public Worker(int id, String nickP, Color color){
         ID=id;
         IDplayer=nickP;
         position=null;
         prev_position=null;
         moved = false;
         built = false;
+        this.color = color;
+    }
+
+    public Color getColor(){
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public int getID() {

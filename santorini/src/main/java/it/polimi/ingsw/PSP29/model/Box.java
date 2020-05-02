@@ -1,5 +1,6 @@
 package it.polimi.ingsw.PSP29.model;
 
+import java.awt.*;
 import java.io.Serializable;
 
 public class Box implements Serializable {
@@ -84,10 +85,37 @@ public class Box implements Serializable {
      * print on monitor the state of box: 0 if empty else 1
      */
     public String printEmpty() {
-        if(isEmpty()) return "0" + level;
+        String s= "";
+        String s2=""+level;
+        if(isEmpty())
+            s = "0";
         else{
-            return workerBox.getIDplayer().charAt(0) + String.valueOf(level);
+            if(workerBox.getColor().equals(Color.ANSI_BLUE)){
+                s = Color.ANSI_BLUE + workerBox.getIDplayer().substring(0,1) + Color.RESET;
+            }
+            if(workerBox.getColor().equals(Color.ANSI_RED)){
+                s = Color.ANSI_RED + workerBox.getIDplayer().substring(0,1) + Color.RESET;
+            }
+            if(workerBox.getColor().equals(Color.ANSI_YELLOW)){
+                s = Color.ANSI_YELLOW + workerBox.getIDplayer().substring(0,1) + Color.RESET;
+            }
         }
+        if(level == 0){
+            s2 = s2;
+        }
+        if(level == 1){
+            s2 = Color.ANSI_LEVEL1 + s2 + Color.RESET;
+        }
+        if(level == 2){
+            s2 = Color.ANSI_LEVEL2 + s2 + Color.RESET;
+        }
+        if(level == 3){
+            s2 = Color.ANSI_LEVEL3 + s2 + Color.RESET;
+        }
+        if(level == 4){
+            s2 = Color.ANSI_LEVEL4 + s2 + Color.RESET;
+        }
+        return s + s2;
     }
 
 }

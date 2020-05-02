@@ -125,6 +125,10 @@ public class Server
                 //fino a qui OK con le disconnessioni
                 //da qui in poi sono da sistemare nel game controller
 
+                for(int i=0; i<gc.getMatch().getPlayers().size();i++){
+                    gc.getMatch().getPlayers().get(i).color = gc.getMatch().getColors().get(i);
+                }
+                gc.getMatch().getColors().remove(0);
                 gc.getMatch().sortPlayers();
                 sortClientHandlers();
                 gc.getMatch().loadGods();

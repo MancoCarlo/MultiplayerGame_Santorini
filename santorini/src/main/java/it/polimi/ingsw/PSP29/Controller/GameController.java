@@ -1,8 +1,6 @@
 package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.model.*;
-import it.polimi.ingsw.PSP29.InputControl.*;
-import it.polimi.ingsw.PSP29.view.Client;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
@@ -60,6 +58,7 @@ public class GameController {
             }
             else{
                 match.updateMovement(p, id, c);
+                match.getBoard()[c.getX()][c.getY()].getWorkerBox().setColor(p.color);
                 return true;
             }
         }
