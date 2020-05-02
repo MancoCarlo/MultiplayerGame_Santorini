@@ -225,22 +225,12 @@ public class Match implements Serializable {
         return false;
     }
 
-    public ArrayList<ClientHandler> updatePlayers(GameController gameController, ArrayList<ClientHandler> clientHandlers){
-        ArrayList<Player> playerArrayList = new ArrayList<>();
-        ArrayList<ClientHandler> removed = new ArrayList<>();
+    public void updatePlayers(ArrayList<ClientHandler> clientHandlers){
         for(ClientHandler clientHandler : clientHandlers){
-            if(clientHandler.getConnected()){
-                Player p = new Player(clientHandler.getName(), clientHandler.getAge());
-                playerArrayList.add(p);
-            }
-            else{
-                removed.add(clientHandler);
+            if(!clientHandler.getConnected()){
+                getPlayer(clientHandler.getName()).setInGame(false);
             }
         }
-        players.clear();
-        players.addAll(playerArrayList);
-        gameController.setNumPlayers(players.size());
-        return removed;
     }
 
     public int playersInGame(){

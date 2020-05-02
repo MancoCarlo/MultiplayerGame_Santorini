@@ -115,8 +115,8 @@ public class ClientHandler implements Runnable
             message = (String) input.readObject();
             timer.cancel();
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("read - client disconnected");
-            error = true;
+            System.out.println(name + " - read - client disconnected");
+            resetConnected();
         }
     }
 
@@ -153,8 +153,8 @@ public class ClientHandler implements Runnable
             output.writeObject(method);
             output.writeObject(message);
         } catch (IOException e) {
-            System.out.println("send - client disconnected");
-            error=true;
+            System.out.println(name + " - send - client disconnected");
+            resetConnected();
         }
     }
 
