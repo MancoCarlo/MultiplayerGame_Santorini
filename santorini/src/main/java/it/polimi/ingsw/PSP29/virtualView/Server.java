@@ -78,52 +78,45 @@ public class Server
                     countPlayers++;
                 }
 
+                for(Player p : gc.getMatch().getPlayers()){
+                    p.setInGame(true);
+                }
+
                 for(ClientHandler clientHandler : clientHandlers){
-                    if(!write(clientHandler, "serviceMessage", "You're in\n\n")){
-                        clientHandler.resetConnected();
+                    if(clientHandler.getConnected()){
+                        write(clientHandler, "serviceMessage", "You're in\n\n");
                     }
                 }
+
+                gc.getMatch().updatePlayers(clientHandlers);
 
                 System.out.println("printing board");
                 gc.getMatch().inizializeBoard();
                 while (gc.getMatch().getBoard() == null){ }
                 for(ClientHandler clientHandler : clientHandlers){
                     if(clientHandler.getConnected()){
-                        if(!write(clientHandler, "serviceMessage",  gc.getMatch().printBoard())){
-                            clientHandler.resetConnected();
-                        }
-                    }
-                    else{
-                        System.out.println(clientHandler.getName() + " disconnected");
+                        write(clientHandler, "serviceMessage",  gc.getMatch().printBoard());
                     }
                 }
+
+                gc.getMatch().updatePlayers(clientHandlers);
 
                 System.out.println("printing players");
                 for(ClientHandler clientHandler : clientHandlers){
                     if(clientHandler.getConnected()){
-                        if(!write(clientHandler, "serviceMessage", gc.getMatch().printPlayers())){
-                            clientHandler.resetConnected();
-                        }
-                    }
-                    else{
-                        System.out.println(clientHandler.getName() + " disconnected");
+                        write(clientHandler, "serviceMessage", gc.getMatch().printPlayers());
                     }
                 }
 
-                ArrayList<ClientHandler> removed = gc.getMatch().updatePlayers(gc, clientHandlers);
-                updateClientHandlers(removed);
+                gc.getMatch().updatePlayers(clientHandlers);
 
-                if(gc.getMatch().getPlayers().size()==1){
+                if(gc.getMatch().playersInGame()==1){
                     for(ClientHandler clientHandler : clientHandlers){
                         if (clientHandler.getName().equals(gc.getMatch().getPlayers().get(0).getNickname())){
                             write(clientHandler, "serviceMessage" , "\nYou win!!\n");
                         }
                     }
                     break;
-                }
-
-                for(Player p : gc.getMatch().getPlayers()){
-                    p.setInGame(true);
                 }
 
 
@@ -238,10 +231,10 @@ public class Server
     public boolean write(ClientHandler clientHandler, String s, String msg){
         clientHandler.sendMessage(s, msg);
         process(clientHandler, "getSentMessage");
-        if(clientHandler.getError()){
+        processReset(clientHandler, "resetSentMessage");
+        if(!clientHandler.getConnected()){
             return false;
         }
-        processReset(clientHandler, "resetSentMessage");
         return true;
     }
 
@@ -256,7 +249,10 @@ public class Server
         clientHandler.takeMessage();
         process(clientHandler, "getReadMessage");
         processReset(clientHandler, "resetReadMessage");
-        String response = clientHandler.getMessage();
+        String response = null;
+        if(clientHandler.getConnected()){
+            response = clientHandler.getMessage();
+        }
         return response;
     }
 

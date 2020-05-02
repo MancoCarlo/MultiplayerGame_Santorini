@@ -217,6 +217,7 @@ public class GameController {
     */
     public void gameExe(){
         while(!endGame){
+            match.updatePlayers(server.getClientHandlers());
             if(match.getPlayers().get(myturn).getInGame()) {
                 if (match.playersInGame() == 1) {
                     endGame = true;
