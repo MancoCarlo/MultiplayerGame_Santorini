@@ -18,14 +18,14 @@ public class Server
     private int numPlayers=0;
     private boolean endGame = false;
     private boolean timeout = false;
+    private int countPlayers = 0;
+    private ServerSocket socket;
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
     /**
      * server execution
      */
-    public void launch()
-    {
-        ServerSocket socket;
+    public void launch(){
         try {
             socket = new ServerSocket(SOCKET_PORT);
         } catch (IOException e) {
@@ -34,8 +34,11 @@ public class Server
             return;
         }
         gc = new GameController(this);
+        launchMatch();
+    }
+    public void launchMatch()
+    {
         while (true) {
-            int countPlayers = 0;
             System.out.println("server ready");
             System.out.println("Creating Lobby");
             while(true){
@@ -102,8 +105,10 @@ public class Server
 
                 if(gc.getMatch().playersInGame()==1){
                     for(int i=0;i<gc.getMatch().getPlayers().size();i++){
-                        if(gc.getMatch().getPlayers().get(i).getInGame())
+                        if(gc.getMatch().getPlayers().get(i).getInGame()){
                             write(clientHandlers.get(i), "serviceMessage" , "\nYou win!!\n");
+                            newGame();
+                        }
                     }
                     break;
                 }
@@ -132,6 +137,7 @@ public class Server
                     for(ClientHandler clientHandler : clientHandlers){
                         if (clientHandler.getName().equals(gc.getMatch().getPlayers().get(0).getNickname())){
                             write(clientHandler, "serviceMessage" , "\nYou win!!\n");
+                            newGame();
                         }
                     }
                     break;
@@ -147,6 +153,7 @@ public class Server
                         for(Player player : gc.getMatch().getPlayers()){
                             if(player.getNickname().equals(clientHandler.getName()) && player.getInGame()){
                                 write(clientHandler, "serviceMessage", "You win!!\n");
+                                newGame();
                             }
                         }
                     }
@@ -159,9 +166,45 @@ public class Server
 
                 gc.gameExe();
 
+
+                newGame();
             }
         }
     }
+
+    public void newGame(){
+        ArrayList<ClientHandler> newCH = new ArrayList<>();
+        for(int i = 0; i<clientHandlers.size();i++){
+            if(clientHandlers.get(i).getConnected()){
+                newCH.add(clientHandlers.get(i));
+            }else{
+                gc.getMatch().getPlayers().remove(i);
+                countPlayers--;
+            }
+        }
+        clientHandlers = newCH;
+        for(int i=0; i<clientHandlers.size();i++){
+            write(clientHandlers.get(i),"interactionServer", "Would you play again?\n1) Yes\n2) No\n");
+        }
+        String again;
+        for(int i=0; i<clientHandlers.size();i++){
+                try{
+                    again = read(clientHandlers.get(i));
+                    if(!again.equals("1") ){
+                        gc.getMatch().getPlayers().remove(i);
+                        System.out.println(clientHandlers.get(i).getName() + "non gioca");
+                        clientHandlers.get(i).closeConnection();
+                    }
+                } catch (Exception e) {
+                    System.out.println("No connection");
+                }
+        }
+        for(int i=0; i<clientHandlers.size();i++){
+            write(clientHandlers.get(i),"serviceMessage", "Waiting for players\n");
+        }
+        launchMatch();
+    }
+
 
     /**
      *
