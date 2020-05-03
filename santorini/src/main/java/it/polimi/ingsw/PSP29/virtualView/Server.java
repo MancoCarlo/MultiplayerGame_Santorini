@@ -180,6 +180,7 @@ public class Server
             }else{
                 gc.getMatch().getPlayers().remove(i);
                 countPlayers--;
+                clientHandlers.get(i).closeConnection();
             }
         }
         clientHandlers = newCH;
@@ -192,7 +193,8 @@ public class Server
                     again = read(clientHandlers.get(i));
                     if(!again.equals("1") ){
                         gc.getMatch().getPlayers().remove(i);
-                        System.out.println(clientHandlers.get(i).getName() + "non gioca");
+                        countPlayers--;
+                        clientHandlers.get(i).resetConnected();
                         clientHandlers.get(i).closeConnection();
                     }
                 } catch (Exception e) {
