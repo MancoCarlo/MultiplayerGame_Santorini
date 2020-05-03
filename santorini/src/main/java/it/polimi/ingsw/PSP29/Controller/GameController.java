@@ -88,6 +88,12 @@ public class GameController {
         if(myturn == numPlayers){
             myturn=0;
         }
+        while(!match.getPlayers().get(myturn).getInGame()){
+            myturn++;
+            if(myturn == numPlayers){
+                myturn=0;
+            }
+        }
         for(int i=0;i<server.getClientHandlers().size();i++){
             if(i != myturn)
                 server.write(server.getClientHandlers().get(i), "serviceMessage", "Is the turn of "+server.getClientHandlers().get(myturn).getName()+", wait your turn!!!\n");
@@ -99,14 +105,31 @@ public class GameController {
     /**
      * assign one God to each player
      */
-    public void godsAssignement(){
+    public boolean godsAssignement(){
+        match.getGods().clear();
+        match.loadGods();
+        godIndex.clear();
         int id=0;
-        server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Choose " + numPlayers + " gods from this list");
+        server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Choose " + match.playersInGame() + " gods from this list");
         server.write(server.getClientHandlers().get(myturn), "serviceMessage", match.printGodlist());
         server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°1 index: ");
         while(true){
             try {
-                id=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));
+                String str = server.read(server.getClientHandlers().get(myturn));
+                if(str==null){
+                    match.updatePlayers(server.getClientHandlers());
+                    if(match.playersInGame()!=1){
+                        next();
+                        server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Choose " + match.playersInGame() + " gods from this list");
+                        server.write(server.getClientHandlers().get(myturn), "serviceMessage", match.printGodlist());
+                        server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°1 index: ");
+                        continue;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                id=Integer.parseInt(str);
                 if(id<1 || id>match.getGods().size()){
                     server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Invalid input\n");
                     server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°1 index: ");
@@ -125,7 +148,20 @@ public class GameController {
             while(true){
                 find=false;
                 try {
-                    id=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));
+                    String str = server.read(server.getClientHandlers().get(myturn));
+                    if(str==null){
+                        match.updatePlayers(server.getClientHandlers());
+                        if(match.playersInGame()!=1){
+                            next();
+                            server.write(server.getClientHandlers().get(myturn), "serviceMessage", match.printGodlist());
+                            server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
+                            continue;
+                        }
+                        else{
+                            return false;
+                        }
+                    }
+                    id=Integer.parseInt(str);
                     if(id<1 || id>match.getGods().size()){
                         server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Invalid input\n");
                         server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°" + (i+1) + " index: ");
@@ -150,49 +186,113 @@ public class GameController {
             godIndex.add(id - 1);
         }
         godSelection();
+        System.out.println(match.printGodlist());
         int i=0;
-        while (i<server.getClientHandlers().size()){
+        int count = match.playersInGame();
+        System.out.println(count);
+        while (i<count){
             next();
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", match.printGodlist());
             server.write(server.getClientHandlers().get(myturn), "interactionServer", "Choose one god from this list: ");
-            id = Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1;
-            while(id >= match.getGods().size()|| id < 0){
+            String str = server.read(server.getClientHandlers().get(myturn));
+            if(str==null){
+                match.updatePlayers(server.getClientHandlers());
+                if(match.playersInGame()!=1){
+                    i++;
+                    continue;
+                }
+                else{
+                    return false;
+                }
+            }
+            id=Integer.parseInt(str)-1;
+            System.out.println(id);
+            while(id >= match.getGods().size() || id < 0){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Index not valid\n");
                 server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert another index: ");
-                id = Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1;
+                str = server.read(server.getClientHandlers().get(myturn));
+                if(str==null){
+                    match.updatePlayers(server.getClientHandlers());
+                    if(match.playersInGame()!=1){
+                        i++;
+                        continue;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+                id = Integer.parseInt(str) - 1;
             }
             match.getPlayers().get(myturn).setCard(match.getGods(), id);
             match.getGods().remove(id);
             i++;
         }
+        return true;
     }
 
     /**
      * ask to the client where he want to put his players
      */
-    public void putWorkers(){
+    public boolean putWorkers(){
         int i=0;
         while (i<numPlayers){
             next();
             server.write(server.getClientHandlers().get(myturn), "serviceMessage",  match.printBoard());
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Insert Worker n°1\n");
             Coordinate c = getCoordinate();
+            if(c==null){
+                if(match.playersInGame()==1){
+                    return false;
+                }
+                else{
+                    i++;
+                    continue;
+                }
+            }
             while (!controlMovement(match.getPlayers().get(myturn), 0, c)){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Not valid box\n");
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Insert Worker n°1\n");
                 c = getCoordinate();
+                if(c==null){
+                    if(match.playersInGame()==1){
+                        return false;
+                    }
+                    else{
+                        i++;
+                        continue;
+                    }
+                }
             }
 
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Insert Worker n°2\n");
             c = getCoordinate();
+            if(c==null){
+                if(match.playersInGame()==1){
+                    return false;
+                }
+                else{
+                    i++;
+                    continue;
+                }
+            }
             while (!controlMovement(match.getPlayers().get(myturn), 1, c)){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Not valid box\n");
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Insert Worker n°2\n");
                 c = getCoordinate();
+                if(c==null){
+                    if(match.playersInGame()==1){
+                        return false;
+                    }
+                    else{
+                        i++;
+                        continue;
+                    }
+                }
             }
             i++;
         }
         next();
+        return true;
     }
 
     /**
@@ -201,10 +301,19 @@ public class GameController {
      */
     public Coordinate getCoordinate(){
         Coordinate c;
+        String str;
         server.write(server.getClientHandlers().get(myturn), "interactionServer", "X: ");
-        int x=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));
+        str = server.read(server.getClientHandlers().get(myturn));
+        if(str==null){
+            return null;
+        }
+        int x=Integer.parseInt(str);
         server.write(server.getClientHandlers().get(myturn), "interactionServer", "Y: ");
-        int y=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));
+        str = server.read(server.getClientHandlers().get(myturn));
+        if(str==null){
+            return null;
+        }
+        int y=Integer.parseInt(str);
         c = new Coordinate(x, y);
         return c;
     }
@@ -213,7 +322,7 @@ public class GameController {
      *
      * used for the execution of the game
      *
-    */
+     */
     public void gameExe(){
         while(!endGame){
             match.updatePlayers(server.getClientHandlers());

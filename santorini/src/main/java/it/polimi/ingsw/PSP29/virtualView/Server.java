@@ -2,7 +2,6 @@ package it.polimi.ingsw.PSP29.virtualView;
 
 import it.polimi.ingsw.PSP29.Controller.*;
 import it.polimi.ingsw.PSP29.model.*;
-import it.polimi.ingsw.PSP29.view.Client;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +9,6 @@ import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Timer;
 
 
 public class Server
@@ -134,10 +132,18 @@ public class Server
                 gc.getMatch().getColors().remove(0);
                 gc.getMatch().sortPlayers();
                 sortClientHandlers();
-                gc.getMatch().loadGods();
 
                 System.out.println("Assigning gods");
-                gc.godsAssignement();
+                if(!gc.godsAssignement()){
+                    for(ClientHandler clientHandler : clientHandlers){
+                        for(Player player : gc.getMatch().getPlayers()){
+                            if(player.getNickname().equals(clientHandler.getName()) && player.getInGame()){
+                                write(clientHandler, "serviceMessage", "You win!!\n");
+                            }
+                        }
+                    }
+                    break;
+                }
 
                 System.out.println("Putting workers");
                 gc.putWorkers();
