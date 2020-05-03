@@ -63,6 +63,9 @@ public class Server
                                 gc.getMatch().getPlayers().remove(numPlayers);
                             }
                         }
+                        else{
+                            gc.getMatch().getPlayers().remove(numPlayers);
+                        }
                     }
                 }
                 System.out.println("Adding players");
@@ -193,12 +196,18 @@ public class Server
             return false;
         }
         String username = read(clientHandler);
+        if(username==null){
+            return false;
+        }
 
         while(gc.getMatch().alreadyIn(username)){
             if(!write(clientHandler,"interactionServer", "Username already in, try again: ")){
                 return false;
             }
             username = read(clientHandler);
+            if(username==null){
+                return false;
+            }
         }
 
         int age;
@@ -208,7 +217,12 @@ public class Server
                 if(!write(clientHandler,"interactionServer", "Insert age: ")){
                     return false;
                 }
-                age = Integer.parseInt(read(clientHandler));
+                String str = read(clientHandler);
+                if(str==null){
+                    return false;
+                }
+                age = Integer.parseInt(str);
+
                 break;
             } catch (NumberFormatException e){
                 if(!write(clientHandler, "serviceMessage", "Invalid input\n")){
@@ -255,9 +269,9 @@ public class Server
         clientHandler.takeMessage();
         try {
             Method method1 = ClientHandler.class.getMethod("getReadMessage");
-            while(!(boolean)method1.invoke(clientHandler) || timeout){  }
+            while(!(boolean)method1.invoke(clientHandler) && !timeout){  }
             if(timeout){
-
+                timeout=false;
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
@@ -303,7 +317,11 @@ public class Server
             return false;
         }
         try{
-            numPlayers = Integer.parseInt(read(clientHandler));
+            String str = read(clientHandler);
+            if(str==null){
+                return false;
+            }
+            numPlayers = Integer.parseInt(str);
         } catch (NumberFormatException e){
             write(clientHandler, "serviceMessage", "Invalid input\n");
             createLobby(clientHandler);

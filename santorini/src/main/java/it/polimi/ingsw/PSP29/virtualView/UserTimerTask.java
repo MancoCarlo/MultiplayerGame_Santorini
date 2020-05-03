@@ -22,7 +22,6 @@ public class UserTimerTask extends TimerTask {
         }else{
             server.setTimeout(true);
             ch.resetConnected();
-            //Disconnessione
             ch.closeConnection();
             this.cancel();
         }
