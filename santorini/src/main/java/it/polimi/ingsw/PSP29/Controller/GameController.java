@@ -375,7 +375,6 @@ public class GameController {
         boolean godOn;
         if(response.equals("1")) godOn = true;
         else godOn = false;
-        System.out.println(p.getCard().toString());
         if(!godOn){
             BaseTurn turn = new BaseTurn();
             return turnExe(ch, turn);

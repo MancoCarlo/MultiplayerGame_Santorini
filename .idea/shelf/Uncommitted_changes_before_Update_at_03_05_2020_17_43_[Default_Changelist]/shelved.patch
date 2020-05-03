@@ -1,0 +1,1096 @@
+Index: santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/GameController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.*;\r\nimport it.polimi.ingsw.PSP29.virtualView.ClientHandler;\r\nimport it.polimi.ingsw.PSP29.virtualView.Server;\r\n\r\nimport java.io.FileNotFoundException;\r\nimport java.io.IOException;\r\nimport java.util.ArrayList;\r\nimport java.util.Scanner;\r\n\r\npublic class GameController {\r\n\r\n    private Match match;\r\n    private Server server;\r\n    private boolean endGame;\r\n    private boolean godOn;\r\n    private ArrayList<Integer> godIndex = new ArrayList<>();\r\n    private Coordinate c = null;\r\n    private boolean athenaOn;\r\n    private int myturn = 0;\r\n    private int numPlayers;\r\n\r\n    public GameController(Server s){\r\n        match = new Match();\r\n        endGame=false;\r\n        godOn=false;\r\n        server = s;\r\n    }\r\n\r\n    public ArrayList<Integer> getGodIndex(){\r\n        return godIndex;\r\n    }\r\n\r\n    public Match getMatch() {\r\n        return match;\r\n    }\r\n\r\n    public boolean getAthenaOn() { return athenaOn; }\r\n\r\n    public void setAthenaOn(boolean b) { athenaOn = b; }\r\n\r\n    public void setNumPlayers(int numPlayers) {\r\n        this.numPlayers = numPlayers;\r\n    }\r\n\r\n    public int getTurn() {\r\n        return myturn;\r\n    }\r\n\r\n    public boolean controlMovement(Player p, int id, Coordinate c){\r\n        if(c.getX()>4 || c.getY()>4 || c.getX()<0 || c.getY()<0){\r\n            return false;\r\n        }\r\n        else{\r\n            if(!match.getBoard()[c.getX()][c.getY()].isEmpty()){\r\n                return false;\r\n            }\r\n            else{\r\n                match.updateMovement(p, id, c);\r\n                match.getBoard()[c.getX()][c.getY()].getWorkerBox().setColor(p.color);\r\n                return true;\r\n            }\r\n        }\r\n    }\r\n\r\n\r\n    /**\r\n     * let the player choose their gods\r\n     */\r\n    public void godSelection(){\r\n        ArrayList<God> gods = new ArrayList<>();\r\n        for(Integer i : godIndex){\r\n            gods.add(match.getGods().get(i));\r\n        }\r\n\r\n        match.getGods().clear();\r\n        for(God god : gods){\r\n            match.getGods().add(god);\r\n        }\r\n    }\r\n\r\n    /**\r\n     * find the index of the next player\r\n     */\r\n    public void next(){\r\n        myturn++;\r\n        if(myturn == numPlayers){\r\n            myturn=0;\r\n        }\r\n        for(int i=0;i<server.getClientHandlers().size();i++){\r\n            if(i != myturn)\r\n                server.write(server.getClientHandlers().get(i), \"serviceMessage\", \"Is the turn of \"+server.getClientHandlers().get(myturn).getName()+\", wait your turn!!!\\n\");\r\n            if(i == myturn)\r\n                server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Is your turn!!!\\n\");\r\n        }\r\n    }\r\n\r\n    /**\r\n     * assign one God to each player\r\n     */\r\n    public void godsAssignement(){\r\n        int id=0;\r\n        server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Choose \" + numPlayers + \" gods from this list\");\r\n        server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", match.printGodlist());\r\n        server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Insert n°1 index: \");\r\n        while(true){\r\n            try {\r\n                id=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));\r\n                if(id<1 || id>match.getGods().size()){\r\n                    server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Invalid input\\n\");\r\n                    server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Insert n°1 index: \");\r\n                    continue;\r\n                }\r\n                break;\r\n            } catch (NumberFormatException e){\r\n                server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Invalid input\\n\");\r\n                server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Insert n°1 index: \");\r\n            }\r\n        }\r\n        godIndex.add(id - 1);\r\n        boolean find;\r\n        for(int i=1; i<numPlayers; i++){\r\n            server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Insert n°\" + (i+1) + \" index: \");\r\n            while(true){\r\n                find=false;\r\n                try {\r\n                    id=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));\r\n                    if(id<1 || id>match.getGods().size()){\r\n                        server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Invalid input\\n\");\r\n                        server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Insert n°\" + (i+1) + \" index: \");\r\n                        continue;\r\n                    }\r\n                    for(int j : godIndex){\r\n                        if(id-1==j){\r\n                            server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"God already selected\\n\");\r\n                            server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Insert n°\" + (i+1) + \" index: \");\r\n                            find=true;\r\n                        }\r\n                    }\r\n                    if(find){\r\n                        continue;\r\n                    }\r\n                    break;\r\n                } catch (NumberFormatException e){\r\n                    server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Invalid input\\n\");\r\n                    server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Insert n°\" + (i+1) + \" index: \");\r\n                }\r\n            }\r\n            godIndex.add(id - 1);\r\n        }\r\n        godSelection();\r\n        int i=0;\r\n        while (i<server.getClientHandlers().size()){\r\n            next();\r\n            server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", match.printGodlist());\r\n            server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Choose one god from this list: \");\r\n            id = Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1;\r\n            while(id >= match.getGods().size()|| id < 0){\r\n                server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Index not valid\\n\");\r\n                server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Insert another index: \");\r\n                id = Integer.parseInt(server.read(server.getClientHandlers().get(myturn))) - 1;\r\n            }\r\n            match.getPlayers().get(myturn).setCard(match.getGods(), id);\r\n            match.getGods().remove(id);\r\n            i++;\r\n        }\r\n    }\r\n\r\n    /**\r\n     * ask to the client where he want to put his players\r\n     */\r\n    public void putWorkers(){\r\n        int i=0;\r\n        while (i<numPlayers){\r\n            next();\r\n            server.write(server.getClientHandlers().get(myturn), \"serviceMessage\",  match.printBoard());\r\n            server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Insert Worker n°1\\n\");\r\n            Coordinate c = getCoordinate();\r\n            while (!controlMovement(match.getPlayers().get(myturn), 0, c)){\r\n                server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Not valid box\\n\");\r\n                server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Insert Worker n°1\\n\");\r\n                c = getCoordinate();\r\n            }\r\n\r\n            server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Insert Worker n°2\\n\");\r\n            c = getCoordinate();\r\n            while (!controlMovement(match.getPlayers().get(myturn), 1, c)){\r\n                server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Not valid box\\n\");\r\n                server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Insert Worker n°2\\n\");\r\n                c = getCoordinate();\r\n            }\r\n            i++;\r\n        }\r\n        next();\r\n    }\r\n\r\n    /**\r\n     * ask a coordinate to the client\r\n     * @return the coordinate\r\n     */\r\n    public Coordinate getCoordinate(){\r\n        Coordinate c;\r\n        server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"X: \");\r\n        int x=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));\r\n        server.write(server.getClientHandlers().get(myturn), \"interactionServer\", \"Y: \");\r\n        int y=Integer.parseInt(server.read(server.getClientHandlers().get(myturn)));\r\n        c = new Coordinate(x, y);\r\n        return c;\r\n    }\r\n\r\n    /**\r\n     *\r\n     * used for the execution of the game\r\n     *\r\n    */\r\n    public void gameExe(){\r\n        while(!endGame){\r\n            match.updatePlayers(server.getClientHandlers());\r\n            if(match.getPlayers().get(myturn).getInGame()) {\r\n                if (match.playersInGame() == 1) {\r\n                    endGame = true;\r\n                    for (int i = 0; i < server.getClientHandlers().size(); i++) {\r\n                        if (i == myturn)\r\n                            server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Congratulations you win!\\n\");\r\n                        else\r\n                            server.write(server.getClientHandlers().get(i), \"serviceMessage\", \"You lose, the winner is \" + server.getClientHandlers().get(myturn).getName() + \"!\\n\");\r\n                    }\r\n                    break;\r\n                }\r\n                endGame = newTurn(server.getClientHandlers().get(myturn));\r\n                match.resetBoard();\r\n                for (ClientHandler ch : server.getClientHandlers()) {\r\n                    server.write(ch, \"serviceMessage\", match.printBoard());\r\n                }\r\n                if (endGame) {\r\n                    for (int i = 0; i < server.getClientHandlers().size(); i++) {\r\n                        if (i == myturn)\r\n                            server.write(server.getClientHandlers().get(myturn), \"serviceMessage\", \"Congratulations you win!\\n\");\r\n                        else\r\n                            server.write(server.getClientHandlers().get(i), \"serviceMessage\", \"You lose, the winner is \" + server.getClientHandlers().get(myturn).getName() + \"!\\n\");\r\n                    }\r\n                }\r\n            }\r\n            next();\r\n        }\r\n    }\r\n\r\n\r\n\r\n\r\n    /**\r\n     *\r\n     * used to create a new turn\r\n     *\r\n     * @param ch the player that plays the turn\r\n     * @return true if player win\r\n     */\r\n    public boolean newTurn(ClientHandler ch) {\r\n        Player p = match.getPlayer(ch.getName());\r\n        if(athenaOn && p.getCard().getName().equals(\"Athena\")){\r\n            athenaOn=false;\r\n        }\r\n        server.write(ch, \"interactionServer\", \"Would you use your god in this turn?\\n1) YES\\n2) NO\\n\");\r\n        String response = server.read(ch);\r\n        boolean godOn;\r\n        if(response.equals(\"1\")) godOn = true;\r\n        else godOn = false;\r\n        System.out.println(p.getCard().toString());\r\n        if(!godOn){\r\n            BaseTurn turn = new BaseTurn();\r\n            return turnExe(ch, turn);\r\n        }\r\n        else{\r\n            switch (p.getCard().getID()){\r\n                case 0 :\r\n                    ApolloTurn turn0 = new ApolloTurn(new GodTurn(new BaseTurn()));\r\n                    return turnExe(ch, turn0);\r\n                case 1 :\r\n                    ArtemisTurn turn1 = new ArtemisTurn(new GodTurn(new BaseTurn()));\r\n                    return turnExe(ch, turn1);\r\n                case 2 :\r\n                    AthenaTurn turn2 = new AthenaTurn(new GodTurn(new BaseTurn()));\r\n                    return turnExe(ch, turn2);\r\n                case 3 :\r\n                    AtlasTurn turn3 = new AtlasTurn(new GodTurn(new BaseTurn()));\r\n                    return turnExe(ch, turn3);\r\n                case 4 :\r\n                    DemeterTurn turn4 = new DemeterTurn(new GodTurn(new BaseTurn()));\r\n                    return turnExe(ch, turn4);\r\n                case 5 :\r\n                    HephaestusTurn turn5 = new HephaestusTurn(new GodTurn(new BaseTurn()));\r\n                    return turnExe(ch, turn5);\r\n                case 6 :\r\n                    MinotaurTurn turn6 = new MinotaurTurn(new GodTurn(new BaseTurn()));\r\n                    return turnExe(ch, turn6);\r\n                case 7 :\r\n                    PanTurn turn7 = new PanTurn(new GodTurn(new BaseTurn()));\r\n                    return turnExe(ch, turn7);\r\n                case 8 :\r\n                    PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));\r\n                    return turnExe(ch, turn8);\r\n            }\r\n        }\r\n        return false;\r\n    }\r\n\r\n\r\n    /**\r\n     *\r\n     * used for the execution of the turn\r\n     *\r\n     * @param ch the player that plays the turn\r\n     * @param turn the turn, can be BaseTurn or one of the gods' turn\r\n     * @return the result of winCondition\r\n     */\r\n    public boolean turnExe(ClientHandler ch, Turn turn){\r\n        for(ClientHandler clientHandler : server.getClientHandlers()){\r\n            server.write(clientHandler, \"serviceMessage\", match.printBoard());\r\n        }\r\n\r\n        if(!turn.move(match, ch, server, athenaOn)){\r\n            losePlayer(ch);\r\n            return false;\r\n        }\r\n\r\n        if(match.getPlayer(ch.getName()).getCard().getName().equals(\"Athena\"))\r\n            athenaCondition(ch);\r\n\r\n        for(ClientHandler clientHandler : server.getClientHandlers()){\r\n            server.write(clientHandler, \"serviceMessage\", match.printBoard());\r\n        }\r\n\r\n        if(!turn.build(match,ch,server)){\r\n            losePlayer(ch);\r\n            return false;\r\n        }\r\n\r\n        if(!turn.winCondition(match, match.getPlayer(ch.getName()))){\r\n            return false;\r\n        }else{\r\n            return true;\r\n        }\r\n    }\r\n\r\n    /**\r\n     * Exclude the player from the game and remove his workers from the board\r\n     * @param ch loser player\r\n     */\r\n    public void losePlayer(ClientHandler ch){\r\n        server.write(ch,\"serviceMessage\", \"You Lose!\");\r\n        match.getPlayer(ch.getName()).setInGame(false);\r\n        match.removeWorkers(match.getPlayer(ch.getName()));\r\n    }\r\n\r\n    public void athenaCondition(ClientHandler ch){\r\n        Coordinate cprev;\r\n        Coordinate c;\r\n        for(Worker w : match.getPlayer(ch.getName()).getWorkers()){\r\n            if(w.getMoved()){\r\n                cprev = w.getPrev_position();\r\n                c = w.getPosition();\r\n                if(match.getBoard()[cprev.getX()][cprev.getY()].getlevelledUp()){\r\n                    if(match.getBoard()[c.getX()][c.getY()].getLevel() - match.getBoard()[cprev.getX()][cprev.getY()].getLevel() >= 0 )\r\n                        athenaOn = true;\r\n                    else\r\n                        athenaOn = false;\r\n                }else{\r\n                    if(match.getBoard()[c.getX()][c.getY()].getLevel() - match.getBoard()[cprev.getX()][cprev.getY()].getLevel() > 0 )\r\n                        athenaOn = true;\r\n                    else\r\n                        athenaOn = false;\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/GameController.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/GameController.java	(date 1588502434265)
+@@ -266,7 +266,6 @@
+         boolean godOn;
+         if(response.equals("1")) godOn = true;
+         else godOn = false;
+-        System.out.println(p.getCard().toString());
+         if(!godOn){
+             BaseTurn turn = new BaseTurn();
+             return turnExe(ch, turn);
+Index: santorini/src/main/java/it/polimi/ingsw/PSP29/virtualView/UserTimerTask.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.virtualView;\r\n\r\nimport java.util.TimerTask;\r\n\r\npublic class UserTimerTask extends TimerTask {\r\n    private int seconds=0;\r\n    private int turnSeconds = 100;\r\n    private ClientHandler ch;\r\n    private Server server;\r\n\r\n    public UserTimerTask(Server server, ClientHandler ch){\r\n        this.server = server;\r\n        this.ch = ch;\r\n    }\r\n\r\n    public void run(){\r\n        //100 secondi per gestire il turno\r\n        if(seconds<=turnSeconds){\r\n            if(seconds % 10 == 0)\r\n                System.out.println(turnSeconds - seconds+ \" seconds remaining\");\r\n            seconds++;\r\n        }else{\r\n            server.setTimeout(true);\r\n            ch.resetConnected();\r\n            ch.closeConnection();\r\n            this.cancel();\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/main/java/it/polimi/ingsw/PSP29/virtualView/UserTimerTask.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/main/java/it/polimi/ingsw/PSP29/virtualView/UserTimerTask.java	(date 1588502434249)
+@@ -4,7 +4,7 @@
+ 
+ public class UserTimerTask extends TimerTask {
+     private int seconds=0;
+-    private int turnSeconds = 100;
++    private int turnSeconds = 20;
+     private ClientHandler ch;
+     private Server server;
+ 
+Index: santorini/src/main/java/it/polimi/ingsw/PSP29/virtualView/Server.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.virtualView;\r\n\r\nimport it.polimi.ingsw.PSP29.Controller.*;\r\nimport it.polimi.ingsw.PSP29.model.*;\r\nimport it.polimi.ingsw.PSP29.view.Client;\r\n\r\nimport java.io.IOException;\r\nimport java.lang.reflect.InvocationTargetException;\r\nimport java.lang.reflect.Method;\r\nimport java.net.ServerSocket;\r\nimport java.net.Socket;\r\nimport java.util.ArrayList;\r\nimport java.util.Timer;\r\n\r\n\r\npublic class Server\r\n{\r\n    public final static int SOCKET_PORT = 7777;\r\n    private static GameController gc;\r\n    private int numPlayers=0;\r\n    private boolean endGame = false;\r\n    private boolean timeout = false;\r\n    private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();\r\n\r\n    /**\r\n     * server execution\r\n     */\r\n    public void launch()\r\n    {\r\n        ServerSocket socket;\r\n        try {\r\n            socket = new ServerSocket(SOCKET_PORT);\r\n        } catch (IOException e) {\r\n            System.out.println(\"cannot open server socket\");\r\n            System.exit(1);\r\n            return;\r\n        }\r\n        gc = new GameController(this);\r\n        while (true) {\r\n            int countPlayers = 0;\r\n            System.out.println(\"server ready\");\r\n            System.out.println(\"Creating Lobby\");\r\n            while(true){\r\n                while(countPlayers==0){\r\n                    ClientHandler clientHandler=null;\r\n                    clientHandler = connection(socket, clientHandler);\r\n                    if(loginPlayer(clientHandler)){\r\n                        if(createLobby(clientHandler)){\r\n                            while(numPlayers != 2 && numPlayers != 3){\r\n                                if(!write(clientHandler, \"serviceMessage\", \"Players number not valid\\n\")){\r\n                                    break;\r\n                                }\r\n                                if(!createLobby(clientHandler)){\r\n                                    break;\r\n                                }\r\n                            }\r\n                            if(numPlayers==2 || numPlayers==3){\r\n                                write(clientHandler, \"serviceMessage\", \"\\nWait for other players\\n\\n\");\r\n                                clientHandlers.add(clientHandler);\r\n                                countPlayers++;\r\n                            }\r\n                            else{\r\n                                gc.getMatch().getPlayers().remove(numPlayers);\r\n                            }\r\n                        }\r\n                        else{\r\n                            gc.getMatch().getPlayers().remove(numPlayers);\r\n                        }\r\n                    }\r\n                }\r\n                System.out.println(\"Adding players\");\r\n                while(countPlayers < numPlayers){\r\n                    ClientHandler clientHandler = null;\r\n                    clientHandler = connection(socket, clientHandler);\r\n                    if(!loginPlayer(clientHandler)){\r\n                        continue;\r\n                    }\r\n                    if(!write(clientHandler, \"serviceMessage\", \"\\nWait for other players\\n\\n\")){\r\n                        gc.getMatch().getPlayers().remove(countPlayers);\r\n                        continue;\r\n                    }\r\n                    clientHandlers.add(clientHandler);\r\n                    countPlayers++;\r\n                }\r\n\r\n                for(Player p : gc.getMatch().getPlayers()){\r\n                    p.setInGame(true);\r\n                }\r\n\r\n                for(ClientHandler clientHandler : clientHandlers){\r\n                    if(clientHandler.getConnected()){\r\n                        write(clientHandler, \"serviceMessage\", \"You're in\\n\\n\");\r\n                    }\r\n                }\r\n\r\n                gc.getMatch().updatePlayers(clientHandlers);\r\n\r\n                System.out.println(\"printing board\");\r\n                gc.getMatch().inizializeBoard();\r\n                while (gc.getMatch().getBoard() == null){ }\r\n                for(ClientHandler clientHandler : clientHandlers){\r\n                    if(clientHandler.getConnected()){\r\n                        write(clientHandler, \"serviceMessage\",  gc.getMatch().printBoard());\r\n                    }\r\n                }\r\n\r\n                gc.getMatch().updatePlayers(clientHandlers);\r\n\r\n                System.out.println(\"printing players\");\r\n                for(ClientHandler clientHandler : clientHandlers){\r\n                    if(clientHandler.getConnected()){\r\n                        write(clientHandler, \"serviceMessage\", gc.getMatch().printPlayers());\r\n                    }\r\n                }\r\n\r\n                gc.getMatch().updatePlayers(clientHandlers);\r\n\r\n                if(gc.getMatch().playersInGame()==1){\r\n                    for(ClientHandler clientHandler : clientHandlers){\r\n                        if (clientHandler.getName().equals(gc.getMatch().getPlayers().get(0).getNickname())){\r\n                            write(clientHandler, \"serviceMessage\" , \"\\nYou win!!\\n\");\r\n                        }\r\n                    }\r\n                    break;\r\n                }\r\n\r\n\r\n                //fino a qui OK con le disconnessioni\r\n                //da qui in poi sono da sistemare nel game controller\r\n\r\n                for(int i=0; i<gc.getMatch().getPlayers().size();i++){\r\n                    gc.getMatch().getPlayers().get(i).color = gc.getMatch().getColors().get(i);\r\n                }\r\n                gc.getMatch().getColors().remove(0);\r\n                gc.getMatch().sortPlayers();\r\n                sortClientHandlers();\r\n                gc.getMatch().loadGods();\r\n\r\n                System.out.println(\"Assigning gods\");\r\n                gc.godsAssignement();\r\n\r\n                System.out.println(\"Putting workers\");\r\n                gc.putWorkers();\r\n\r\n\r\n                gc.gameExe();\r\n\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     *\r\n     * wait unthil the method is executed\r\n     *\r\n     * @param clientHandler\r\n     * @param meth the method to process\r\n     */\r\n    public void process(ClientHandler clientHandler, String meth){\r\n        try {\r\n            Method method1 = ClientHandler.class.getMethod(meth);\r\n            while(!(boolean)method1.invoke(clientHandler));\r\n        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    /**\r\n     *\r\n     * reset the variable in clienthandler linked to the method passed\r\n     *\r\n     * @param clientHandler\r\n     * @param meth the method to reset\r\n     */\r\n    public void processReset(ClientHandler clientHandler, String meth){\r\n        try {\r\n            Method method1 = ClientHandler.class.getMethod(meth);\r\n            method1.invoke(clientHandler);\r\n        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    /**\r\n     *\r\n     * accept a client and add him to the players list\r\n     *\r\n     * @param clientHandler\r\n     */\r\n    public boolean loginPlayer(ClientHandler clientHandler){\r\n        if(!write(clientHandler, \"serviceMessage\", \"Welcome to Santorini\\n\\n\")){\r\n            return false;\r\n        }\r\n\r\n        if(!write(clientHandler,\"interactionServer\", \"Insert username: \")){\r\n            return false;\r\n        }\r\n        String username = read(clientHandler);\r\n        if(username==null){\r\n            return false;\r\n        }\r\n\r\n        while(gc.getMatch().alreadyIn(username)){\r\n            if(!write(clientHandler,\"interactionServer\", \"Username already in, try again: \")){\r\n                return false;\r\n            }\r\n            username = read(clientHandler);\r\n            if(username==null){\r\n                return false;\r\n            }\r\n        }\r\n\r\n        int age;\r\n\r\n        while(true){\r\n            try{\r\n                if(!write(clientHandler,\"interactionServer\", \"Insert age: \")){\r\n                    return false;\r\n                }\r\n                String str = read(clientHandler);\r\n                if(str==null){\r\n                    return false;\r\n                }\r\n                age = Integer.parseInt(str);\r\n\r\n                break;\r\n            } catch (NumberFormatException e){\r\n                if(!write(clientHandler, \"serviceMessage\", \"Invalid input\\n\")){\r\n                    return false;\r\n                }\r\n                continue;\r\n            }\r\n        }\r\n\r\n        clientHandler.setName(username);\r\n        clientHandler.setAge(age);\r\n\r\n        Player player1 = new Player(username, age);\r\n        gc.getMatch().addPlayer(player1);\r\n        return true;\r\n    }\r\n\r\n    /**\r\n     *\r\n     * write a message to the client\r\n     *\r\n     * @param clientHandler\r\n     * @param s the type of message\r\n     * @param msg the message\r\n     */\r\n    public boolean write(ClientHandler clientHandler, String s, String msg){\r\n        clientHandler.sendMessage(s, msg);\r\n        process(clientHandler, \"getSentMessage\");\r\n        processReset(clientHandler, \"resetSentMessage\");\r\n        if(!clientHandler.getConnected()){\r\n            return false;\r\n        }\r\n        return true;\r\n    }\r\n\r\n    /**\r\n     *\r\n     * read a message from the client\r\n     *\r\n     * @param clientHandler\r\n     * @return the message\r\n     */\r\n    public String read(ClientHandler clientHandler){\r\n        clientHandler.takeMessage();\r\n        try {\r\n            Method method1 = ClientHandler.class.getMethod(\"getReadMessage\");\r\n            while(!(boolean)method1.invoke(clientHandler) && !timeout){  }\r\n            if(timeout){\r\n                timeout=false;\r\n            }\r\n        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {\r\n            e.printStackTrace();\r\n        }\r\n        processReset(clientHandler, \"resetReadMessage\");\r\n        String response = null;\r\n        if(clientHandler.getConnected()){\r\n            response = clientHandler.getMessage();\r\n        }\r\n        return response;\r\n    }\r\n\r\n    /**\r\n     *\r\n     * connect a client to the server\r\n     *\r\n     * @param socket the server\r\n     * @param clientHandler\r\n     * @return the clientHandler linked to the client\r\n     */\r\n    public ClientHandler connection(ServerSocket socket,ClientHandler clientHandler){\r\n        Socket client;\r\n        try {\r\n            client = socket.accept();\r\n            clientHandler = new ClientHandler(client, this);\r\n            Thread thread = new Thread(clientHandler , \"server_\" + client.getInetAddress());\r\n            thread.start();\r\n            process(clientHandler, \"getConnected\");\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n        return clientHandler;\r\n    }\r\n\r\n    /**\r\n     *\r\n     * ask to the player how many players will be in the game\r\n     *\r\n     * @param clientHandler\r\n     */\r\n    public boolean createLobby(ClientHandler clientHandler) {\r\n        if(!write(clientHandler, \"interactionServer\", \"How many players 2 or 3? \")){\r\n            return false;\r\n        }\r\n        try{\r\n            String str = read(clientHandler);\r\n            if(str==null){\r\n                return false;\r\n            }\r\n            numPlayers = Integer.parseInt(str);\r\n        } catch (NumberFormatException e){\r\n            write(clientHandler, \"serviceMessage\", \"Invalid input\\n\");\r\n            createLobby(clientHandler);\r\n        }\r\n        gc.setNumPlayers(numPlayers);\r\n        return true;\r\n    }\r\n\r\n    /**\r\n     * sort the list of clienHandlers\r\n     */\r\n    public void sortClientHandlers(){\r\n        boolean change=true;\r\n        ClientHandler ch;\r\n        while(change){\r\n            change=false;\r\n            for(int i=0; i<clientHandlers.size()-1; i++){\r\n                if(clientHandlers.get(i).getAge()>clientHandlers.get(i+1).getAge()){\r\n                    ch=clientHandlers.get(i);\r\n                    clientHandlers.set(i, clientHandlers.get(i+1));\r\n                    clientHandlers.set(i+1, ch);\r\n                    change=true;\r\n                }\r\n            }\r\n        }\r\n    }\r\n\r\n    public ArrayList<ClientHandler> getClientHandlers() {\r\n        return clientHandlers;\r\n    }\r\n\r\n    public void updateClientHandlers(ArrayList<ClientHandler> removed){\r\n        for(ClientHandler clientHandler : removed){\r\n            clientHandlers.remove(clientHandler);\r\n        }\r\n    }\r\n\r\n    public void setTimeout(boolean t){\r\n        timeout = t;\r\n    }\r\n\r\n    public boolean getTimeout(){\r\n        return timeout;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/main/java/it/polimi/ingsw/PSP29/virtualView/Server.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/main/java/it/polimi/ingsw/PSP29/virtualView/Server.java	(date 1588502213860)
+@@ -124,10 +124,6 @@
+                     break;
+                 }
+ 
+-
+-                //fino a qui OK con le disconnessioni
+-                //da qui in poi sono da sistemare nel game controller
+-
+                 for(int i=0; i<gc.getMatch().getPlayers().size();i++){
+                     gc.getMatch().getPlayers().get(i).color = gc.getMatch().getColors().get(i);
+                 }
+Index: santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/ApolloTurnTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.Coordinate;\r\nimport it.polimi.ingsw.PSP29.model.Match;\r\nimport it.polimi.ingsw.PSP29.model.Player;\r\nimport it.polimi.ingsw.PSP29.model.Worker;\r\nimport org.junit.Before;\r\nimport org.junit.Test;\r\n\r\nimport static org.junit.Assert.*;\r\n\r\npublic class ApolloTurnTest {\r\n    Match m = null;\r\n    ApolloTurn turn = null;\r\n\r\n    @Before\r\n    public void setUp() throws Exception {\r\n        m = new Match();\r\n        m.inizializeBoard();\r\n        m.getPlayers().add(new Player(\"Luca\", 21));\r\n        m.getPlayers().add(new Player(\"Letizia\", 21));\r\n        turn = new ApolloTurn(new GodTurn(new BaseTurn()));\r\n    }\r\n\r\n    @Test\r\n    public void build_CorrectInputs_callSuperBuild() {\r\n        Coordinate c1 = new Coordinate(1,1);\r\n        Coordinate c2 = new Coordinate(1,2);\r\n        Worker w1 = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c1);\r\n        assertTrue(turn.build(m, w1, c2));\r\n        assertEquals(m.getBoard()[c2.getX()][c2.getY()].getLevel(),1);\r\n        assertTrue(w1.getBuilt());\r\n        assertFalse(turn.winCondition(m, m.getPlayers().get(0)));\r\n    }\r\n\r\n    @Test\r\n    public void move_CorrectInputs_SwapWorkerReturnTrue() {\r\n        Coordinate c1 = new Coordinate(1,1);\r\n        Coordinate c2 = new Coordinate(1,2);\r\n        Worker w1 = m.getPlayers().get(0).getWorker(0);\r\n        Worker w2 = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c1);\r\n        m.updateMovement(m.getPlayers().get(1), 0, c2);\r\n        m.getBoard()[c2.getX()][c2.getY()].upgradeLevel();\r\n        assertTrue(turn.move(m, w1,c2));\r\n        assertTrue(w1.getPosition() == c2 && w2.getPosition() == c1);\r\n        assertTrue(w1.getMoved());\r\n        Coordinate c3 = new Coordinate(1,3);\r\n        assertTrue(turn.move(m, w1,c3));\r\n    }\r\n\r\n    @Test\r\n    public void move_CorrectInputs_LevelBoxTooHighReturnFalse() {\r\n        Coordinate c1 = new Coordinate(1,1);\r\n        Coordinate c2 = new Coordinate(1,2);\r\n        Worker w1 = m.getPlayers().get(0).getWorker(0);\r\n        Worker w2 = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c1);\r\n        m.updateMovement(m.getPlayers().get(1), 0, c2);\r\n        m.getBoard()[c2.getX()][c2.getY()].upgradeLevel();\r\n        m.getBoard()[c2.getX()][c2.getY()].upgradeLevel();\r\n        assertFalse(turn.move(m, w1,c2));\r\n        assertFalse(w1.getPosition() == c2 && w2.getPosition() == c1);\r\n    }\r\n\r\n    @Test\r\n    public void limitedMove_CorrectInputsAthenaON_LevelBoxTooHighReturnFalse() {\r\n        Coordinate c1 = new Coordinate(1,1);\r\n        Coordinate c2 = new Coordinate(1,2);\r\n        Worker w1 = m.getPlayers().get(0).getWorker(0);\r\n        Worker w2 = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c1);\r\n        m.updateMovement(m.getPlayers().get(1), 0, c2);\r\n        m.getBoard()[c2.getX()][c2.getY()].upgradeLevel();\r\n        assertFalse(turn.limited_move(m, w1,c2));\r\n        assertFalse(w1.getPosition() == c2 && w2.getPosition() == c1);\r\n    }\r\n\r\n    @Test\r\n    public void limitedMove_CorrectInputsAthenaON_SwapWorkerReturnTrue() {\r\n        Coordinate c1 = new Coordinate(1,1);\r\n        Coordinate c2 = new Coordinate(1,2);\r\n        Worker w1 = m.getPlayers().get(0).getWorker(0);\r\n        Worker w2 = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c1);\r\n        m.updateMovement(m.getPlayers().get(1), 0, c2);\r\n        assertTrue(turn.limited_move(m, w1,c2));\r\n        assertTrue(w1.getPosition() == c2 && w2.getPosition() == c1);\r\n        assertTrue(w1.getMoved());\r\n    }\r\n\r\n    @Test\r\n    public void limitedMove_CorrectInputsAthenaON_SuperLimitedMoveReturnTrue() {\r\n        Coordinate c1 = new Coordinate(1,1);\r\n        Coordinate c2 = new Coordinate(1,2);\r\n        Worker w1 = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c1);\r\n        assertTrue(turn.limited_move(m, w1,c2));\r\n        assertTrue(w1.getPosition() == c2);\r\n        assertTrue(w1.getMoved());\r\n    }\r\n\r\n    @Test\r\n    public void cantmove_CorrectInputsAthenaON_ReturnTrue() {\r\n        Coordinate c1 = new Coordinate(1,1);\r\n        Worker w1 = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c1);\r\n        for(int i=0; i<m.getRows();i++){\r\n            for(int j=0; j<m.getColumns();j++)\r\n                if(i == c1.getX() && j == c1.getY()){}\r\n                else m.getBoard()[i][j].upgradeLevel();\r\n        }\r\n        assertTrue(turn.cantMove(m, w1, true));\r\n    }\r\n\r\n    @Test\r\n    public void cantmove_CorrectInputsAthenaOnBoxNotEmpty_ReturnFalse() {\r\n        Coordinate c1 = new Coordinate(1,1);\r\n        Coordinate c2 = new Coordinate(1,2);\r\n        Worker w1 = m.getPlayers().get(0).getWorker(0);\r\n        Worker w2 = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c1);\r\n        m.updateMovement(m.getPlayers().get(1), 0, c2);\r\n        for(int i=0; i<m.getRows();i++){\r\n            for(int j=0; j<m.getColumns();j++)\r\n                if(i != 1 || j != 1 || j != 2)\r\n                    m.getBoard()[i][j].upgradeLevel();\r\n        }\r\n        assertFalse(turn.cantMove(m, w1, true));\r\n    }\r\n\r\n    @Test\r\n    public void cantmove_CorrectInputsAthenaOFFBoxNotEmpty_ReturnFalse() {\r\n        Coordinate c1 = new Coordinate(1,1);\r\n        Coordinate c2 = new Coordinate(1,2);\r\n        Worker w1 = m.getPlayers().get(0).getWorker(0);\r\n        Worker w2 = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c1);\r\n        m.updateMovement(m.getPlayers().get(1), 0, c2);\r\n        for(int i=0; i<m.getRows();i++){\r\n            for(int j=0; j<m.getColumns();j++)\r\n                if(i != 1 || j != 1)\r\n                    m.getBoard()[i][j].upgradeLevel();\r\n        }\r\n        assertFalse(turn.cantMove(m, w1, false));\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/ApolloTurnTest.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/ApolloTurnTest.java	(date 1588267865784)
+@@ -22,128 +22,4 @@
+         turn = new ApolloTurn(new GodTurn(new BaseTurn()));
+     }
+ 
+-    @Test
+-    public void build_CorrectInputs_callSuperBuild() {
+-        Coordinate c1 = new Coordinate(1,1);
+-        Coordinate c2 = new Coordinate(1,2);
+-        Worker w1 = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c1);
+-        assertTrue(turn.build(m, w1, c2));
+-        assertEquals(m.getBoard()[c2.getX()][c2.getY()].getLevel(),1);
+-        assertTrue(w1.getBuilt());
+-        assertFalse(turn.winCondition(m, m.getPlayers().get(0)));
+-    }
+-
+-    @Test
+-    public void move_CorrectInputs_SwapWorkerReturnTrue() {
+-        Coordinate c1 = new Coordinate(1,1);
+-        Coordinate c2 = new Coordinate(1,2);
+-        Worker w1 = m.getPlayers().get(0).getWorker(0);
+-        Worker w2 = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c1);
+-        m.updateMovement(m.getPlayers().get(1), 0, c2);
+-        m.getBoard()[c2.getX()][c2.getY()].upgradeLevel();
+-        assertTrue(turn.move(m, w1,c2));
+-        assertTrue(w1.getPosition() == c2 && w2.getPosition() == c1);
+-        assertTrue(w1.getMoved());
+-        Coordinate c3 = new Coordinate(1,3);
+-        assertTrue(turn.move(m, w1,c3));
+-    }
+-
+-    @Test
+-    public void move_CorrectInputs_LevelBoxTooHighReturnFalse() {
+-        Coordinate c1 = new Coordinate(1,1);
+-        Coordinate c2 = new Coordinate(1,2);
+-        Worker w1 = m.getPlayers().get(0).getWorker(0);
+-        Worker w2 = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c1);
+-        m.updateMovement(m.getPlayers().get(1), 0, c2);
+-        m.getBoard()[c2.getX()][c2.getY()].upgradeLevel();
+-        m.getBoard()[c2.getX()][c2.getY()].upgradeLevel();
+-        assertFalse(turn.move(m, w1,c2));
+-        assertFalse(w1.getPosition() == c2 && w2.getPosition() == c1);
+-    }
+-
+-    @Test
+-    public void limitedMove_CorrectInputsAthenaON_LevelBoxTooHighReturnFalse() {
+-        Coordinate c1 = new Coordinate(1,1);
+-        Coordinate c2 = new Coordinate(1,2);
+-        Worker w1 = m.getPlayers().get(0).getWorker(0);
+-        Worker w2 = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c1);
+-        m.updateMovement(m.getPlayers().get(1), 0, c2);
+-        m.getBoard()[c2.getX()][c2.getY()].upgradeLevel();
+-        assertFalse(turn.limited_move(m, w1,c2));
+-        assertFalse(w1.getPosition() == c2 && w2.getPosition() == c1);
+-    }
+-
+-    @Test
+-    public void limitedMove_CorrectInputsAthenaON_SwapWorkerReturnTrue() {
+-        Coordinate c1 = new Coordinate(1,1);
+-        Coordinate c2 = new Coordinate(1,2);
+-        Worker w1 = m.getPlayers().get(0).getWorker(0);
+-        Worker w2 = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c1);
+-        m.updateMovement(m.getPlayers().get(1), 0, c2);
+-        assertTrue(turn.limited_move(m, w1,c2));
+-        assertTrue(w1.getPosition() == c2 && w2.getPosition() == c1);
+-        assertTrue(w1.getMoved());
+-    }
+-
+-    @Test
+-    public void limitedMove_CorrectInputsAthenaON_SuperLimitedMoveReturnTrue() {
+-        Coordinate c1 = new Coordinate(1,1);
+-        Coordinate c2 = new Coordinate(1,2);
+-        Worker w1 = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c1);
+-        assertTrue(turn.limited_move(m, w1,c2));
+-        assertTrue(w1.getPosition() == c2);
+-        assertTrue(w1.getMoved());
+-    }
+-
+-    @Test
+-    public void cantmove_CorrectInputsAthenaON_ReturnTrue() {
+-        Coordinate c1 = new Coordinate(1,1);
+-        Worker w1 = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c1);
+-        for(int i=0; i<m.getRows();i++){
+-            for(int j=0; j<m.getColumns();j++)
+-                if(i == c1.getX() && j == c1.getY()){}
+-                else m.getBoard()[i][j].upgradeLevel();
+-        }
+-        assertTrue(turn.cantMove(m, w1, true));
+-    }
+-
+-    @Test
+-    public void cantmove_CorrectInputsAthenaOnBoxNotEmpty_ReturnFalse() {
+-        Coordinate c1 = new Coordinate(1,1);
+-        Coordinate c2 = new Coordinate(1,2);
+-        Worker w1 = m.getPlayers().get(0).getWorker(0);
+-        Worker w2 = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c1);
+-        m.updateMovement(m.getPlayers().get(1), 0, c2);
+-        for(int i=0; i<m.getRows();i++){
+-            for(int j=0; j<m.getColumns();j++)
+-                if(i != 1 || j != 1 || j != 2)
+-                    m.getBoard()[i][j].upgradeLevel();
+-        }
+-        assertFalse(turn.cantMove(m, w1, true));
+-    }
+-
+-    @Test
+-    public void cantmove_CorrectInputsAthenaOFFBoxNotEmpty_ReturnFalse() {
+-        Coordinate c1 = new Coordinate(1,1);
+-        Coordinate c2 = new Coordinate(1,2);
+-        Worker w1 = m.getPlayers().get(0).getWorker(0);
+-        Worker w2 = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c1);
+-        m.updateMovement(m.getPlayers().get(1), 0, c2);
+-        for(int i=0; i<m.getRows();i++){
+-            for(int j=0; j<m.getColumns();j++)
+-                if(i != 1 || j != 1)
+-                    m.getBoard()[i][j].upgradeLevel();
+-        }
+-        assertFalse(turn.cantMove(m, w1, false));
+-    }
+-
+ }
+Index: santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/MinotaurTurn.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.*;\r\nimport it.polimi.ingsw.PSP29.virtualView.ClientHandler;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class MinotaurTurn extends GodTurn {\r\n\r\n    public MinotaurTurn(Turn turn) {\r\n        super(turn);\r\n    }\r\n\r\n    @Override\r\n    public boolean winCondition(Match m, Player p) {\r\n        return super.winCondition(m, p);\r\n    }\r\n\r\n    @Override\r\n    public boolean build(Match m, Worker w, Coordinate c) {\r\n        return super.build(m, w, c);\r\n    }\r\n\r\n    /**\r\n     * allows a player to move his worker in an adjacent box already occupied by a worker of another player and change that worker's position in the following box\r\n     * @param m match played\r\n     * @param w worker that must be moved\r\n     * @param c new position of w occupied by a worker of another player\r\n     * @return true if is moved in c, else false\r\n     */\r\n    public boolean move(Match m, Worker w, Coordinate c) {\r\n        if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){\r\n            if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <= 1) {\r\n                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);\r\n                w.changeMoved(true);\r\n                return true;\r\n            }\r\n            Coordinate c1 = w.getPosition().nextCoordinate(m, c); //ottengo la coordinata seguente oppure c\r\n            if(c1.equals(c) || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>1 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4){\r\n                //se la casella c non ha una successiva oppure se la casella successiva non è vuota oppure se la casella indicata non contiene un operaio oppure se l'operaio nella casella è dello stesso giocatore oppure se la casella in cui mi voglio spostare è alta di più di 1 livello oppure se la casella successiva è completa\r\n                return false;\r\n            }\r\n            else {\r\n                m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c1);\r\n                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);\r\n                w.changeMoved(true);\r\n                return true;\r\n            }\r\n        }\r\n        else\r\n            return false;\r\n    }\r\n\r\n    /**\r\n     * allows a player to move his worker without upgrading his level in an adjacent box already occupied by a worker of another player and change that worker's position in the following box\r\n     * @param m match played\r\n     * @param w worker that must be moved\r\n     * @param c new position of w occupied by a worker of another player\r\n     * @return true if is moved in c, else false\r\n     */\r\n    public boolean limited_move(Match m, Worker w, Coordinate c) {\r\n        if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){\r\n            if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <=0) {\r\n                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);\r\n                w.changeMoved(true);\r\n                return true;\r\n            }\r\n            Coordinate c1 = w.getPosition().nextCoordinate(m, c);\r\n            if(c1.equals(c) || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4)\r\n                //se la casella c non ha una successiva oppure se la casella successiva non è vuota oppure se la casella indicata non contiene un operaio oppure se l'operaio nella casella è dello stesso giocatore oppure se la casella in cui mi voglio spostare è piu alta della mia casella oppure se la casella successiva è completa\r\n                return false;\r\n            else {\r\n                m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c1);\r\n                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);\r\n                w.changeMoved(true);\r\n                return true;\r\n            }\r\n        }\r\n        else\r\n            return false;\r\n    }\r\n\r\n    /**\r\n     * checks if a player can't move his worker using Minotaur power\r\n     * @param m match played\r\n     * @param w worker that can be moved\r\n     * @param athena true if the athena power is on, else false\r\n     * @return true if w can't move to another location, else false\r\n     */\r\n    public boolean cantMove(Match m, Worker w, boolean athena) {\r\n        if (athena) {\r\n            for (int i = 0; i < m.getRows(); i++) {\r\n                for (int j = 0; j < m.getColumns(); j++) {\r\n                    if (w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() != 4) { //se la casella è adiacente ma non coincidente e se la torre non è completa\r\n                        Coordinate c1 = w.getPosition().nextCoordinate(m, m.getBoard()[i][j].getLocation());//restituisce la casella stessa se non ha una successiva\r\n                        if (!m.getBoard()[i][j].getLocation().equals(c1) && m.getBoard()[c1.getX()][c1.getY()].isEmpty() && !m.getBoard()[i][j].isEmpty() && !m.getBoard()[i][j].getWorkerBox().getIDplayer().equals(w.getIDplayer()) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(m.getBoard()[i][j]) >= 0 && m.getBoard()[c1.getX()][c1.getY()].getLevel() != 4) {\r\n                            //se la casella c ha una successiva e se la casella successiva  è vuota e se la casella indicata contiene un operaio e se l'operaio nella casella non è dello stesso giocatore e se la casella in cui mi voglio spostare non è piu alta del mio livello e se la casella successiva non è completa\r\n                            return false; //si puo usare la divinità\r\n                        }\r\n                    }\r\n                }\r\n            }\r\n        } else {\r\n            for (int i = 0; i < m.getRows(); i++) {\r\n                for (int j = 0; j < m.getColumns(); j++) {\r\n                    if (w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() != 4) {\r\n                        Coordinate c1 = w.getPosition().nextCoordinate(m, m.getBoard()[i][j].getLocation());\r\n                        if (!m.getBoard()[i][j].getLocation().equals(c1) && m.getBoard()[c1.getX()][c1.getY()].isEmpty() && !m.getBoard()[i][j].isEmpty() && !m.getBoard()[i][j].getWorkerBox().getIDplayer().equals(w.getIDplayer()) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(m.getBoard()[i][j]) >= -1 && m.getBoard()[c1.getX()][c1.getY()].getLevel() != 4) {\r\n                            //se la casella c ha una successiva e se la casella successiva  è vuota e se la casella indicata contiene un operaio e se l'operaio nella casella non è dello stesso giocatore e se la casella in cui mi voglio spostare non è alta di più di 1 livello e se la casella successiva non è completa\r\n                            return false;\r\n                        }\r\n                    }\r\n                }\r\n            }\r\n        }\r\n        return true;\r\n    }\r\n\r\n    @Override\r\n    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {\r\n        return super.whereCanMove(match,ch,id,athenaOn);\r\n    }\r\n\r\n    @Override\r\n    public String printCoordinates(ArrayList<Coordinate> coordinates) {\r\n        return super.printCoordinates(coordinates);\r\n    }\r\n\r\n}\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/MinotaurTurn.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/MinotaurTurn.java	(date 1588284777855)
+@@ -11,23 +11,14 @@
+         super(turn);
+     }
+ 
+-    @Override
+-    public boolean winCondition(Match m, Player p) {
+-        return super.winCondition(m, p);
+-    }
+-
+-    @Override
+-    public boolean build(Match m, Worker w, Coordinate c) {
+-        return super.build(m, w, c);
+-    }
+-
++/*
+     /**
+      * allows a player to move his worker in an adjacent box already occupied by a worker of another player and change that worker's position in the following box
+      * @param m match played
+      * @param w worker that must be moved
+      * @param c new position of w occupied by a worker of another player
+      * @return true if is moved in c, else false
+-     */
++
+     public boolean move(Match m, Worker w, Coordinate c) {
+         if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){
+             if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <= 1) {
+@@ -40,35 +31,6 @@
+                 //se la casella c non ha una successiva oppure se la casella successiva non è vuota oppure se la casella indicata non contiene un operaio oppure se l'operaio nella casella è dello stesso giocatore oppure se la casella in cui mi voglio spostare è alta di più di 1 livello oppure se la casella successiva è completa
+                 return false;
+             }
+-            else {
+-                m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c1);
+-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
+-                w.changeMoved(true);
+-                return true;
+-            }
+-        }
+-        else
+-            return false;
+-    }
+-
+-    /**
+-     * allows a player to move his worker without upgrading his level in an adjacent box already occupied by a worker of another player and change that worker's position in the following box
+-     * @param m match played
+-     * @param w worker that must be moved
+-     * @param c new position of w occupied by a worker of another player
+-     * @return true if is moved in c, else false
+-     */
+-    public boolean limited_move(Match m, Worker w, Coordinate c) {
+-        if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){
+-            if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <=0) {
+-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
+-                w.changeMoved(true);
+-                return true;
+-            }
+-            Coordinate c1 = w.getPosition().nextCoordinate(m, c);
+-            if(c1.equals(c) || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4)
+-                //se la casella c non ha una successiva oppure se la casella successiva non è vuota oppure se la casella indicata non contiene un operaio oppure se l'operaio nella casella è dello stesso giocatore oppure se la casella in cui mi voglio spostare è piu alta della mia casella oppure se la casella successiva è completa
+-                return false;
+             else {
+                 m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c1);
+                 m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
+@@ -79,6 +41,7 @@
+         else
+             return false;
+     }
++*/
+ 
+     /**
+      * checks if a player can't move his worker using Minotaur power
+Index: santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/PrometheusTurn.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.*;\r\nimport it.polimi.ingsw.PSP29.virtualView.ClientHandler;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.Scanner;\r\n\r\npublic class PrometheusTurn extends GodTurn {\r\n    public PrometheusTurn(Turn turn) {\r\n        super(turn);\r\n    }\r\n\r\n    /**\r\n     * call winCondition() of the superclass\r\n     * @param m match played\r\n     * @param p player that plays the turn\r\n     * @return true if p win the game, else false\r\n     */\r\n    @Override\r\n    public boolean winCondition(Match m, Player p) {\r\n        return super.winCondition(m, p);\r\n    }\r\n\r\n    /**\r\n     * call build() of the superclass\r\n     * @param m match played\r\n     * @param w worker that must build\r\n     * @param c location of the box where w must build\r\n     * @return true if w has built in c, else false\r\n     */\r\n    @Override\r\n    public boolean build(Match m, Worker w, Coordinate c) {\r\n        return super.build(m, w, c);\r\n    }\r\n\r\n    /**\r\n     * allows a player to build before and after moving his worker if in this turn his worker can't level up\r\n     * @param m match played\r\n     * @param w worker that must be moved\r\n     * @param c new position of w\r\n     * @return true if is moved in c, else false\r\n     */\r\n    public boolean move(Match m, Worker w, Coordinate c) {\r\n        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){\r\n            return false; //se la mossa non è valida\r\n        }\r\n        else {\r\n            Scanner scanner = new Scanner(System.in);\r\n            String x, y;\r\n            do {\r\n                System.out.println(\"Potere dio attivato!!\\nInserisci una nuova coordinata dove vuoi costruire: \\t\");\r\n                x = scanner.nextLine();\r\n                y = scanner.nextLine();\r\n            } while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);\r\n            Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));\r\n            if((!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()) || (c.equals(c1) && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0)){\r\n                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);\r\n                w.changeMoved(true);\r\n                return true; //mi muovo ma non costruisco\r\n            }\r\n            else{\r\n                m.updateBuilding(c1);\r\n                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);\r\n                w.changeMoved(true); //costruisco e mi muovo\r\n                return true;\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * allows a player to build before and after moving his worker without letting him level up\r\n     * @param m match played\r\n     * @param w worker that must be moved\r\n     * @param c new position of w\r\n     * @return true if is moved in c, else false\r\n     */\r\n    public boolean limited_move(Match m, Worker w, Coordinate c) {\r\n        Scanner scanner = new Scanner(System.in);\r\n        String x, y;\r\n        do {\r\n            System.out.println(\"Potere dio attivato!!\\nInserisci una nuova coordinata dove vuoi costruire: \\t\");\r\n            x = scanner.nextLine();\r\n            y = scanner.nextLine();\r\n        }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);\r\n        Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));\r\n        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){\r\n            return false; //se la mossa non è valida\r\n        }\r\n        else {\r\n            if((!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()) || (c.equals(c1) && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >=0)){\r\n                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);\r\n                w.changeMoved(true);\r\n                return true; //mi muovo ma non costruisco\r\n            }\r\n            else{\r\n                m.updateBuilding(c1);\r\n                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);\r\n                w.changeMoved(true); //costruisco e mi muovo\r\n                return true;\r\n            }\r\n        }\r\n    }\r\n\r\n    /**\r\n     * checks if a player can't move his worker using Prometheus power\r\n     * @param m match played\r\n     * @param w worker that can be moved\r\n     * @param athena true if the athena power is on, else false\r\n     * @return true if w can't move to another location, else false\r\n     */\r\n   /* @Override\r\n    public boolean cantMove(Match m,Worker w, boolean athena){\r\n        int count = 0;\r\n        if(!athena){\r\n            for(int i=0; i<m.getRows(); i++){\r\n                for(int j=0; j<m.getColumns(); j++){\r\n                    if(m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel()!=4 && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(m.getBoard()[i][j])==-1){\r\n                        //se esiste una casella che è vuota, è vicina al mio operaio, la cui torre non è completa e il mio operaio puo salire di livello\r\n                        return true;//non si può usare la divinità\r\n                    }\r\n                    else { // devo controllare che costruendo poi riesca a muoversi\r\n                        if (!w.canLevelUp(m) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() < 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() <= m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())\r\n                            //se il worker non puo salire di livello ed è a livello inferiore a 3 e se esiste una casella che è vuota e vicina al mio operaio, il cui livello è inferirore o uguale a quello del mio worker\r\n                            return false;\r\n                        else {\r\n                            if (!w.canLevelUp(m) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() < m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())\r\n                                return false;//se il worker non puo salire di livello ed è al terzo livello e c'è almeno una casella vuota e adiacente che è ha un livello inferiore\r\n                            if (!w.canLevelUp(m) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() != 4)//almeno due caselle che non sono al 4 livello\r\n                                count =count +1;//se worker non può salire di livello ed è al terzo livello e ci sono almeno due caselle che non sono al 4 livello\r\n                        }\r\n                    }\r\n                }\r\n            }\r\n            if(count >=2)\r\n                return false;\r\n            else\r\n                return true;\r\n        }\r\n        else {\r\n            for(int i=0; i<m.getRows(); i++){\r\n                for(int j=0; j<m.getColumns(); j++) {\r\n                    if (m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() <= 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() < m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())\r\n                        //se il worker è a livello inferiore o uguale a 3 e se esiste una casella che è vuota e vicina al mio operaio, il cui livello è inferirore a quello del mio worker\r\n                        return false;\r\n                    if (m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() != 4)//almeno due caselle che non sono al 4 livello\r\n                        count =count +1;//se worker è al terzo livello e ci sono almeno due caselle che non sono al 4 livello\r\n\r\n                }\r\n            }\r\n            if(count >=2)\r\n                return false;\r\n            else\r\n                return true;\r\n\r\n        }\r\n    }*/\r\n\r\n    @Override\r\n    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {\r\n        return super.whereCanMove(match,ch,id,athenaOn);\r\n    }\r\n\r\n    @Override\r\n    public String printCoordinates(ArrayList<Coordinate> coordinates) {\r\n        return super.printCoordinates(coordinates);\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/PrometheusTurn.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/PrometheusTurn.java	(date 1588284777839)
+@@ -11,29 +11,6 @@
+         super(turn);
+     }
+ 
+-    /**
+-     * call winCondition() of the superclass
+-     * @param m match played
+-     * @param p player that plays the turn
+-     * @return true if p win the game, else false
+-     */
+-    @Override
+-    public boolean winCondition(Match m, Player p) {
+-        return super.winCondition(m, p);
+-    }
+-
+-    /**
+-     * call build() of the superclass
+-     * @param m match played
+-     * @param w worker that must build
+-     * @param c location of the box where w must build
+-     * @return true if w has built in c, else false
+-     */
+-    @Override
+-    public boolean build(Match m, Worker w, Coordinate c) {
+-        return super.build(m, w, c);
+-    }
+-
+     /**
+      * allows a player to build before and after moving his worker if in this turn his worker can't level up
+      * @param m match played
+@@ -102,13 +79,6 @@
+         }
+     }
+ 
+-    /**
+-     * checks if a player can't move his worker using Prometheus power
+-     * @param m match played
+-     * @param w worker that can be moved
+-     * @param athena true if the athena power is on, else false
+-     * @return true if w can't move to another location, else false
+-     */
+    /* @Override
+     public boolean cantMove(Match m,Worker w, boolean athena){
+         int count = 0;
+@@ -155,15 +125,4 @@
+ 
+         }
+     }*/
+-
+-    @Override
+-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+-        return super.whereCanMove(match,ch,id,athenaOn);
+-    }
+-
+-    @Override
+-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
+-        return super.printCoordinates(coordinates);
+-    }
+-
+ }
+Index: santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/HephaestusTurnTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.Coordinate;\r\nimport it.polimi.ingsw.PSP29.model.Match;\r\nimport it.polimi.ingsw.PSP29.model.Player;\r\nimport it.polimi.ingsw.PSP29.model.Worker;\r\nimport org.junit.After;\r\nimport org.junit.Before;\r\nimport org.junit.Test;\r\n\r\nimport static org.junit.Assert.*;\r\n\r\npublic class HephaestusTurnTest {\r\n    Match m = null;\r\n    HephaestusTurn turn = null;\r\n\r\n    @Before\r\n    public void setUp() {\r\n        m = new Match();\r\n        m.inizializeBoard();\r\n        m.getPlayers().add(new Player(\"Luca\", 21));\r\n        m.getPlayers().add(new Player(\"Carlo\", 21));\r\n        turn = new HephaestusTurn(new GodTurn(new BaseTurn()));\r\n    }\r\n\r\n    @After\r\n    public void TearDown(){ }\r\n\r\n    @Test\r\n    public void winCondition_notValidLevelInput_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        wL.changeMoved(true);\r\n        wL.changeBuilt(true);\r\n        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));\r\n    }\r\n\r\n    @Test\r\n    public void build_notValidCoordinateInput_falseOutput() {\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(0,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertFalse(turn.build(m, wL, cC));\r\n        assertFalse(wL.getBuilt());\r\n    }\r\n\r\n    @Test\r\n    public void move_correctInput_callSuperMove_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(0,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(turn.move(m, wL, cnext));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(cnext));\r\n        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());\r\n    }\r\n\r\n    @Test\r\n    public void move_notEmptyBoxInput_callSuperMove_falseOutput() {\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(0,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertFalse(turn.move(m, wL, cC));\r\n        assertFalse(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(cL));\r\n        assertFalse(m.getBoard()[cC.getX()][cC.getY()].isEmpty());\r\n    }\r\n\r\n    @Test\r\n    public void limited_move_correctInput_callSuperLimitedMove_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        m.updateBuilding(c);\r\n        Coordinate cnext = new Coordinate(0,0);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(turn.limited_move(m, wL, cnext));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(cnext));\r\n        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());\r\n        assertFalse(m.getBoard()[cnext.getX()][cnext.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);\r\n    }\r\n\r\n    @Test\r\n    public void limited_move_upperLevelBoxInput_callSuperLimitedMove_falseOutput() {\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate c1 = new Coordinate(1,2);\r\n        m.updateBuilding(c1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);\r\n        assertFalse(turn.limited_move(m, wL, c1));\r\n        assertFalse(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(c));\r\n    }\r\n\r\n    @Test\r\n    public void cantMove_correctInputs_callSuperCantMove_falseOutput() {\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertFalse(turn.cantMove(m, wL, false));\r\n        assertFalse(turn.cantMove(m, wL, true));\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/HephaestusTurnTest.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/HephaestusTurnTest.java	(date 1588284859594)
+@@ -35,76 +35,4 @@
+         wL.changeBuilt(true);
+         assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+     }
+-
+-    @Test
+-    public void build_notValidCoordinateInput_falseOutput() {
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate cC = new Coordinate(0,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        assertFalse(turn.build(m, wL, cC));
+-        assertFalse(wL.getBuilt());
+-    }
+-
+-    @Test
+-    public void move_correctInput_callSuperMove_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(0,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(turn.move(m, wL, cnext));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(cnext));
+-        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
+-    }
+-
+-    @Test
+-    public void move_notEmptyBoxInput_callSuperMove_falseOutput() {
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate cC = new Coordinate(0,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        assertFalse(turn.move(m, wL, cC));
+-        assertFalse(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(cL));
+-        assertFalse(m.getBoard()[cC.getX()][cC.getY()].isEmpty());
+-    }
+-
+-    @Test
+-    public void limited_move_correctInput_callSuperLimitedMove_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        m.updateBuilding(c);
+-        Coordinate cnext = new Coordinate(0,0);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(turn.limited_move(m, wL, cnext));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(cnext));
+-        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
+-        assertFalse(m.getBoard()[cnext.getX()][cnext.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);
+-    }
+-
+-    @Test
+-    public void limited_move_upperLevelBoxInput_callSuperLimitedMove_falseOutput() {
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate c1 = new Coordinate(1,2);
+-        m.updateBuilding(c1);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);
+-        assertFalse(turn.limited_move(m, wL, c1));
+-        assertFalse(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(c));
+-    }
+-
+-    @Test
+-    public void cantMove_correctInputs_callSuperCantMove_falseOutput() {
+-        Coordinate c = new Coordinate(1,1);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertFalse(turn.cantMove(m, wL, false));
+-        assertFalse(turn.cantMove(m, wL, true));
+-    }
+ }
+Index: santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/PanTurnTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.Coordinate;\r\nimport it.polimi.ingsw.PSP29.model.Match;\r\nimport it.polimi.ingsw.PSP29.model.Player;\r\nimport it.polimi.ingsw.PSP29.model.Worker;\r\nimport org.junit.After;\r\nimport org.junit.Before;\r\nimport org.junit.Test;\r\n\r\nimport static org.junit.Assert.*;\r\n\r\npublic class PanTurnTest {\r\n    Match m = null;\r\n    PanTurn turn = null;\r\n\r\n    @Before\r\n    public void setUp() {\r\n        m = new Match();\r\n        m.inizializeBoard();\r\n        m.getPlayers().add(new Player(\"Luca\", 21));\r\n        m.getPlayers().add(new Player(\"Carlo\", 21));\r\n        turn = new PanTurn(new GodTurn(new BaseTurn()));\r\n    }\r\n\r\n    @After\r\n    public void TearDown() { }\r\n\r\n    @Test\r\n    public void winCondition_validWinningPanConditions_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(1,2);\r\n        Coordinate cbuild = new Coordinate(1,3);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(cnext);\r\n        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))\r\n        {\r\n            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));\r\n            assertTrue(!m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) >= 2);\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_validWinningPanConditionsWithSameLevelPrevPositionInput_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(1,2);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(cnext);\r\n        if(turn.move(m, wL, cnext) && turn.build(m, wL, c))\r\n        {\r\n            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));\r\n            assertTrue(m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) >= 3);\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_notValidPreviousPositionInput_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(1,2);\r\n        Coordinate cbuild = new Coordinate(1,3);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))\r\n        {\r\n            assertFalse(turn.winCondition(m,m.getPlayers().get(0)));\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_validWinningConditionsInput_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(1,2);\r\n        Coordinate cbuild = new Coordinate(1,3);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))\r\n        {\r\n            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));\r\n            assertTrue(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].getLevel() == 3 && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel() == 2);\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_validWinningConditionsWithSameLevelPrevPositionInput_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(1,2);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        if(turn.move(m, wL, cnext) && turn.build(m, wL, c))\r\n        {\r\n            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));\r\n            assertTrue(m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel()==3);\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_notValidTurnInput_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        wL.changeBuilt(false);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));\r\n        assertFalse(wL.getMoved() && wL.getBuilt());\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_notValidLevelInput_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        wL.changeMoved(true);\r\n        wL.changeBuilt(true);\r\n        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));\r\n    }\r\n\r\n    @Test\r\n    public void build_correctInput_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate c1 = new Coordinate(1,0);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(turn.build(m, wL, c1));\r\n        assertTrue(wL.getBuilt());\r\n        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);\r\n    }\r\n\r\n    @Test\r\n    public void move_correctInput_callSuperMove_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(0,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(turn.move(m, wL, cnext));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(cnext));\r\n        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());\r\n    }\r\n\r\n    @Test\r\n    public void limited_move_correctInput_callSuperLimitedMove_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        m.updateBuilding(c);\r\n        Coordinate cnext = new Coordinate(0,0);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(turn.limited_move(m, wL, cnext));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(cnext));\r\n        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());\r\n        assertFalse(m.getBoard()[cnext.getX()][cnext.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);\r\n    }\r\n\r\n    @Test\r\n    public void cantMove_correctInput_falseOutput() {\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertFalse(turn.cantMove(m, wL, false));\r\n        assertFalse(turn.cantMove(m, wL, true));\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/PanTurnTest.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/PanTurnTest.java	(date 1588284889694)
+@@ -26,97 +26,6 @@
+     @After
+     public void TearDown() { }
+ 
+-    @Test
+-    public void winCondition_validWinningPanConditions_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(1,2);
+-        Coordinate cbuild = new Coordinate(1,3);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(cnext);
+-        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
+-        {
+-            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+-            assertTrue(!m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) >= 2);
+-        }
+-    }
+-
+-    @Test
+-    public void winCondition_validWinningPanConditionsWithSameLevelPrevPositionInput_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(1,2);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(cnext);
+-        if(turn.move(m, wL, cnext) && turn.build(m, wL, c))
+-        {
+-            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+-            assertTrue(m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) >= 3);
+-        }
+-    }
+-
+-    @Test
+-    public void winCondition_notValidPreviousPositionInput_falseOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(1,2);
+-        Coordinate cbuild = new Coordinate(1,3);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
+-        {
+-            assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+-        }
+-    }
+-
+-    @Test
+-    public void winCondition_validWinningConditionsInput_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(1,2);
+-        Coordinate cbuild = new Coordinate(1,3);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
+-        {
+-            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+-            assertTrue(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].getLevel() == 3 && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel() == 2);
+-        }
+-    }
+-
+-    @Test
+-    public void winCondition_validWinningConditionsWithSameLevelPrevPositionInput_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(1,2);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        if(turn.move(m, wL, cnext) && turn.build(m, wL, c))
+-        {
+-            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+-            assertTrue(m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel()==3);
+-        }
+-    }
+-
+     @Test
+     public void winCondition_notValidTurnInput_falseOutput(){
+         Coordinate c = new Coordinate(1,1);
+@@ -136,50 +45,4 @@
+         wL.changeBuilt(true);
+         assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+     }
+-
+-    @Test
+-    public void build_correctInput_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate c1 = new Coordinate(1,0);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(turn.build(m, wL, c1));
+-        assertTrue(wL.getBuilt());
+-        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);
+-    }
+-
+-    @Test
+-    public void move_correctInput_callSuperMove_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(0,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(turn.move(m, wL, cnext));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(cnext));
+-        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
+-    }
+-
+-    @Test
+-    public void limited_move_correctInput_callSuperLimitedMove_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        m.updateBuilding(c);
+-        Coordinate cnext = new Coordinate(0,0);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(turn.limited_move(m, wL, cnext));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(cnext));
+-        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
+-        assertFalse(m.getBoard()[cnext.getX()][cnext.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);
+-    }
+-
+-    @Test
+-    public void cantMove_correctInput_falseOutput() {
+-        Coordinate c = new Coordinate(1,1);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertFalse(turn.cantMove(m, wL, false));
+-        assertFalse(turn.cantMove(m, wL, true));
+-    }
+ }
+\ No newline at end of file
+Index: santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/PrometheusTurnTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.Coordinate;\r\nimport it.polimi.ingsw.PSP29.model.Match;\r\nimport it.polimi.ingsw.PSP29.model.Player;\r\nimport it.polimi.ingsw.PSP29.model.Worker;\r\nimport org.junit.After;\r\nimport org.junit.Before;\r\nimport org.junit.Test;\r\n\r\nimport static org.junit.Assert.*;\r\n\r\npublic class PrometheusTurnTest {\r\n    Match m = null;\r\n    PrometheusTurn turn = null;\r\n\r\n    @Before\r\n    public void setUp() {\r\n        m = new Match();\r\n        m.inizializeBoard();\r\n        m.getPlayers().add(new Player(\"Luca\", 21));\r\n        m.getPlayers().add(new Player(\"Carlo\", 21));\r\n        turn = new PrometheusTurn(new GodTurn(new BaseTurn()));\r\n    }\r\n\r\n    @After\r\n    public void TearDown(){\r\n\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_notValidLevelInput_callSuperWinCondition_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        wL.changeMoved(true);\r\n        wL.changeBuilt(true);\r\n        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));\r\n    }\r\n\r\n    @Test\r\n    public void build_correctInput_callSuperBuild_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate c1 = new Coordinate(1,0);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(turn.build(m, wL, c1));\r\n        assertTrue(wL.getBuilt());\r\n        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);\r\n    }\r\n\r\n    @Test\r\n    public void move_notValidCoordinateInput_falseOutput() {\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(0,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertFalse(turn.move(m, wL, cC));\r\n        assertFalse(wL.getMoved());\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/PrometheusTurnTest.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/PrometheusTurnTest.java	(date 1588284889678)
+@@ -38,16 +38,6 @@
+         assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+     }
+ 
+-    @Test
+-    public void build_correctInput_callSuperBuild_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate c1 = new Coordinate(1,0);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(turn.build(m, wL, c1));
+-        assertTrue(wL.getBuilt());
+-        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);
+-    }
+ 
+     @Test
+     public void move_notValidCoordinateInput_falseOutput() {
+Index: santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/BaseTurnTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.Coordinate;\r\nimport it.polimi.ingsw.PSP29.model.Match;\r\nimport it.polimi.ingsw.PSP29.model.Player;\r\nimport it.polimi.ingsw.PSP29.model.Worker;\r\nimport org.junit.After;\r\nimport org.junit.Before;\r\nimport org.junit.Test;\r\n\r\nimport static org.junit.Assert.*;\r\n\r\npublic class BaseTurnTest {\r\n    Match m = null;\r\n    BaseTurn turn = null;\r\n\r\n    @Before\r\n    public void setUp() {\r\n        m = new Match();\r\n        m.inizializeBoard();\r\n        m.getPlayers().add(new Player(\"Luca\", 21));\r\n        m.getPlayers().add(new Player(\"Carlo\", 21));\r\n        turn = new BaseTurn();\r\n    }\r\n\r\n    @After\r\n    public void TearDown(){ }\r\n\r\n    @Test\r\n    public void winCondition_notValidPreviousPositionInput_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(1,2);\r\n        Coordinate cbuild = new Coordinate(1,3);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))\r\n        {\r\n            assertFalse(turn.winCondition(m,m.getPlayers().get(0)));\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_validWinningConditionsInput_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(1,2);\r\n        Coordinate cbuild = new Coordinate(1,3);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))\r\n        {\r\n            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));\r\n            assertTrue(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].getLevel() == 3 && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel() == 2);\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_validWinningConditionsWithSameLevelPrevPositionInput_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate cnext = new Coordinate(1,2);\r\n        m.updateBuilding(c);\r\n        m.updateBuilding(c);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        m.updateBuilding(cnext);\r\n        if(turn.move(m, wL, cnext) && turn.build(m, wL, c))\r\n        {\r\n            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));\r\n            assertTrue(m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel()==3);\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_notValidLevelInput_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        wL.changeMoved(true);\r\n        wL.changeBuilt(true);\r\n        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));\r\n    }\r\n\r\n    @Test\r\n    public void winCondition_notValidTurnInput_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        wL.changeBuilt(false);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));\r\n        assertFalse(wL.getMoved() && wL.getBuilt());\r\n    }\r\n\r\n    @Test\r\n    public void move_notValidNearBoxInput_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate c1 = new Coordinate(0,4);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertFalse(c.isNear(c1));\r\n        assertFalse(turn.move(m, wL, c1));\r\n        assertFalse(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(c));\r\n    }\r\n\r\n    @Test\r\n    public void move_correctInput_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate c1 = new Coordinate(0,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(turn.move(m, wL, c1));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(c1));\r\n    }\r\n\r\n    @Test\r\n    public void limited_move_upperLevelBoxInput_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate c1 = new Coordinate(0,2);\r\n        m.updateBuilding(c1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);\r\n        assertFalse(turn.limited_move(m, wL, c1));\r\n        assertFalse(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(c));\r\n    }\r\n\r\n    @Test\r\n    public void limited_move_correctInput_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate c1 = new Coordinate(0,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(turn.limited_move(m, wL, c1));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(c1));\r\n    }\r\n\r\n    @Test\r\n    public void build_correctInput_trueOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Coordinate c1 = new Coordinate(1,0);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertTrue(turn.build(m, wL, c1));\r\n        assertTrue(wL.getBuilt());\r\n        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);\r\n    }\r\n\r\n    @Test\r\n    public void build_notEmptyBoxInput_falseOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(0,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertFalse(turn.build(m, wL, cC));\r\n        assertFalse(wL.getBuilt());\r\n        assertEquals(m.getBoard()[cC.getX()][cC.getY()].getLevel(),0);\r\n    }\r\n\r\n    @Test\r\n    public void cantMove_correctInput_falseOutput() {\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        assertFalse(turn.cantMove(m, wL, false));\r\n        assertFalse(turn.cantMove(m, wL, true));\r\n    }\r\n    @Test\r\n    public void cantMove_notValidInputWithAthenaOn_trueOutput() {\r\n        Coordinate c = new Coordinate(0,0);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(new Coordinate(0,1));\r\n        m.updateBuilding(new Coordinate(1,1));\r\n        m.updateBuilding(new Coordinate(1,0));\r\n        assertTrue(turn.cantMove(m, wL, true));\r\n        assertTrue(wL.canLevelUp(m));\r\n    }\r\n\r\n    @Test\r\n    public void cantMove_notValidInputWithAthenaOff_trueOutput() {\r\n        Coordinate c = new Coordinate(0,0);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        m.updateBuilding(new Coordinate(0,1));\r\n        m.updateBuilding(new Coordinate(0,1));\r\n        m.updateBuilding(new Coordinate(1,0));\r\n        m.updateBuilding(new Coordinate(1,0));\r\n        m.updateBuilding(new Coordinate(1,1));\r\n        m.updateBuilding(new Coordinate(1,1));\r\n        assertTrue(turn.cantMove(m, wL, false));\r\n        assertFalse(wL.canLevelUp(m));\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/BaseTurnTest.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/BaseTurnTest.java	(date 1588267865753)
+@@ -26,62 +26,6 @@
+     @After
+     public void TearDown(){ }
+ 
+-    @Test
+-    public void winCondition_notValidPreviousPositionInput_falseOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(1,2);
+-        Coordinate cbuild = new Coordinate(1,3);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
+-        {
+-            assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+-        }
+-    }
+-
+-    @Test
+-    public void winCondition_validWinningConditionsInput_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(1,2);
+-        Coordinate cbuild = new Coordinate(1,3);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        if(turn.move(m, wL, cnext) && turn.build(m, wL, cbuild))
+-        {
+-            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+-            assertTrue(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].getLevel() == 3 && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel() == 2);
+-        }
+-    }
+-
+-    @Test
+-    public void winCondition_validWinningConditionsWithSameLevelPrevPositionInput_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate cnext = new Coordinate(1,2);
+-        m.updateBuilding(c);
+-        m.updateBuilding(c);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        m.updateBuilding(cnext);
+-        if(turn.move(m, wL, cnext) && turn.build(m, wL, c))
+-        {
+-            assertTrue(turn.winCondition(m,m.getPlayers().get(0)));
+-            assertTrue(m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getlevelledUp() && m.getBoard()[wL.getPrev_position().getX()][wL.getPrev_position().getY()].getLevel()==3);
+-        }
+-    }
+-
+     @Test
+     public void winCondition_notValidLevelInput_falseOutput(){
+         Coordinate c = new Coordinate(1,1);
+@@ -101,109 +45,4 @@
+         assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+         assertFalse(wL.getMoved() && wL.getBuilt());
+     }
+-
+-    @Test
+-    public void move_notValidNearBoxInput_falseOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate c1 = new Coordinate(0,4);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertFalse(c.isNear(c1));
+-        assertFalse(turn.move(m, wL, c1));
+-        assertFalse(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(c));
+-    }
+-
+-    @Test
+-    public void move_correctInput_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate c1 = new Coordinate(0,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(turn.move(m, wL, c1));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(c1));
+-    }
+-
+-    @Test
+-    public void limited_move_upperLevelBoxInput_falseOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate c1 = new Coordinate(0,2);
+-        m.updateBuilding(c1);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);
+-        assertFalse(turn.limited_move(m, wL, c1));
+-        assertFalse(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(c));
+-    }
+-
+-    @Test
+-    public void limited_move_correctInput_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate c1 = new Coordinate(0,1);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(turn.limited_move(m, wL, c1));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(c1));
+-    }
+-
+-    @Test
+-    public void build_correctInput_trueOutput(){
+-        Coordinate c = new Coordinate(1,1);
+-        Coordinate c1 = new Coordinate(1,0);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertTrue(turn.build(m, wL, c1));
+-        assertTrue(wL.getBuilt());
+-        assertEquals(m.getBoard()[c1.getX()][c1.getY()].getLevel(),1);
+-    }
+-
+-    @Test
+-    public void build_notEmptyBoxInput_falseOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate cC = new Coordinate(0,1);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        assertFalse(turn.build(m, wL, cC));
+-        assertFalse(wL.getBuilt());
+-        assertEquals(m.getBoard()[cC.getX()][cC.getY()].getLevel(),0);
+-    }
+-
+-    @Test
+-    public void cantMove_correctInput_falseOutput() {
+-        Coordinate c = new Coordinate(1,1);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        assertFalse(turn.cantMove(m, wL, false));
+-        assertFalse(turn.cantMove(m, wL, true));
+-    }
+-    @Test
+-    public void cantMove_notValidInputWithAthenaOn_trueOutput() {
+-        Coordinate c = new Coordinate(0,0);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(new Coordinate(0,1));
+-        m.updateBuilding(new Coordinate(1,1));
+-        m.updateBuilding(new Coordinate(1,0));
+-        assertTrue(turn.cantMove(m, wL, true));
+-        assertTrue(wL.canLevelUp(m));
+-    }
+-
+-    @Test
+-    public void cantMove_notValidInputWithAthenaOff_trueOutput() {
+-        Coordinate c = new Coordinate(0,0);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, c);
+-        m.updateBuilding(new Coordinate(0,1));
+-        m.updateBuilding(new Coordinate(0,1));
+-        m.updateBuilding(new Coordinate(1,0));
+-        m.updateBuilding(new Coordinate(1,0));
+-        m.updateBuilding(new Coordinate(1,1));
+-        m.updateBuilding(new Coordinate(1,1));
+-        assertTrue(turn.cantMove(m, wL, false));
+-        assertFalse(wL.canLevelUp(m));
+-    }
+ }
+Index: santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/MinotaurTurnTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.Coordinate;\r\nimport it.polimi.ingsw.PSP29.model.Match;\r\nimport it.polimi.ingsw.PSP29.model.Player;\r\nimport it.polimi.ingsw.PSP29.model.Worker;\r\nimport org.junit.After;\r\nimport org.junit.Before;\r\nimport org.junit.Test;\r\n\r\nimport static org.junit.Assert.*;\r\n\r\npublic class MinotaurTurnTest {\r\n    Match m = null;\r\n    MinotaurTurn turn = null;\r\n    @Before\r\n    public void setUp() {\r\n        m = new Match();\r\n        m.inizializeBoard();\r\n        m.getPlayers().add(new Player(\"Luca\", 21));\r\n        m.getPlayers().add(new Player(\"Carlo\", 21));\r\n        turn = new MinotaurTurn(new GodTurn(new BaseTurn()));\r\n    }\r\n\r\n    @After\r\n    public void TearDown(){ }\r\n\r\n    @Test\r\n    public void winCondition_notValidLevelInput_callSuperWinCondition_falseOutput(){\r\n        Coordinate c = new Coordinate(1,1);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, c);\r\n        wL.changeMoved(true);\r\n        wL.changeBuilt(true);\r\n        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));\r\n    }\r\n\r\n    @Test\r\n    public void move_correctInput_trueOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        m.updateBuilding(cL);\r\n        Coordinate cC = new Coordinate(1,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC);\r\n        assertFalse(m.getBoard()[cC.getX()][cC.getY()].isEmpty() && m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 1);\r\n        assertFalse(cNext.equals(cC) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);\r\n        assertTrue(turn.move(m, wL, cC));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(cC));\r\n        assertTrue(wC.getPosition().equals(cNext));\r\n    }\r\n\r\n    @Test\r\n    public void move_notNearBoxInput_falseOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(3,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertFalse(turn.move(m, wL, cC));\r\n        assertFalse(wL.getMoved());\r\n        assertFalse(wL.getPosition().equals(cC));\r\n    }\r\n\r\n    @Test\r\n    public void move_emptyNearBoxInput_trueOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate c = new Coordinate(0,0);\r\n        m.updateBuilding(c);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        assertTrue(turn.move(m, wL, c));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(c));\r\n    }\r\n\r\n    @Test\r\n    public void move_correctInput_notAvailableEmptyNextBox_falseOutput() {\r\n        Coordinate cL = new Coordinate(1,1);\r\n        m.updateBuilding(cL);\r\n        Coordinate cC1 = new Coordinate(1,2);\r\n        Coordinate cC2 = new Coordinate(1,3);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC1 = m.getPlayers().get(1).getWorker(0);\r\n        Worker wC2 = m.getPlayers().get(1).getWorker(1);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC1);\r\n        m.updateMovement(m.getPlayers().get(1), 1, cC2);\r\n        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC1);\r\n        assertFalse(m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() && m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 1);\r\n        assertTrue(cNext.equals(cC1) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);\r\n        assertFalse(turn.move(m, wL, cC1));\r\n        assertFalse(wL.getMoved());\r\n        assertFalse(wL.getPosition().equals(cC1));\r\n        assertTrue(wC1.getPosition().equals(cC1));\r\n        assertTrue(wC2.getPosition().equals(cNext));\r\n    }\r\n\r\n    @Test\r\n    public void limited_move_correctInput_trueOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        m.updateBuilding(cL);\r\n        Coordinate cC = new Coordinate(2,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC);\r\n        m.updateBuilding(cNext);\r\n        m.updateBuilding(cNext);\r\n        assertFalse(m.getBoard()[cC.getX()][cC.getY()].isEmpty() && m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 0);\r\n        assertFalse(cNext.equals(cC) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);\r\n        assertTrue(turn.limited_move(m, wL, cC));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(cC));\r\n        assertTrue(wC.getPosition().equals(cNext));\r\n    }\r\n\r\n    @Test\r\n    public void limited_move_notNearBoxInput_falseOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(3,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertFalse(turn.limited_move(m, wL, cC));\r\n        assertFalse(wL.getMoved());\r\n        assertFalse(wL.getPosition().equals(cC));\r\n    }\r\n\r\n    @Test\r\n    public void limited_move_emptyNearBoxInput_trueOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        m.updateBuilding(cL);\r\n        Coordinate c = new Coordinate(0,0);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        assertTrue(turn.limited_move(m, wL, c));\r\n        assertTrue(wL.getMoved());\r\n        assertTrue(wL.getPosition().equals(c));\r\n    }\r\n\r\n    @Test\r\n    public void limited_move_correctInput_notAvailableEmptyNextBox_falseOutput() {\r\n        Coordinate cL = new Coordinate(1,1);\r\n        m.updateBuilding(cL);\r\n        Coordinate cC1 = new Coordinate(1,2);\r\n        Coordinate cC2 = new Coordinate(1,3);\r\n        m.updateBuilding(cC2);\r\n        m.updateBuilding(cC2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC1 = m.getPlayers().get(1).getWorker(0);\r\n        Worker wC2 = m.getPlayers().get(1).getWorker(1);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC1);\r\n        m.updateMovement(m.getPlayers().get(1), 1, cC2);\r\n        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC1);\r\n        assertFalse(m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() && m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 0);\r\n        assertTrue(cNext.equals(cC1) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);\r\n        assertFalse(turn.limited_move(m, wL, cC1));\r\n        assertFalse(wL.getMoved());\r\n        assertFalse(wL.getPosition().equals(cC1));\r\n        assertTrue(wC1.getPosition().equals(cC1));\r\n        assertTrue(wC2.getPosition().equals(cNext));\r\n    }\r\n\r\n    @Test\r\n    public void build_notValidCoordinateInput_callSuperBuild_falseOutput() {\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(0,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertFalse(turn.build(m, wL, cC));\r\n        assertFalse(wL.getBuilt());\r\n    }\r\n\r\n    @Test\r\n    public void cantMove_correctInputWithAthenaOn_falseOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(1,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertFalse(turn.cantMove(m, wL, true));\r\n        assertTrue(wL.getPosition().isNear(m.getBoard()[cC.getX()][cC.getY()].getLocation()) && m.getBoard()[cC.getX()][cC.getY()].getLevel() != 4);\r\n        Coordinate cnext = wL.getPosition().nextCoordinate(m, m.getBoard()[cC.getX()][cC.getY()].getLocation());\r\n        assertTrue(!m.getBoard()[cC.getX()][cC.getY()].getLocation().equals(cnext) && m.getBoard()[cnext.getX()][cnext.getY()].isEmpty() && !m.getBoard()[cC.getX()][cC.getY()].isEmpty() && !m.getBoard()[cC.getX()][cC.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) && m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].level_diff(m.getBoard()[cC.getX()][cC.getY()]) >= 0 && m.getBoard()[cnext.getX()][cnext.getY()].getLevel() != 4);\r\n    }\r\n    @Test\r\n    public void cantMove_correctInputWithAthenaOff_falseOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(1,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertFalse(turn.cantMove(m, wL, false));\r\n        assertTrue(wL.getPosition().isNear(m.getBoard()[cC.getX()][cC.getY()].getLocation()) && m.getBoard()[cC.getX()][cC.getY()].getLevel() != 4);\r\n        Coordinate cnext = wL.getPosition().nextCoordinate(m, m.getBoard()[cC.getX()][cC.getY()].getLocation());\r\n        assertTrue(!m.getBoard()[cC.getX()][cC.getY()].getLocation().equals(cnext) && m.getBoard()[cnext.getX()][cnext.getY()].isEmpty() && !m.getBoard()[cC.getX()][cC.getY()].isEmpty() && !m.getBoard()[cC.getX()][cC.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) && m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].level_diff(m.getBoard()[cC.getX()][cC.getY()]) >= -1 && m.getBoard()[cnext.getX()][cnext.getY()].getLevel() != 4);\r\n    }\r\n\r\n    @Test\r\n    public void cantMove_notAvailableNearBoxWithWorker_trueOutput(){\r\n        Coordinate cL = new Coordinate(2,2);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        assertTrue(turn.cantMove(m, wL, false));\r\n        for (int i = 0; i < m.getRows(); i++) {\r\n            for (int j = 0; j < m.getColumns(); j++) {\r\n                if(wL.getPosition().isNear(m.getBoard()[i][j].getLocation()))\r\n                    assertTrue( m.getBoard()[i][j].isEmpty() || m.getBoard()[i][j].getLevel() == 4);\r\n            }\r\n        }\r\n        assertTrue(turn.cantMove(m, wL, true));\r\n        for (int i = 0; i < m.getRows(); i++) {\r\n            for (int j = 0; j < m.getColumns(); j++) {\r\n                if(wL.getPosition().isNear(m.getBoard()[i][j].getLocation()))\r\n                    assertTrue( m.getBoard()[i][j].isEmpty() || m.getBoard()[i][j].getLevel() == 4);\r\n            }\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void cantMove_availableUpperLevelBoxWithWorkerWithAthenaOnInput_trueOutput(){\r\n        Coordinate cL = new Coordinate(2,2);\r\n        Coordinate cC = new Coordinate(2,1);\r\n        m.updateBuilding(cC);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        assertTrue(turn.cantMove(m, wL, true));\r\n        for (int i = 0; i < m.getRows(); i++) {\r\n            for (int j = 0; j < m.getColumns(); j++) {\r\n                if(wL.getPosition().isNear(m.getBoard()[i][j].getLocation()))\r\n                    assertTrue( m.getBoard()[i][j].isEmpty() || m.getBoard()[i][j].getLevel() == 4 || m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].level_diff(m.getBoard()[i][j]) >= -1);\r\n            }\r\n        }\r\n    }\r\n\r\n    @Test\r\n    public void cantMove_correctInputWithAthenaOff_notAvailableNextBox_trueOutput(){\r\n        Coordinate cL = new Coordinate(1,1);\r\n        Coordinate cC = new Coordinate(0,0);\r\n        m.updateBuilding(cC);\r\n        Worker wL = m.getPlayers().get(0).getWorker(0);\r\n        Worker wC = m.getPlayers().get(1).getWorker(0);\r\n        m.updateMovement(m.getPlayers().get(0), 0, cL);\r\n        m.updateMovement(m.getPlayers().get(1), 0, cC);\r\n        Coordinate cNext = wL.getPosition().nextCoordinate(m, m.getBoard()[cC.getX()][cC.getY()].getLocation());\r\n        assertTrue(m.getBoard()[cC.getX()][cC.getY()].getLocation().equals(cNext));\r\n        assertTrue(turn.cantMove(m, wL, false));\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/MinotaurTurnTest.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/test/java/it/polimi/ingsw/PSP29/Controller/MinotaurTurnTest.java	(date 1588284859578)
+@@ -13,6 +13,7 @@
+ public class MinotaurTurnTest {
+     Match m = null;
+     MinotaurTurn turn = null;
++
+     @Before
+     public void setUp() {
+         m = new Match();
+@@ -23,240 +24,16 @@
+     }
+ 
+     @After
+-    public void TearDown(){ }
++    public void TearDown() {
++    }
+ 
+     @Test
+-    public void winCondition_notValidLevelInput_callSuperWinCondition_falseOutput(){
+-        Coordinate c = new Coordinate(1,1);
++    public void winCondition_notValidLevelInput_callSuperWinCondition_falseOutput() {
++        Coordinate c = new Coordinate(1, 1);
+         Worker wL = m.getPlayers().get(0).getWorker(0);
+         m.updateMovement(m.getPlayers().get(0), 0, c);
+         wL.changeMoved(true);
+         wL.changeBuilt(true);
+-        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
++        assertFalse(turn.winCondition(m, m.getPlayers().get(0)));
+     }
+-
+-    @Test
+-    public void move_correctInput_trueOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        m.updateBuilding(cL);
+-        Coordinate cC = new Coordinate(1,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC);
+-        assertFalse(m.getBoard()[cC.getX()][cC.getY()].isEmpty() && m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 1);
+-        assertFalse(cNext.equals(cC) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);
+-        assertTrue(turn.move(m, wL, cC));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(cC));
+-        assertTrue(wC.getPosition().equals(cNext));
+-    }
+-
+-    @Test
+-    public void move_notNearBoxInput_falseOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate cC = new Coordinate(3,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        assertFalse(turn.move(m, wL, cC));
+-        assertFalse(wL.getMoved());
+-        assertFalse(wL.getPosition().equals(cC));
+-    }
+-
+-    @Test
+-    public void move_emptyNearBoxInput_trueOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate c = new Coordinate(0,0);
+-        m.updateBuilding(c);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        assertTrue(turn.move(m, wL, c));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(c));
+-    }
+-
+-    @Test
+-    public void move_correctInput_notAvailableEmptyNextBox_falseOutput() {
+-        Coordinate cL = new Coordinate(1,1);
+-        m.updateBuilding(cL);
+-        Coordinate cC1 = new Coordinate(1,2);
+-        Coordinate cC2 = new Coordinate(1,3);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC1 = m.getPlayers().get(1).getWorker(0);
+-        Worker wC2 = m.getPlayers().get(1).getWorker(1);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC1);
+-        m.updateMovement(m.getPlayers().get(1), 1, cC2);
+-        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC1);
+-        assertFalse(m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() && m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 1);
+-        assertTrue(cNext.equals(cC1) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);
+-        assertFalse(turn.move(m, wL, cC1));
+-        assertFalse(wL.getMoved());
+-        assertFalse(wL.getPosition().equals(cC1));
+-        assertTrue(wC1.getPosition().equals(cC1));
+-        assertTrue(wC2.getPosition().equals(cNext));
+-    }
+-
+-    @Test
+-    public void limited_move_correctInput_trueOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        m.updateBuilding(cL);
+-        Coordinate cC = new Coordinate(2,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC);
+-        m.updateBuilding(cNext);
+-        m.updateBuilding(cNext);
+-        assertFalse(m.getBoard()[cC.getX()][cC.getY()].isEmpty() && m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 0);
+-        assertFalse(cNext.equals(cC) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].isEmpty() || m.getBoard()[cC.getX()][cC.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC.getX()][cC.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);
+-        assertTrue(turn.limited_move(m, wL, cC));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(cC));
+-        assertTrue(wC.getPosition().equals(cNext));
+-    }
+-
+-    @Test
+-    public void limited_move_notNearBoxInput_falseOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate cC = new Coordinate(3,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        assertFalse(turn.limited_move(m, wL, cC));
+-        assertFalse(wL.getMoved());
+-        assertFalse(wL.getPosition().equals(cC));
+-    }
+-
+-    @Test
+-    public void limited_move_emptyNearBoxInput_trueOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        m.updateBuilding(cL);
+-        Coordinate c = new Coordinate(0,0);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        assertTrue(turn.limited_move(m, wL, c));
+-        assertTrue(wL.getMoved());
+-        assertTrue(wL.getPosition().equals(c));
+-    }
+-
+-    @Test
+-    public void limited_move_correctInput_notAvailableEmptyNextBox_falseOutput() {
+-        Coordinate cL = new Coordinate(1,1);
+-        m.updateBuilding(cL);
+-        Coordinate cC1 = new Coordinate(1,2);
+-        Coordinate cC2 = new Coordinate(1,3);
+-        m.updateBuilding(cC2);
+-        m.updateBuilding(cC2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC1 = m.getPlayers().get(1).getWorker(0);
+-        Worker wC2 = m.getPlayers().get(1).getWorker(1);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC1);
+-        m.updateMovement(m.getPlayers().get(1), 1, cC2);
+-        Coordinate cNext = wL.getPosition().nextCoordinate(m, cC1);
+-        assertFalse(m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() && m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()]) <= 0);
+-        assertTrue(cNext.equals(cC1) || !m.getBoard()[cNext.getX()][cNext.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].isEmpty() || m.getBoard()[cC1.getX()][cC1.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) || m.getBoard()[cC1.getX()][cC1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>1 || m.getBoard()[cNext.getX()][cNext.getY()].getLevel()==4);
+-        assertFalse(turn.limited_move(m, wL, cC1));
+-        assertFalse(wL.getMoved());
+-        assertFalse(wL.getPosition().equals(cC1));
+-        assertTrue(wC1.getPosition().equals(cC1));
+-        assertTrue(wC2.getPosition().equals(cNext));
+-    }
+-
+-    @Test
+-    public void build_notValidCoordinateInput_callSuperBuild_falseOutput() {
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate cC = new Coordinate(0,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        assertFalse(turn.build(m, wL, cC));
+-        assertFalse(wL.getBuilt());
+-    }
+-
+-    @Test
+-    public void cantMove_correctInputWithAthenaOn_falseOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate cC = new Coordinate(1,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        assertFalse(turn.cantMove(m, wL, true));
+-        assertTrue(wL.getPosition().isNear(m.getBoard()[cC.getX()][cC.getY()].getLocation()) && m.getBoard()[cC.getX()][cC.getY()].getLevel() != 4);
+-        Coordinate cnext = wL.getPosition().nextCoordinate(m, m.getBoard()[cC.getX()][cC.getY()].getLocation());
+-        assertTrue(!m.getBoard()[cC.getX()][cC.getY()].getLocation().equals(cnext) && m.getBoard()[cnext.getX()][cnext.getY()].isEmpty() && !m.getBoard()[cC.getX()][cC.getY()].isEmpty() && !m.getBoard()[cC.getX()][cC.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) && m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].level_diff(m.getBoard()[cC.getX()][cC.getY()]) >= 0 && m.getBoard()[cnext.getX()][cnext.getY()].getLevel() != 4);
+-    }
+-    @Test
+-    public void cantMove_correctInputWithAthenaOff_falseOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate cC = new Coordinate(1,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        assertFalse(turn.cantMove(m, wL, false));
+-        assertTrue(wL.getPosition().isNear(m.getBoard()[cC.getX()][cC.getY()].getLocation()) && m.getBoard()[cC.getX()][cC.getY()].getLevel() != 4);
+-        Coordinate cnext = wL.getPosition().nextCoordinate(m, m.getBoard()[cC.getX()][cC.getY()].getLocation());
+-        assertTrue(!m.getBoard()[cC.getX()][cC.getY()].getLocation().equals(cnext) && m.getBoard()[cnext.getX()][cnext.getY()].isEmpty() && !m.getBoard()[cC.getX()][cC.getY()].isEmpty() && !m.getBoard()[cC.getX()][cC.getY()].getWorkerBox().getIDplayer().equals(wL.getIDplayer()) && m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].level_diff(m.getBoard()[cC.getX()][cC.getY()]) >= -1 && m.getBoard()[cnext.getX()][cnext.getY()].getLevel() != 4);
+-    }
+-
+-    @Test
+-    public void cantMove_notAvailableNearBoxWithWorker_trueOutput(){
+-        Coordinate cL = new Coordinate(2,2);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        assertTrue(turn.cantMove(m, wL, false));
+-        for (int i = 0; i < m.getRows(); i++) {
+-            for (int j = 0; j < m.getColumns(); j++) {
+-                if(wL.getPosition().isNear(m.getBoard()[i][j].getLocation()))
+-                    assertTrue( m.getBoard()[i][j].isEmpty() || m.getBoard()[i][j].getLevel() == 4);
+-            }
+-        }
+-        assertTrue(turn.cantMove(m, wL, true));
+-        for (int i = 0; i < m.getRows(); i++) {
+-            for (int j = 0; j < m.getColumns(); j++) {
+-                if(wL.getPosition().isNear(m.getBoard()[i][j].getLocation()))
+-                    assertTrue( m.getBoard()[i][j].isEmpty() || m.getBoard()[i][j].getLevel() == 4);
+-            }
+-        }
+-    }
+-
+-    @Test
+-    public void cantMove_availableUpperLevelBoxWithWorkerWithAthenaOnInput_trueOutput(){
+-        Coordinate cL = new Coordinate(2,2);
+-        Coordinate cC = new Coordinate(2,1);
+-        m.updateBuilding(cC);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        assertTrue(turn.cantMove(m, wL, true));
+-        for (int i = 0; i < m.getRows(); i++) {
+-            for (int j = 0; j < m.getColumns(); j++) {
+-                if(wL.getPosition().isNear(m.getBoard()[i][j].getLocation()))
+-                    assertTrue( m.getBoard()[i][j].isEmpty() || m.getBoard()[i][j].getLevel() == 4 || m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()].level_diff(m.getBoard()[i][j]) >= -1);
+-            }
+-        }
+-    }
+-
+-    @Test
+-    public void cantMove_correctInputWithAthenaOff_notAvailableNextBox_trueOutput(){
+-        Coordinate cL = new Coordinate(1,1);
+-        Coordinate cC = new Coordinate(0,0);
+-        m.updateBuilding(cC);
+-        Worker wL = m.getPlayers().get(0).getWorker(0);
+-        Worker wC = m.getPlayers().get(1).getWorker(0);
+-        m.updateMovement(m.getPlayers().get(0), 0, cL);
+-        m.updateMovement(m.getPlayers().get(1), 0, cC);
+-        Coordinate cNext = wL.getPosition().nextCoordinate(m, m.getBoard()[cC.getX()][cC.getY()].getLocation());
+-        assertTrue(m.getBoard()[cC.getX()][cC.getY()].getLocation().equals(cNext));
+-        assertTrue(turn.cantMove(m, wL, false));
+-    }
+ }
+Index: santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/PanTurn.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package it.polimi.ingsw.PSP29.Controller;\r\n\r\nimport it.polimi.ingsw.PSP29.model.*;\r\nimport it.polimi.ingsw.PSP29.virtualView.ClientHandler;\r\nimport it.polimi.ingsw.PSP29.virtualView.Server;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class PanTurn extends GodTurn {\r\n\r\n    public PanTurn(Turn turn) {\r\n        super(turn);\r\n    }\r\n\r\n    /**\r\n     * allows the player to win the game if in his turn his worker moved from 2nd level to 3rd level or if he went down 2 or more levels\r\n     * @param m match played\r\n     * @param p player that plays the turn\r\n     * @return true if p wins the game, else false\r\n     */\r\n    @Override\r\n    public boolean winCondition(Match m, Player p) {\r\n        for (Worker w : p.getWorkers()) {\r\n            if (w.getMoved() && w.getBuilt()) {\r\n                w.changeMoved(false);\r\n                w.changeBuilt(false);\r\n                if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel()==3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==3)\r\n                    return true;\r\n                if (!m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel() == 2)\r\n                    return true;\r\n                if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >= 3)\r\n                    return true;\r\n                if (!m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >= 2)\r\n                    return true;\r\n            }\r\n        }\r\n        return false;\r\n    }\r\n\r\n\r\n    @Override\r\n    public boolean build(Match m, Worker w, Coordinate c) {\r\n        return super.build(m, w, c);\r\n    }\r\n\r\n    @Override\r\n    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {\r\n        return super.move(m, ch, server, athenaOn);\r\n    }\r\n\r\n    @Override\r\n    public boolean canMoveTo(Match m,Worker w,Coordinate c, boolean athena){ return super.canMoveTo(m,w,c,athena);\r\n    }\r\n\r\n    @Override\r\n    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {\r\n        return super.whereCanMove(match,ch,id,athenaOn);\r\n    }\r\n\r\n    @Override\r\n    public String printCoordinates(ArrayList<Coordinate> coordinates) {\r\n        return super.printCoordinates(coordinates);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/PanTurn.java	(revision 6ecf19347e687242c549a2e3b1fd1044497d35f6)
++++ santorini/src/main/java/it/polimi/ingsw/PSP29/Controller/PanTurn.java	(date 1588284803688)
+@@ -36,29 +36,4 @@
+         }
+         return false;
+     }
+-
+-
+-    @Override
+-    public boolean build(Match m, Worker w, Coordinate c) {
+-        return super.build(m, w, c);
+-    }
+-
+-    @Override
+-    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
+-        return super.move(m, ch, server, athenaOn);
+-    }
+-
+-    @Override
+-    public boolean canMoveTo(Match m,Worker w,Coordinate c, boolean athena){ return super.canMoveTo(m,w,c,athena);
+-    }
+-
+-    @Override
+-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+-        return super.whereCanMove(match,ch,id,athenaOn);
+-    }
+-
+-    @Override
+-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
+-        return super.printCoordinates(coordinates);
+-    }
+ }

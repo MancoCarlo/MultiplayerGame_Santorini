@@ -81,17 +81,32 @@ public class Server
                     countPlayers++;
                 }
 
+                gc.getMatch().updatePlayers(clientHandlers);
+
+                gc.getMatch().sortPlayers();
+                sortClientHandlers();
+
                 for(Player p : gc.getMatch().getPlayers()){
                     p.setInGame(true);
                 }
 
                 for(ClientHandler clientHandler : clientHandlers){
                     if(clientHandler.getConnected()){
-                        write(clientHandler, "serviceMessage", "You're in\n\n");
+                        if(!write(clientHandler, "serviceMessage", "You're in\n\n")){
+                            gc.getMatch().getPlayer(clientHandler.getName()).setInGame(false);
+                        }
                     }
                 }
 
                 gc.getMatch().updatePlayers(clientHandlers);
+
+                if(gc.getMatch().playersInGame()==1){
+                    for(int i=0;i<gc.getMatch().getPlayers().size();i++){
+                        if(gc.getMatch().getPlayers().get(i).getInGame())
+                            write(clientHandlers.get(i), "serviceMessage" , "\nYou win!!\n");
+                    }
+                    break;
+                }
 
                 System.out.println("printing board");
                 gc.getMatch().inizializeBoard();
@@ -122,16 +137,9 @@ public class Server
                     break;
                 }
 
-
-                //fino a qui OK con le disconnessioni
-                //da qui in poi sono da sistemare nel game controller
-
                 for(int i=0; i<gc.getMatch().getPlayers().size();i++){
                     gc.getMatch().getPlayers().get(i).color = gc.getMatch().getColors().get(i);
                 }
-                gc.getMatch().getColors().remove(0);
-                gc.getMatch().sortPlayers();
-                sortClientHandlers();
 
                 System.out.println("Assigning gods");
                 if(!gc.godsAssignement()){
@@ -240,9 +248,9 @@ public class Server
 
         clientHandler.setName(username);
         clientHandler.setAge(age);
-
         Player player1 = new Player(username, age);
         gc.getMatch().addPlayer(player1);
+        gc.getMatch().getPlayer(username).setInGame(true);
         return true;
     }
 

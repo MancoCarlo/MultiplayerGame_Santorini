@@ -1,0 +1,34 @@
+<changelist name="Uncommitted_changes_before_Update_at_03_05_2020_17_43_[Default_Changelist]" date="1588520606961" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_03_05_2020_17_43_[Default_Changelist]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 03/05/2020 17:43 [Default Changelist]" />
+  <binary>
+    <option name="BEFORE_PATH" value="santorini/target/classes/it/polimi/ingsw/PSP29/model/Match.class" />
+    <option name="AFTER_PATH" value="santorini/target/classes/it/polimi/ingsw/PSP29/model/Match.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_03_05_2020_17_43_[Default_Changelist]/Match.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="santorini/target/test-classes/it/polimi/ingsw/PSP29/model/WorkerTest.class" />
+    <option name="AFTER_PATH" value="santorini/target/test-classes/it/polimi/ingsw/PSP29/model/WorkerTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_03_05_2020_17_43_[Default_Changelist]/WorkerTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="santorini/target/classes/it/polimi/ingsw/PSP29/model/Worker.class" />
+    <option name="AFTER_PATH" value="santorini/target/classes/it/polimi/ingsw/PSP29/model/Worker.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_03_05_2020_17_43_[Default_Changelist]/Worker.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="santorini/target/classes/it/polimi/ingsw/PSP29/model/Box.class" />
+    <option name="AFTER_PATH" value="santorini/target/classes/it/polimi/ingsw/PSP29/model/Box.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_03_05_2020_17_43_[Default_Changelist]/Box.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="santorini/target/test-classes/it/polimi/ingsw/PSP29/model/BoxTest.class" />
+    <option name="AFTER_PATH" value="santorini/target/test-classes/it/polimi/ingsw/PSP29/model/BoxTest.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_03_05_2020_17_43_[Default_Changelist]/BoxTest.class" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="santorini/target/classes/it/polimi/ingsw/PSP29/model/Player.class" />
+    <option name="AFTER_PATH" value="santorini/target/classes/it/polimi/ingsw/PSP29/model/Player.class" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_03_05_2020_17_43_[Default_Changelist]/Player.class" />
+  </binary>
+</changelist>
