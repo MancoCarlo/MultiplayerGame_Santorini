@@ -235,12 +235,14 @@ public class GameController {
      */
     public boolean putWorkers(){
         int i=0;
-        while (i<numPlayers){
+        int count = match.playersInGame();
+        while (i<count){
             next();
             server.write(server.getClientHandlers().get(myturn), "serviceMessage",  match.printBoard());
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Insert Worker n°1\n");
             Coordinate c = getCoordinate();
             if(c==null){
+                match.updatePlayers(server.getClientHandlers());
                 if(match.playersInGame()==1){
                     return false;
                 }
@@ -254,6 +256,7 @@ public class GameController {
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Insert Worker n°1\n");
                 c = getCoordinate();
                 if(c==null){
+                    match.updatePlayers(server.getClientHandlers());
                     if(match.playersInGame()==1){
                         return false;
                     }
@@ -267,6 +270,7 @@ public class GameController {
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Insert Worker n°2\n");
             c = getCoordinate();
             if(c==null){
+                match.updatePlayers(server.getClientHandlers());
                 if(match.playersInGame()==1){
                     return false;
                 }
@@ -280,6 +284,7 @@ public class GameController {
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Insert Worker n°2\n");
                 c = getCoordinate();
                 if(c==null){
+                    match.updatePlayers(server.getClientHandlers());
                     if(match.playersInGame()==1){
                         return false;
                     }
@@ -372,6 +377,10 @@ public class GameController {
         }
         server.write(ch, "interactionServer", "Would you use your god in this turn?\n1) YES\n2) NO\n");
         String response = server.read(ch);
+        if(response==null){
+            match.updatePlayers(server.getClientHandlers());
+            return false;
+        }
         boolean godOn;
         if(response.equals("1")) godOn = true;
         else godOn = false;

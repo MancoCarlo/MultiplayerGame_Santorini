@@ -161,7 +161,17 @@ public class Server
                 }
 
                 System.out.println("Putting workers");
-                gc.putWorkers();
+                if(!gc.putWorkers()){
+                    for(ClientHandler clientHandler : clientHandlers){
+                        for(Player player : gc.getMatch().getPlayers()){
+                            if(player.getNickname().equals(clientHandler.getName()) && player.getInGame()){
+                                write(clientHandler, "serviceMessage", "You win!!\n");
+                                newGame();
+                            }
+                        }
+                    }
+                    break;
+                }
 
 
                 gc.gameExe();
