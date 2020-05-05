@@ -3,7 +3,6 @@ package it.polimi.ingsw.PSP29.Controller;
 import it.polimi.ingsw.PSP29.model.Coordinate;
 import it.polimi.ingsw.PSP29.model.Match;
 import it.polimi.ingsw.PSP29.model.Player;
-import it.polimi.ingsw.PSP29.model.Worker;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
