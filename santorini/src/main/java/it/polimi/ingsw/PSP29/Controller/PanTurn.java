@@ -39,13 +39,17 @@ public class PanTurn extends GodTurn {
 
 
     @Override
-    public boolean build(Match m, Worker w, Coordinate c) {
-        return super.build(m, w, c);
+    public boolean build(Match m, ClientHandler ch, Server server) {
+        return super.build(m, ch, server);
     }
 
     @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
         return super.move(m, ch, server, athenaOn);
+    }
+
+    public boolean canBuildIn(Match match,Worker w,Coordinate c){
+        return super.canBuildIn(match, w, c);
     }
 
     @Override
@@ -56,6 +60,10 @@ public class PanTurn extends GodTurn {
     public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
         return super.whereCanMove(match,ch,id,athenaOn);
     }
+
+    @Override
+    public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id) {
+        return super.whereCanBuild(match, ch, id); }
 
     @Override
     public String printCoordinates(ArrayList<Coordinate> coordinates) {
