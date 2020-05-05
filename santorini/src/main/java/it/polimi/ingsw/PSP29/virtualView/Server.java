@@ -261,16 +261,16 @@ public class Server
             return false;
         }
 
-        if(!write(clientHandler,"interactionServer", "Insert username: ")){
+        if(!write(clientHandler,"interactionServer", "LOGN-Insert username: ")){
             return false;
         }
         String username = read(clientHandler);
         if(username==null){
             return false;
         }
-
+        System.out.println(username);
         while(gc.getMatch().alreadyIn(username)){
-            if(!write(clientHandler,"interactionServer", "Username already in, try again: ")){
+            if(!write(clientHandler,"interactionServer", "LOGN-Username already in, try again: ")){
                 return false;
             }
             username = read(clientHandler);
@@ -283,7 +283,7 @@ public class Server
 
         while(true){
             try{
-                if(!write(clientHandler,"interactionServer", "Insert age: ")){
+                if(!write(clientHandler,"interactionServer", "LOGE-Insert age: ")){
                     return false;
                 }
                 String str = read(clientHandler);
@@ -294,7 +294,7 @@ public class Server
 
                 break;
             } catch (NumberFormatException e){
-                if(!write(clientHandler, "serviceMessage", "Invalid input\n")){
+                if(!write(clientHandler, "serviceMessage", "LOG-Invalid input\n")){
                     return false;
                 }
                 continue;

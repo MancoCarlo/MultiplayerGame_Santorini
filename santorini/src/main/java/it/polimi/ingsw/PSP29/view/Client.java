@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
+import java.util.Scanner;
+
 import it.polimi.ingsw.PSP29.model.Color;
 
 
@@ -31,7 +33,13 @@ public class Client implements Runnable, ServerObserver
         /*
          * WARNING: this method executes IN THE CONTEXT OF THE MAIN THREAD
          */
-
+        Scanner scanner = new Scanner(System.in);
+        boolean CLI = false;
+        System.out.println("Would you use CLI?\n1) Yes\n2) No");
+        String answer = scanner.nextLine();
+        if(answer.equals("1")){
+            CLI = true;
+        }
         String ip = "127.0.0.8";
 
         /* open a connection to the server */
@@ -46,7 +54,7 @@ public class Client implements Runnable, ServerObserver
 
         /* Create the adapter that will allow communication with the server
          * in background, and start running its thread */
-        ServerAdapter serverAdapter = new ServerAdapter(server);
+        ServerAdapter serverAdapter = new ServerAdapter(server,CLI);
         serverAdapter.addObserver(this);
         Thread serverAdapterThread = new Thread(serverAdapter);
         serverAdapterThread.start();

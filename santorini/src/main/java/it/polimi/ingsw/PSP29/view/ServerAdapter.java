@@ -22,7 +22,8 @@ public class ServerAdapter implements Runnable
     private Commands nextCommand;
     private String cmd;
     private boolean connected = false;
-
+    private boolean CLI = true;
+    private GUI gui;
     private Socket server;
     private ObjectOutputStream outputStm;
     private ObjectInputStream inputStm;
@@ -30,9 +31,13 @@ public class ServerAdapter implements Runnable
     private List<ServerObserver> observers = new ArrayList<>();
 
 
-    public ServerAdapter(Socket server)
+    public ServerAdapter(Socket server, boolean cli)
     {
         this.server = server;
+        if(!cli){
+            CLI = false;
+            gui = new GUI();
+        }
     }
 
 
@@ -151,9 +156,25 @@ public class ServerAdapter implements Runnable
      * execution of the command INTERACTION_SERVER
      */
     public synchronized void doInteractionServer(){
-        Scanner s = new Scanner(System.in);
-        System.out.print(cmd);
-        String rsp = s.nextLine();
+        String rsp = null;
+        if(CLI){
+            Scanner s = new Scanner(System.in);
+            System.out.print(cmd);
+            rsp = s.nextLine();
+        }else{
+            if(cmd.startsWith("LOGN")){
+                gui.doLoginN("Insert nickname: ");
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
+                rsp = gui.getMessage();
+            }
+            if(cmd.substring(0,3).equals("LOGE")){
+                //rsp = gui.loginE(cmd);
+            }
+            if(cmd.substring(0,3).equals("INDX")){
+                //rsp = gui.viewIndex(cmd);
+            }
+        }
         try {
             outputStm.writeObject(rsp);
         } catch (IOException e) {
@@ -175,7 +196,20 @@ public class ServerAdapter implements Runnable
      * execution of the command SERVICE_MESSAGE
      */
     public synchronized void doServiceMessage(){
-        System.out.print(cmd);
+        String rsp = null;
+        if(CLI){
+            System.out.print(cmd);
+        }else{
+            if(cmd.substring(0,3).equals("BORD")){
+                //gui.viewBoard(cmd);
+            }
+            if(cmd.substring(0,3).equals("LIST")){
+                //gui.viewList(cmd);
+            }
+            if(cmd.substring(0,3).equals("MSGE")){
+                //gui.viewMessage(cmd);
+            }
+        }
 
         List<ServerObserver> observersCpy;
         synchronized (observers) {
