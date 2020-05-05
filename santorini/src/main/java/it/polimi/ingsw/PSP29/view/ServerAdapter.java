@@ -162,17 +162,17 @@ public class ServerAdapter implements Runnable
             System.out.print(cmd);
             rsp = s.nextLine();
         }else{
-            if(cmd.startsWith("LOGN")){
-                gui.doLoginN("Insert nickname: ");
+            if(cmd.startsWith("LOGI")){
+                gui.doLogin(cmd);
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
                 rsp = gui.getMessage();
             }
-            if(cmd.substring(0,3).equals("LOGE")){
-                //rsp = gui.loginE(cmd);
-            }
-            if(cmd.substring(0,3).equals("INDX")){
-                //rsp = gui.viewIndex(cmd);
+            if(cmd.startsWith("LOBB")){
+                gui.doLobby(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
+                rsp = gui.getMessage();
             }
         }
         try {
@@ -201,13 +201,16 @@ public class ServerAdapter implements Runnable
             System.out.print(cmd);
         }else{
             if(cmd.substring(0,3).equals("BORD")){
-                //gui.viewBoard(cmd);
+                gui.viewBoard(cmd);
             }
-            if(cmd.substring(0,3).equals("LIST")){
+            if(cmd.startsWith("LIST")) {
                 //gui.viewList(cmd);
             }
-            if(cmd.substring(0,3).equals("MSGE")){
-                //gui.viewMessage(cmd);
+            if(cmd.startsWith("LSTP")){
+                //gui.viewListPlayer(cmd);
+            }
+            if(cmd.startsWith("MSGE")){
+                gui.viewMessage(cmd);
             }
         }
 

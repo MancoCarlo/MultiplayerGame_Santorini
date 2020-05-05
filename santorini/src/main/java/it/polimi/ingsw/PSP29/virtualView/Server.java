@@ -56,7 +56,7 @@ public class Server
                                 }
                             }
                             if(numPlayers==2 || numPlayers==3){
-                                write(clientHandler, "serviceMessage", "\nWait for other players\n\n");
+                                write(clientHandler, "serviceMessage", "MSGE-\nWait for other players\n\n");
                                 clientHandlers.add(clientHandler);
                                 countPlayers++;
                             }
@@ -76,7 +76,7 @@ public class Server
                     if(!loginPlayer(clientHandler)){
                         continue;
                     }
-                    if(!write(clientHandler, "serviceMessage", "\nWait for other players\n\n")){
+                    if(!write(clientHandler, "serviceMessage", "MSGE-\nWait for other players\n\n")){
                         gc.getMatch().getPlayers().remove(countPlayers);
                         continue;
                     }
@@ -95,7 +95,7 @@ public class Server
 
                 for(ClientHandler clientHandler : clientHandlers){
                     if(clientHandler.getConnected()){
-                        if(!write(clientHandler, "serviceMessage", "You're in\n\n")){
+                        if(!write(clientHandler, "serviceMessage", "MSGE-You're in\n\n")){
                             gc.getMatch().getPlayer(clientHandler.getName()).setInGame(false);
                         }
                     }
@@ -106,7 +106,7 @@ public class Server
                 if(gc.getMatch().playersInGame()==1){
                     for(int i=0;i<gc.getMatch().getPlayers().size();i++){
                         if(gc.getMatch().getPlayers().get(i).getInGame()){
-                            write(clientHandlers.get(i), "serviceMessage" , "\nYou win!!\n");
+                            write(clientHandlers.get(i), "serviceMessage" , "MSGE-\nYou win!!\n");
                             newGame();
                         }
                     }
@@ -118,7 +118,7 @@ public class Server
                 while (gc.getMatch().getBoard() == null){ }
                 for(ClientHandler clientHandler : clientHandlers){
                     if(clientHandler.getConnected()){
-                        write(clientHandler, "serviceMessage",  gc.getMatch().printBoard());
+                        write(clientHandler, "serviceMessage",  "BORD-"+gc.getMatch().printBoard());
                     }
                 }
 
@@ -261,16 +261,15 @@ public class Server
             return false;
         }
 
-        if(!write(clientHandler,"interactionServer", "LOGN-Insert username: ")){
+        if(!write(clientHandler,"interactionServer", "LOGI-Insert username: ")){
             return false;
         }
         String username = read(clientHandler);
         if(username==null){
             return false;
         }
-        System.out.println(username);
         while(gc.getMatch().alreadyIn(username)){
-            if(!write(clientHandler,"interactionServer", "LOGN-Username already in, try again: ")){
+            if(!write(clientHandler,"interactionServer", "LOGI-Username already in, try again: ")){
                 return false;
             }
             username = read(clientHandler);
@@ -283,10 +282,11 @@ public class Server
 
         while(true){
             try{
-                if(!write(clientHandler,"interactionServer", "LOGE-Insert age: ")){
+                if(!write(clientHandler,"interactionServer", "LOGI-Insert age: ")){
                     return false;
                 }
                 String str = read(clientHandler);
+                System.out.println(str);
                 if(str==null){
                     return false;
                 }
@@ -294,7 +294,7 @@ public class Server
 
                 break;
             } catch (NumberFormatException e){
-                if(!write(clientHandler, "serviceMessage", "LOG-Invalid input\n")){
+                if(!write(clientHandler, "serviceMessage", "LOGI-Invalid input\n")){
                     return false;
                 }
                 continue;
@@ -382,7 +382,7 @@ public class Server
      * @param clientHandler
      */
     public boolean createLobby(ClientHandler clientHandler) {
-        if(!write(clientHandler, "interactionServer", "How many players 2 or 3? ")){
+        if(!write(clientHandler, "interactionServer", "LOBB-How many players 2 or 3? ")){
             return false;
         }
         try{
@@ -392,10 +392,11 @@ public class Server
             }
             numPlayers = Integer.parseInt(str);
         } catch (NumberFormatException e){
-            write(clientHandler, "serviceMessage", "Invalid input\n");
+            write(clientHandler, "serviceMessage", "LOBB-Invalid input\n");
             createLobby(clientHandler);
         }
         gc.setNumPlayers(numPlayers);
+        System.out.println(numPlayers);
         return true;
     }
 
