@@ -200,17 +200,23 @@ public class ServerAdapter implements Runnable
         if(CLI){
             System.out.print(cmd);
         }else{
-            if(cmd.substring(0,3).equals("BORD")){
+            if(cmd.startsWith("BORD")){
                 gui.viewBoard(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
             }
             if(cmd.startsWith("LIST")) {
                 //gui.viewList(cmd);
             }
             if(cmd.startsWith("LSTP")){
-                //gui.viewListPlayer(cmd);
+                gui.viewListPlayer(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
             }
             if(cmd.startsWith("MSGE")){
                 gui.viewMessage(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
             }
         }
 

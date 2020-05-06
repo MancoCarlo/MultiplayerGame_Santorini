@@ -127,7 +127,7 @@ public class Server
                 System.out.println("printing players");
                 for(ClientHandler clientHandler : clientHandlers){
                     if(clientHandler.getConnected()){
-                        write(clientHandler, "serviceMessage", gc.getMatch().printPlayers());
+                        write(clientHandler, "serviceMessage", "LSTP-"+gc.getMatch().printPlayers());
                     }
                 }
 
