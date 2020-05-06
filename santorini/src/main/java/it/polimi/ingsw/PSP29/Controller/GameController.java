@@ -110,8 +110,8 @@ public class GameController {
         match.loadGods();
         godIndex.clear();
         int id=0;
-        server.write(server.getClientHandlers().get(myturn), "serviceMessage", "Choose " + match.playersInGame() + " gods from this list");
-        server.write(server.getClientHandlers().get(myturn), "serviceMessage", match.printGodlist());
+        server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Choose " + match.playersInGame() + " gods from this list");
+        server.write(server.getClientHandlers().get(myturn), "serviceMessage", "LIST-"+match.printGodlist());
         server.write(server.getClientHandlers().get(myturn), "interactionServer", "Insert n°1 index: ");
         while(true){
             try {

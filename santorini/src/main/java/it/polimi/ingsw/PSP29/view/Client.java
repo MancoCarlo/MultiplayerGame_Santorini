@@ -35,7 +35,7 @@ public class Client implements Runnable, ServerObserver
          */
         Scanner scanner = new Scanner(System.in);
         boolean CLI = false;
-        System.out.println("Would you use CLI?\n1) Yes\n2) No");
+        System.out.println("What you want to use?\n1) CLI\n2) GUI");
         String answer = scanner.nextLine();
         if(answer.equals("1")){
             CLI = true;

@@ -31,12 +31,16 @@ public class ServerAdapter implements Runnable
     private List<ServerObserver> observers = new ArrayList<>();
 
 
-    public ServerAdapter(Socket server, boolean cli)
-    {
+    public ServerAdapter(Socket server, boolean cli){
         this.server = server;
         if(!cli){
             CLI = false;
-            gui = new GUI();
+            gui= new GUI();
+            Thread threadGUI = new Thread(gui);
+            threadGUI.start();
+            while (!gui.getGuiLoaded()){
+                System.out.println("ciao");
+            }
         }
     }
 
@@ -127,9 +131,11 @@ public class ServerAdapter implements Runnable
             nextCommand = null;
 
             try {
+                System.out.println("wait SA");
                 wait();
             } catch (InterruptedException e) { }
-
+            System.out.println("sveglio SA");
+            System.out.println(nextCommand);
             if (nextCommand == null)
                 continue;
 
@@ -163,13 +169,13 @@ public class ServerAdapter implements Runnable
             rsp = s.nextLine();
         }else{
             if(cmd.startsWith("LOGI")){
-                gui.doLogin(cmd);
+                gui.login(cmd);
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
                 rsp = gui.getMessage();
             }
             if(cmd.startsWith("LOBB")){
-                gui.doLobby(cmd);
+                gui.lobby(cmd);
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
                 rsp = gui.getMessage();
@@ -198,23 +204,42 @@ public class ServerAdapter implements Runnable
     public synchronized void doServiceMessage(){
         String rsp = null;
         if(CLI){
+            if(cmd.startsWith("BORD")){
+                cmd.substring(5);
+                String gameboard = "Gameboard\n  \t";
+                for(int i=0; i<5; i++){
+                    gameboard = gameboard + i + " \t";
+                }
+                gameboard = gameboard + "\n";
+                int k=0;
+                for(int i=0; i<5; i++){
+                    gameboard = gameboard + i + " \t";
+                    for(int j=0; j<5; j++){
+                        gameboard = gameboard + cmd.substring(5*i + 2*j, 5*i + 2*j + 2) + "\t";
+                    }
+                    gameboard = gameboard + "\n";
+                }
+                cmd=gameboard;
+            }
             System.out.print(cmd);
         }else{
             if(cmd.startsWith("BORD")){
-                gui.viewBoard(cmd);
+                gui.board(cmd);
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
             }
             if(cmd.startsWith("LIST")) {
-                //gui.viewList(cmd);
+                gui.list(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
             }
             if(cmd.startsWith("LSTP")){
-                gui.viewListPlayer(cmd);
+                gui.listPlayers(cmd);
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
             }
             if(cmd.startsWith("MSGE")){
-                gui.viewMessage(cmd);
+                gui.message(cmd);
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
             }
@@ -241,6 +266,7 @@ public class ServerAdapter implements Runnable
         /* send the string to the server and get the new string back */
         String newStr1 = (String)inputStm.readObject();
         String newStr2= (String)inputStm.readObject();
+        System.out.println(newStr2);
         /* copy the list of observers in case some observers changes it from inside
          * the notification method */
         List<ServerObserver> observersCpy;

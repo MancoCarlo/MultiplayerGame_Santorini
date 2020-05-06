@@ -178,19 +178,13 @@ public class Match implements Serializable {
      * print the board on monitor
      */
     public String printBoard(){
-        String gameboard = "Gameboard\n  \t";
-        for(int i=0; i<5; i++){
-            gameboard = gameboard + i + " \t";
-        }
-        gameboard = gameboard + "\n";
-        for(int i=0; i<5; i++){
-            gameboard = gameboard + i + " \t";
-            for(int j=0; j<5; j++){
-                gameboard = gameboard + board[i][j].printEmpty() + "\t";
+        StringBuilder gameboard = new StringBuilder();
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<columns; j++){
+                gameboard.append(board[i][j].printEmpty());
             }
-            gameboard = gameboard + "\n";
         }
-        return gameboard;
+        return gameboard.toString();
     }
 
     /**

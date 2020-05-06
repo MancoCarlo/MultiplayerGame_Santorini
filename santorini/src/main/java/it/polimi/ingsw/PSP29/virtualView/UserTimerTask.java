@@ -4,7 +4,7 @@ import java.util.TimerTask;
 
 public class UserTimerTask extends TimerTask {
     private int seconds=0;
-    private int turnSeconds = 20;
+    private int turnSeconds = 100;
     private ClientHandler ch;
     private Server server;
 
