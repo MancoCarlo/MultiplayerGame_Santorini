@@ -2,127 +2,206 @@ package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class PrometheusTurn extends GodTurn {
+
     public PrometheusTurn(Turn turn) {
         super(turn);
     }
 
     /**
-     * allows a player to build before and after moving his worker if in this turn his worker can't level up
+     * call build() of the superclass
      * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
-     * @return true if is moved in c, else false
+     * @param ch clientHandler that must build
+     * @param server manage the interaction with client
+     * @return true if w has built at least once, else false
      */
-    public boolean move(Match m, Worker w, Coordinate c) {
-        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
-            return false; //se la mossa non è valida
-        }
-        else {
-            Scanner scanner = new Scanner(System.in);
-            String x, y;
-            do {
-                System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata dove vuoi costruire: \t");
-                x = scanner.nextLine();
-                y = scanner.nextLine();
-            } while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
-            Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-            if((!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()) || (c.equals(c1) && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0)){
-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved(true);
-                return true; //mi muovo ma non costruisco
-            }
-            else{
-                m.updateBuilding(c1);
-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved(true); //costruisco e mi muovo
-                return true;
-            }
-        }
+    @Override
+    public boolean build(Match m, ClientHandler ch, Server server) {
+        return super.build(m, ch, server);
     }
 
     /**
-     * allows a player to build before and after moving his worker without letting him level up
+     * allows a player to build before and after moving his worker if in this turn his worker can't level up
      * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w
+     * @param ch owner of the turn
+     * @param server manage the interaction with client
+     * @param athenaOn true if athena is on
      * @return true if is moved in c, else false
      */
-    public boolean limited_move(Match m, Worker w, Coordinate c) {
-        Scanner scanner = new Scanner(System.in);
-        String x, y;
-        do {
-            System.out.println("Potere dio attivato!!\nInserisci una nuova coordinata dove vuoi costruire: \t");
-            x = scanner.nextLine();
-            y = scanner.nextLine();
-        }while(Integer.parseInt(x)>m.getRows()-1 || Integer.parseInt(y)>m.getRows()-1 || Integer.parseInt(x)<0 || Integer.parseInt(y)<0);
-        Coordinate c1=new Coordinate(Integer.parseInt(x), Integer.parseInt(y));
-        if(!w.getPosition().isNear(c) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >0 || m.getBoard()[c.getX()][c.getY()].getLevel() == 4 || !m.getBoard()[c.getX()][c.getY()].isEmpty()){
-            return false; //se la mossa non è valida
-        }
-        else {
-            if((!w.getPosition().isNear(c1) || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4 || !m.getBoard()[c1.getX()][c1.getY()].isEmpty()) || (c.equals(c1) && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) >=0)){
-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved(true);
-                return true; //mi muovo ma non costruisco
+
+    @Override
+    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
+        int wID=2;
+        Player p = m.getPlayer(ch.getName());
+        ArrayList<Coordinate> coordinates0 = whereCanMove(m, ch, 0, athenaOn);
+        ArrayList<Coordinate> coordinates1 = whereCanMove(m, ch, 1, athenaOn);
+        if(coordinates0.size()!=0 && coordinates1.size()!=0){
+            server.write(ch, "serviceMessage", "It's your turn\n");
+            server.write(ch, "interactionServer", m.getPlayer(ch.getName()).printWorkers());
+            server.write(ch, "serviceMessage", "Choose the worker to use in this turn: \n");
+            while(true){
+                try{
+                    wID = Integer.parseInt(server.read(ch));
+                    if(wID<0 || wID>1){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
             }
-            else{
-                m.updateBuilding(c1);
-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved(true); //costruisco e mi muovo
-                return true;
+        }
+        else if(coordinates0.size()!=0 && coordinates1.size()==0){
+            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
+            wID = 0;
+        }
+        else if(coordinates0.size()==0 && coordinates1.size()!=0){
+            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
+            wID = 1;
+        }else if(coordinates0.size()==0 && coordinates1.size()==0){
+            return false;
+        }
+        //-------------------potere di prometeo--------------------
+        if(!p.getWorker(wID).canLevelUp(m) || athenaOn){//se il worker non puo fare upgrade oppure athena è attivata
+            String power;
+            server.write(ch, "interactionServer", "Would you like to build an additional block before moving you worker?\n1) Yes\n2) No\n");
+            power = server.read(ch);
+            if(power.equals("1"))
+            {
+               int count = 0;
+                ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
+                for(Coordinate c : coordinates) {
+                    if ( m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() < 3 && m.getBoard()[c.getX()][c.getY()].getLevel() <= m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel())
+                        //se il worker ha livello inferiore a 3 e se la casella ha un livello inferirore o uguale a quello del mio worker
+                        continue;
+                    else {
+                        if ( m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() == 3 && m.getBoard()[c.getX()][c.getY()].getLevel() < m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel())
+                            continue;//se il worker è al terzo livello e la casella ha un livello inferiore al worker
+                        if (m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() == 3 && m.getBoard()[c.getX()][c.getY()].getLevel() == 3) {
+                            count = count +1;
+                            continue;//se worker non può salire di livello ed è al terzo livello e la casella considerata è al 3 livello la includo inizialmente
+                        }
+                        else
+                            coordinates.remove(c);
+                    }
+                }
+                if(!athenaOn) {
+                    if (count == 1 && coordinates.size() == 1) //se c'è solo una casella disponibile ed è al terzo livello non posso usare il potere
+                        server.write(ch, "serviceMessage", "You can't use the power of Prometheus \n");
+                } else if(coordinates.size()== 1 && m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() == m.getBoard()[coordinates.get(0).getX()][coordinates.get(0).getY()].getLevel())
+                        server.write(ch, "serviceMessage", "You can't use the power of Prometheus \n");
+                else{
+                    server.write(ch, "serviceMessage", "Additional Build: ");
+                    if(coordinates.size()!=0){
+                        Coordinate c = null;
+                        server.write(ch, "serviceMessage", printCoordinates(coordinates));
+                        server.write(ch, "interactionServer", "Where you want to build?\n");
+                        int id;
+                        while(true){
+                            try{
+                                id = Integer.parseInt(server.read(ch));
+                                if(id<0 || id>=coordinates.size()){
+                                    server.write(ch, "serviceMessage", "Invalid input\n");
+                                    server.write(ch, "interactionServer", "Try another index: ");
+                                    continue;
+                                }
+                                break;
+                            } catch (NumberFormatException e){
+                                server.write(ch, "serviceMessage", "Invalid input\n");
+                                server.write(ch, "interactionServer", "Try another index: ");
+                            }
+                        }
+                        c = coordinates.get(id);
+                        m.updateBuilding(c);
+                    } else{
+                        server.write(ch, "serviceMessage", "You can't build an additional block\n");
+                    }
+                }
             }
         }
+        Coordinate c = null;
+        if(wID==0){
+            coordinates0 = whereCanMove(m, ch, 0, athenaOn);
+            server.write(ch, "serviceMessage", printCoordinates(coordinates0));
+            server.write(ch, "interactionServer", "Where do you want to move?\n");
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates0.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+            c = coordinates0.get(id);
+        }
+        else if(wID==1){
+            coordinates1 = whereCanMove(m, ch, 1, athenaOn);
+            server.write(ch, "serviceMessage", printCoordinates(coordinates1));
+            server.write(ch, "interactionServer", "Where do you want to move?\n");
+            int id;
+            while(true){
+                try{
+                    id = Integer.parseInt(server.read(ch));
+                    if(id<0 || id>=coordinates1.size()){
+                        server.write(ch, "serviceMessage", "Invalid input\n");
+                        server.write(ch, "interactionServer", "Try another index: ");
+                        continue;
+                    }
+                    break;
+                } catch (NumberFormatException e){
+                    server.write(ch, "serviceMessage", "Invalid input\n");
+                    server.write(ch, "interactionServer", "Try another index: ");
+                }
+            }
+            c = coordinates1.get(id);
+        }
+        m.updateMovement(p,wID,c);
+        p.getWorker(wID).changeMoved(true);
+        return true;
     }
 
-   /* @Override
-    public boolean cantMove(Match m,Worker w, boolean athena){
-        int count = 0;
-        if(!athena){
-            for(int i=0; i<m.getRows(); i++){
-                for(int j=0; j<m.getColumns(); j++){
-                    if(m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel()!=4 && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(m.getBoard()[i][j])==-1){
-                        //se esiste una casella che è vuota, è vicina al mio operaio, la cui torre non è completa e il mio operaio puo salire di livello
-                        return true;//non si può usare la divinità
-                    }
-                    else { // devo controllare che costruendo poi riesca a muoversi
-                        if (!w.canLevelUp(m) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() < 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() <= m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())
-                            //se il worker non puo salire di livello ed è a livello inferiore a 3 e se esiste una casella che è vuota e vicina al mio operaio, il cui livello è inferirore o uguale a quello del mio worker
-                            return false;
-                        else {
-                            if (!w.canLevelUp(m) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() < m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())
-                                return false;//se il worker non puo salire di livello ed è al terzo livello e c'è almeno una casella vuota e adiacente che è ha un livello inferiore
-                            if (!w.canLevelUp(m) && m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() != 4)//almeno due caselle che non sono al 4 livello
-                                count =count +1;//se worker non può salire di livello ed è al terzo livello e ci sono almeno due caselle che non sono al 4 livello
-                        }
-                    }
-                }
-            }
-            if(count >=2)
-                return false;
-            else
-                return true;
-        }
-        else {
-            for(int i=0; i<m.getRows(); i++){
-                for(int j=0; j<m.getColumns(); j++) {
-                    if (m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() <= 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() < m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel())
-                        //se il worker è a livello inferiore o uguale a 3 e se esiste una casella che è vuota e vicina al mio operaio, il cui livello è inferirore a quello del mio worker
-                        return false;
-                    if (m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel() == 3 && m.getBoard()[i][j].isEmpty() && w.getPosition().isNear(m.getBoard()[i][j].getLocation()) && m.getBoard()[i][j].getLevel() != 4)//almeno due caselle che non sono al 4 livello
-                        count =count +1;//se worker è al terzo livello e ci sono almeno due caselle che non sono al 4 livello
+    @Override
+    public boolean winCondition(Match m, Player p) {
+        return super.winCondition(m, p);
+    }
 
-                }
-            }
-            if(count >=2)
-                return false;
-            else
-                return true;
+    @Override
+    public boolean canBuildIn(Match match,Worker w,Coordinate c){
+        return super.canBuildIn(match, w, c);
+    }
 
+    @Override
+    public boolean canMoveTo(Match m,Worker w,Coordinate c, boolean athena){
+        return super.canMoveTo( m, w, c, athena);
         }
-    }*/
+
+    @Override
+    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+        return super.whereCanMove(match,ch,id,athenaOn);
+    }
+
+    @Override
+    public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id) {
+        return super.whereCanBuild(match, ch, id);
+    }
+
+    @Override
+    public String printCoordinates(ArrayList<Coordinate> coordinates) {
+        return super.printCoordinates(coordinates);
+    }
+
 }
