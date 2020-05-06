@@ -12,29 +12,6 @@ public class PrometheusTurn extends GodTurn {
     }
 
     /**
-     * call winCondition() of the superclass
-     * @param m match played
-     * @param p player that plays the turn
-     * @return true if p win the game, else false
-     */
-    @Override
-    public boolean winCondition(Match m, Player p) {
-        return super.winCondition(m, p);
-    }
-
-    /**
-     * call build() of the superclass
-     * @param m match played
-     * @param w worker that must build
-     * @param c location of the box where w must build
-     * @return true if w has built in c, else false
-     */
-    @Override
-    public boolean build(Match m, Worker w, Coordinate c) {
-        return super.build(m, w, c);
-    }
-
-    /**
      * allows a player to build before and after moving his worker if in this turn his worker can't level up
      * @param m match played
      * @param w worker that must be moved
@@ -102,13 +79,6 @@ public class PrometheusTurn extends GodTurn {
         }
     }
 
-    /**
-     * checks if a player can't move his worker using Prometheus power
-     * @param m match played
-     * @param w worker that can be moved
-     * @param athena true if the athena power is on, else false
-     * @return true if w can't move to another location, else false
-     */
    /* @Override
     public boolean cantMove(Match m,Worker w, boolean athena){
         int count = 0;
@@ -155,15 +125,4 @@ public class PrometheusTurn extends GodTurn {
 
         }
     }*/
-
-    @Override
-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
-        return super.whereCanMove(match,ch,id,athenaOn);
-    }
-
-    @Override
-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
-        return super.printCoordinates(coordinates);
-    }
-
 }

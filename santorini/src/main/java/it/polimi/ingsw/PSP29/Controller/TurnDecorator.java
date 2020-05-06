@@ -64,7 +64,14 @@ public abstract class TurnDecorator implements Turn {
             int id;
             while(true){
                 try{
-                    id = Integer.parseInt(server.read(ch));
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        id = Integer.parseInt(msg);
+                    }
                     if(id<0 || id>=coordinates.size()){
                         server.write(ch, "serviceMessage", "Invalid input\n");
                         server.write(ch, "interactionServer", "Try another index: ");
@@ -106,7 +113,14 @@ public abstract class TurnDecorator implements Turn {
             server.write(ch, "serviceMessage", "Choose the worker to use in this turn: \n");
             while(true){
                 try{
-                    wID = Integer.parseInt(server.read(ch));
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        wID = Integer.parseInt(msg);
+                    }
                     if(wID<0 || wID>1){
                         server.write(ch, "serviceMessage", "Invalid input\n");
                         server.write(ch, "interactionServer", "Try another index: ");
@@ -136,7 +150,14 @@ public abstract class TurnDecorator implements Turn {
             int id;
             while(true){
                 try{
-                    id = Integer.parseInt(server.read(ch));
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        id = Integer.parseInt(msg);
+                    }
                     if(id<0 || id>=coordinates0.size()){
                         server.write(ch, "serviceMessage", "Invalid input\n");
                         server.write(ch, "interactionServer", "Try another index: ");
@@ -156,7 +177,14 @@ public abstract class TurnDecorator implements Turn {
             int id;
             while(true){
                 try{
-                    id = Integer.parseInt(server.read(ch));
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        id = Integer.parseInt(msg);
+                    }
                     if(id<0 || id>=coordinates1.size()){
                         server.write(ch, "serviceMessage", "Invalid input\n");
                         server.write(ch, "interactionServer", "Try another index: ");

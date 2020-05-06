@@ -108,8 +108,8 @@ public class ClientHandler implements Runnable
      */
     public synchronized void doTakeMessage(){
         readMessage = true;
-        Timer timer = new Timer();
         UserTimerTask ut = new UserTimerTask(server, this);
+        Timer timer = new Timer();
         timer.schedule(ut, 0, 1000);
         try {
             message = (String) input.readObject();

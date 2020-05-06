@@ -38,7 +38,14 @@ public class HephaestusTurn extends GodTurn {
             int id;
             while (true) {
                 try {
-                    id = Integer.parseInt(server.read(ch));
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        id = Integer.parseInt(msg);
+                    }
                     if (id < 0 || id >= coordinates.size()) {
                         server.write(ch, "serviceMessage", "Invalid input\n");
                         server.write(ch, "interactionServer", "Try another index: ");

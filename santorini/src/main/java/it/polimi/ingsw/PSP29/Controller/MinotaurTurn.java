@@ -11,23 +11,14 @@ public class MinotaurTurn extends GodTurn {
         super(turn);
     }
 
-    @Override
-    public boolean winCondition(Match m, Player p) {
-        return super.winCondition(m, p);
-    }
-
-    @Override
-    public boolean build(Match m, Worker w, Coordinate c) {
-        return super.build(m, w, c);
-    }
-
+/*
     /**
      * allows a player to move his worker in an adjacent box already occupied by a worker of another player and change that worker's position in the following box
      * @param m match played
      * @param w worker that must be moved
      * @param c new position of w occupied by a worker of another player
      * @return true if is moved in c, else false
-     */
+
     public boolean move(Match m, Worker w, Coordinate c) {
         if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){
             if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <= 1) {
@@ -50,35 +41,7 @@ public class MinotaurTurn extends GodTurn {
         else
             return false;
     }
-
-    /**
-     * allows a player to move his worker without upgrading his level in an adjacent box already occupied by a worker of another player and change that worker's position in the following box
-     * @param m match played
-     * @param w worker that must be moved
-     * @param c new position of w occupied by a worker of another player
-     * @return true if is moved in c, else false
-     */
-    public boolean limited_move(Match m, Worker w, Coordinate c) {
-        if(w.getPosition().isNear(c) && m.getBoard()[c.getX()][c.getY()].getLevel()!=4){
-            if (m.getBoard()[c.getX()][c.getY()].isEmpty() && m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()]) <=0) {
-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved(true);
-                return true;
-            }
-            Coordinate c1 = w.getPosition().nextCoordinate(m, c);
-            if(c1.equals(c) || !m.getBoard()[c1.getX()][c1.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].isEmpty() || m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) || m.getBoard()[c.getX()][c.getY()].level_diff(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()])>0 || m.getBoard()[c1.getX()][c1.getY()].getLevel()==4)
-                //se la casella c non ha una successiva oppure se la casella successiva non è vuota oppure se la casella indicata non contiene un operaio oppure se l'operaio nella casella è dello stesso giocatore oppure se la casella in cui mi voglio spostare è piu alta della mia casella oppure se la casella successiva è completa
-                return false;
-            else {
-                m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c1);
-                m.updateMovement(m.getPlayer(w.getIDplayer()), w.getID(), c);
-                w.changeMoved(true);
-                return true;
-            }
-        }
-        else
-            return false;
-    }
+*/
 
     /**
      * checks if a player can't move his worker using Minotaur power
