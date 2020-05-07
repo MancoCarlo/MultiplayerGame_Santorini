@@ -264,9 +264,6 @@ public class Server
      * @param clientHandler
      */
     public boolean loginPlayer(ClientHandler clientHandler){
-        if(!write(clientHandler, "serviceMessage", "MSGE-Welcome to Santorini\n\n")){
-            return false;
-        }
 
         if(!write(clientHandler,"interactionServer", "LOGI-Insert username: ")){
             return false;

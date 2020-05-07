@@ -67,7 +67,6 @@ public class GUI extends JFrame implements Runnable{
     {
         nextCommand = Commands.LOG;
         command = cmd;
-        System.out.println("notify");
         notifyAll();
     }
 
@@ -112,11 +111,9 @@ public class GUI extends JFrame implements Runnable{
             nextCommand = null;
 
             try {
-                System.out.println("Wait");
                 wait();
             } catch (InterruptedException e) { }
 
-            System.out.println("sveglio");
             if (nextCommand == null)
                 continue;
 

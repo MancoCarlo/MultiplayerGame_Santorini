@@ -38,6 +38,7 @@ public class ServerAdapter implements Runnable
             Thread threadGUI = new Thread(gui);
             threadGUI.start();
             while (!gui.getGuiLoaded()){
+                System.out.println("Loading Gui");
             }
         }
     }
