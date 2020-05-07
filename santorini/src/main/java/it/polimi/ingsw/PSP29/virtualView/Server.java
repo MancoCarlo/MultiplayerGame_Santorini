@@ -48,7 +48,7 @@ public class Server
                     if(loginPlayer(clientHandler)){
                         if(createLobby(clientHandler)){
                             while(numPlayers != 2 && numPlayers != 3){
-                                if(!write(clientHandler, "serviceMessage", "Players number not valid\n")){
+                                if(!write(clientHandler, "serviceMessage", "MSGE-Players number not valid\n")){
                                     break;
                                 }
                                 if(!createLobby(clientHandler)){
@@ -136,7 +136,7 @@ public class Server
                 if(gc.getMatch().playersInGame()==1){
                     for(ClientHandler clientHandler : clientHandlers){
                         if (clientHandler.getName().equals(gc.getMatch().getPlayers().get(0).getNickname())){
-                            write(clientHandler, "serviceMessage" , "\nYou win!!\n");
+                            write(clientHandler, "serviceMessage" , "MSGE-\nYou win!!\n");
                             newGame();
                         }
                     }
@@ -152,7 +152,7 @@ public class Server
                     for(ClientHandler clientHandler : clientHandlers){
                         for(Player player : gc.getMatch().getPlayers()){
                             if(player.getNickname().equals(clientHandler.getName()) && player.getInGame()){
-                                write(clientHandler, "serviceMessage", "You win!!\n");
+                                write(clientHandler, "serviceMessage", "MSGE-You win!!\n");
                                 newGame();
                             }
                         }
@@ -165,7 +165,7 @@ public class Server
                     for(ClientHandler clientHandler : clientHandlers){
                         for(Player player : gc.getMatch().getPlayers()){
                             if(player.getNickname().equals(clientHandler.getName()) && player.getInGame()){
-                                write(clientHandler, "serviceMessage", "You win!!\n");
+                                write(clientHandler, "serviceMessage", "MSGE-You win!!\n");
                                 newGame();
                             }
                         }
@@ -188,14 +188,21 @@ public class Server
             if(clientHandlers.get(i).getConnected()){
                 newCH.add(clientHandlers.get(i));
             }else{
-                gc.getMatch().getPlayers().remove(i);
+                if(gc.getMatch().getPlayers().size()==0){
+                    try {
+                        this.socket.close();
+                    } catch (IOException e) {
+                        System.out.println("Server closed");
+                    }
+                }
+                    gc.getMatch().getPlayers().remove(i);
                 countPlayers--;
                 clientHandlers.get(i).closeConnection();
             }
         }
         clientHandlers = newCH;
         for(int i=0; i<clientHandlers.size();i++){
-            write(clientHandlers.get(i),"interactionServer", "Would you play again?\n1) Yes\n2) No\n");
+            write(clientHandlers.get(i),"interactionServer", "INDX-Would you play again?\n1) Yes\n2) No\n");
         }
         String again;
         for(int i=0; i<clientHandlers.size();i++){
@@ -212,7 +219,7 @@ public class Server
                 }
         }
         for(int i=0; i<clientHandlers.size();i++){
-            write(clientHandlers.get(i),"serviceMessage", "Waiting for players\n");
+            write(clientHandlers.get(i),"serviceMessage", "MSGE-Waiting for players\n");
         }
         launchMatch();
     }
@@ -257,7 +264,7 @@ public class Server
      * @param clientHandler
      */
     public boolean loginPlayer(ClientHandler clientHandler){
-        if(!write(clientHandler, "serviceMessage", "Welcome to Santorini\n\n")){
+        if(!write(clientHandler, "serviceMessage", "MSGE-Welcome to Santorini\n\n")){
             return false;
         }
 

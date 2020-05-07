@@ -27,11 +27,11 @@ public class AtlasTurn extends GodTurn{
         if(p.getWorker(0).getMoved()) wID = 0;
         if(p.getWorker(1).getMoved()) wID = 1;
         ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
-        server.write(ch, "serviceMessage", "Build: ");
+        server.write(ch, "serviceMessage", "MSGE-Build: ");
         if(coordinates.size()!=0){
             Coordinate c = null;
-            server.write(ch, "serviceMessage", printCoordinates(coordinates));
-            server.write(ch, "interactionServer", "Where you want to build?\n");
+            server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));
+            server.write(ch, "interactionServer", "INDX-Where you want to build?\n");
             int id;
             while(true){
                 try{
@@ -44,17 +44,17 @@ public class AtlasTurn extends GodTurn{
                         id = Integer.parseInt(msg);
                     }
                     if(id<0 || id>=coordinates.size()){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "interactionServer", "INDX-Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
+                    server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                    server.write(ch, "interactionServer", "INDX-Try another index: ");
                 }
             }
-            server.write(ch, "interactionServer", "Would you use Atlas's power?\n1) Yes\n2) No\n ");
+            server.write(ch, "interactionServer", "INDX-Would you use Atlas's power?\n1) Yes\n2) No\n ");
             String response = server.read(ch);
             c = coordinates.get(id);
             if(response.equals("1")){

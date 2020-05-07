@@ -1,7 +1,5 @@
 package it.polimi.ingsw.PSP29.view;
 
-import it.polimi.ingsw.PSP29.model.*;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,6 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import it.polimi.ingsw.PSP29.model.Color;
 
 
 public class ServerAdapter implements Runnable
@@ -39,7 +38,6 @@ public class ServerAdapter implements Runnable
             Thread threadGUI = new Thread(gui);
             threadGUI.start();
             while (!gui.getGuiLoaded()){
-                System.out.println("ciao");
             }
         }
     }
@@ -131,11 +129,8 @@ public class ServerAdapter implements Runnable
             nextCommand = null;
 
             try {
-                System.out.println("wait SA");
                 wait();
             } catch (InterruptedException e) { }
-            System.out.println("sveglio SA");
-            System.out.println(nextCommand);
             if (nextCommand == null)
                 continue;
 
@@ -165,7 +160,7 @@ public class ServerAdapter implements Runnable
         String rsp = null;
         if(CLI){
             Scanner s = new Scanner(System.in);
-            System.out.print(cmd);
+            System.out.print(cmd.substring(5));
             rsp = s.nextLine();
         }else{
             if(cmd.startsWith("LOGI")){
@@ -202,26 +197,34 @@ public class ServerAdapter implements Runnable
      * execution of the command SERVICE_MESSAGE
      */
     public synchronized void doServiceMessage(){
-        String rsp = null;
         if(CLI){
             if(cmd.startsWith("BORD")){
-                cmd.substring(5);
+                ArrayList<String> board = new ArrayList<>();
+                cmd = cmd.substring(5);
+                int i = 0;
+                while(i<cmd.length()){
+                    board.add(cmd.substring(i,i+2));
+                    i=i+2;
+                }
+                System.out.println(board.toString());
                 String gameboard = "Gameboard\n  \t";
-                for(int i=0; i<5; i++){
+                for(i=0; i<5; i++){
                     gameboard = gameboard + i + " \t";
                 }
                 gameboard = gameboard + "\n";
-                int k=0;
-                for(int i=0; i<5; i++){
+                for(i=0; i<5; i++){
                     gameboard = gameboard + i + " \t";
                     for(int j=0; j<5; j++){
-                        gameboard = gameboard + cmd.substring(5*i + 2*j, 5*i + 2*j + 2) + "\t";
+                        gameboard = gameboard + board.get(0) + "\t";
+                        board.remove(0);
                     }
                     gameboard = gameboard + "\n";
                 }
                 cmd=gameboard;
+                System.out.print(cmd);
+            }else{
+                System.out.print(cmd.substring(5));
             }
-            System.out.print(cmd);
         }else{
             if(cmd.startsWith("BORD")){
                 gui.board(cmd);
@@ -266,7 +269,6 @@ public class ServerAdapter implements Runnable
         /* send the string to the server and get the new string back */
         String newStr1 = (String)inputStm.readObject();
         String newStr2= (String)inputStm.readObject();
-        System.out.println(newStr2);
         /* copy the list of observers in case some observers changes it from inside
          * the notification method */
         List<ServerObserver> observersCpy;

@@ -28,8 +28,8 @@ public class ArtemisTurn extends GodTurn{
         int wID=2;
         boolean nopower = super.move(m,ch,server,athenaOn);
         if(!nopower) return false;
-        server.write(ch,"serviceMessage", m.printBoard());
-        server.write(ch,"interactionServer", "Would you move again?\n1) Yes\n2) No\n");
+        server.write(ch,"serviceMessage", "BORD-"+m.printBoard());
+        server.write(ch,"interactionServer", "INDX-Would you move again?\n1) Yes\n2) No\n");
         String answer = server.read(ch);
         if(answer.equals("1")){
             ArrayList<Coordinate> coordinates = null;
@@ -43,8 +43,8 @@ public class ArtemisTurn extends GodTurn{
             if(coordinates.size()!=0){
                 Coordinate c;
                 int id;
-                server.write(ch, "serviceMessage", printCoordinates(coordinates));
-                server.write(ch, "interactionServer", "Where you want to move?\n");
+                server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));
+                server.write(ch, "interactionServer", "INDX-Where you want to move?\n");
                 while(true){
                     try{
                         String msg = server.read(ch);
@@ -56,14 +56,14 @@ public class ArtemisTurn extends GodTurn{
                             id = Integer.parseInt(msg);
                         }
                         if(id<0 || id>=coordinates.size()){
-                            server.write(ch, "serviceMessage", "Invalid input\n");
-                            server.write(ch, "interactionServer", "Try another index: ");
+                            server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                            server.write(ch, "interactionServer", "INDX-Try another index: ");
                             continue;
                         }
                         break;
                     } catch (NumberFormatException e){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "interactionServer", "INDX-Try another index: ");
                     }
                 }
                 c = coordinates.get(id);
