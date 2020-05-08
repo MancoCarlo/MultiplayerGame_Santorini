@@ -29,7 +29,7 @@ public class ApolloTurn extends GodTurn{
         if(coordinates0.size()!=0 && coordinates1.size()!=0){
             server.write(ch, "serviceMessage", "MSGE-It's your turn\n");
             server.write(ch, "serviceMessage", "LIST-"+m.getPlayer(ch.getName()).printWorkers());
-            server.write(ch, "interactionServer", "INDX-Choose the worker to use in this turn: \n");
+            server.write(ch, "interactionServer", "INDX2Choose the worker to use in this turn: \n");
             while(true){
                 try{
                     String msg = server.read(ch);
@@ -38,17 +38,17 @@ public class ApolloTurn extends GodTurn{
                         ch.closeConnection();
                         return false;
                     }else{
-                        wID = Integer.parseInt(msg);
+                        wID = Integer.parseInt(msg) - 1;
                     }
                     if(wID<0 || wID>1){
                         server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "INDX-Try another index: ");
+                        server.write(ch, "interactionServer", "INDX2Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                    server.write(ch, "interactionServer", "INDX-Try another index: ");
+                    server.write(ch, "interactionServer", "INDX2Try another index: ");
                 }
             }
         }
@@ -65,7 +65,7 @@ public class ApolloTurn extends GodTurn{
         Coordinate c = null;
         if(wID==0){
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
-            server.write(ch, "interactionServer", "INDX-Where you want to move?\n");
+            server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
                 try{
@@ -92,7 +92,7 @@ public class ApolloTurn extends GodTurn{
         }
         else if(wID==1){
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
-            server.write(ch, "interactionServer", "INDX-Where you want to move?\n");
+            server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
                 try{

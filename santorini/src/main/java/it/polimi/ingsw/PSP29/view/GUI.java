@@ -21,8 +21,12 @@ public class GUI extends JFrame implements Runnable{
     private JPanel mainPanel;
     private String lastViewCenter;
 
+    private ArrayList<String> list;
+
     private Commands nextCommand;
     private String command;
+
+    private BoardGUI B;
 
     public boolean getGuiLoaded() {
         return GuiLoaded;
@@ -61,6 +65,8 @@ public class GUI extends JFrame implements Runnable{
         LIST,
         MESSAGE,
         INDEX,
+        COORDINATE,
+        TURN,
         STOP
     }
 
@@ -113,6 +119,20 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    public synchronized void turn(String cmd)
+    {
+        nextCommand = Commands.MESSAGE;
+        command = cmd;
+        notifyAll();
+    }
+
+    public synchronized void coordinate(String cmd)
+    {
+        nextCommand = Commands.COORDINATE;
+        command = "Click coordinate on the board to put the worker: ";
+        notifyAll();
+    }
+
     public synchronized void processGUI(){
         GuiLoaded=true;
         while (true) {
@@ -152,6 +172,14 @@ public class GUI extends JFrame implements Runnable{
 
                 case INDEX:
                     viewIndex();
+                    break;
+
+                case COORDINATE:
+                    doCoordinate();
+                    break;
+
+                case TURN:
+                    doTurn();
                     break;
 
                 case STOP:
@@ -269,9 +297,9 @@ public class GUI extends JFrame implements Runnable{
         }
         topPanel.removeAll();
         topPanel.setLayout(new FlowLayout());
-        command = command.substring(5);
-        char size = command.charAt(0);
-        int dim = Integer.parseInt(String.valueOf(size));
+        command = command.substring(4);
+        String size = command.substring(0,1);
+        int dim = Integer.parseInt(size);
         JLabel label = new JLabel(command.substring(1));
         final JComboBox cb = new JComboBox();
         for(int i=1;i<=dim;i++){
@@ -297,7 +325,119 @@ public class GUI extends JFrame implements Runnable{
         });
     }
 
+    public synchronized void doTurn() {
+        mainPanel.setVisible(false);
+        topPanel.setVisible(false);
+        mainPanel.remove(topPanel);
+        if (!lastViewCenter.equals("board")) {
+            centerPanel.setVisible(false);
+            mainPanel.remove(centerPanel);
+            centerPanel.removeAll();
+        }
+        topPanel.removeAll();
+        topPanel.setLayout(new FlowLayout());
+        JLabel label = new JLabel(command);
+        topPanel.add(label);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        this.add(mainPanel);
+        this.pack();
+        final ArrayList<Integer> indexes = new ArrayList<>();
+        for(String s : list){
+            char a = s.charAt(3);
+            char b = s.charAt(5);
+            int x = Integer.parseInt(String.valueOf(a));
+            int y = Integer.parseInt(String.valueOf(b));
+            indexes.add(reverseConvert(x,y));
+        }
+        centerPanel.setVisible(false);
+        for (final JButton b : B.getButtons()) {
+            for(final Integer i : indexes){
+                if(i == B.getCoordinate(b)){
+                    b.setBackground(Color.GREEN);
+                    b.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            int id = B.getCoordinate(b);
+                            message = getIndex(indexes, id);
+                            sentMessage = true;
+                            for (final JButton b : B.getButtons()){
+                                b.removeActionListener(this);
+                            }
+                        }
+                    });
+                }else{
+                    b.setBackground(Color.RED);
+                }
+            }
+        }
+        centerPanel.revalidate();
+        centerPanel.setVisible(true);
+        topPanel.setVisible(true);
+        mainPanel.setVisible(true);
+    }
+
+    public String getIndex(ArrayList<Integer> indexes, int id){
+        int result = 0;
+        for(int i=0; i<indexes.size();i++){
+            if(id == indexes.get(i)){
+                result = i+1;
+                break;
+            }
+        }
+        return ""+result;
+    }
+
+    public Integer reverseConvert(int x, int y) {
+        return x * 5 + y;
+    }
+
+    public synchronized void doCoordinate() {
+        mainPanel.setVisible(false);
+        topPanel.setVisible(false);
+        mainPanel.remove(topPanel);
+        if (!lastViewCenter.equals("board")) {
+            centerPanel.setVisible(false);
+            mainPanel.remove(centerPanel);
+            centerPanel.removeAll();
+        }
+        topPanel.removeAll();
+        topPanel.setLayout(new FlowLayout());
+        JLabel label = new JLabel(command);
+        topPanel.add(label);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        this.add(mainPanel);
+        this.pack();
+        for (final JButton b : B.getButtons()) {
+            b.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int id = B.getCoordinate(b);
+                    message = convert(id);
+                    sentMessage = true;
+                    for (final JButton b : B.getButtons()){
+                        b.removeActionListener(this);
+                    }
+                }
+            });
+        }
+        topPanel.setVisible(true);
+        mainPanel.setVisible(true);
+    }
+
+    public String convert(int id) {
+        int x = 0;
+        for(int i = 5; i<id; i=i+5) {
+            x++;
+        }
+        id = id - x * 5;
+        String result = ""+x+id;
+        return result;
+    }
+
     public synchronized void viewBoard(){
+        B = new BoardGUI();
         if(!lastViewCenter.equals("board")){
             createGameGui();
         }
@@ -317,14 +457,13 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.setLayout(new BorderLayout(20, 20));
         JPanel Y = new JPanel(new GridLayout(1, 6, 20, 0));
         JPanel X = new JPanel(new GridLayout(5, 1));
-        JPanel B;
-        B = setBoard(command);
+        B.setBoard(command);
 
         JLabel y[] = new JLabel[6];
         y[0] = new JLabel("X/Y\t");
         Y.add(y[0]);
-        for(int i=1; i<6; i++){
-            y[i]= new JLabel(i + "\t");
+        for(int i=1; i<5; i++){
+            y[i]= new JLabel((i-1) + "\t");
             Y.add(y[i]);
         }
 
@@ -333,7 +472,6 @@ public class GUI extends JFrame implements Runnable{
             x[i]= new JLabel(i + "\t");
             X.add(x[i]);
         }
-
         centerPanel.add(Y, BorderLayout.NORTH);
         centerPanel.add(X, BorderLayout.WEST);
         centerPanel.add(B, BorderLayout.CENTER);
@@ -342,8 +480,11 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         this.add(mainPanel);
-        this.setMinimumSize(new Dimension(500, 400));
+        this.setMinimumSize(new Dimension(1000, 800));
         pack();
+        mainPanel.remove(rightPanel);
+        rightPanel.setVisible(false);
+        rightPanel.removeAll();
         topPanel.setVisible(true);
         centerPanel.setVisible(true);
         mainPanel.setVisible(true);
@@ -464,7 +605,8 @@ public class GUI extends JFrame implements Runnable{
     }
 
     public synchronized void viewList(){
-        ArrayList<String> list = getList(command);
+        list = getList(command);
+
 
         mainPanel.setVisible(false);
         mainPanel.remove(rightPanel);
@@ -505,216 +647,5 @@ public class GUI extends JFrame implements Runnable{
             i++;
         }
         return list;
-    }
-
-    public synchronized JPanel setBoard(String b){
-        JPanel B = new JPanel(new GridLayout(5, 5));
-        String board = b.substring(5);
-        final JButton b00 = new JButton(board.substring(0,2));
-        final JButton b01 = new JButton(board.substring(2,4));
-        final JButton b02 = new JButton(board.substring(4,6));
-        final JButton b03 = new JButton(board.substring(6,8));
-        final JButton b04 = new JButton(board.substring(8,10));
-        final JButton b10 = new JButton(board.substring(10,12));
-        final JButton b11 = new JButton(board.substring(12,14));
-        final JButton b12 = new JButton(board.substring(14,16));
-        final JButton b13 = new JButton(board.substring(16,18));
-        final JButton b14 = new JButton(board.substring(18,20));
-        final JButton b20 = new JButton(board.substring(20,22));
-        final JButton b21 = new JButton(board.substring(22,24));
-        final JButton b22 = new JButton(board.substring(24,26));
-        final JButton b23 = new JButton(board.substring(26,28));
-        final JButton b24 = new JButton(board.substring(28,30));
-        final JButton b30 = new JButton(board.substring(30,32));
-        final JButton b31 = new JButton(board.substring(32,34));
-        final JButton b32 = new JButton(board.substring(34,36));
-        final JButton b33 = new JButton(board.substring(36,38));
-        final JButton b34 = new JButton(board.substring(38,40));
-        final JButton b40 = new JButton(board.substring(40,42));
-        final JButton b41 = new JButton(board.substring(42,44));
-        final JButton b42 = new JButton(board.substring(44,46));
-        final JButton b43 = new JButton(board.substring(46,48));
-        final JButton b44 = new JButton(board.substring(48,50));
-
-        B.add(b00);
-        B.add(b01);
-        B.add(b02);
-        B.add(b03);
-        B.add(b04);
-        B.add(b10);
-        B.add(b11);
-        B.add(b12);
-        B.add(b13);
-        B.add(b14);
-        B.add(b20);
-        B.add(b21);
-        B.add(b22);
-        B.add(b23);
-        B.add(b24);
-        B.add(b30);
-        B.add(b31);
-        B.add(b32);
-        B.add(b33);
-        B.add(b34);
-        B.add(b40);
-        B.add(b41);
-        B.add(b42);
-        B.add(b43);
-        B.add(b44);
-
-        /*
-        b00.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b00.getText());
-            }
-        });
-        b01.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b01.getText());
-            }
-        });
-        b02.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b02.getText());
-            }
-        });
-        b03.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b03.getText());
-            }
-        });
-        b04.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b04.getText());
-            }
-        });
-        b10.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b10.getText());
-            }
-        });
-        b11.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b11.getText());
-            }
-        });
-        b12.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b12.getText());
-            }
-        });
-        b13.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b13.getText());
-            }
-        });
-        b14.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b14.getText());
-            }
-        });
-        b20.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b20.getText());
-            }
-        });
-        b21.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b21.getText());
-            }
-        });
-        b22.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b22.getText());
-            }
-        });
-        b23.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b23.getText());
-            }
-        });
-        b24.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b24.getText());
-            }
-        });
-        b30.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b30.getText());
-            }
-        });
-        b31.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b31.getText());
-            }
-        });
-        b32.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b32.getText());
-            }
-        });
-        b33.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b33.getText());
-            }
-        });
-        b34.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b34.getText());
-            }
-        });
-        b40.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b40.getText());
-            }
-        });
-        b41.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b41.getText());
-            }
-        });
-        b42.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b42.getText());
-            }
-        });
-        b43.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b43.getText());
-            }
-        });
-        b44.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(b44.getText());
-            }
-        });
-        */
-
-        return B;
     }
 }

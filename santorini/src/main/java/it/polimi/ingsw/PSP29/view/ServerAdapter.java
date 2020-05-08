@@ -161,8 +161,17 @@ public class ServerAdapter implements Runnable
         String rsp = null;
         if(CLI){
             Scanner s = new Scanner(System.in);
-            System.out.print(cmd.substring(5));
-            rsp = s.nextLine();
+            if(cmd.startsWith("COOR")){
+                System.out.println(cmd.substring(5));
+                System.out.print("X: ");
+                String x = s.nextLine();
+                System.out.print("Y: ");
+                String y = s.nextLine();
+                rsp = x + y;
+            }else{
+                System.out.print(cmd.substring(5));
+                rsp = s.nextLine();
+            }
         }else{
             if(cmd.startsWith("LOGI")){
                 gui.login(cmd);
@@ -181,7 +190,18 @@ public class ServerAdapter implements Runnable
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
                 rsp = gui.getMessage();
-                System.out.println(rsp);
+            }
+            if(cmd.startsWith("COOR")){
+                gui.coordinate(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
+                rsp = gui.getMessage();
+            }
+            if(cmd.startsWith("TURN")){
+                gui.turn(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
+                rsp = gui.getMessage();
             }
         }
         try {

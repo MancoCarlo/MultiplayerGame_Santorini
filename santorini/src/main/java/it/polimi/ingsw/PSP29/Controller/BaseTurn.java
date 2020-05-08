@@ -56,7 +56,7 @@ public class BaseTurn implements Turn {
         if(coordinates.size()!=0){
             Coordinate c = null;
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));
-            server.write(ch, "interactionServer", "INDX-Where you want to build?\n");
+            server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
             int id;
             while(true){
                 try{
@@ -106,7 +106,7 @@ public class BaseTurn implements Turn {
         if(coordinates0.size()!=0 && coordinates1.size()!=0){
             server.write(ch, "serviceMessage", "MSGE-It's your turn\n");
             server.write(ch, "serviceMessage", "LIST-"+m.getPlayer(ch.getName()).printWorkers());
-            server.write(ch, "interactionServer", "INDX-Choose the worker to use in this turn: \n");
+            server.write(ch, "interactionServer", "INDX2Choose the worker to use in this turn: \n");
             while(true){
                 try{
                     String msg = server.read(ch);
@@ -115,7 +115,7 @@ public class BaseTurn implements Turn {
                         ch.closeConnection();
                         return false;
                     }else{
-                        wID= Integer.parseInt(msg);
+                        wID= Integer.parseInt(msg) - 1;
                     }
                     if(wID<0 || wID>1){
                         server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
@@ -142,7 +142,7 @@ public class BaseTurn implements Turn {
         Coordinate c = null;
         if(wID==0){
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
-            server.write(ch, "interactionServer", "INDX-Where you want to move?\n");
+            server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
                 try{
@@ -169,7 +169,7 @@ public class BaseTurn implements Turn {
         }
         else if(wID==1){
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
-            server.write(ch, "interactionServer", "INDX-Where you want to move?\n");
+            server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
                 try{
@@ -290,7 +290,7 @@ public class BaseTurn implements Turn {
      */
     @Override
     public String printCoordinates(ArrayList<Coordinate> coordinates){
-        String c = "Valid coordinates:\n";
+        String c = "";
         for(int i=0; i<coordinates.size(); i++){
             c = c + i + ") " + coordinates.get(i).toString() + "\n";
         }

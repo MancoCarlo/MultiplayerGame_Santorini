@@ -23,7 +23,7 @@ public class DemeterTurn extends GodTurn {
         boolean nopower = super.build(m,ch,server);
         if(!nopower) return false;
         server.write(ch,"serviceMessage", "BORD-"+m.printBoard());
-        server.write(ch,"interactionServer", "INDX-Would you build again?\n1) Yes\n2) No\n");
+        server.write(ch,"interactionServer", "INDX2Would you build again?\n1) Yes\n2) No\n");
         String answer = server.read(ch);
         if(answer.equals("1")){
             super.build(m,ch,server);
