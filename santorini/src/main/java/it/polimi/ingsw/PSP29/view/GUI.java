@@ -60,6 +60,7 @@ public class GUI extends JFrame implements Runnable{
         LISTP,
         LIST,
         MESSAGE,
+        INDEX,
         STOP
     }
 
@@ -73,6 +74,13 @@ public class GUI extends JFrame implements Runnable{
     public synchronized void lobby(String cmd)
     {
         nextCommand = Commands.LOBBY;
+        command = cmd;
+        notifyAll();
+    }
+
+    public synchronized void index(String cmd)
+    {
+        nextCommand = Commands.INDEX;
         command = cmd;
         notifyAll();
     }
@@ -140,6 +148,10 @@ public class GUI extends JFrame implements Runnable{
 
                 case MESSAGE:
                     viewMessage();
+                    break;
+
+                case INDEX:
+                    viewIndex();
                     break;
 
                 case STOP:
@@ -244,6 +256,45 @@ public class GUI extends JFrame implements Runnable{
         topPanel.setVisible(true);
         mainPanel.setVisible(true);
         sentMessage=true;
+    }
+
+    public synchronized void viewIndex(){
+        mainPanel.setVisible(false);
+        topPanel.setVisible(false);
+        mainPanel.remove(topPanel);
+        if(!lastViewCenter.equals("board")){
+            centerPanel.setVisible(false);
+            mainPanel.remove(centerPanel);
+            centerPanel.removeAll();
+        }
+        topPanel.removeAll();
+        topPanel.setLayout(new FlowLayout());
+        command = command.substring(5);
+        char size = command.charAt(0);
+        int dim = Integer.parseInt(String.valueOf(size));
+        JLabel label = new JLabel(command.substring(1));
+        final JComboBox cb = new JComboBox();
+        for(int i=1;i<=dim;i++){
+            cb.addItem(i);
+        }
+        JButton button = new JButton("SEND");
+        topPanel.add(label);
+        topPanel.add(cb);
+        topPanel.add(button);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        this.add(mainPanel);
+        this.pack();
+        topPanel.setVisible(true);
+        mainPanel.setVisible(true);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(cb.getItemAt(cb.getSelectedIndex())!=null)
+                message = Integer.toString((Integer) cb.getItemAt(cb.getSelectedIndex()));
+                sentMessage = true;
+            }
+        });
     }
 
     public synchronized void viewBoard(){

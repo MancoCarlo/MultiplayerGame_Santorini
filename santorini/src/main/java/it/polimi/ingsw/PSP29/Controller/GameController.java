@@ -112,7 +112,8 @@ public class GameController {
         int id=0;
         server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Choose " + match.playersInGame() + " gods from this list");
         server.write(server.getClientHandlers().get(myturn), "serviceMessage", "LIST-"+match.printGodlist());
-        server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°1 index: ");
+        String num = Integer.toString(match.getGods().size());
+        server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Insert n°1 index: ");
         while(true){
             try {
                 String str = server.read(server.getClientHandlers().get(myturn));
@@ -122,7 +123,8 @@ public class GameController {
                         next();
                         server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Choose " + match.playersInGame() + " gods from this list");
                         server.write(server.getClientHandlers().get(myturn), "serviceMessage", "LIST-"+match.printGodlist());
-                        server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°1 index: ");
+                        num = Integer.toString(match.getGods().size());
+                        server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Insert n°1 index: ");
                         continue;
                     }
                     else{
@@ -132,19 +134,22 @@ public class GameController {
                 id=Integer.parseInt(str);
                 if(id<1 || id>match.getGods().size()){
                     server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Invalid input\n");
-                    server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°1 index: ");
+                    num = Integer.toString(match.getGods().size());
+                    server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Insert n°1 index: ");
                     continue;
                 }
                 break;
             } catch (NumberFormatException e){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Invalid input\n");
-                server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°1 index: ");
+                num = Integer.toString(match.getGods().size());
+                server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Insert n°1 index: ");
             }
         }
         godIndex.add(id - 1);
         boolean find;
         for(int i=1; i<numPlayers; i++){
-            server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°" + (i+1) + " index: ");
+            num = Integer.toString(match.getGods().size());
+            server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Insert n°" + (i+1) + " index: ");
             while(true){
                 find=false;
                 try {
@@ -154,7 +159,8 @@ public class GameController {
                         if(match.playersInGame()!=1){
                             next();
                             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "LIST-"+match.printGodlist());
-                            server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°" + (i+1) + " index: ");
+                            num = Integer.toString(match.getGods().size());
+                            server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Insert n°" + (i+1) + " index: ");
                             continue;
                         }
                         else{
@@ -164,13 +170,15 @@ public class GameController {
                     id=Integer.parseInt(str);
                     if(id<1 || id>match.getGods().size()){
                         server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°" + (i+1) + " index: ");
+                        num = Integer.toString(match.getGods().size());
+                        server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Insert n°" + (i+1) + " index: ");
                         continue;
                     }
                     for(int j : godIndex){
                         if(id-1==j){
                             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-God already selected\n");
-                            server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°" + (i+1) + " index: ");
+                            num = Integer.toString(match.getGods().size());
+                            server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Insert n°" + (i+1) + " index: ");
                             find=true;
                         }
                     }
@@ -180,7 +188,8 @@ public class GameController {
                     break;
                 } catch (NumberFormatException e){
                     server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Invalid input\n");
-                    server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°" + (i+1) + " index: ");
+                    num = Integer.toString(match.getGods().size());
+                    server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Insert n°" + (i+1) + " index: ");
                 }
             }
             godIndex.add(id - 1);
@@ -193,7 +202,8 @@ public class GameController {
         while (i<count){
             next();
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "LIST-"+match.printGodlist());
-            server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Choose one god from this list: ");
+            num = Integer.toString(match.getGods().size());
+            server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Choose one god from this list: ");
             String str = server.read(server.getClientHandlers().get(myturn));
             if(str==null){
                 match.updatePlayers(server.getClientHandlers());
@@ -209,7 +219,8 @@ public class GameController {
             System.out.println(id);
             while(id >= match.getGods().size() || id < 0){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Index not valid\n");
-                server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert another index: ");
+                num = Integer.toString(match.getGods().size());
+                server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-"+num+"Choose one god from this list: ");;
                 str = server.read(server.getClientHandlers().get(myturn));
                 if(str==null){
                     match.updatePlayers(server.getClientHandlers());

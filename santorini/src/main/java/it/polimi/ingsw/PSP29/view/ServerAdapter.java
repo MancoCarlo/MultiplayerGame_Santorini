@@ -176,6 +176,13 @@ public class ServerAdapter implements Runnable
                 gui.resetSentMessage();
                 rsp = gui.getMessage();
             }
+            if(cmd.startsWith("INDX")){
+                gui.index(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
+                rsp = gui.getMessage();
+                System.out.println(rsp);
+            }
         }
         try {
             outputStm.writeObject(rsp);

@@ -194,15 +194,16 @@ public class Server
                     } catch (IOException e) {
                         System.out.println("Server closed");
                     }
-                }
+                }else{
                     gc.getMatch().getPlayers().remove(i);
+                }
                 countPlayers--;
                 clientHandlers.get(i).closeConnection();
             }
         }
         clientHandlers = newCH;
         for(int i=0; i<clientHandlers.size();i++){
-            write(clientHandlers.get(i),"interactionServer", "INDX-Would you play again?\n1) Yes\n2) No\n");
+            write(clientHandlers.get(i),"interactionServer", "INDX-2Would you play again?\n1) Yes\n2) No\n");
         }
         String again;
         for(int i=0; i<clientHandlers.size();i++){
