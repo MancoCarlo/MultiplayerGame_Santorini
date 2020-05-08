@@ -234,7 +234,6 @@ public class ServerAdapter implements Runnable
                     board.add(cmd.substring(i,i+2));
                     i=i+2;
                 }
-                System.out.println(board.toString());
                 String gameboard = "Gameboard\n  \t";
                 for(i=0; i<5; i++){
                     gameboard = gameboard + i + " \t";

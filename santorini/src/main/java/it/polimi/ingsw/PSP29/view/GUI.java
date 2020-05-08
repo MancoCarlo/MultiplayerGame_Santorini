@@ -121,8 +121,8 @@ public class GUI extends JFrame implements Runnable{
 
     public synchronized void turn(String cmd)
     {
-        nextCommand = Commands.MESSAGE;
-        command = cmd;
+        nextCommand = Commands.TURN;
+        command = cmd.substring(5);
         notifyAll();
     }
 
@@ -343,31 +343,32 @@ public class GUI extends JFrame implements Runnable{
         this.add(mainPanel);
         this.pack();
         final ArrayList<Integer> indexes = new ArrayList<>();
-        for(String s : list){
-            char a = s.charAt(3);
-            char b = s.charAt(5);
-            int x = Integer.parseInt(String.valueOf(a));
-            int y = Integer.parseInt(String.valueOf(b));
+        for(int i = 0; i<list.size();i++){
+            String a = list.get(i).substring(3,4);
+            String b = list.get(i).substring(5);
+            int x = Integer.parseInt(a);
+            int y = Integer.parseInt(b);
             indexes.add(reverseConvert(x,y));
         }
         centerPanel.setVisible(false);
+        for(Integer i : indexes){
+                B.getButtons().get(i).setBackground(Color.GREEN);
+        }
         for (final JButton b : B.getButtons()) {
-            for(final Integer i : indexes){
+            for(Integer i : indexes){
                 if(i == B.getCoordinate(b)){
-                    b.setBackground(Color.GREEN);
                     b.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             int id = B.getCoordinate(b);
                             message = getIndex(indexes, id);
+                            System.out.println(message);
                             sentMessage = true;
                             for (final JButton b : B.getButtons()){
                                 b.removeActionListener(this);
                             }
                         }
                     });
-                }else{
-                    b.setBackground(Color.RED);
                 }
             }
         }
@@ -381,15 +382,11 @@ public class GUI extends JFrame implements Runnable{
         int result = 0;
         for(int i=0; i<indexes.size();i++){
             if(id == indexes.get(i)){
-                result = i+1;
+                result = i;
                 break;
             }
         }
         return ""+result;
-    }
-
-    public Integer reverseConvert(int x, int y) {
-        return x * 5 + y;
     }
 
     public synchronized void doCoordinate() {
@@ -424,16 +421,6 @@ public class GUI extends JFrame implements Runnable{
         }
         topPanel.setVisible(true);
         mainPanel.setVisible(true);
-    }
-
-    public String convert(int id) {
-        int x = 0;
-        for(int i = 5; i<id; i=i+5) {
-            x++;
-        }
-        id = id - x * 5;
-        String result = ""+x+id;
-        return result;
     }
 
     public synchronized void viewBoard(){
@@ -480,7 +467,7 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         this.add(mainPanel);
-        this.setMinimumSize(new Dimension(1000, 800));
+        this.setMinimumSize(new Dimension(800, 600));
         pack();
         mainPanel.remove(rightPanel);
         rightPanel.setVisible(false);
@@ -636,16 +623,76 @@ public class GUI extends JFrame implements Runnable{
         while (i<l.length()){
             c=l.charAt(i);
             while (c!='\n'){
-                System.out.print(c);
                 element=element+c;
                 i++;
                 c=l.charAt(i);
             }
-            System.out.println("");
             list.add(element);
             element="";
             i++;
         }
         return list;
+    }
+
+    public String convert(int id) {
+        switch (id){
+            case 0:
+                return "00";
+            case 1:
+                return "01";
+            case 2:
+                return "02";
+            case 3:
+                return "03";
+            case 4:
+                return "04";
+            case 5:
+                return "10";
+            case 6:
+                return "11";
+            case 7:
+                return "12";
+            case 8:
+                return "13";
+            case 9:
+                return "14";
+            case 10:
+                return "20";
+            case 11:
+                return "21";
+            case 12:
+                return "22";
+            case 13:
+                return "23";
+            case 14:
+                return "24";
+            case 15:
+                return "30";
+            case 16:
+                return "31";
+            case 17:
+                return "32";
+            case 18:
+                return "33";
+            case 19:
+                return "34";
+            case 20:
+                return "40";
+            case 21:
+                return "41";
+            case 22:
+                return "42";
+            case 23:
+                return "43";
+            case 24:
+                return "44";
+            default:
+                return "";
+        }
+
+    }
+
+    public Integer reverseConvert(int x, int y) {
+        return x * 5 + y;
     }
 }

@@ -203,7 +203,7 @@ public class Server
         }
         clientHandlers = newCH;
         for(int i=0; i<clientHandlers.size();i++){
-            write(clientHandlers.get(i),"interactionServer", "INDX-2Would you play again?\n1) Yes\n2) No\n");
+            write(clientHandlers.get(i),"interactionServer", "INDX2Would you play again?\n1) Yes\n2) No\n");
         }
         String again;
         for(int i=0; i<clientHandlers.size();i++){
@@ -428,17 +428,7 @@ public class Server
         return clientHandlers;
     }
 
-    public void updateClientHandlers(ArrayList<ClientHandler> removed){
-        for(ClientHandler clientHandler : removed){
-            clientHandlers.remove(clientHandler);
-        }
-    }
-
     public void setTimeout(boolean t){
         timeout = t;
-    }
-
-    public boolean getTimeout(){
-        return timeout;
     }
 }

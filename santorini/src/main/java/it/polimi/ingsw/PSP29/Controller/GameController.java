@@ -382,8 +382,7 @@ public class GameController {
         if(athenaOn && p.getCard().getName().equals("Athena")){
             athenaOn=false;
         }
-        System.out.println("turno di " + p.getNickname()+ "\n\n\n\n");
-        /*server.write(ch, "interactionServer", "INDX2Would you use your god in this turn?\n1) YES\n2) NO\n");
+        server.write(ch, "interactionServer", "INDX2Would you use your god in this turn?\n1) YES\n2) NO\n");
         String response = server.read(ch);
         if(response==null){
             match.updatePlayers(server.getClientHandlers());
@@ -391,7 +390,7 @@ public class GameController {
         }
         boolean godOn;
         if(response.equals("1")) godOn = true;
-        else */godOn = false;
+        else godOn = false;
         if(!godOn){
             BaseTurn turn = new BaseTurn();
             return turnExe(ch, turn);

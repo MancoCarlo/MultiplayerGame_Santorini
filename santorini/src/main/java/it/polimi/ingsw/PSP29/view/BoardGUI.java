@@ -13,10 +13,12 @@ public class BoardGUI extends JPanel {
 
     public void setBoard(String command) {
         command = command.substring(5);
+        int j=0;
         for(int i=0; i<command.length();i=i+2){
-            JButton button = new JButton(command.substring(i,i+2));
+            JButton button = new JButton(command.substring(i,i+2)+"-"+j);
             buttons.add(button);
             this.add(button);
+            j++;
         }
     }
 
