@@ -181,7 +181,7 @@ public class Match implements Serializable {
         StringBuilder gameboard = new StringBuilder();
         for(int i=0; i<rows; i++){
             for(int j=0; j<columns; j++){
-                gameboard.append(board[i][j].printEmpty());
+                gameboard.append(board[i][j].printEmpty(this));
             }
         }
         return gameboard.toString();
@@ -204,7 +204,7 @@ public class Match implements Serializable {
     public String printPlayers(){
         String pl= "Players: \n";
         for (Player p : players){
-            pl = pl + "- " + p.getNickname() + ", " + p.getAge() + " years old\n";
+            pl = pl + "- "+ p.getId()+", " + p.getNickname() + ", " + p.getAge() + " years old\n";
         }
         return pl;
     }

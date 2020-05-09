@@ -16,7 +16,6 @@ public class Server
     public final static int SOCKET_PORT = 7777;
     private static GameController gc;
     private int numPlayers=0;
-    private boolean endGame = false;
     private boolean timeout = false;
     private int countPlayers = 0;
     private ServerSocket socket;
@@ -143,10 +142,6 @@ public class Server
                     break;
                 }
 
-                for(int i=0; i<gc.getMatch().getPlayers().size();i++){
-                    gc.getMatch().getPlayers().get(i).color = gc.getMatch().getColors().get(i);
-                }
-
                 System.out.println("Assigning gods");
                 if(!gc.godsAssignement()){
                     for(ClientHandler clientHandler : clientHandlers){
@@ -203,8 +198,8 @@ public class Server
         }
         clientHandlers = newCH;
         for(int i=0; i<clientHandlers.size();i++){
-            write(clientHandlers.get(i), "serviceMessage", "LIST-1) YES\n2)NO\n");
-            write(clientHandlers.get(i),"interactionServer", "INDX2Would you play again?");
+            write(clientHandlers.get(i), "serviceMessage", "LIST-1) YES\n2) NO\n");
+            write(clientHandlers.get(i),"interactionServer", "INDX-Would you play again?");
         }
         String again;
         for(int i=0; i<clientHandlers.size();i++){
@@ -309,7 +304,7 @@ public class Server
 
         clientHandler.setName(username);
         clientHandler.setAge(age);
-        Player player1 = new Player(username, age);
+        Player player1 = new Player(username, age, countPlayers+1);
         gc.getMatch().addPlayer(player1);
         gc.getMatch().getPlayer(username).setInGame(true);
         return true;

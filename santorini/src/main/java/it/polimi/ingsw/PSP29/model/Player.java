@@ -6,19 +6,22 @@ import java.util.ArrayList;
 public class Player implements Serializable {
     private String nickname;
     private int age;
+    private int id;
     God card;
     ArrayList<Worker> workers;
     private boolean inGame = false;
-    public Color color;
 
-    public Player(String nick, int a) {
+    public Player(String nick, int a, int id) {
         nickname = nick;
         age = a;
+        this.id = id;
         workers = new ArrayList<Worker>();
         for(int i = 0;i<2;i++){
-            workers.add(new Worker(i,nick,color));
+            workers.add(new Worker(i,nick));
         }
     }
+
+    public int getId() { return id; }
 
     public boolean getInGame() {
         return inGame;

@@ -2,6 +2,7 @@ package it.polimi.ingsw.PSP29.model;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Box implements Serializable {
     private Coordinate location;
@@ -84,11 +85,11 @@ public class Box implements Serializable {
     /**
      * print on monitor the state of box: 0 if empty else 1
      */
-    public String printEmpty() {
+    public String printEmpty(Match m) {
         String s;
         if(isEmpty()) s="0";
         else{
-            s= workerBox.getIDplayer().substring(0,1);
+            s=""+m.getPlayer(workerBox.getIDplayer()).getId();
         }
         return s + level;
     }

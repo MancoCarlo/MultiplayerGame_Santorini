@@ -198,7 +198,7 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.setVisible(false);
         mainPanel.remove(centerPanel);
         centerPanel.removeAll();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.setLayout(new BorderLayout());
         JLabel label = new JLabel(command.substring(5));
         final JTextField mex = new JTextField();
         mex.setMaximumSize(new Dimension(Short.MAX_VALUE, 30));
@@ -210,10 +210,11 @@ public class GUI extends JFrame implements Runnable{
         mex.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel.add(centerPanel);
-        this.add(mainPanel);
-        //this.pack();
+        this.getContentPane().add(mainPanel);
+        this.pack();
         centerPanel.setVisible(true);
         mainPanel.setVisible(true);
+
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -223,6 +224,7 @@ public class GUI extends JFrame implements Runnable{
                 }
             }
         });
+
     }
 
     public synchronized void doLobby() {
@@ -303,46 +305,7 @@ public class GUI extends JFrame implements Runnable{
         while (!indexGUI.isIndexObtained());
         message = "" +indexGUI.getIndex();
         indexGUI.setVisible(false);
-        //list=null;
         sentMessage=true;
-        /*
-        mainPanel.setVisible(false);
-        topPanel.setVisible(false);
-        mainPanel.remove(topPanel);
-        if(!lastViewCenter.equals("board")){
-            centerPanel.setVisible(false);
-            mainPanel.remove(centerPanel);
-            centerPanel.removeAll();
-        }
-        topPanel.removeAll();
-        topPanel.setLayout(new FlowLayout());
-        command = command.substring(4);
-        String size = command.substring(0,1);
-        int dim = Integer.parseInt(size);
-        JLabel label = new JLabel(command.substring(1));
-        final JComboBox cb = new JComboBox();
-        for(int i=1;i<=dim;i++){
-            cb.addItem(i);
-        }
-        JButton button = new JButton("SEND");
-        topPanel.add(label);
-        topPanel.add(cb);
-        topPanel.add(button);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(topPanel, BorderLayout.NORTH);
-        this.add(mainPanel);
-        this.pack();
-        topPanel.setVisible(true);
-        mainPanel.setVisible(true);
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(cb.getItemAt(cb.getSelectedIndex())!=null)
-                message = Integer.toString((Integer) cb.getItemAt(cb.getSelectedIndex()));
-                sentMessage = true;
-            }
-        });
-        */
     }
 
     public synchronized void doTurn() {
@@ -548,7 +511,7 @@ public class GUI extends JFrame implements Runnable{
         JLabel[] text = new JLabel[players.size()*2];
         int j=0;
         for(int i=0; i<players.size(); i++){
-            text[j] = new JLabel("- " + players.get(i).getNickname());
+            text[j] = new JLabel(players.get(i).getId()+") "+players.get(i).getNickname());
             leftPanel.add(text[j]);
             j++;
             text[j] = new JLabel(players.get(i).getAge() + " years");
@@ -583,12 +546,20 @@ public class GUI extends JFrame implements Runnable{
         ArrayList<Player> players = new ArrayList<>();
         String name="";
         String age="";
+        String id="";
         while (j<list.length()){
             c=list.charAt(j);
             if(c!='-'){
                 j++;
             }
             else{
+                j=j+2;
+                c=list.charAt(j);
+                while(c!=','){
+                    id=id + c;
+                    j++;
+                    c=list.charAt(j);
+                }
                 j=j+2;
                 c=list.charAt(j);
                 while(c!=','){
@@ -603,9 +574,10 @@ public class GUI extends JFrame implements Runnable{
                     j++;
                     c=list.charAt(j);
                 }
-                players.add(new Player(name, Integer.parseInt(age)));
+                players.add(new Player(name, Integer.parseInt(age), Integer.parseInt(id)));
                 name="";
                 age="";
+                id="";
             }
         }
         return players;

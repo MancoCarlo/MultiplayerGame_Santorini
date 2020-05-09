@@ -242,7 +242,40 @@ public class ServerAdapter implements Runnable
                 for(i=0; i<5; i++){
                     gameboard = gameboard + i + " \t";
                     for(int j=0; j<5; j++){
-                        gameboard = gameboard + board.get(0) + "\t";
+                        String first;
+                        String second;
+                        switch(board.get(0).charAt(0)){
+                            case '1':
+                                first = ""+Color.ANSI_RED + board.get(0).charAt(0) + Color.RESET;
+                                break;
+                            case '2':
+                                first = ""+Color.ANSI_BLUE + board.get(0).charAt(0) + Color.RESET;
+                                break;
+                            case '3':
+                                first = ""+Color.ANSI_YELLOW + board.get(0).charAt(0) + Color.RESET;
+                                break;
+                            default:
+                                first = ""+board.get(0).charAt(0);
+                                break;
+                        }
+                        switch(board.get(0).charAt(1)){
+                            case '1':
+                                second = ""+Color.ANSI_LEVEL1 + board.get(0).charAt(1) + Color.RESET;
+                                break;
+                            case '2':
+                                second = ""+Color.ANSI_LEVEL2 + board.get(0).charAt(1) + Color.RESET;
+                                break;
+                            case '3':
+                                second = ""+Color.ANSI_LEVEL3 + board.get(0).charAt(1) + Color.RESET;
+                                break;
+                            case '4':
+                                second = ""+Color.ANSI_LEVEL4 + board.get(0).charAt(1) + Color.RESET;
+                                break;
+                            default:
+                                second = ""+board.get(0).charAt(1);
+                                break;
+                        }
+                        gameboard = gameboard + first + second + "\t";
                         board.remove(0);
                     }
                     gameboard = gameboard + "\n";
