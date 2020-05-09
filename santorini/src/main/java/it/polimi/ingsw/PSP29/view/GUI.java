@@ -34,6 +34,10 @@ public class GUI extends JFrame implements Runnable{
 
     @Override
     public void run() {
+
+        setDefaultLookAndFeelDecorated(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         mainPanel = new JPanel();
         topPanel = new JPanel();
         bottomPanel = new JPanel();
@@ -49,8 +53,6 @@ public class GUI extends JFrame implements Runnable{
 
         this.add(mainPanel);
         this.setTitle("SANTORINI the GAME");
-        setDefaultLookAndFeelDecorated(true);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setPreferredSize(new Dimension(400, 300));
         this.pack();
         this.setVisible(true);
@@ -171,7 +173,9 @@ public class GUI extends JFrame implements Runnable{
                     break;
 
                 case INDEX:
-                    viewIndex();
+                    try{
+                        viewIndex();
+                    }catch (InterruptedException e){}
                     break;
 
                 case COORDINATE:
@@ -286,7 +290,22 @@ public class GUI extends JFrame implements Runnable{
         sentMessage=true;
     }
 
-    public synchronized void viewIndex(){
+    public synchronized void viewIndex() throws InterruptedException {
+        if(list==null){
+            list.add("1) Yes");
+            list.add("2) No");
+        }
+        command = command.substring(4);
+        String size = command.substring(0,1);
+        IndexGUI indexGUI = new IndexGUI(list, command.substring(1));
+        Thread indexThread = new Thread(indexGUI);
+        indexThread.start();
+        while (!indexGUI.isIndexObtained());
+        message = "" +indexGUI.getIndex();
+        indexGUI.setVisible(false);
+        //list=null;
+        sentMessage=true;
+        /*
         mainPanel.setVisible(false);
         topPanel.setVisible(false);
         mainPanel.remove(topPanel);
@@ -323,6 +342,7 @@ public class GUI extends JFrame implements Runnable{
                 sentMessage = true;
             }
         });
+        */
     }
 
     public synchronized void doTurn() {
@@ -449,7 +469,7 @@ public class GUI extends JFrame implements Runnable{
         JLabel y[] = new JLabel[6];
         y[0] = new JLabel("X/Y\t");
         Y.add(y[0]);
-        for(int i=1; i<5; i++){
+        for(int i=1; i<6; i++){
             y[i]= new JLabel((i-1) + "\t");
             Y.add(y[i]);
         }
@@ -467,7 +487,7 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         this.add(mainPanel);
-        this.setMinimumSize(new Dimension(800, 600));
+        this.setMinimumSize(new Dimension(600, 500));
         pack();
         mainPanel.remove(rightPanel);
         rightPanel.setVisible(false);
@@ -594,7 +614,7 @@ public class GUI extends JFrame implements Runnable{
     public synchronized void viewList(){
         list = getList(command);
 
-
+        /*
         mainPanel.setVisible(false);
         mainPanel.remove(rightPanel);
         rightPanel.setVisible(false);
@@ -611,7 +631,7 @@ public class GUI extends JFrame implements Runnable{
         pack();
         rightPanel.setVisible(true);
         mainPanel.setVisible(true);
-
+        */
         sentMessage=true;
     }
 

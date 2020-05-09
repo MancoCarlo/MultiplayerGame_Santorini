@@ -203,7 +203,8 @@ public class Server
         }
         clientHandlers = newCH;
         for(int i=0; i<clientHandlers.size();i++){
-            write(clientHandlers.get(i),"interactionServer", "INDX2Would you play again?\n1) Yes\n2) No\n");
+            write(clientHandlers.get(i), "serviceMessage", "LIST-1) YES\n2)NO\n");
+            write(clientHandlers.get(i),"interactionServer", "INDX2Would you play again?");
         }
         String again;
         for(int i=0; i<clientHandlers.size();i++){
