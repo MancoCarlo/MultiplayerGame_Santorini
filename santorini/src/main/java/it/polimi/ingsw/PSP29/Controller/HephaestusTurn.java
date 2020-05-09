@@ -65,6 +65,7 @@ public class HephaestusTurn extends GodTurn {
             p.getWorker(wID).changeBuilt(true);
             String power;
             if (m.getBoard()[c.getX()][c.getY()].getLevel() < 3) {
+                server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
                 server.write(ch, "interactionServer", "Would you like to build another block on your previous one?\n1) Yes\n2) No\n");
                 power = server.read(ch);
                 if (power.equals("1"))

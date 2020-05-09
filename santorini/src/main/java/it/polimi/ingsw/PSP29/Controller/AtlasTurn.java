@@ -54,6 +54,7 @@ public class AtlasTurn extends GodTurn{
                     server.write(ch, "interactionServer", "INDX-Try another index: ");
                 }
             }
+            server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
             server.write(ch, "interactionServer", "INDX2Would you use Atlas's power?\n1) Yes\n2) No\n ");
             String response = server.read(ch);
             c = coordinates.get(id);

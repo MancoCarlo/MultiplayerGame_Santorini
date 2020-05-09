@@ -28,6 +28,7 @@ public class ArtemisTurn extends GodTurn{
         boolean nopower = super.move(m,ch,server,athenaOn);
         if(!nopower) return false;
         server.write(ch,"serviceMessage", "BORD-"+m.printBoard());
+        server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
         server.write(ch,"interactionServer", "INDX2Would you move again?\n1) Yes\n2) No\n");
         String answer = server.read(ch);
         if(answer.equals("1")){
