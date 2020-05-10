@@ -197,7 +197,7 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.setVisible(false);
         mainPanel.remove(centerPanel);
         centerPanel.removeAll();
-        centerPanel = new ImagePanel("/login.png", this.getWidth()-10, this.getHeight()-35);
+        centerPanel = new ImagePanel("/title.png", this.getWidth(), this.getHeight());
         centerPanel.setLayout(new GridLayout(3,3));
         JPanel fake1 = new JPanel();
         JPanel fake2 = new JPanel();
