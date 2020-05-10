@@ -47,17 +47,15 @@ public class GUI extends JFrame implements Runnable{
         leftPanel = new JPanel();
         centerPanel = new JPanel();
 
-        JLabel text = new JLabel("Welcome to Santorini");
-        centerPanel.setLayout(new GridLayout());
-        centerPanel.add(text);
-
         mainPanel.add(centerPanel);
 
         this.add(mainPanel);
         this.setTitle("SANTORINI the GAME");
-        this.setPreferredSize(new Dimension(635, 635));
+        this.setPreferredSize(new Dimension(640, 640));
         this.pack();
         this.setVisible(true);
+        this.setResizable(false);
+        initialPage();
         processGUI();
     }
 
@@ -150,6 +148,7 @@ public class GUI extends JFrame implements Runnable{
                 continue;
 
             switch (nextCommand) {
+
                 case LOG:
                     doLogin();
                     break;
@@ -175,9 +174,7 @@ public class GUI extends JFrame implements Runnable{
                     break;
 
                 case INDEX:
-                    try{
-                        viewIndex();
-                    }catch (InterruptedException e){}
+                    viewIndex();
                     break;
 
                 case COORDINATE:
@@ -194,13 +191,74 @@ public class GUI extends JFrame implements Runnable{
         }
     }
 
+    public synchronized void initialPage(){
+        lastViewCenter="initial";
+        mainPanel.setVisible(false);
+        centerPanel.setVisible(false);
+        mainPanel.remove(centerPanel);
+        centerPanel.removeAll();
+        centerPanel = new ImagePanel("/login.png", this.getWidth()-10, this.getHeight()-35);
+        centerPanel.setLayout(new GridLayout(3,3));
+        JPanel fake1 = new JPanel();
+        JPanel fake2 = new JPanel();
+        JPanel fake3 = new JPanel();
+        JPanel fake4 = new JPanel();
+        JPanel fake6 = new JPanel();
+        JPanel fake7 = new JPanel();
+        JPanel fake8 = new JPanel();
+        JPanel fake9 = new JPanel();
+        ImagePanel cen = new ImagePanel("/form.png", this.getWidth()/3, this.getHeight()/3);
+
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        cen.setLayout(gridbag);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel label1 = new JLabel("Welcome to Santorini!");
+        JLabel label2 = new JLabel("Wait for a lobby");
+
+        c.gridx = 1;
+        c.gridy = 0;
+        gridbag.setConstraints(label1, c);
+        cen.add(label1);
+
+        c.gridx = 1;
+        c.gridy = 1;
+        gridbag.setConstraints(label2, c);
+        cen.add(label2);
+
+        fake1.setOpaque(false);
+        fake2.setOpaque(false);
+        fake3.setOpaque(false);
+        fake4.setOpaque(false);
+        fake6.setOpaque(false);
+        fake7.setOpaque(false);
+        fake8.setOpaque(false);
+        fake9.setOpaque(false);
+
+        centerPanel.add(fake1);
+        centerPanel.add(fake2);
+        centerPanel.add(fake3);
+        centerPanel.add(fake4);
+        centerPanel.add(cen);
+        centerPanel.add(fake6);
+        centerPanel.add(fake7);
+        centerPanel.add(fake8);
+        centerPanel.add(fake9);
+
+        this.getContentPane().add(centerPanel);
+        this.pack();
+        centerPanel.setVisible(true);
+    }
+
+
     public synchronized void doLogin() {
         lastViewCenter="login";
         mainPanel.setVisible(false);
         centerPanel.setVisible(false);
         mainPanel.remove(centerPanel);
         centerPanel.removeAll();
-        centerPanel = new ImagePanel("/login.png", this.getWidth(), this.getHeight());
+        centerPanel = new ImagePanel("/login.png", this.getWidth()-10, this.getHeight()-35);
         centerPanel.setLayout(new GridLayout(3,3));
         JPanel fake1 = new JPanel();
         JPanel fake2 = new JPanel();
@@ -220,7 +278,6 @@ public class GUI extends JFrame implements Runnable{
         JLabel label = new JLabel(command.substring(5));
         final JTextField mex = new JTextField();
         mex.setMaximumSize(new Dimension(Short.MAX_VALUE, 30));
-
         JButton button = new JButton("SEND");
 
         fake1.setOpaque(false);
@@ -262,6 +319,7 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.add(fake7);
         centerPanel.add(fake8);
         centerPanel.add(fake9);
+
         this.getContentPane().add(centerPanel);
         this.pack();
         centerPanel.setVisible(true);
@@ -284,7 +342,32 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.setVisible(false);
         mainPanel.remove(centerPanel);
         centerPanel.removeAll();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel = new ImagePanel("/login.png", this.getWidth()-10, this.getHeight()-35);
+        centerPanel.setLayout(new GridLayout(3,3));
+        JPanel fake1 = new JPanel();
+        JPanel fake2 = new JPanel();
+        JPanel fake3 = new JPanel();
+        JPanel fake4 = new JPanel();
+        JPanel fake6 = new JPanel();
+        JPanel fake7 = new JPanel();
+        JPanel fake8 = new JPanel();
+        JPanel fake9 = new JPanel();
+        ImagePanel cen = new ImagePanel("/form.png", this.getWidth()/3, this.getHeight()/3);
+
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        cen.setLayout(gridbag);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        fake1.setOpaque(false);
+        fake2.setOpaque(false);
+        fake3.setOpaque(false);
+        fake4.setOpaque(false);
+        fake6.setOpaque(false);
+        fake7.setOpaque(false);
+        fake8.setOpaque(false);
+        fake9.setOpaque(false);
+
         JLabel label = new JLabel(command.substring(5));
         final JRadioButton but1 = new JRadioButton("2");
         final JRadioButton but2 = new JRadioButton("3");
@@ -292,22 +375,43 @@ public class GUI extends JFrame implements Runnable{
         but1.setSelected(true);
         buttonG.add(but1);
         buttonG.add(but2);
-        JPanel buttons = new JPanel(new GridLayout(1, 2));
-        buttons.add(but1);
-        buttons.add(but2);
-        buttons.setMaximumSize(new Dimension(Short.MAX_VALUE, 50));
+        but1.setOpaque(false);
+        but2.setOpaque(false);
         JButton button = new JButton("SEND");
-        centerPanel.add(label);
-        centerPanel.add(buttons);
-        centerPanel.add(button);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buttons.setAlignmentX(Component.CENTER_ALIGNMENT);
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(centerPanel);
-        this.add(mainPanel);
+
+        c.gridx = 1;
+        c.gridy = 0;
+        gridbag.setConstraints(label, c);
+        cen.add(label);
+
+        c.gridx = 1;
+        c.gridy = 1;
+        gridbag.setConstraints(but1, c);
+        cen.add(but1);
+
+        c.gridx = 1;
+        c.gridy = 2;
+        gridbag.setConstraints(but2, c);
+        cen.add(but2);
+
+        c.gridx = 1;
+        c.gridy = 3;
+        gridbag.setConstraints(button, c);
+        cen.add(button);
+
+        centerPanel.add(fake1);
+        centerPanel.add(fake2);
+        centerPanel.add(fake3);
+        centerPanel.add(fake4);
+        centerPanel.add(cen);
+        centerPanel.add(fake6);
+        centerPanel.add(fake7);
+        centerPanel.add(fake8);
+        centerPanel.add(fake9);
+        this.getContentPane().add(centerPanel);
         this.pack();
         centerPanel.setVisible(true);
-        mainPanel.setVisible(true);
+
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -343,13 +447,12 @@ public class GUI extends JFrame implements Runnable{
         sentMessage=true;
     }
 
-    public synchronized void viewIndex() throws InterruptedException {
+    public synchronized void viewIndex(){
         if(list==null){
             list.add("1) Yes");
             list.add("2) No");
         }
         command = command.substring(4);
-        String size = command.substring(0,1);
         IndexGUI indexGUI = new IndexGUI(list, command.substring(1));
         Thread indexThread = new Thread(indexGUI);
         indexThread.start();
