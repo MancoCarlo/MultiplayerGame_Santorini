@@ -200,72 +200,22 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.setVisible(false);
         mainPanel.remove(centerPanel);
         centerPanel.removeAll();
-        centerPanel = new ImagePanel("/login.png", this.getWidth(), this.getHeight());
-        centerPanel.setLayout(new GridLayout(3,3));
-        JPanel fake1 = new JPanel();
-        JPanel fake2 = new JPanel();
-        JPanel fake3 = new JPanel();
-        JPanel fake4 = new JPanel();
-        JPanel fake6 = new JPanel();
-        JPanel fake7 = new JPanel();
-        JPanel fake8 = new JPanel();
-        JPanel fake9 = new JPanel();
-        ImagePanel cen = new ImagePanel("/form.png", this.getWidth()/3, this.getHeight()/3);
-
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        cen.setLayout(gridbag);
-        c.fill = GridBagConstraints.HORIZONTAL;
-
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         JLabel label = new JLabel(command.substring(5));
         final JTextField mex = new JTextField();
         mex.setMaximumSize(new Dimension(Short.MAX_VALUE, 30));
-
         JButton button = new JButton("SEND");
-
-        fake1.setOpaque(false);
-        fake2.setOpaque(false);
-        fake3.setOpaque(false);
-        fake4.setOpaque(false);
-        fake6.setOpaque(false);
-        fake7.setOpaque(false);
-        fake8.setOpaque(false);
-        fake9.setOpaque(false);
-        label.setAlignmentX(CENTER_ALIGNMENT);
-        mex.setAlignmentX(CENTER_ALIGNMENT);
-        button.setAlignmentX(CENTER_ALIGNMENT);
-        label.setAlignmentY(CENTER_ALIGNMENT);
-        mex.setAlignmentY(CENTER_ALIGNMENT);
-        button.setAlignmentY(CENTER_ALIGNMENT);
-
-        c.gridx = 1;
-        c.gridy = 0;
-        gridbag.setConstraints(label, c);
-        cen.add(label);
-
-        c.gridx = 1;
-        c.gridy = 1;
-        gridbag.setConstraints(mex, c);
-        cen.add(mex);
-
-        c.gridx = 1;
-        c.gridy = 2;
-        gridbag.setConstraints(button, c);
-        cen.add(button);
-
-        centerPanel.add(fake1);
-        centerPanel.add(fake2);
-        centerPanel.add(fake3);
-        centerPanel.add(fake4);
-        centerPanel.add(cen);
-        centerPanel.add(fake6);
-        centerPanel.add(fake7);
-        centerPanel.add(fake8);
-        centerPanel.add(fake9);
-        this.getContentPane().add(centerPanel);
-        this.pack();
+        centerPanel.add(label);
+        centerPanel.add(mex);
+        centerPanel.add(button);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mex.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(centerPanel);
+        this.add(mainPanel);
+        //this.pack();
         centerPanel.setVisible(true);
-
+        mainPanel.setVisible(true);
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -275,7 +225,6 @@ public class GUI extends JFrame implements Runnable{
                 }
             }
         });
-
     }
 
     public synchronized void doLobby() {
