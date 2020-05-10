@@ -197,7 +197,7 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.setVisible(false);
         mainPanel.remove(centerPanel);
         centerPanel.removeAll();
-        centerPanel = new ImagePanel("/title.png", this.getWidth(), this.getHeight());
+        centerPanel = new ImagePanel("/login.png", this.getWidth()-10, this.getHeight()-35);
         centerPanel.setLayout(new GridLayout(3,3));
         JPanel fake1 = new JPanel();
         JPanel fake2 = new JPanel();
@@ -428,17 +428,43 @@ public class GUI extends JFrame implements Runnable{
     public synchronized void viewMessage(){
         mainPanel.setVisible(false);
         topPanel.setVisible(false);
+        topPanel.removeAll();
         mainPanel.remove(topPanel);
+        topPanel = new ImagePanel("/top.png", getWidth(), getHeight());
+        topPanel.setLayout(new GridLayout(4,1));
+
+        JPanel fake1 = new JPanel();
+        JPanel fake2 = new JPanel();
+        JPanel fake3 = new JPanel();
+        JPanel correct = new JPanel();
+
+        fake1.setOpaque(false);
+        fake2.setOpaque(false);
+        fake3.setOpaque(false);
+        correct.setOpaque(false);
+
         if(!lastViewCenter.equals("board")){
             centerPanel.setVisible(false);
             mainPanel.remove(centerPanel);
             centerPanel.removeAll();
         }
-        topPanel.removeAll();
-        topPanel.setLayout(new FlowLayout());
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        correct.setLayout(gridbag);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
         JLabel label = new JLabel(command.substring(5));
-        topPanel.add(label);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        c.gridx = 1;
+        c.gridy = 0;
+        gridbag.setConstraints(label, c);
+        correct.add(label);
+
+        topPanel.add(fake1);
+        topPanel.add(fake2);
+        topPanel.add(fake3);
+        topPanel.add(correct);
+
         mainPanel.add(topPanel, BorderLayout.NORTH);
         this.add(mainPanel);
         this.pack();
@@ -569,6 +595,7 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.setVisible(false);
         topPanel.setVisible(false);
         centerPanel.setVisible(false);
+        centerPanel = new JPanel();
 
         mainPanel.remove(topPanel);
         topPanel.removeAll();
@@ -623,6 +650,7 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.setVisible(false);
         topPanel.removeAll();
         centerPanel.removeAll();
+        centerPanel = new JPanel();
 
         JButton top = new JButton("top");
         JButton bottom = new JButton("bottom");
