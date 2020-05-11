@@ -29,9 +29,9 @@ public class IndexGUI extends JFrame implements Runnable{
         indexObtained=false;
         this.setLayout(new BorderLayout());
         text=new JLabel(command);
-        optionPanel=new JPanel();
+        optionPanel=new ImagePanel("/back.png", getWidth(), getHeight());
         options = new ArrayList<>();
-        optionPanel.setLayout(new BoxLayout(optionPanel, BoxLayout.Y_AXIS));
+        optionPanel.setLayout(new GridLayout(3,3));
     }
 
     public synchronized void setOptions() {
@@ -53,17 +53,204 @@ public class IndexGUI extends JFrame implements Runnable{
                 gods.add(g);
             }
             for(final God g : gods){
-                final JButton button = new JButton(g.getName());
-                button.setBackground(Color.LIGHT_GRAY);
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        index=g.getID();
-                        indexObtained=true;
-                    }
-                });
-                options.add(button);
-                optionPanel.add(button);
+                if(g.getName().contains("Apollo")) {
+                    JPanel ap = new JPanel();
+                    ap.setOpaque(false);
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/01.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    ap.add(buttonA);
+                    optionPanel.add(ap);
+                }
+                if(g.getName().contains("Arthemis")) {
+                    JPanel ap = new JPanel();
+                    ap.setOpaque(false);
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/02.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    ap.add(buttonA);
+                    optionPanel.add(ap);
+                }
+                if(g.getName().contains("Athena")) {
+                    JPanel ap = new JPanel();
+                    ap.setOpaque(false);
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/03.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    ap.add(buttonA);
+                    optionPanel.add(ap);
+                }
+                if(g.getName().contains("Atlas")) {
+                    JPanel ap = new JPanel();
+                    ap.setOpaque(false);
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/04.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    ap.add(buttonA);
+                    optionPanel.add(ap);
+                }
+                if(g.getName().contains("Demeter")) {
+                    JPanel ap = new JPanel();
+                    ap.setOpaque(false);
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/05.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    ap.add(buttonA);
+                    optionPanel.add(ap);
+                }
+                if(g.getName().contains("Hephaestus")) {
+                    JPanel ap = new JPanel();
+                    ap.setOpaque(false);
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/06.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    ap.add(buttonA);
+                    optionPanel.add(ap);
+                }
+                if(g.getName().contains("Minotaur")) {
+                    JPanel ap = new JPanel();
+                    ap.setOpaque(false);
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/08.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    ap.add(buttonA);
+                    optionPanel.add(ap);
+                }
+                if(g.getName().contains("Pan")) {
+                    JPanel ap = new JPanel();
+                    ap.setOpaque(false);
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/09.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    ap.add(buttonA);
+                    optionPanel.add(ap);
+                }
+                if(g.getName().contains("Prometheus")) {
+                    JPanel ap = new JPanel();
+                    ap.setOpaque(false);
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/10.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    ap.add(buttonA);
+                    optionPanel.add(ap);
+                }
             }
         }else {
             for (String str : list) {
@@ -82,6 +269,7 @@ public class IndexGUI extends JFrame implements Runnable{
             }
         }
         this.add(text, BorderLayout.NORTH);
+        optionPanel.setOpaque(false);
         this.add(optionPanel, BorderLayout.CENTER);
         pack();
         this.setVisible(true);
