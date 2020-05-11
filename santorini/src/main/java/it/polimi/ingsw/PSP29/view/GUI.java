@@ -595,7 +595,6 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.setVisible(false);
         topPanel.setVisible(false);
         centerPanel.setVisible(false);
-        centerPanel = new JPanel();
 
         mainPanel.remove(topPanel);
         topPanel.removeAll();
@@ -605,9 +604,11 @@ public class GUI extends JFrame implements Runnable{
 
         mainPanel.remove(centerPanel);
         centerPanel.removeAll();
-        centerPanel.setLayout(new BorderLayout(20, 20));
-        JPanel Y = new JPanel(new GridLayout(1, 6, 20, 0));
-        JPanel X = new JPanel(new GridLayout(5, 1));
+        centerPanel.setLayout(new BorderLayout());
+        JPanel Y = new JPanel(new GridLayout(1, 6, 50, 50));
+        Y.setOpaque(false);
+        JPanel X = new JPanel(new GridLayout(5, 1, 50, 50));
+        X.setOpaque(false);
         B.setBoard(command);
 
         JLabel y[] = new JLabel[6];
@@ -664,7 +665,7 @@ public class GUI extends JFrame implements Runnable{
         leftPanel.add(left);
         centerPanel.add(center);
 
-        mainPanel.setLayout(new BorderLayout(20, 20));
+        mainPanel.setLayout(new BorderLayout(15,0));
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
         mainPanel.add(rightPanel, BorderLayout.EAST);
@@ -686,7 +687,10 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.remove(leftPanel);
         leftPanel.setVisible(false);
         leftPanel.removeAll();
-        leftPanel = new ImagePanel("/left.png", 200, getHeight());
+
+        JLabel title = new JLabel("\nPlayers:");
+
+        leftPanel = new ImagePanel("/form.png", 2*title.getWidth()+300, leftPanel.getHeight());
         leftPanel.setLayout(new GridLayout(4,2));
 
         JPanel fake = new JPanel();
@@ -707,18 +711,21 @@ public class GUI extends JFrame implements Runnable{
         listP.setOpaque(false);
         listP.setLayout(new GridLayout(6,1));
 
-        JLabel title = new JLabel("Players:");
-        leftPanel.add(title);
+
         leftPanel.add(fake2);
         leftPanel.add(fake3);
+        leftPanel.add(title);
         leftPanel.add(fake4);
-        JLabel[] text = new JLabel[players.size()*2];
+        JLabel[] text = new JLabel[players.size()*3];
         int j=0;
         for(int i=0; i<players.size(); i++){
-            text[j] = new JLabel(players.get(i).getId()+") "+players.get(i).getNickname());
+            text[j] = new JLabel(players.get(i).getId()+") "+players.get(i).getNickname()+"\t");
             listP.add(text[j]);
             j++;
-            text[j] = new JLabel(players.get(i).getAge() + " years");
+            text[j] = new JLabel(players.get(i).getAge() + " years"+ "\t");
+            listP.add(text[j]);
+            j++;
+            text[j] = new JLabel("\n");
             listP.add(text[j]);
             j++;
         }
