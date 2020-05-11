@@ -686,20 +686,43 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.remove(leftPanel);
         leftPanel.setVisible(false);
         leftPanel.removeAll();
+        leftPanel = new ImagePanel("/left.png", 200, getHeight());
+        leftPanel.setLayout(new GridLayout(4,2));
 
-        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        JPanel fake = new JPanel();
+        fake.setOpaque(false);
+
+        JPanel fake2 = new JPanel();
+        fake2.setOpaque(false);
+
+        JPanel fake3 = new JPanel();
+        fake3.setOpaque(false);
+
+        JPanel fake4 = new JPanel();
+        fake4.setOpaque(false);
+
+        leftPanel.add(fake);
+
+        JPanel listP = new JPanel();
+        listP.setOpaque(false);
+        listP.setLayout(new GridLayout(6,1));
+
         JLabel title = new JLabel("Players:");
         leftPanel.add(title);
+        leftPanel.add(fake2);
+        leftPanel.add(fake3);
+        leftPanel.add(fake4);
         JLabel[] text = new JLabel[players.size()*2];
         int j=0;
         for(int i=0; i<players.size(); i++){
             text[j] = new JLabel(players.get(i).getId()+") "+players.get(i).getNickname());
-            leftPanel.add(text[j]);
+            listP.add(text[j]);
             j++;
             text[j] = new JLabel(players.get(i).getAge() + " years");
-            leftPanel.add(text[j]);
+            listP.add(text[j]);
             j++;
         }
+        leftPanel.add(listP);
 
         mainPanel.add(leftPanel, BorderLayout.WEST);
         pack();
