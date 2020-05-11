@@ -1,5 +1,7 @@
 package it.polimi.ingsw.PSP29.view;
 
+import it.polimi.ingsw.PSP29.model.God;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -36,19 +38,48 @@ public class IndexGUI extends JFrame implements Runnable{
         if(!list.get(0).substring(1,2).equals(")")){
             list.remove(0);
         }
-        for(String str : list){
-            final JButton button = new JButton(str);
-            button.setBackground(Color.LIGHT_GRAY);
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    index=getPosition(button);
-                    System.out.println(index);
-                    indexObtained=true;
+        if(list.size()>2){
+            ArrayList<God> gods = new ArrayList<>();
+            for(int i = 0; i<list.size(); i++){
+                String name = "";
+                String anal = list.get(i);
+                while(anal.charAt(0) != ','){
+                    name = name + anal.charAt(0);
+                    anal = anal.substring(1);
                 }
-            });
-            options.add(button);
-            optionPanel.add(button);
+                anal = anal.substring(1);
+                String des = anal;
+                God g = new God(i+1, name, des);
+                gods.add(g);
+            }
+            for(final God g : gods){
+                final JButton button = new JButton(g.getName());
+                button.setBackground(Color.LIGHT_GRAY);
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        index=g.getID();
+                        indexObtained=true;
+                    }
+                });
+                options.add(button);
+                optionPanel.add(button);
+            }
+        }else {
+            for (String str : list) {
+                final JButton button = new JButton(str);
+                button.setBackground(Color.LIGHT_GRAY);
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        index = getPosition(button);
+                        System.out.println(index);
+                        indexObtained = true;
+                    }
+                });
+                options.add(button);
+                optionPanel.add(button);
+            }
         }
         this.add(text, BorderLayout.NORTH);
         this.add(optionPanel, BorderLayout.CENTER);
