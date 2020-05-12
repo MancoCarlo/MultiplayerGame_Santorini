@@ -426,14 +426,17 @@ public class GameController {
                     PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn8);
                 case 9 :
-                    HestiaTurn turn9 = new HestiaTurn(new GodTurn(new BaseTurn()));
+                    PoseidonTurn turn9 = new PoseidonTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn9);
                 case 10 :
-                    PoseidonTurn turn10 = new PoseidonTurn(new GodTurn(new BaseTurn()));
+                    TritonTurn turn10 = new TritonTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn10);
                 case 11 :
-                    TritonTurn turn11 = new TritonTurn(new GodTurn(new BaseTurn()));
+                    HestiaTurn turn11 = new HestiaTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn11);
+                case 12 :
+                    CharonTurn turn12 = new CharonTurn(new GodTurn(new BaseTurn()));
+                    return turnExe(ch, turn12);
             }
         }
         return false;
