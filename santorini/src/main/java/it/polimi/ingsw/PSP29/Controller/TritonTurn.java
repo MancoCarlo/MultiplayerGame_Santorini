@@ -1,9 +1,6 @@
 package it.polimi.ingsw.PSP29.Controller;
 
-import it.polimi.ingsw.PSP29.model.Coordinate;
-import it.polimi.ingsw.PSP29.model.Match;
-import it.polimi.ingsw.PSP29.model.Player;
-import it.polimi.ingsw.PSP29.model.Worker;
+import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
@@ -14,6 +11,14 @@ public class TritonTurn extends GodTurn {
 
     public TritonTurn(Turn turn) {super(turn);}
 
+    /**
+     * move the worker and allows him to move unlimited times on border boxes if he was moved on one of them
+     * @param m match played
+     * @param ch owner of the turn
+     * @param server manage the interaction with client
+     * @param athenaOn true if athena is on
+     * @return true if is moved at least once
+     */
     @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
         Player p = m.getPlayer(ch.getName());
