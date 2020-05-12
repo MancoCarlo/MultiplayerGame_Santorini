@@ -396,6 +396,12 @@ public class GUI extends JFrame implements Runnable{
         but2.setOpaque(false);
         JButton button = new JButton("SEND");
 
+        JPanel radio = new JPanel(new GridLayout(1,2));
+        radio.setOpaque(false);
+
+        radio.add(but1);
+        radio.add(but2);
+
         c.gridx = 1;
         c.gridy = 0;
         gridbag.setConstraints(label, c);
@@ -403,16 +409,11 @@ public class GUI extends JFrame implements Runnable{
 
         c.gridx = 1;
         c.gridy = 1;
-        gridbag.setConstraints(but1, c);
-        cen.add(but1);
+        gridbag.setConstraints(radio, c);
+        cen.add(radio);
 
         c.gridx = 1;
         c.gridy = 2;
-        gridbag.setConstraints(but2, c);
-        cen.add(but2);
-
-        c.gridx = 1;
-        c.gridy = 3;
         gridbag.setConstraints(button, c);
         cen.add(button);
 
@@ -856,6 +857,15 @@ public class GUI extends JFrame implements Runnable{
                 break;
             case "Prometheus":
                 img = new ImageIcon(getClass().getResource("/god/10.png"));
+                break;
+            case "Poseidon":
+                img = new ImageIcon(getClass().getResource("/god/27.png"));
+                break;
+            case "Triton":
+                img = new ImageIcon(getClass().getResource("/god/29.png"));
+                break;
+            case "Hestia":
+                img = new ImageIcon(getClass().getResource("/god/21.png"));
                 break;
             default:
                 img = new ImageIcon(getClass().getResource("/god/01.png"));

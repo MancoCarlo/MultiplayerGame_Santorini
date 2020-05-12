@@ -163,17 +163,18 @@ public class Match implements Serializable {
      * creates the list of gods
      */
     public void loadGods() {
-        gods.add(new God(0, "Apollo", "Il Dio della musica"));
-        gods.add(new God(1, "Arthemis", "La Dea della caccia"));
-        gods.add(new God(2, "Athena", "La Dea della saggezza"));
-        gods.add(new God(3, "Atlas", "Il titano che regge sulle spalle la volta celeste"));
-        gods.add(new God(4, "Demeter", "La dea del raccolto"));
-        gods.add(new God(5, "Hephaestus", "Il dio delle fucine"));
-        gods.add(new God(6, "Minotaur", "Il mostro dalla testa di toro"));
-        gods.add(new God(7, "Pan", "Il dio della natura selvaggia"));
-        gods.add(new God(8, "Prometheus", "Il titano benefattore dell'umanità"));
-        gods.add(new God(9, "Hestia", "La dea del focolare e della casa"));
-        gods.add(new God(10, "Poseidon", "Il dio del mare"));
+        gods.add(new God(0, "Apollo", "God of Music"));
+        gods.add(new God(1, "Arthemis", "Goddess of the Hunt"));
+        gods.add(new God(2, "Athena", "Goddess of Wisdom"));
+        gods.add(new God(3, "Atlas", "Titan Shouldering the Heavens"));
+        gods.add(new God(4, "Demeter", "Goddess of the Harvest"));
+        gods.add(new God(5, "Hephaestus", "God of Blacksmiths"));
+        gods.add(new God(6, "Minotaur", "Bull-headed Monster"));
+        gods.add(new God(7, "Pan", "God of the Wild"));
+        gods.add(new God(8, "Prometheus", "Titan Benefactor of Mankind"));
+        gods.add(new God(9, "Hestia", "Goddess of Heart h and Home"));
+        gods.add(new God(10, "Poseidon", "God of the Sea"));
+        gods.add(new God(11, "Triton", "God of the Waves"));
     }
 
     /**

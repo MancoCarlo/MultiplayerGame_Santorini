@@ -276,7 +276,9 @@ public class GameController {
                     }
                 }
             }
-
+            for(ClientHandler clientHandler : server.getClientHandlers()){
+                server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
+            }
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Insert Worker n°2\n");
             c = getCoordinate();
             if(c==null){
@@ -305,6 +307,9 @@ public class GameController {
                 }
             }
             i++;
+        }
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
         }
         next();
         return true;
@@ -431,6 +436,9 @@ public class GameController {
                 case 10 :
                     PoseidonTurn turn10 = new PoseidonTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn10);
+                case 11 :
+                    TritonTurn turn11 = new TritonTurn(new GodTurn(new BaseTurn()));
+                    return turnExe(ch, turn11);
             }
         }
         return false;
@@ -455,6 +463,10 @@ public class GameController {
             return false;
         }
 
+        if(turn.winCondition(match, match.getPlayer(ch.getName()))){
+            return true;
+        }
+
         if(match.getPlayer(ch.getName()).getCard().getName().equals("Athena"))
             athenaCondition(ch);
 
@@ -467,11 +479,16 @@ public class GameController {
             return false;
         }
 
-        if(!turn.winCondition(match, match.getPlayer(ch.getName()))){
-            return false;
-        }else{
-            return true;
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
         }
+
+        match.getPlayer(ch.getName()).getWorkers().get(0).changeBuilt(false);
+        match.getPlayer(ch.getName()).getWorkers().get(1).changeBuilt(false);
+        match.getPlayer(ch.getName()).getWorkers().get(0).changeMoved(false);
+        match.getPlayer(ch.getName()).getWorkers().get(1).changeMoved(false);
+
+        return false;
     }
 
     /**
