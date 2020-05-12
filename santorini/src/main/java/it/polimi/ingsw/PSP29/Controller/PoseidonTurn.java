@@ -1,8 +1,6 @@
 package it.polimi.ingsw.PSP29.Controller;
 
-import it.polimi.ingsw.PSP29.model.Coordinate;
-import it.polimi.ingsw.PSP29.model.Match;
-import it.polimi.ingsw.PSP29.model.Player;
+import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
@@ -12,6 +10,13 @@ public class PoseidonTurn extends GodTurn {
 
     public PoseidonTurn(Turn turn){super(turn);}
 
+    /**
+     * let the worker build and allows the other worker to build for a maximum of 3 block if he is on level zero
+     * @param m match played
+     * @param ch clientHandler that must build
+     * @param server manage the interaction with client
+     * @return true if w has built 
+     */
     @Override
     public boolean build(Match m, ClientHandler ch, Server server) {
         boolean nopower = super.build(m, ch, server);
