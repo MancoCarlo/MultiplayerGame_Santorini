@@ -175,6 +175,7 @@ public class Match implements Serializable {
         gods.add(new God(9, "Hestia", "Goddess of Heart h and Home"));
         gods.add(new God(10, "Poseidon", "God of the Sea"));
         gods.add(new God(11, "Triton", "God of the Waves"));
+        gods.add(new God(12, "Charon", "Ferryman to the Underworld"));
     }
 
     /**

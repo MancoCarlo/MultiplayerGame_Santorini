@@ -283,6 +283,25 @@ public class IndexGUI extends JFrame implements Runnable{
                     });
                     optionPanel.add(buttonA);
                 }
+                if(g.getName().contains("Charon")) {
+                    ImageIcon img = new ImageIcon(getClass().getResource("/god/15.png"));
+                    Image img1 = img.getImage() ;
+                    Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+                    img = new ImageIcon( newimg );
+                    JButton buttonA = new JButton("");
+                    buttonA.setIcon(img);
+                    buttonA.setOpaque(false);
+                    buttonA.setBorder(null);
+                    buttonA.setContentAreaFilled(false);
+                    buttonA.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            index = g.getID();
+                            indexObtained = true;
+                        }
+                    });
+                    optionPanel.add(buttonA);
+                }
             }
         }else {
             for (String str : list) {
@@ -344,6 +363,7 @@ public class IndexGUI extends JFrame implements Runnable{
         if(list.get(0).contains("Hestia")) return true;
         if(list.get(0).contains("Poseidon")) return true;
         if(list.get(0).contains("Triton")) return true;
+        if(list.get(0).contains("Charon")) return true;
         return false;
     }
 

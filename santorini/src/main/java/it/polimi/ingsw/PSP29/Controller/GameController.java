@@ -439,6 +439,9 @@ public class GameController {
                 case 11 :
                     TritonTurn turn11 = new TritonTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn11);
+                case 12 :
+                    CharonTurn turn12 = new CharonTurn(new GodTurn(new BaseTurn()));
+                    return turnExe(ch, turn12);
             }
         }
         return false;
