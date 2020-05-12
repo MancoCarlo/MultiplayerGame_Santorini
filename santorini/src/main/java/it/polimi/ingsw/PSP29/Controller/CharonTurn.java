@@ -6,14 +6,12 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
-public class MinotaurTurn extends GodTurn {
+public class CharonTurn extends GodTurn{
 
-    public MinotaurTurn(Turn turn) {
-        super(turn);
-    }
+    public CharonTurn(Turn turn){super(turn);}
 
     /**
-     * move the worker with or without Minotaur power
+     * allows to change an adjacent enemy worker position to the opposite side of the worker before moving him
      * @param m match played
      * @param ch owner of the turn
      * @param server manage the interaction with client
@@ -21,7 +19,7 @@ public class MinotaurTurn extends GodTurn {
      * @return true if the worker is moved, else false
      */
     @Override
-    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
+    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
         int wID=2;
         Player p = m.getPlayer(ch.getName());
         ArrayList<Coordinate> coordinates0 = whereCanMove(m, ch, 0, athenaOn);
@@ -62,10 +60,58 @@ public class MinotaurTurn extends GodTurn {
         }else if(coordinates0.size()==0 && coordinates1.size()==0){
             return false;
         }
+        ArrayList<Coordinate> coordinatesWorkers = new ArrayList<Coordinate>();
+        for (int i = 0; i < m.getRows(); i++) {
+            for (int j = 0; j < m.getColumns(); j++) {
+                Coordinate c = new Coordinate(i, j);
+                if (!m.getBoard()[c.getX()][c.getY()].isEmpty() && c.isNear(p.getWorker(wID).getPosition()) && !m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(p.getWorker(wID).getIDplayer())) {
+                    Coordinate c1 = c.nextCoordinate(m, p.getWorker(wID).getPosition());
+                    if(!m.getBoard()[c.getX()][c.getY()].getLocation().equals(c1) && m.getBoard()[c1.getX()][c1.getY()].isEmpty() && m.getBoard()[c1.getX()][c1.getY()].getLevel() != 4 )
+                    coordinatesWorkers.add(new Coordinate(i, j));
+                }
+            }
+        }
+        if(coordinatesWorkers.size()!=0)
+        {
+            server.write(ch,"serviceMessage", "BORD-"+m.printBoard());
+            server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
+            server.write(ch,"interactionServer", "INDX2Would you like to move an adjacent enemy worker in the opposite box?\n1) Yes\n2) No\n");
+            String answer = server.read(ch);
+            Coordinate c;
+            int id;
+            if(answer.equals("1")){
+                server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinatesWorkers));
+                server.write(ch, "interactionServer", "TURN-Choose the position of the worker you would like to move?\n");
+                while(true){
+                    try{
+                        String msg = server.read(ch);
+                        if(msg == null){
+                            ch.resetConnected();
+                            ch.closeConnection();
+                            return false;
+                        }else{
+                            id = Integer.parseInt(msg);
+                        }
+                        if(id<0 || id>=coordinatesWorkers.size()){
+                            server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                            server.write(ch, "interactionServer", "INDX-Try another index: ");
+                            continue;
+                        }
+                        break;
+                    } catch (NumberFormatException e){
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "interactionServer", "INDX-Try another index: ");
+                    }
+                }
+                c = coordinatesWorkers.get(id);
+                m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c.nextCoordinate(m, p.getWorker(wID).getPosition()));
+            }
+        }
         Coordinate c = null;
         if(wID==0){
+            coordinates0 = whereCanMove(m, ch, 0, athenaOn);
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
-            server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
+            server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
                 try{
@@ -91,8 +137,9 @@ public class MinotaurTurn extends GodTurn {
             c = coordinates0.get(id);
         }
         else if(wID==1){
+            coordinates1 = whereCanMove(m, ch, 0, athenaOn);
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
-            server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
+            server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
                 try{
@@ -117,54 +164,9 @@ public class MinotaurTurn extends GodTurn {
             }
             c = coordinates1.get(id);
         }
-        if(!m.getBoard()[c.getX()][c.getY()].isEmpty()) {
-            server.write(ch, "serviceMessage", "MSGE-You're using Mintaurus Power!\n");
-            Coordinate c1 = p.getWorker(wID).getPosition().nextCoordinate(m, c);
-            m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c1);
-            m.updateMovement(m.getPlayer(p.getWorker(wID).getIDplayer()), wID, c);
-            p.getWorker(wID).changeMoved(true);
-            return true;
-        }
-        else {
-            m.updateMovement(p, wID, c);
-            p.getWorker(wID).changeMoved(true);
-            return true;
-        }
-    }
-
-    /**
-     * control if the worker can move
-     * @param match match played
-     * @param w worker that can be moved
-     * @param c coordinate that must be checked
-     * @param athena true if the athena power is on, else false
-     * @return true if w can't move to another location with or without using Minotaur power, else false
-     */
-    @Override
-    public boolean canMoveTo(Match match, Worker w, Coordinate c, boolean athena){
-        if(!athena){
-            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<=1)
-                return true;
-            if (w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].getLevel() != 4) { //se la casella è adiacente ma non coincidente e se la torre non è completa
-                Coordinate c1 = w.getPosition().nextCoordinate(match, match.getBoard()[c.getX()][c.getY()].getLocation());//restituisce la casella stessa se non ha una successiva
-                if (!match.getBoard()[c.getX()][c.getY()].getLocation().equals(c1) && match.getBoard()[c1.getX()][c1.getY()].isEmpty() && !match.getBoard()[c.getX()][c.getY()].isEmpty() && !match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[c.getX()][c.getY()]) >= 0 && match.getBoard()[c1.getX()][c1.getY()].getLevel() != 4) {
-                    //se la casella c ha una successiva e se la casella successiva  è vuota e se la casella indicata contiene un operaio e se l'operaio nella casella non è dello stesso giocatore e se la casella in cui mi voglio spostare non è piu alta del mio livello e se la casella successiva non è completa
-                    return true;
-                }
-            }
-        } else{
-            if(match.getBoard()[c.getX()][c.getY()].isEmpty() && match.getBoard()[c.getX()][c.getY()].getLevel()!=4 && w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].level_diff(match.getBoard()[w.getPosition().getX()][w.getPosition().getY()])<1)
-                return true;
-            if (w.getPosition().isNear(c) && match.getBoard()[c.getX()][c.getY()].getLevel() != 4) {
-                Coordinate c1 = w.getPosition().nextCoordinate(match, match.getBoard()[c.getX()][c.getY()].getLocation());
-                if (!match.getBoard()[c.getX()][c.getY()].getLocation().equals(c1) && match.getBoard()[c1.getX()][c1.getY()].isEmpty() && !match.getBoard()[c.getX()][c.getY()].isEmpty() && !match.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer().equals(w.getIDplayer()) && match.getBoard()[w.getPosition().getX()][w.getPosition().getY()].level_diff(match.getBoard()[c.getX()][c.getY()]) >= -1 && match.getBoard()[c1.getX()][c1.getY()].getLevel() != 4) {
-                    //se la casella c ha una successiva e se la casella successiva  è vuota e se la casella indicata contiene un operaio e se l'operaio nella casella non è dello stesso giocatore e se la casella in cui mi voglio spostare non è alta di più di 1 livello e se la casella successiva non è completa
-                    return true;
-                    }
-                }
-
-        }
-        return false;
+        m.updateMovement(p,wID,c);
+        p.getWorker(wID).changeMoved(true);
+        return true;
     }
 
     @Override
@@ -172,10 +174,4 @@ public class MinotaurTurn extends GodTurn {
         return super.whereCanMove(match,ch,id,athenaOn);
     }
 
-    @Override
-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
-        return super.printCoordinates(coordinates);
-    }
 }
-
-
