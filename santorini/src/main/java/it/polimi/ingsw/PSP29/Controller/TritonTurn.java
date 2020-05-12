@@ -17,7 +17,7 @@ public class TritonTurn extends GodTurn {
      * @param ch owner of the turn
      * @param server manage the interaction with client
      * @param athenaOn true if athena is on
-     * @return true if is moved at least once
+     * @return true if the worker is moved at least once
      */
     @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {

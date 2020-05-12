@@ -18,7 +18,7 @@ public class MinotaurTurn extends GodTurn {
      * @param ch owner of the turn
      * @param server manage the interaction with client
      * @param athenaOn true if athena is on
-     * @return true if is moved in c, else false
+     * @return true if the worker is moved, else false
      */
     @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
