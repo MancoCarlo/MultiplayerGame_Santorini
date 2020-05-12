@@ -3,7 +3,6 @@ package it.polimi.ingsw.PSP29.view;
 import it.polimi.ingsw.PSP29.model.Player;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,13 +38,12 @@ public class GUI extends JFrame implements Runnable{
         setDefaultLookAndFeelDecorated(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        mainPanel = new JPanel();
-
         topPanel = new JPanel();
-        bottomPanel = new JPanel();
+        bottomPanel = new ImagePanel("/bottomPanel.png", getWidth(), getHeight());
         rightPanel = new JPanel();
         leftPanel = new JPanel();
         centerPanel = new JPanel();
+        mainPanel = new JPanel();
 
         mainPanel.add(centerPanel);
 
@@ -69,6 +67,7 @@ public class GUI extends JFrame implements Runnable{
         INDEX,
         COORDINATE,
         TURN,
+        GOD,
         STOP
     }
 
@@ -135,6 +134,13 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    public synchronized void viewGod(String cmd)
+    {
+        nextCommand = Commands.GOD;
+        command = cmd;
+        notifyAll();
+    }
+
     public synchronized void processGUI(){
         GuiLoaded=true;
         while (true) {
@@ -185,6 +191,10 @@ public class GUI extends JFrame implements Runnable{
                     doTurn();
                     break;
 
+                case GOD:
+                    viewIconGod();
+                    break;
+
                 case STOP:
                     return;
             }
@@ -214,8 +224,15 @@ public class GUI extends JFrame implements Runnable{
         cen.setLayout(gridbag);
         c.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel label1 = new JLabel("Welcome to Santorini!");
-        JLabel label2 = new JLabel("Wait for a lobby");
+        JLabel label1;
+        JLabel label2;
+        if(command != null){
+            label1 = new JLabel("");
+            label2 = new JLabel(command.substring(5));
+        }else {
+            label1 = new JLabel("Welcome to Santorini!");
+            label2 = new JLabel("Wait for a lobby");
+        }
 
         c.gridx = 1;
         c.gridy = 0;
@@ -430,47 +447,55 @@ public class GUI extends JFrame implements Runnable{
         topPanel.setVisible(false);
         topPanel.removeAll();
         mainPanel.remove(topPanel);
-        topPanel = new ImagePanel("/top.png", getWidth(), getHeight());
-        topPanel.setLayout(new GridLayout(4,1));
-
-        JPanel fake1 = new JPanel();
-        JPanel fake2 = new JPanel();
-        JPanel fake3 = new JPanel();
-        JPanel correct = new JPanel();
-
-        fake1.setOpaque(false);
-        fake2.setOpaque(false);
-        fake3.setOpaque(false);
-        correct.setOpaque(false);
 
         if(!lastViewCenter.equals("board")){
             centerPanel.setVisible(false);
             mainPanel.remove(centerPanel);
             centerPanel.removeAll();
+            initialPage();
+            sentMessage = true;
         }
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        correct.setLayout(gridbag);
-        c.fill = GridBagConstraints.HORIZONTAL;
+        else{
+            topPanel = new ImagePanel("/top.png", getWidth(), getHeight());
+            topPanel.setLayout(new GridLayout(5,1));
 
-        JLabel label = new JLabel(command.substring(5));
+            JPanel fake1 = new JPanel();
+            JPanel fake2 = new JPanel();
+            JPanel fake3 = new JPanel();
+            JPanel correct = new JPanel();
+            JPanel fake4 = new JPanel();
 
-        c.gridx = 1;
-        c.gridy = 0;
-        gridbag.setConstraints(label, c);
-        correct.add(label);
+            fake1.setOpaque(false);
+            fake2.setOpaque(false);
+            fake3.setOpaque(false);
+            fake4.setOpaque(false);
+            correct.setOpaque(false);
 
-        topPanel.add(fake1);
-        topPanel.add(fake2);
-        topPanel.add(fake3);
-        topPanel.add(correct);
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints c = new GridBagConstraints();
+            correct.setLayout(gridbag);
+            c.fill = GridBagConstraints.HORIZONTAL;
 
-        mainPanel.add(topPanel, BorderLayout.NORTH);
-        this.add(mainPanel);
-        this.pack();
-        topPanel.setVisible(true);
-        mainPanel.setVisible(true);
-        sentMessage=true;
+            JLabel label = new JLabel(command.substring(5));
+
+            c.gridx = 1;
+            c.gridy = 0;
+            gridbag.setConstraints(label, c);
+            correct.add(label);
+
+            topPanel.add(fake1);
+            topPanel.add(fake2);
+            topPanel.add(fake3);
+            topPanel.add(correct);
+            topPanel.add(fake4);
+
+            mainPanel.add(topPanel, BorderLayout.NORTH);
+            this.add(mainPanel);
+            this.pack();
+            topPanel.setVisible(true);
+            mainPanel.setVisible(true);
+            sentMessage=true;
+        }
     }
 
     public synchronized void viewIndex(){
@@ -525,7 +550,6 @@ public class GUI extends JFrame implements Runnable{
                         public void actionPerformed(ActionEvent e) {
                             int id = B.getCoordinate(b);
                             message = getIndex(indexes, id);
-                            System.out.println(message);
                             sentMessage = true;
                             for (final JButton b : B.getButtons()){
                                 b.removeActionListener(this);
@@ -562,10 +586,37 @@ public class GUI extends JFrame implements Runnable{
             centerPanel.removeAll();
         }
         topPanel.removeAll();
-        topPanel.setLayout(new FlowLayout());
+
+        JPanel fake1 = new JPanel();
+        JPanel fake2 = new JPanel();
+        JPanel fake3 = new JPanel();
+        JPanel fake4 = new JPanel();
+        JPanel correct = new JPanel();
+
+        fake1.setOpaque(false);
+        fake2.setOpaque(false);
+        fake3.setOpaque(false);
+        fake4.setOpaque(false);
+        correct.setOpaque(false);
+
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        correct.setLayout(gridbag);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
         JLabel label = new JLabel(command);
-        topPanel.add(label);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        c.gridx = 1;
+        c.gridy = 0;
+        gridbag.setConstraints(label, c);
+        correct.add(label);
+
+        topPanel.add(fake1);
+        topPanel.add(fake2);
+        topPanel.add(fake3);
+        topPanel.add(correct);
+        topPanel.add(fake4);
+
         mainPanel.add(topPanel, BorderLayout.NORTH);
         this.add(mainPanel);
         this.pack();
@@ -596,6 +647,11 @@ public class GUI extends JFrame implements Runnable{
         topPanel.setVisible(false);
         centerPanel.setVisible(false);
 
+        mainPanel.setBackground(new Color(209, 198, 185));
+        mainPanel.setOpaque(true);
+
+        centerPanel.setOpaque(false);
+
         mainPanel.remove(topPanel);
         topPanel.removeAll();
         JLabel text = new JLabel("BOARD");
@@ -604,7 +660,7 @@ public class GUI extends JFrame implements Runnable{
 
         mainPanel.remove(centerPanel);
         centerPanel.removeAll();
-        centerPanel.setLayout(new BorderLayout());
+        centerPanel.setLayout(new BorderLayout(10,10));
         JPanel Y = new JPanel(new GridLayout(1, 6, 50, 50));
         Y.setOpaque(false);
         JPanel X = new JPanel(new GridLayout(5, 1, 50, 50));
@@ -628,15 +684,11 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.add(X, BorderLayout.WEST);
         centerPanel.add(B, BorderLayout.CENTER);
 
-
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         this.add(mainPanel);
-        this.setMinimumSize(new Dimension(600, 500));
+        this.setMinimumSize(new Dimension(1000, 500));
         pack();
-        mainPanel.remove(rightPanel);
-        rightPanel.setVisible(false);
-        rightPanel.removeAll();
         topPanel.setVisible(true);
         centerPanel.setVisible(true);
         mainPanel.setVisible(true);
@@ -653,15 +705,24 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.removeAll();
         centerPanel = new JPanel();
 
+        bottomPanel = new ImagePanel("/bottomPanel.png", this.getWidth()*2, this.getHeight()/6);
         JButton top = new JButton("top");
-        JButton bottom = new JButton("bottom");
-        JButton right = new JButton("dx");
         JButton left = new JButton("sx");
         JButton center = new JButton("center");
+        bottomPanel.setLayout(new GridLayout(3,1));
+
+        JPanel fake1 = new JPanel();
+        JPanel fake2 = new JPanel();
+        fake1.setOpaque(false);
+        fake2.setOpaque(false);
+
+        JLabel label = new JLabel("Santorini The Game");
+
+        bottomPanel.add(fake1);
+        bottomPanel.add(label);
+        bottomPanel.add(fake2);
 
         topPanel.add(top);
-        bottomPanel.add(bottom);
-        rightPanel.add(right);
         leftPanel.add(left);
         centerPanel.add(center);
 
@@ -688,9 +749,9 @@ public class GUI extends JFrame implements Runnable{
         leftPanel.setVisible(false);
         leftPanel.removeAll();
 
-        JLabel title = new JLabel("\nPlayers:");
+        JLabel title = new JLabel("  Players:             ");
 
-        leftPanel = new ImagePanel("/form.png", 2*title.getWidth()+300, leftPanel.getHeight());
+        leftPanel = new ImagePanel("/form.png", 4*title.getWidth()+300, leftPanel.getHeight());
         leftPanel.setLayout(new GridLayout(4,2));
 
         JPanel fake = new JPanel();
@@ -709,8 +770,11 @@ public class GUI extends JFrame implements Runnable{
 
         JPanel listP = new JPanel();
         listP.setOpaque(false);
-        listP.setLayout(new GridLayout(6,1));
 
+        if(players.size()==2)
+            listP.setLayout(new GridLayout(6,1));
+        else
+            listP.setLayout(new GridLayout(9,1));
 
         leftPanel.add(fake2);
         leftPanel.add(fake3);
@@ -720,9 +784,13 @@ public class GUI extends JFrame implements Runnable{
         int j=0;
         for(int i=0; i<players.size(); i++){
             text[j] = new JLabel(players.get(i).getId()+") "+players.get(i).getNickname()+"\t");
+            text[j].setBackground(new Color(224, 213, 200));
+            text[j].setOpaque(true);
             listP.add(text[j]);
             j++;
-            text[j] = new JLabel(players.get(i).getAge() + " years"+ "\t");
+            text[j] = new JLabel(players.get(i).getAge() + " years");
+            text[j].setBackground(new Color(224, 213, 200));
+            text[j].setOpaque(true);
             listP.add(text[j]);
             j++;
             text[j] = new JLabel("\n");
@@ -734,6 +802,80 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.add(leftPanel, BorderLayout.WEST);
         pack();
         leftPanel.setVisible(true);
+        mainPanel.setVisible(true);
+
+        sentMessage=true;
+    }
+
+    public void viewIconGod(){
+        mainPanel.setVisible(false);
+        mainPanel.remove(rightPanel);
+        rightPanel.setVisible(false);
+        rightPanel.removeAll();
+
+        JLabel title = new JLabel("              Your god:          ");
+
+        rightPanel = new ImagePanel("/rightPanel.png", 4*rightPanel.getWidth()+300, rightPanel.getHeight());
+
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        rightPanel.setLayout(gridbag);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        c.gridx = 1;
+        c.gridy = 0;
+        gridbag.setConstraints(title, c);
+        rightPanel.add(title);
+
+        ImageIcon img;
+
+        switch(command.substring(5)){
+            case "Apollo":
+                img = new ImageIcon(getClass().getResource("/god/01.png"));
+                break;
+            case "Arthemis":
+                img = new ImageIcon(getClass().getResource("/god/02.png"));
+                break;
+            case "Athena":
+                img = new ImageIcon(getClass().getResource("/god/03.png"));
+                break;
+            case "Atlas":
+                img = new ImageIcon(getClass().getResource("/god/04.png"));
+                break;
+            case "Demeter":
+                img = new ImageIcon(getClass().getResource("/god/05.png"));
+                break;
+            case "Hephaestus":
+                img = new ImageIcon(getClass().getResource("/god/06.png"));
+                break;
+            case "Minotaur":
+                img = new ImageIcon(getClass().getResource("/god/08.png"));
+                break;
+            case "Pan":
+                img = new ImageIcon(getClass().getResource("/god/09.png"));
+                break;
+            case "Prometheus":
+                img = new ImageIcon(getClass().getResource("/god/10.png"));
+                break;
+            default:
+                img = new ImageIcon(getClass().getResource("/god/01.png"));
+                break;
+        }
+
+        Image img1 = img.getImage() ;
+        Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+        img = new ImageIcon( newimg );
+
+        JLabel god = new JLabel(img);
+
+        c.gridx = 1;
+        c.gridy = 1;
+        gridbag.setConstraints(god, c);
+        rightPanel.add(god);
+
+        mainPanel.add(rightPanel, BorderLayout.EAST);
+        pack();
+        rightPanel.setVisible(true);
         mainPanel.setVisible(true);
 
         sentMessage=true;

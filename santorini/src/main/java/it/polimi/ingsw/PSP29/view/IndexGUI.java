@@ -29,16 +29,18 @@ public class IndexGUI extends JFrame implements Runnable{
         indexObtained=false;
         this.setLayout(new BorderLayout());
         text=new JLabel(command);
-        optionPanel=new ImagePanel("/back.png", getWidth(), getHeight());
+        optionPanel=new JPanel();
         options = new ArrayList<>();
-        optionPanel.setLayout(new GridLayout(3,3));
+        optionPanel.setOpaque(false);
+        optionPanel.setLayout(new GridLayout(3,3, 10, 10));
     }
 
     public synchronized void setOptions() {
         if(!list.get(0).substring(1,2).equals(")")){
             list.remove(0);
         }
-        if(list.size()>2){
+
+        if(isGodList(list)){
             ArrayList<God> gods = new ArrayList<>();
             for(int i = 0; i<list.size(); i++){
                 String name = "";
@@ -54,8 +56,6 @@ public class IndexGUI extends JFrame implements Runnable{
             }
             for(final God g : gods){
                 if(g.getName().contains("Apollo")) {
-                    JPanel ap = new JPanel();
-                    ap.setOpaque(false);
                     ImageIcon img = new ImageIcon(getClass().getResource("/god/01.png"));
                     Image img1 = img.getImage() ;
                     Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -72,12 +72,9 @@ public class IndexGUI extends JFrame implements Runnable{
                             indexObtained = true;
                         }
                     });
-                    ap.add(buttonA);
-                    optionPanel.add(ap);
+                    optionPanel.add(buttonA);
                 }
                 if(g.getName().contains("Arthemis")) {
-                    JPanel ap = new JPanel();
-                    ap.setOpaque(false);
                     ImageIcon img = new ImageIcon(getClass().getResource("/god/02.png"));
                     Image img1 = img.getImage() ;
                     Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -94,12 +91,9 @@ public class IndexGUI extends JFrame implements Runnable{
                             indexObtained = true;
                         }
                     });
-                    ap.add(buttonA);
-                    optionPanel.add(ap);
+                    optionPanel.add(buttonA);
                 }
                 if(g.getName().contains("Athena")) {
-                    JPanel ap = new JPanel();
-                    ap.setOpaque(false);
                     ImageIcon img = new ImageIcon(getClass().getResource("/god/03.png"));
                     Image img1 = img.getImage() ;
                     Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -116,12 +110,9 @@ public class IndexGUI extends JFrame implements Runnable{
                             indexObtained = true;
                         }
                     });
-                    ap.add(buttonA);
-                    optionPanel.add(ap);
+                    optionPanel.add(buttonA);
                 }
                 if(g.getName().contains("Atlas")) {
-                    JPanel ap = new JPanel();
-                    ap.setOpaque(false);
                     ImageIcon img = new ImageIcon(getClass().getResource("/god/04.png"));
                     Image img1 = img.getImage() ;
                     Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -138,12 +129,9 @@ public class IndexGUI extends JFrame implements Runnable{
                             indexObtained = true;
                         }
                     });
-                    ap.add(buttonA);
-                    optionPanel.add(ap);
+                    optionPanel.add(buttonA);
                 }
                 if(g.getName().contains("Demeter")) {
-                    JPanel ap = new JPanel();
-                    ap.setOpaque(false);
                     ImageIcon img = new ImageIcon(getClass().getResource("/god/05.png"));
                     Image img1 = img.getImage() ;
                     Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -160,12 +148,9 @@ public class IndexGUI extends JFrame implements Runnable{
                             indexObtained = true;
                         }
                     });
-                    ap.add(buttonA);
-                    optionPanel.add(ap);
+                    optionPanel.add(buttonA);
                 }
                 if(g.getName().contains("Hephaestus")) {
-                    JPanel ap = new JPanel();
-                    ap.setOpaque(false);
                     ImageIcon img = new ImageIcon(getClass().getResource("/god/06.png"));
                     Image img1 = img.getImage() ;
                     Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -182,12 +167,9 @@ public class IndexGUI extends JFrame implements Runnable{
                             indexObtained = true;
                         }
                     });
-                    ap.add(buttonA);
-                    optionPanel.add(ap);
+                    optionPanel.add(buttonA);
                 }
                 if(g.getName().contains("Minotaur")) {
-                    JPanel ap = new JPanel();
-                    ap.setOpaque(false);
                     ImageIcon img = new ImageIcon(getClass().getResource("/god/08.png"));
                     Image img1 = img.getImage() ;
                     Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -204,12 +186,9 @@ public class IndexGUI extends JFrame implements Runnable{
                             indexObtained = true;
                         }
                     });
-                    ap.add(buttonA);
-                    optionPanel.add(ap);
+                    optionPanel.add(buttonA);
                 }
                 if(g.getName().contains("Pan")) {
-                    JPanel ap = new JPanel();
-                    ap.setOpaque(false);
                     ImageIcon img = new ImageIcon(getClass().getResource("/god/09.png"));
                     Image img1 = img.getImage() ;
                     Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -226,12 +205,9 @@ public class IndexGUI extends JFrame implements Runnable{
                             indexObtained = true;
                         }
                     });
-                    ap.add(buttonA);
-                    optionPanel.add(ap);
+                    optionPanel.add(buttonA);
                 }
                 if(g.getName().contains("Prometheus")) {
-                    JPanel ap = new JPanel();
-                    ap.setOpaque(false);
                     ImageIcon img = new ImageIcon(getClass().getResource("/god/10.png"));
                     Image img1 = img.getImage() ;
                     Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
@@ -248,8 +224,7 @@ public class IndexGUI extends JFrame implements Runnable{
                             indexObtained = true;
                         }
                     });
-                    ap.add(buttonA);
-                    optionPanel.add(ap);
+                    optionPanel.add(buttonA);
                 }
             }
         }else {
@@ -297,6 +272,19 @@ public class IndexGUI extends JFrame implements Runnable{
         index=1;
         indexObtained=true;
         return 0;
+    }
+
+    public boolean isGodList(ArrayList<String> list){
+        if(list.get(0).contains("Apollo")) return true;
+        if(list.get(0).contains("Arthemis")) return true;
+        if(list.get(0).contains("Athena")) return true;
+        if(list.get(0).contains("Atlas")) return true;
+        if(list.get(0).contains("Demeter")) return true;
+        if(list.get(0).contains("Hephaestus")) return true;
+        if(list.get(0).contains("Minotaur")) return true;
+        if(list.get(0).contains("Pan")) return true;
+        if(list.get(0).contains("Prometheus")) return true;
+        return false;
     }
 
 }

@@ -112,6 +112,8 @@ public class Server
                     break;
                 }
 
+
+
                 System.out.println("printing board");
                 gc.getMatch().inizializeBoard();
                 while (gc.getMatch().getBoard() == null){ }
@@ -153,6 +155,12 @@ public class Server
                         }
                     }
                     break;
+                }
+
+                for(ClientHandler clientHandler : clientHandlers){
+                    if(clientHandler.getConnected()){
+                        write(clientHandler, "serviceMessage",  "MGOD-"+gc.getMatch().getPlayer(clientHandler.getName()).getCard().getName());
+                    }
                 }
 
                 System.out.println("Putting workers");
@@ -287,7 +295,6 @@ public class Server
                     return false;
                 }
                 String str = read(clientHandler);
-                System.out.println(str);
                 if(str==null){
                     return false;
                 }
@@ -397,7 +404,6 @@ public class Server
             createLobby(clientHandler);
         }
         gc.setNumPlayers(numPlayers);
-        System.out.println(numPlayers);
         return true;
     }
 
