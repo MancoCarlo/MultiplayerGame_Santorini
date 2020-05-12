@@ -1,9 +1,6 @@
 package it.polimi.ingsw.PSP29.Controller;
 
-import it.polimi.ingsw.PSP29.model.Coordinate;
-import it.polimi.ingsw.PSP29.model.Match;
-import it.polimi.ingsw.PSP29.model.Player;
-import it.polimi.ingsw.PSP29.model.Worker;
+import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
@@ -13,6 +10,14 @@ public class CharonTurn extends GodTurn{
 
     public CharonTurn(Turn turn){super(turn);}
 
+    /**
+     * allows to change an adjacent enemy worker position to the opposite side of the worker before moving him
+     * @param m match played
+     * @param ch owner of the turn
+     * @param server manage the interaction with client
+     * @param athenaOn true if athena is on
+     * @return true if the worker is moved, else false
+     */
     @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
         int wID=2;
