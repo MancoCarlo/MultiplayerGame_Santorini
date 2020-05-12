@@ -14,7 +14,6 @@ public class UserTimerTask extends TimerTask {
     }
 
     public void run(){
-        //100 secondi per gestire il turno
         if(seconds<=turnSeconds){
             System.out.println(turnSeconds - seconds+ " seconds remaining");
             seconds++;

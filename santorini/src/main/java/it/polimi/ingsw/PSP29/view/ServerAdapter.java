@@ -38,7 +38,7 @@ public class ServerAdapter implements Runnable
             Thread threadGUI = new Thread(gui);
             threadGUI.start();
             while (!gui.getGuiLoaded()){
-                System.out.println("Loading Gui");
+                System.out.print("");
             }
         }
     }
@@ -282,6 +282,7 @@ public class ServerAdapter implements Runnable
                 }
                 cmd=gameboard;
                 System.out.print(cmd);
+            }else if(cmd.startsWith("MGOD")){
             }else{
                 System.out.print(cmd.substring(5));
             }
@@ -303,6 +304,11 @@ public class ServerAdapter implements Runnable
             }
             if(cmd.startsWith("MSGE")){
                 gui.message(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
+            }
+            if(cmd.startsWith("MGOD")){
+                gui.viewGod(cmd);
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
             }
