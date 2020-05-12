@@ -425,6 +425,9 @@ public class GameController {
                 case 8 :
                     PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn8);
+                case 9 :
+                    HestiaTurn turn9 = new HestiaTurn(new GodTurn(new BaseTurn()));
+                    return turnExe(ch, turn9);
             }
         }
         return false;
