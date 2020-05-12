@@ -12,6 +12,14 @@ public class MinotaurTurn extends GodTurn {
         super(turn);
     }
 
+    /**
+     * move the worker with or without Minotaur power
+     * @param m match played
+     * @param ch owner of the turn
+     * @param server manage the interaction with client
+     * @param athenaOn true if athena is on
+     * @return true if is moved in c, else false
+     */
     @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
         int wID=2;
@@ -124,16 +132,14 @@ public class MinotaurTurn extends GodTurn {
         }
     }
 
-    @Override
-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
-        return super.whereCanMove(match,ch,id,athenaOn);
-    }
-
-    @Override
-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
-        return super.printCoordinates(coordinates);
-    }
-
+    /**
+     * control if the worker can move
+     * @param match match played
+     * @param w worker that can be moved
+     * @param c coordinate that must be checked
+     * @param athena true if the athena power is on, else false
+     * @return true if w can't move to another location with or without using Minotaur power, else false
+     */
     @Override
     public boolean canMoveTo(Match match, Worker w, Coordinate c, boolean athena){
         if(!athena){
@@ -161,6 +167,15 @@ public class MinotaurTurn extends GodTurn {
         return false;
     }
 
+    @Override
+    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
+        return super.whereCanMove(match,ch,id,athenaOn);
+    }
+
+    @Override
+    public String printCoordinates(ArrayList<Coordinate> coordinates) {
+        return super.printCoordinates(coordinates);
+    }
 }
 
 
