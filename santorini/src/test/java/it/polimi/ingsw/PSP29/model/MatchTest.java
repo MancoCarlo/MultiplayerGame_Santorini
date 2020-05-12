@@ -13,8 +13,8 @@ public class MatchTest {
         m.inizializeBoard();
         God g = new God(0,"a","b");
         m.getGods().add(g);
-        m.getPlayers().add(new Player("Luca", 23));
-        m.getPlayers().add(new Player("Letizia", 22));
+        m.getPlayers().add(new Player("Luca", 23, 1));
+        m.getPlayers().add(new Player("Letizia", 22, 2));
         assertEquals(g,m.getGod(0));
     }
 
@@ -100,7 +100,7 @@ public class MatchTest {
 
     @Test
     public void addPlayer_CorrectAddPlayer_Return(){
-        Player p1 = new Player("Werner", 24);
+        Player p1 = new Player("Werner", 24, 1);
         m.addPlayer(p1);
         assertEquals(p1, m.getPlayer("Werner"));
     }

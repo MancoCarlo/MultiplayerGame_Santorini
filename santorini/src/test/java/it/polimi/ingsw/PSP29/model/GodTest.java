@@ -1,4 +1,4 @@
-package it.polimi.ingsw.PSP29.Controller;
+package it.polimi.ingsw.PSP29.model;
 
 import it.polimi.ingsw.PSP29.model.God;
 import org.junit.Before;
