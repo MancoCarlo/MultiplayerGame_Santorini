@@ -15,7 +15,7 @@ public class PoseidonTurn extends GodTurn {
      * @param m match played
      * @param ch clientHandler that must build
      * @param server manage the interaction with client
-     * @return true if w has built 
+     * @return true if w has built
      */
     @Override
     public boolean build(Match m, ClientHandler ch, Server server) {

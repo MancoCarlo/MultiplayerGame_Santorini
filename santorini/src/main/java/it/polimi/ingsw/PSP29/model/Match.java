@@ -173,6 +173,7 @@ public class Match implements Serializable {
         gods.add(new God(7, "Pan", "Il dio della natura selvaggia"));
         gods.add(new God(8, "Prometheus", "Il titano benefattore dell'umanità"));
         gods.add(new God(9, "Hestia", "La dea del focolare e della casa"));
+        gods.add(new God(10, "Poseidon", "Il dio del mare"));
     }
 
     /**
