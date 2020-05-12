@@ -27,9 +27,10 @@ public class PoseidonTurn extends GodTurn {
         if(!p.getWorker(0).getMoved()) wID = 0;
         if(!p.getWorker(1).getMoved()) wID = 1;
         int count =0;
-        String power = "0";
+        String power;
         if(m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel()==0) {
             do{
+                power = "0";
                 ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
                 if(coordinates.size()!=0) {
                     server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
@@ -66,7 +67,7 @@ public class PoseidonTurn extends GodTurn {
                         count = count + 1;
                     }
                 }
-            }while(!power.equals("0") || count ==3);
+            }while(power.equals("1") || count ==3);
         }
         return true;
     }
