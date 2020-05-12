@@ -40,30 +40,37 @@ public class PrometheusTurn extends GodTurn {
         ArrayList<Coordinate> coordinates0 = whereCanMove(m, ch, 0, athenaOn);
         ArrayList<Coordinate> coordinates1 = whereCanMove(m, ch, 1, athenaOn);
         if(coordinates0.size()!=0 && coordinates1.size()!=0){
-            server.write(ch, "serviceMessage", "It's your turn\n");
-            server.write(ch, "interactionServer", m.getPlayer(ch.getName()).printWorkers());
-            server.write(ch, "serviceMessage", "Choose the worker to use in this turn: \n");
+            server.write(ch, "serviceMessage", "MSGE-It's your turn\n");
+            server.write(ch, "serviceMessage", "LIST-"+m.getPlayer(ch.getName()).printWorkers());
+            server.write(ch, "interactionServer", "INDX2Choose the worker to use in this turn: \n");
             while(true){
                 try{
-                    wID = Integer.parseInt(server.read(ch));
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        wID= Integer.parseInt(msg) - 1;
+                    }
                     if(wID<0 || wID>1){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "interactionServer", "INDX-Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
+                    server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                    server.write(ch, "interactionServer", "INDX-Try another index: ");
                 }
             }
         }
         else if(coordinates0.size()!=0 && coordinates1.size()==0){
-            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
+            server.write(ch, "serviceMessage", "MSGE-You can only move one of your worker in these positions: \n");
             wID = 0;
         }
         else if(coordinates0.size()==0 && coordinates1.size()!=0){
-            server.write(ch, "serviceMessage", "You can only move one of your worker in these positions: \n");
+            server.write(ch, "serviceMessage", "MSGE-You can only move one of your worker in these positions: \n");
             wID = 1;
         }else if(coordinates0.size()==0 && coordinates1.size()==0){
             return false;
@@ -71,7 +78,7 @@ public class PrometheusTurn extends GodTurn {
         //-------------------potere di prometeo--------------------
         if(!p.getWorker(wID).canLevelUp(m) || athenaOn){//se il worker non puo fare upgrade oppure athena è attivata
             String power;
-            server.write(ch, "interactionServer", "Would you like to build an additional block before moving you worker?\n1) Yes\n2) No\n");
+            server.write(ch, "interactionServer", "INDX2-Would you like to build an additional block before moving you worker?\n1) Yes\n2) No\n");
             power = server.read(ch);
             if(power.equals("1"))
             {
@@ -94,34 +101,34 @@ public class PrometheusTurn extends GodTurn {
                 }
                 if(!athenaOn) {
                     if (count == 1 && coordinates.size() == 1) //se c'è solo una casella disponibile ed è al terzo livello non posso usare il potere
-                        server.write(ch, "serviceMessage", "You can't use the power of Prometheus \n");
+                        server.write(ch, "serviceMessage", "MSGE-You can't use the power of Prometheus \n");
                 } else if(coordinates.size()== 1 && m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() == m.getBoard()[coordinates.get(0).getX()][coordinates.get(0).getY()].getLevel())
-                        server.write(ch, "serviceMessage", "You can't use the power of Prometheus \n");
+                        server.write(ch, "serviceMessage", "MSGE-You can't use the power of Prometheus \n");
                 else{
-                    server.write(ch, "serviceMessage", "Additional Build: ");
+                    server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
                     if(coordinates.size()!=0){
                         Coordinate c = null;
-                        server.write(ch, "serviceMessage", printCoordinates(coordinates));
-                        server.write(ch, "interactionServer", "Where you want to build?\n");
+                        server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));
+                        server.write(ch, "interactionServer", "INDX2Where you want to build?\n");
                         int id;
                         while(true){
                             try{
                                 id = Integer.parseInt(server.read(ch));
                                 if(id<0 || id>=coordinates.size()){
-                                    server.write(ch, "serviceMessage", "Invalid input\n");
-                                    server.write(ch, "interactionServer", "Try another index: ");
+                                    server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                                    server.write(ch, "interactionServer", "INDX-Try another index: ");
                                     continue;
                                 }
                                 break;
                             } catch (NumberFormatException e){
-                                server.write(ch, "serviceMessage", "Invalid input\n");
-                                server.write(ch, "interactionServer", "Try another index: ");
+                                server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                                server.write(ch, "interactionServer", "INDX-Try another index: ");
                             }
                         }
                         c = coordinates.get(id);
                         m.updateBuilding(c);
                     } else{
-                        server.write(ch, "serviceMessage", "You can't build an additional block\n");
+                        server.write(ch, "serviceMessage", "MSGE-You can't build an additional block\n");
                     }
                 }
             }
@@ -129,21 +136,28 @@ public class PrometheusTurn extends GodTurn {
         Coordinate c = null;
         if(wID==0){
             coordinates0 = whereCanMove(m, ch, 0, athenaOn);
-            server.write(ch, "serviceMessage", printCoordinates(coordinates0));
-            server.write(ch, "interactionServer", "Where do you want to move?\n");
+            server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
+            server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
                 try{
-                    id = Integer.parseInt(server.read(ch));
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        id = Integer.parseInt(msg);
+                    }
                     if(id<0 || id>=coordinates0.size()){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "interactionServer", "INDX-Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
+                    server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                    server.write(ch, "interactionServer", "INDX-Try another index: ");
                 }
             }
             c = coordinates0.get(id);
@@ -155,16 +169,23 @@ public class PrometheusTurn extends GodTurn {
             int id;
             while(true){
                 try{
-                    id = Integer.parseInt(server.read(ch));
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        id = Integer.parseInt(msg);
+                    }
                     if(id<0 || id>=coordinates1.size()){
-                        server.write(ch, "serviceMessage", "Invalid input\n");
-                        server.write(ch, "interactionServer", "Try another index: ");
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "interactionServer", "INDX-Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
-                    server.write(ch, "serviceMessage", "Invalid input\n");
-                    server.write(ch, "interactionServer", "Try another index: ");
+                    server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                    server.write(ch, "interactionServer", "INDX-Try another index: ");
                 }
             }
             c = coordinates1.get(id);

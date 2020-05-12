@@ -425,6 +425,12 @@ public class GameController {
                 case 8 :
                     PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn8);
+                case 9 :
+                    HestiaTurn turn9 = new HestiaTurn(new GodTurn(new BaseTurn()));
+                    return turnExe(ch, turn9);
+                case 10 :
+                    PoseidonTurn turn10 = new PoseidonTurn(new GodTurn(new BaseTurn()));
+                    return turnExe(ch, turn10);
             }
         }
         return false;

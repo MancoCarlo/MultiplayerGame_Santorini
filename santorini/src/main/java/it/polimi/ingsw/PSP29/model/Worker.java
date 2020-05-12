@@ -62,7 +62,7 @@ public class Worker implements Serializable {
     public void setPrev_position(Coordinate c) { prev_position=c; }
 
     /**
-     *
+     * checks if the worker can upgrade his level before doing a move
      * @param match the match in which the worker is in
      * @return true if the worker can upgrade his level
      */

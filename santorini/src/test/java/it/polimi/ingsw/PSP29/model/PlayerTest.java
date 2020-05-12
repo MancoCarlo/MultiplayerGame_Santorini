@@ -13,7 +13,7 @@ public class PlayerTest {
 
     @Before
     public void setUp(){
-        player=new Player("Luca", 21);
+        player=new Player("Luca", 21, 1);
         God g = new God(0,"Carlo","a");
         ArrayList<God> gods = new ArrayList<God>();
         gods.add(g);

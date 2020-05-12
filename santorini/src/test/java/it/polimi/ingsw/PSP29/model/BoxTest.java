@@ -45,7 +45,7 @@ public class BoxTest {
 
     @Test
     public void TestgetWorker(){
-        Worker w1 = new Worker(1,"paolo",Color.ANSI_RED);
+        Worker w1 = new Worker(1,"paolo");
         box.setWorkerBox(w1);
         assertEquals(box.getWorkerBox(), w1);
     }
