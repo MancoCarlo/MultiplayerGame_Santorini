@@ -197,7 +197,6 @@ public class GameController {
         System.out.println(match.printGodlist());
         int i=0;
         int count = match.playersInGame();
-        System.out.println(count);
         while (i<count){
             next();
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "LIST-"+match.printGodlist());
@@ -215,7 +214,6 @@ public class GameController {
                 }
             }
             id=Integer.parseInt(str)-1;
-            System.out.println(id);
             while(id >= match.getGods().size() || id < 0){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Index not valid\n");
                 num = Integer.toString(match.getGods().size());
@@ -278,10 +276,6 @@ public class GameController {
                 }
             }
 
-            for(Player p : match.getPlayers()){
-                System.out.println(p.getWorkers().toString());
-            }
-
             for(ClientHandler clientHandler : server.getClientHandlers()){
                 server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
             }
@@ -327,7 +321,7 @@ public class GameController {
                 Worker w = new Worker(p.getId(), p.getNickname());
                 p.getWorkers().get(i).setPrev_position(null);
                 p.getWorkers().get(i).setPosition(null);
-                p.getWorkers().get(i).setID(p.getId());
+                p.getWorkers().get(i).setID(i);
                 p.getWorkers().get(i).setIDplayer(p.getNickname());
                 p.getWorkers().get(i).setMoved(false);
                 p.getWorkers().get(i).setBuilt(false);

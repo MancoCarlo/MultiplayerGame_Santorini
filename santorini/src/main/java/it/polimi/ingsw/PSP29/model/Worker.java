@@ -162,7 +162,7 @@ public class Worker implements Serializable {
 
     @Override
     public String toString() {
-        return "Worker{" +
+        return "Worker{" + ID +", "+
                 " position=" + position + " }\n";
     }
 }

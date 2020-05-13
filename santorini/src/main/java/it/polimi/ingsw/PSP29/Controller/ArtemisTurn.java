@@ -38,8 +38,8 @@ public class ArtemisTurn extends GodTurn{
             ArrayList<Coordinate> coordinates = null;
             for(Worker w : p.getWorkers()){
                 if(w.getMoved()){
-                    coordinates = whereCanMove(m, ch, w.getID(), athenaOn);
                     wID = w.getID();
+                    coordinates = whereCanMove(m, ch, wID, athenaOn);
                     break;
                 }
             }
