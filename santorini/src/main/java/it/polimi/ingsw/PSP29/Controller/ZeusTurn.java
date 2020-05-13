@@ -8,13 +8,18 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 import java.util.ArrayList;
 
 public class ZeusTurn extends GodTurn {
+
     public ZeusTurn(Turn turn) {
         super(turn);
     }
 
-    @Override
-    public boolean winCondition(Match m, Player p) { return super.winCondition(m, p); }
-
+    /**
+     * let the worker build on an adjacent box or on the worker's box
+     * @param m match played
+     * @param ch clientHandler that must build
+     * @param server manage the interaction with client
+     * @return true if w has built
+     */
     @Override
     public boolean build(Match m, ClientHandler ch, Server server) {
         int wID=2;
@@ -62,6 +67,13 @@ public class ZeusTurn extends GodTurn {
 
     }
 
+    /**
+     * create an arrayList with all the coordinates in which the worker can build using Zeus power
+     * @param match match played
+     * @param ch owner of turn
+     * @param id the worker id
+     * @return the list
+     */
     @Override
     public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id){
         Player player = match.getPlayer(ch.getName());
@@ -71,11 +83,6 @@ public class ZeusTurn extends GodTurn {
             return result;
         }
         return super.whereCanBuild(match,ch,id);
-    }
-
-    @Override
-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
-        return super.printCoordinates(coordinates);
     }
 
 }
