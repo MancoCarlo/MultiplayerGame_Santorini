@@ -568,7 +568,7 @@ public class GUI extends JFrame implements Runnable{
         }
         centerPanel.setVisible(false);
         for(Integer i : indexes){
-                B.getButtons().get(i).setBackground(Color.GREEN);
+            setButtonBackground(B.getButtons().get(i), B.getButtons().get(i).getName().charAt(1));
         }
         for (final JButton b : B.getButtons()) {
             for(Integer i : indexes){
@@ -591,6 +591,43 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.setVisible(true);
         topPanel.setVisible(true);
         mainPanel.setVisible(true);
+    }
+
+    public void setButtonBackground(JButton button, char level){
+        ImageIcon img;
+        Image img1;
+        Image newimg;
+        switch (level){
+            case '0':
+                img = new ImageIcon(getClass().getResource("/Board/floor0ok.png"));
+                break;
+
+            case '1':
+                img = new ImageIcon(getClass().getResource("/Board/floor1ok.png"));
+                break;
+
+            case '2':
+                img = new ImageIcon(getClass().getResource("/Board/floor2ok.png"));
+                break;
+
+            case '3':
+                img = new ImageIcon(getClass().getResource("/Board/floor3ok.png"));
+                break;
+
+            default:
+                img = new ImageIcon(getClass().getResource("/Board/floor0ok.png"));
+                break;
+        }
+
+        img1 = img.getImage() ;
+        newimg = img1.getScaledInstance( 80, 80,  java.awt.Image.SCALE_SMOOTH ) ;
+        img = new ImageIcon( newimg );
+
+        button.setText("");
+        button.setIcon(img);
+        button.setOpaque(false);
+        button.setBorder(null);
+        button.setContentAreaFilled(false);
     }
 
     public String getIndex(ArrayList<Integer> indexes, int id){

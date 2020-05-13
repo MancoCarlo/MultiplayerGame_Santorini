@@ -16,14 +16,20 @@ public class BoardGUI extends JPanel {
         for(int i=0; i<command.length();i=i+2){
             JButton button = new JButton(command.substring(i,i+2));
             switch(command.charAt(i)){
+                case '0':
+                    setFloor(button, '0', command.charAt(i+1));
+                    break;
                 case '1':
-                    button.setBackground(Color.RED);
+                    setFloor(button, '1', command.charAt(i+1));
                     break;
                 case '2':
-                    button.setBackground(Color.BLUE);
+                    setFloor(button, '2', command.charAt(i+1));
                     break;
                 case '3':
-                    button.setBackground(Color.YELLOW);
+                    setFloor(button, '3', command.charAt(i+1));
+                    break;
+                case '4':
+                    setFloor(button, '3', command.charAt(i+1));
                     break;
                 default:
                     break;
@@ -44,5 +50,59 @@ public class BoardGUI extends JPanel {
 
     public ArrayList<JButton> getButtons() {
         return buttons;
+    }
+
+    public void setFloor(JButton button, char player, char floor){
+        ImageIcon img;
+        Image img1;
+        Image newimg;
+        switch (player){
+            case '0':
+                if(floor=='0') img = new ImageIcon(getClass().getResource("/Board/floor0.png"));
+                else if(floor=='1') img = new ImageIcon(getClass().getResource("/Board/floor1.png"));
+                else if(floor=='2') img = new ImageIcon(getClass().getResource("/Board/floor2.png"));
+                else if(floor=='3') img = new ImageIcon(getClass().getResource("/Board/floor3.png"));
+                else img = new ImageIcon(getClass().getResource("/Board/floor4.png"));
+                break;
+
+            case '1':
+                if(floor=='0') img = new ImageIcon(getClass().getResource("/Board/floor0red.png"));
+                else if(floor=='1') img = new ImageIcon(getClass().getResource("/Board/floor1red.png"));
+                else if(floor=='2') img = new ImageIcon(getClass().getResource("/Board/floor2red.png"));
+                else img = new ImageIcon(getClass().getResource("/Board/floor3red.png"));
+                break;
+
+            case '2':
+                if(floor=='0') img = new ImageIcon(getClass().getResource("/Board/floor0blue.png"));
+                else if(floor=='1') img = new ImageIcon(getClass().getResource("/Board/floor1blue.png"));
+                else if(floor=='2') img = new ImageIcon(getClass().getResource("/Board/floor2blue.png"));
+                else img = new ImageIcon(getClass().getResource("/Board/floor3blue.png"));
+                break;
+
+            case '3':
+                if(floor=='0') img = new ImageIcon(getClass().getResource("/Board/floor0yellow.png"));
+                else if(floor=='1') img = new ImageIcon(getClass().getResource("/Board/floor1yellow.png"));
+                else if(floor=='2') img = new ImageIcon(getClass().getResource("/Board/floor2yellow.png"));
+                else img = new ImageIcon(getClass().getResource("/Board/floor3yellow.png"));
+                break;
+
+            default:
+                if(floor=='0') img = new ImageIcon(getClass().getResource("/Board/floor0.png"));
+                else if(floor=='1') img = new ImageIcon(getClass().getResource("/Board/floor1.png"));
+                else if(floor=='2') img = new ImageIcon(getClass().getResource("/Board/floor2.png"));
+                else if(floor=='3') img = new ImageIcon(getClass().getResource("/Board/floor3.png"));
+                else img = new ImageIcon(getClass().getResource("/Board/floor4.png"));
+                break;
+        }
+
+        img1 = img.getImage() ;
+        newimg = img1.getScaledInstance( 80, 80,  java.awt.Image.SCALE_SMOOTH ) ;
+        img = new ImageIcon( newimg );
+
+        button.setName(""+player+floor);
+        button.setIcon(img);
+        button.setOpaque(false);
+        button.setBorder(null);
+        button.setContentAreaFilled(false);
     }
 }
