@@ -276,7 +276,9 @@ public class GameController {
                     }
                 }
             }
-
+            for(ClientHandler clientHandler : server.getClientHandlers()){
+                server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
+            }
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Insert Worker n°2\n");
             c = getCoordinate();
             if(c==null){
@@ -305,6 +307,9 @@ public class GameController {
                 }
             }
             i++;
+        }
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
         }
         next();
         return true;
@@ -426,13 +431,13 @@ public class GameController {
                     PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn8);
                 case 9 :
-                    PoseidonTurn turn9 = new PoseidonTurn(new GodTurn(new BaseTurn()));
+                    HestiaTurn turn9 = new HestiaTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn9);
                 case 10 :
-                    TritonTurn turn10 = new TritonTurn(new GodTurn(new BaseTurn()));
+                    PoseidonTurn turn10 = new PoseidonTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn10);
                 case 11 :
-                    HestiaTurn turn11 = new HestiaTurn(new GodTurn(new BaseTurn()));
+                    TritonTurn turn11 = new TritonTurn(new GodTurn(new BaseTurn()));
                     return turnExe(ch, turn11);
                 case 12 :
                     CharonTurn turn12 = new CharonTurn(new GodTurn(new BaseTurn()));
@@ -461,6 +466,10 @@ public class GameController {
             return false;
         }
 
+        if(turn.winCondition(match, match.getPlayer(ch.getName()))){
+            return true;
+        }
+
         if(match.getPlayer(ch.getName()).getCard().getName().equals("Athena"))
             athenaCondition(ch);
 
@@ -473,11 +482,16 @@ public class GameController {
             return false;
         }
 
-        if(!turn.winCondition(match, match.getPlayer(ch.getName()))){
-            return false;
-        }else{
-            return true;
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
         }
+
+        match.getPlayer(ch.getName()).getWorkers().get(0).changeBuilt(false);
+        match.getPlayer(ch.getName()).getWorkers().get(1).changeBuilt(false);
+        match.getPlayer(ch.getName()).getWorkers().get(0).changeMoved(false);
+        match.getPlayer(ch.getName()).getWorkers().get(1).changeMoved(false);
+
+        return false;
     }
 
     /**

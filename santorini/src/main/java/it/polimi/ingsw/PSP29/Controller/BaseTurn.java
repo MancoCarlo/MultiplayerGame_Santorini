@@ -18,9 +18,7 @@ public class BaseTurn implements Turn {
     @Override
     public boolean winCondition(Match m, Player p) {
         for(Worker w : p.getWorkers()){
-            if(w.getMoved() && w.getBuilt()){
-                w.changeMoved(false);
-                w.changeBuilt(false);
+            if(w.getMoved()){
                 if(m.getBoard()[w.getPosition().getX()][w.getPosition().getY()].getLevel()==3){
                     if(m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getlevelledUp() && m.getBoard()[w.getPrev_position().getX()][w.getPrev_position().getY()].getLevel()==3){
                         return true;
@@ -52,7 +50,7 @@ public class BaseTurn implements Turn {
         if(p.getWorker(0).getMoved()) wID = 0;
         if(p.getWorker(1).getMoved()) wID = 1;
         ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
-        server.write(ch, "serviceMessage", "MSGE-Build: ");
+        server.write(ch, "serviceMessage", "MSGE-Build: \n");
         if(coordinates.size()!=0){
             Coordinate c = null;
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));

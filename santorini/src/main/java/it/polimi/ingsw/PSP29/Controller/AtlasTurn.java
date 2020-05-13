@@ -27,7 +27,7 @@ public class AtlasTurn extends GodTurn{
         if(p.getWorker(0).getMoved()) wID = 0;
         if(p.getWorker(1).getMoved()) wID = 1;
         ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
-        server.write(ch, "serviceMessage", "MSGE-Build: ");
+        server.write(ch, "serviceMessage", "MSGE-Build: \n");
         if(coordinates.size()!=0){
             Coordinate c = null;
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));

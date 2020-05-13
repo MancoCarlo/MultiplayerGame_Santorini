@@ -198,7 +198,11 @@ public class Server
                         System.out.println("Server closed");
                     }
                 }else{
-                    gc.getMatch().getPlayers().remove(i);
+                    try{
+                        gc.getMatch().getPlayers().remove(i);
+                    } catch (Exception e) {
+                        System.out.print("");
+                    }
                 }
                 countPlayers--;
                 clientHandlers.get(i).closeConnection();
