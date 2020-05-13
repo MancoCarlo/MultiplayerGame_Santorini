@@ -13,18 +13,6 @@ public class PrometheusTurn extends GodTurn {
     }
 
     /**
-     * call build() of the superclass
-     * @param m match played
-     * @param ch clientHandler that must build
-     * @param server manage the interaction with client
-     * @return true if w has built at least once, else false
-     */
-    @Override
-    public boolean build(Match m, ClientHandler ch, Server server) {
-        return super.build(m, ch, server);
-    }
-
-    /**
      * allows a player to build before and after moving his worker if in this turn his worker can't level up
      * @param m match played
      * @param ch owner of the turn
@@ -75,8 +63,7 @@ public class PrometheusTurn extends GodTurn {
         }else if(coordinates0.size()==0 && coordinates1.size()==0){
             return false;
         }
-        //-------------------potere di prometeo--------------------
-        if(!p.getWorker(wID).canLevelUp(m) || athenaOn){//se il worker non puo fare upgrade oppure athena è attivata
+        if(!p.getWorker(wID).canLevelUp(m) || athenaOn){
             String power;
             server.write(ch, "interactionServer", "INDX2-Would you like to build an additional block before moving you worker?\n1) Yes\n2) No\n");
             power = server.read(ch);
@@ -193,36 +180,6 @@ public class PrometheusTurn extends GodTurn {
         m.updateMovement(p,wID,c);
         p.getWorker(wID).changeMoved(true);
         return true;
-    }
-
-    @Override
-    public boolean winCondition(Match m, Player p) {
-        return super.winCondition(m, p);
-    }
-
-    @Override
-    public boolean canBuildIn(Match match,Worker w,Coordinate c){
-        return super.canBuildIn(match, w, c);
-    }
-
-    @Override
-    public boolean canMoveTo(Match m,Worker w,Coordinate c, boolean athena){
-        return super.canMoveTo( m, w, c, athena);
-        }
-
-    @Override
-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
-        return super.whereCanMove(match,ch,id,athenaOn);
-    }
-
-    @Override
-    public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id) {
-        return super.whereCanBuild(match, ch, id);
-    }
-
-    @Override
-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
-        return super.printCoordinates(coordinates);
     }
 
 }

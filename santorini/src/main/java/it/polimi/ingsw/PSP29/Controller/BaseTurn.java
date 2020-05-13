@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class BaseTurn implements Turn {
 
     /**
-     * control if the player win
+     * control if the player wins
      * @param m match played
      * @param p player that plays the turn
      * @return true if p win the game, else false
@@ -237,7 +237,7 @@ public class BaseTurn implements Turn {
     }
 
     /**
-     * create an arrayList with all the coordinates in wich the worker can move
+     * create an arrayList with all the coordinates in which the worker can move
      * @param match match played
      * @param ch owner of turn
      * @param id the worker id
@@ -260,7 +260,7 @@ public class BaseTurn implements Turn {
     }
 
     /**
-     * create an arrayList with all the coordinates in wich the worker can build
+     * create an arrayList with all the coordinates in which the worker can build
      * @param match match played
      * @param ch owner of turn
      * @param id the worker id
@@ -282,7 +282,7 @@ public class BaseTurn implements Turn {
     }
 
     /**
-     * print the list of valids coordinate
+     * print the list of valid coordinates
      * @param coordinates
      * @return the string that print the list
      */
