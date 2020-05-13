@@ -1164,7 +1164,55 @@ public class GUI extends JFrame implements Runnable{
      * launch endGame GUI
      */
     public synchronized void viewWin(){
-        initialPage();
+        JFrame f = new JFrame();
+        f.setMinimumSize(new Dimension(640,640));
+        ImagePanel panel = new ImagePanel("/login.png", f.getWidth(), f.getHeight());
+        panel.setLayout(new GridLayout(3,3));
+
+        JPanel f1 = new JPanel();
+        JPanel f2 = new JPanel();
+        JPanel f3 = new JPanel();
+        JPanel f4 = new JPanel();
+        JPanel f5 = new JPanel();
+        JPanel f6 = new JPanel();
+        JPanel f7 = new JPanel();
+        JPanel f8 = new JPanel();
+        
+        f1.setOpaque(false);
+        f2.setOpaque(false);
+        f3.setOpaque(false);
+        f4.setOpaque(false);
+        f5.setOpaque(false);
+        f6.setOpaque(false);
+        f7.setOpaque(false);
+        f8.setOpaque(false);
+        ImagePanel cen = new ImagePanel("/form.png", f.getWidth()/3, f.getHeight()/3);
+
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        cen.setLayout(gridbag);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        JLabel label = new JLabel(command.substring(5));
+
+        c.gridx = 1;
+        c.gridy = 0;
+        gridbag.setConstraints(label, c);
+        cen.add(label);
+
+        panel.add(f1);
+        panel.add(f2);
+        panel.add(f3);
+        panel.add(f4);
+        panel.add(cen);
+        panel.add(f5);
+        panel.add(f6);
+        panel.add(f7);
+        panel.add(f8);
+        f.add(panel);
+        f.setVisible(true);
+        f.setResizable(false);
+
         sentMessage=true;
     }
 
