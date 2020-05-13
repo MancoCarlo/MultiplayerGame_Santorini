@@ -35,6 +35,9 @@ public class IndexGUI extends JFrame implements Runnable{
         optionPanel.setLayout(new GridLayout(3,3, 10, 10));
     }
 
+    /**
+     * creates the buttons and add them to the frame
+     */
     public synchronized void setOptions() {
         if(!list.get(0).substring(1,2).equals(")")){
             list.remove(0);
@@ -345,6 +348,10 @@ public class IndexGUI extends JFrame implements Runnable{
         this.setVisible(true);
     }
 
+    /**
+     * @param button the button
+     * @return his position in the ArrayList
+     */
     public synchronized int getPosition(JButton button){
         int i;
         for(i=0; i<options.size(); i++){
@@ -369,6 +376,10 @@ public class IndexGUI extends JFrame implements Runnable{
         return 0;
     }
 
+    /**
+     * @param list list of strings
+     * @return true if the list represents a list of gods
+     */
     public boolean isGodList(ArrayList<String> list){
         if(list.get(0).contains("Apollo")) return true;
         if(list.get(0).contains("Arthemis")) return true;

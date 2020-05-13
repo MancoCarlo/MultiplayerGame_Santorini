@@ -11,6 +11,10 @@ public class BoardGUI extends JPanel {
         this.setLayout(new GridLayout(5,5));
     }
 
+    /**
+     * set the board for the GUI
+     * @param command the string that represent the board
+     */
     public void setBoard(String command) {
         command = command.substring(5);
         for(int i=0; i<command.length();i=i+2){
@@ -39,6 +43,10 @@ public class BoardGUI extends JPanel {
         }
     }
 
+    /**
+     * @param b the button
+     * @return the position of the button in the ArrayList
+     */
     public int getCoordinate(JButton b){
         int i;
         for(i = 0; i < buttons.size(); i++){
@@ -52,6 +60,12 @@ public class BoardGUI extends JPanel {
         return buttons;
     }
 
+    /**
+     * set the image of the button
+     * @param button the button
+     * @param player char that represent the player
+     * @param floor char that represent the level of the box
+     */
     public void setFloor(JButton button, char player, char floor){
         ImageIcon img;
         Image img1;

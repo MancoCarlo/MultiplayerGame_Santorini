@@ -1,12 +1,9 @@
 package it.polimi.ingsw.PSP29.model;
 
-import it.polimi.ingsw.PSP29.Controller.GameController;
-import it.polimi.ingsw.PSP29.view.Client;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Match implements Serializable {
     private static int columns = 5;
@@ -26,10 +23,6 @@ public class Match implements Serializable {
         colors.add(Color.ANSI_YELLOW);
     }
 
-    public ArrayList<Color> getColors() {
-        return colors;
-    }
-
     public Box[][] getBoard() {
         return board;
     }
@@ -38,6 +31,9 @@ public class Match implements Serializable {
         return players;
     }
 
+    /**
+     * get a player from his name
+     */
     public Player getPlayer(String n){
         for(Player p : this.players){
             if(p.getNickname().equals(n)){
@@ -233,6 +229,10 @@ public class Match implements Serializable {
         return false;
     }
 
+    /**
+     * remove a player from the game if disconnected
+     * @param clientHandlers list of clients
+     */
     public void updatePlayers(ArrayList<ClientHandler> clientHandlers){
         for(ClientHandler clientHandler : clientHandlers){
             if(!clientHandler.getConnected()){
@@ -241,6 +241,9 @@ public class Match implements Serializable {
         }
     }
 
+    /**
+     * @return the number of players in game
+     */
     public int playersInGame(){
         int count = 0;
         for(Player p : players){

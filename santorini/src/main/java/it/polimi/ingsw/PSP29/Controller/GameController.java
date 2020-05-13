@@ -16,7 +16,6 @@ public class GameController {
     private boolean endGame;
     private boolean godOn;
     private ArrayList<Integer> godIndex = new ArrayList<>();
-    private Coordinate c = null;
     private boolean athenaOn;
     private int myturn = 0;
     private int numPlayers;
@@ -48,6 +47,12 @@ public class GameController {
         return myturn;
     }
 
+    /**
+     * @param p the player
+     * @param id worker's id
+     * @param c coordinate
+     * @return true if the worker can be put in the coordinate c
+     */
     public boolean controlMovement(Player p, int id, Coordinate c){
         if(c.getX()>4 || c.getY()>4 || c.getX()<0 || c.getY()<0){
             return false;
@@ -315,6 +320,9 @@ public class GameController {
         return true;
     }
 
+    /**
+     * reset workers position in the board
+     */
     private void resetWorkerPos() {
         for(Player p : match.getPlayers()){
             for(int i=0; i<p.getWorkers().size();i++){
@@ -522,6 +530,10 @@ public class GameController {
         match.removeWorkers(match.getPlayer(ch.getName()));
     }
 
+    /**
+     * control if the condition that activate athena is verified
+     * @param ch the client
+     */
     public void athenaCondition(ClientHandler ch){
         Coordinate cprev;
         Coordinate c;

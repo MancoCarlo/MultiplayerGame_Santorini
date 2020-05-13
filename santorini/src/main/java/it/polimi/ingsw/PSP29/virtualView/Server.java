@@ -185,6 +185,9 @@ public class Server
         }
     }
 
+    /**
+     * create a new game at the end of the previous one
+     */
     public void newGame(){
         ArrayList<ClientHandler> newCH = new ArrayList<>();
         for(int i = 0; i<clientHandlers.size();i++){

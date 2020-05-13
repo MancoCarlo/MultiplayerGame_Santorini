@@ -16,6 +16,10 @@ public class ImagePanel extends JPanel {
         this.setVisible(true);
     }
 
+    /**
+     * add an image as background of the panel
+     * @param g
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

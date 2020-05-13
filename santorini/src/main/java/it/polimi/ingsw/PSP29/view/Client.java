@@ -13,7 +13,6 @@ import it.polimi.ingsw.PSP29.model.Color;
 
 public class Client implements Runnable, ServerObserver
 {
-    /* auxiliary variable used for implementing the consumer-producer pattern*/
     private String response = null;
     private String method = null;
     private boolean rsp = false;
@@ -30,9 +29,6 @@ public class Client implements Runnable, ServerObserver
     @Override
     public void run()
     {
-        /*
-         * WARNING: this method executes IN THE CONTEXT OF THE MAIN THREAD
-         */
         Scanner scanner = new Scanner(System.in);
         boolean CLI = false;
         System.out.println("What you want to use?\n1) CLI\n2) GUI");

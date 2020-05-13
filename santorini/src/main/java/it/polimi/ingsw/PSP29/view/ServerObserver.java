@@ -1,6 +1,5 @@
 package it.polimi.ingsw.PSP29.view;
 
-import it.polimi.ingsw.PSP29.model.*;
 
 
 public interface ServerObserver

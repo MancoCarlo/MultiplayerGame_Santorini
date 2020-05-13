@@ -13,6 +13,9 @@ public class UserTimerTask extends TimerTask {
         this.ch = ch;
     }
 
+    /**
+     * run the timer
+     */
     public void run(){
         if(seconds<=turnSeconds){
             System.out.println(turnSeconds - seconds+ " seconds remaining");

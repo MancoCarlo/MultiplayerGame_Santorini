@@ -71,6 +71,10 @@ public class GUI extends JFrame implements Runnable{
         STOP
     }
 
+    /**
+     * set nextCommand to LOG
+     * @param cmd the string from the server
+     */
     public synchronized void login(String cmd)
     {
         nextCommand = Commands.LOG;
@@ -78,6 +82,10 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * set nextCommand to LOBBY
+     * @param cmd the string from the server
+     */
     public synchronized void lobby(String cmd)
     {
         nextCommand = Commands.LOBBY;
@@ -85,6 +93,10 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * set nextCommand to INDEX
+     * @param cmd the string from the server
+     */
     public synchronized void index(String cmd)
     {
         nextCommand = Commands.INDEX;
@@ -92,6 +104,10 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * set nextCommand to BOARD
+     * @param cmd the string from the server
+     */
     public synchronized void board(String cmd)
     {
         nextCommand = Commands.BOARD;
@@ -99,6 +115,10 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * set nextCommand to LISTP
+     * @param cmd the string from the server
+     */
     public synchronized void listPlayers(String cmd)
     {
         nextCommand = Commands.LISTP;
@@ -106,6 +126,10 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * set nextCommand to LIST
+     * @param cmd the string from the server
+     */
     public synchronized void list(String cmd)
     {
         nextCommand = Commands.LIST;
@@ -113,6 +137,10 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * set nextCommand to MESSAGE
+     * @param cmd the string from the server
+     */
     public synchronized void message(String cmd)
     {
         nextCommand = Commands.MESSAGE;
@@ -120,6 +148,10 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * set nextCommand to TURN
+     * @param cmd the string from the server
+     */
     public synchronized void turn(String cmd)
     {
         nextCommand = Commands.TURN;
@@ -127,6 +159,10 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * set nextCommand to COORDINATE
+     * @param cmd the string from the server
+     */
     public synchronized void coordinate(String cmd)
     {
         nextCommand = Commands.COORDINATE;
@@ -134,6 +170,10 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * set nextCommand to GOD
+     * @param cmd the string from the server
+     */
     public synchronized void viewGod(String cmd)
     {
         nextCommand = Commands.GOD;
@@ -141,6 +181,9 @@ public class GUI extends JFrame implements Runnable{
         notifyAll();
     }
 
+    /**
+     * run the GUI and wait for new commands
+     */
     public synchronized void processGUI(){
         GuiLoaded=true;
         while (true) {
@@ -201,6 +244,9 @@ public class GUI extends JFrame implements Runnable{
         }
     }
 
+    /**
+     * set the initial page of the GUI
+     */
     public synchronized void initialPage(){
         lastViewCenter="initial";
         mainPanel.setVisible(false);
@@ -269,6 +315,9 @@ public class GUI extends JFrame implements Runnable{
     }
 
 
+    /**
+     * set the frame for the login
+     */
     public synchronized void doLogin() {
         lastViewCenter="login";
         mainPanel.setVisible(false);
@@ -353,6 +402,9 @@ public class GUI extends JFrame implements Runnable{
 
     }
 
+    /**
+     * set the frame for the lobby creation
+     */
     public synchronized void doLobby() {
         lastViewCenter="lobby";
         mainPanel.setVisible(false);
@@ -443,6 +495,9 @@ public class GUI extends JFrame implements Runnable{
         });
     }
 
+    /**
+     * print the message on the frame
+     */
     public synchronized void viewMessage(){
         mainPanel.setVisible(false);
         topPanel.setVisible(false);
@@ -499,6 +554,9 @@ public class GUI extends JFrame implements Runnable{
         }
     }
 
+    /**
+     * create the frame for choosing an index
+     */
     public synchronized void viewIndex(){
         if(list==null){
             list.add("1) Yes");
@@ -514,6 +572,9 @@ public class GUI extends JFrame implements Runnable{
         sentMessage=true;
     }
 
+    /**
+     * set the frame for the turn execution
+     */
     public synchronized void doTurn() {
         mainPanel.setVisible(false);
         topPanel.setVisible(false);
@@ -593,6 +654,11 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.setVisible(true);
     }
 
+    /**
+     * set background of the button
+     * @param button the button
+     * @param level the level ot the box represented by the button
+     */
     public void setButtonBackground(JButton button, char level){
         ImageIcon img;
         Image img1;
@@ -630,6 +696,11 @@ public class GUI extends JFrame implements Runnable{
         button.setContentAreaFilled(false);
     }
 
+    /**
+     * @param indexes list of index
+     * @param id the current id
+     * @return the string representing the index if is in indexes
+     */
     public String getIndex(ArrayList<Integer> indexes, int id){
         int result = 0;
         for(int i=0; i<indexes.size();i++){
@@ -641,6 +712,9 @@ public class GUI extends JFrame implements Runnable{
         return ""+result;
     }
 
+    /**
+     * set the frame for choosing a coordinate
+     */
     public synchronized void doCoordinate() {
         mainPanel.setVisible(false);
         topPanel.setVisible(false);
@@ -702,6 +776,9 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.setVisible(true);
     }
 
+    /**
+     * put or update the board on the frame
+     */
     public synchronized void viewBoard(){
         B = new BoardGUI();
         if(!lastViewCenter.equals("board")){
@@ -788,6 +865,9 @@ public class GUI extends JFrame implements Runnable{
         sentMessage=true;
     }
 
+    /**
+     * set the frame for the start of the effective game
+     */
     public synchronized  void createGameGui(){
         mainPanel.setVisible(false);
         mainPanel.removeAll();
@@ -833,6 +913,9 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.setVisible(true);
     }
 
+    /**
+     * put the list of players in game on the frame
+     */
     public void viewListPlayer(){
         ArrayList<Player> players = getPlayersFromList(command);
 
@@ -899,6 +982,9 @@ public class GUI extends JFrame implements Runnable{
         sentMessage=true;
     }
 
+    /**
+     * put the player's god on the frame
+     */
     public void viewIconGod(){
         mainPanel.setVisible(false);
         mainPanel.remove(rightPanel);
@@ -1001,6 +1087,11 @@ public class GUI extends JFrame implements Runnable{
         sentMessage = false;
     }
 
+    /**
+     * transform a list of strings in a list of players
+     * @param list the list of strings
+     * @return the list of players
+     */
     public synchronized ArrayList<Player> getPlayersFromList(String list){
         int j=5;
         char c;
@@ -1044,30 +1135,19 @@ public class GUI extends JFrame implements Runnable{
         return players;
     }
 
+    /**
+     * save the list send from the server
+     */
     public synchronized void viewList(){
         list = getList(command);
 
-        /*
-        mainPanel.setVisible(false);
-        mainPanel.remove(rightPanel);
-        rightPanel.setVisible(false);
-        rightPanel.removeAll();
-
-        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-        JLabel[] text = new JLabel[list.size()];
-        for(int i=0; i<list.size(); i++){
-            text[i] = new JLabel("- " + list.get(i));
-            rightPanel.add(text[i]);
-        }
-
-        mainPanel.add(rightPanel, BorderLayout.EAST);
-        pack();
-        rightPanel.setVisible(true);
-        mainPanel.setVisible(true);
-        */
         sentMessage=true;
     }
 
+    /**
+     * @param l the list of strings
+     * @return the updated list of strings
+     */
     public synchronized ArrayList<String> getList(String l){
         ArrayList<String> list = new ArrayList<>();
         char c;
@@ -1087,6 +1167,11 @@ public class GUI extends JFrame implements Runnable{
         return list;
     }
 
+    /**
+     * convert an id to a string representig a coordinate
+     * @param id the id
+     * @return the coordinate
+     */
     public String convert(int id) {
         switch (id){
             case 0:
@@ -1145,6 +1230,12 @@ public class GUI extends JFrame implements Runnable{
 
     }
 
+    /**
+     * convert a coordinate in an index
+     * @param x compontent x
+     * @param y component y
+     * @return the index
+     */
     public Integer reverseConvert(int x, int y) {
         return x * 5 + y;
     }

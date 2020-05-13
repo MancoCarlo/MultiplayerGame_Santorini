@@ -83,7 +83,7 @@ public class Box implements Serializable {
     }
 
     /**
-     * print on monitor the state of box: 0 if empty else 1
+     * print on monitor the state of box: 0 if empty else 1 and the ID of the player in the box
      */
     public String printEmpty(Match m) {
         String s;

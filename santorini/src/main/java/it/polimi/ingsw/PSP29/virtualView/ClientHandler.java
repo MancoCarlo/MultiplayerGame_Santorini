@@ -27,8 +27,6 @@ public class ClientHandler implements Runnable
     private boolean connected;
     private boolean sentMessage;
     private boolean readMessage;
-    private boolean error = false;
-    private boolean timeout = false;
     ObjectOutputStream output;
     ObjectInputStream input;
     private Server server;
@@ -196,15 +194,6 @@ public class ClientHandler implements Runnable
 
     public void setName(String n) {
         name=n;
-    }
-
-
-    public boolean getError() {
-        return error;
-    }
-
-    public void resetError() {
-        error = false;
     }
 
     public void resetConnected(){
