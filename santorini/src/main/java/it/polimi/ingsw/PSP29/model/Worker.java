@@ -19,6 +19,22 @@ public class Worker implements Serializable {
         built = false;
     }
 
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public void setIDplayer(String IDplayer) {
+        this.IDplayer = IDplayer;
+    }
+
+    public void setMoved(boolean moved) {
+        this.moved = moved;
+    }
+
+    public void setBuilt(boolean built) {
+        this.built = built;
+    }
+
     public int getID() {
         return ID;
     }

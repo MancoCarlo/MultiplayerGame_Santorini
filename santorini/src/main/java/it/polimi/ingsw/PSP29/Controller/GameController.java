@@ -244,6 +244,7 @@ public class GameController {
      * ask to the client where he want to put his players
      */
     public boolean putWorkers(){
+        resetWorkerPos();
         int i=0;
         int count = match.playersInGame();
         while (i<count){
@@ -276,6 +277,11 @@ public class GameController {
                     }
                 }
             }
+
+            for(Player p : match.getPlayers()){
+                System.out.println(p.getWorkers().toString());
+            }
+
             for(ClientHandler clientHandler : server.getClientHandlers()){
                 server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
             }
@@ -313,6 +319,20 @@ public class GameController {
         }
         next();
         return true;
+    }
+
+    private void resetWorkerPos() {
+        for(Player p : match.getPlayers()){
+            for(int i=0; i<p.getWorkers().size();i++){
+                Worker w = new Worker(p.getId(), p.getNickname());
+                p.getWorkers().get(i).setPrev_position(null);
+                p.getWorkers().get(i).setPosition(null);
+                p.getWorkers().get(i).setID(p.getId());
+                p.getWorkers().get(i).setIDplayer(p.getNickname());
+                p.getWorkers().get(i).setMoved(false);
+                p.getWorkers().get(i).setBuilt(false);
+            }
+        }
     }
 
     /**
@@ -369,6 +389,7 @@ public class GameController {
             }
             next();
         }
+        endGame = false;
     }
 
 
