@@ -105,7 +105,7 @@ public class Server
                 if(gc.getMatch().playersInGame()==1){
                     for(int i=0;i<gc.getMatch().getPlayers().size();i++){
                         if(gc.getMatch().getPlayers().get(i).getInGame()){
-                            write(clientHandlers.get(i), "serviceMessage" , "MSGE-\nYou win!!\n");
+                            write(clientHandlers.get(i), "serviceMessage" , "WINM-\nYou win!!\n");
                             newGame();
                         }
                     }
@@ -137,7 +137,7 @@ public class Server
                 if(gc.getMatch().playersInGame()==1){
                     for(ClientHandler clientHandler : clientHandlers){
                         if (clientHandler.getName().equals(gc.getMatch().getPlayers().get(0).getNickname())){
-                            write(clientHandler, "serviceMessage" , "MSGE-\nYou win!!\n");
+                            write(clientHandler, "serviceMessage" , "WINM-\nYou win!!\n");
                             newGame();
                         }
                     }
@@ -149,7 +149,7 @@ public class Server
                     for(ClientHandler clientHandler : clientHandlers){
                         for(Player player : gc.getMatch().getPlayers()){
                             if(player.getNickname().equals(clientHandler.getName()) && player.getInGame()){
-                                write(clientHandler, "serviceMessage", "MSGE-You win!!\n");
+                                write(clientHandler, "serviceMessage", "WINM-You win!!\n");
                                 newGame();
                             }
                         }
@@ -168,7 +168,7 @@ public class Server
                     for(ClientHandler clientHandler : clientHandlers){
                         for(Player player : gc.getMatch().getPlayers()){
                             if(player.getNickname().equals(clientHandler.getName()) && player.getInGame()){
-                                write(clientHandler, "serviceMessage", "MSGE-You win!!\n");
+                                write(clientHandler, "serviceMessage", "WINM-You win!!\n");
                                 newGame();
                             }
                         }

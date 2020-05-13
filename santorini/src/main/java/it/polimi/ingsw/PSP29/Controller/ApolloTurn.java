@@ -13,7 +13,7 @@ public class ApolloTurn extends GodTurn{
     }
 
     /**
-     * move the worker
+     * move the worker in one available coordinate
      * @param m match played
      * @param ch owner of the turn
      * @param server manage the interaction with client
@@ -138,7 +138,7 @@ public class ApolloTurn extends GodTurn{
     }
 
     /**
-     * control if the worker can move
+     * control if the worker can move and return an array of the available coordinates
      * @param match match played
      * @param w worker that can be moved
      * @param c coordinate that must be checked

@@ -14,7 +14,7 @@ public class ArtemisTurn extends GodTurn{
     }
 
     /**
-     * move the worker
+     * can move the same worker twice, but not in the start box of the first movement
      * @param m match played
      * @param ch owner of the turn
      * @param server manage the interaction with client
@@ -29,6 +29,9 @@ public class ArtemisTurn extends GodTurn{
         if(!nopower) return false;
         for(ClientHandler clientHandler : server.getClientHandlers()){
             server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
+        }
+        if(super.winCondition(m, p)){
+            return true;
         }
         server.write(ch,"serviceMessage", "BORD-"+m.printBoard());
         server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");

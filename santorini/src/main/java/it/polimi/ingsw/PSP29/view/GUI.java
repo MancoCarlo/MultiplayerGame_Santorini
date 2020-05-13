@@ -68,6 +68,7 @@ public class GUI extends JFrame implements Runnable{
         COORDINATE,
         TURN,
         GOD,
+        WIN,
         STOP
     }
 
@@ -182,6 +183,17 @@ public class GUI extends JFrame implements Runnable{
     }
 
     /**
+     * set nextCommand to WIN
+     * @param cmd the string from the server
+     */
+    public synchronized void win(String cmd)
+    {
+        nextCommand = Commands.WIN;
+        command = cmd;
+        notifyAll();
+    }
+
+    /**
      * run the GUI and wait for new commands
      */
     public synchronized void processGUI(){
@@ -236,6 +248,10 @@ public class GUI extends JFrame implements Runnable{
 
                 case GOD:
                     viewIconGod();
+                    break;
+
+                case WIN:
+                    viewWin();
                     break;
 
                 case STOP:
@@ -1141,6 +1157,14 @@ public class GUI extends JFrame implements Runnable{
     public synchronized void viewList(){
         list = getList(command);
 
+        sentMessage=true;
+    }
+
+    /**
+     * launch endGame GUI
+     */
+    public synchronized void viewWin(){
+        initialPage();
         sentMessage=true;
     }
 

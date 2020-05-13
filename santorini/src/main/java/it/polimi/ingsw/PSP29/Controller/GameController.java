@@ -369,9 +369,9 @@ public class GameController {
                     endGame = true;
                     for (int i = 0; i < server.getClientHandlers().size(); i++) {
                         if (i == myturn)
-                            server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Congratulations you win!\n");
+                            server.write(server.getClientHandlers().get(myturn), "serviceMessage", "WINM-Congratulations you win!\n");
                         else
-                            server.write(server.getClientHandlers().get(i), "serviceMessage", "MSGE-You lose, the winner is " + server.getClientHandlers().get(myturn).getName() + "!\n");
+                            server.write(server.getClientHandlers().get(i), "serviceMessage", "WINM-You lose, the winner is " + server.getClientHandlers().get(myturn).getName() + "!\n");
                     }
                     break;
                 }
@@ -383,9 +383,9 @@ public class GameController {
                 if (endGame) {
                     for (int i = 0; i < server.getClientHandlers().size(); i++) {
                         if (i == myturn)
-                            server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Congratulations you win!\n");
+                            server.write(server.getClientHandlers().get(myturn), "serviceMessage", "WINM-Congratulations you win!\n");
                         else
-                            server.write(server.getClientHandlers().get(i), "serviceMessage", "MSGE-You lose, the winner is " + server.getClientHandlers().get(myturn).getName() + "!\n");
+                            server.write(server.getClientHandlers().get(i), "serviceMessage", "WINM-You lose, the winner is " + server.getClientHandlers().get(myturn).getName() + "!\n");
                     }
                 }
             }

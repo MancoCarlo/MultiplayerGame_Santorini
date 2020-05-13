@@ -312,6 +312,11 @@ public class ServerAdapter implements Runnable
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
             }
+            if(cmd.startsWith("WINM")){
+                gui.win(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
+            }
         }
 
         List<ServerObserver> observersCpy;
