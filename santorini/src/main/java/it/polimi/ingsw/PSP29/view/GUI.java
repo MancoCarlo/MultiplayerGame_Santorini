@@ -574,18 +574,146 @@ public class GUI extends JFrame implements Runnable{
      * create the frame for choosing an index
      */
     public synchronized void viewIndex(){
-        if(list==null){
-            list.add("1) Yes");
-            list.add("2) No");
+        if(list.get(0).contains("YES") || list.get(0).contains("Yes")){
+            mainPanel.setVisible(false);
+            topPanel.setVisible(false);
+            topPanel.removeAll();
+            mainPanel.remove(topPanel);
+
+            topPanel = new ImagePanel("/top.png", getWidth(), getHeight());
+            topPanel.setLayout(new GridLayout(3,1));
+
+            JButton by = new JButton("YES");
+            JButton bn = new JButton("NO");
+            JPanel bu = new JPanel();
+            bu.setOpaque(false);
+            bu.add(by);
+            bu.add(bn);
+
+            JPanel fake1 = new JPanel();
+            JPanel fake2 = new JPanel();
+            JPanel fake3 = new JPanel();
+            JPanel correct = new JPanel();
+            JPanel fake4 = new JPanel();
+
+            fake1.setOpaque(false);
+            fake2.setOpaque(false);
+            fake3.setOpaque(false);
+            fake4.setOpaque(false);
+            correct.setOpaque(false);
+
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints c = new GridBagConstraints();
+            correct.setLayout(gridbag);
+            c.fill = GridBagConstraints.HORIZONTAL;
+
+            JLabel label = new JLabel(command.substring(5));
+
+            c.gridx = 1;
+            c.gridy = 0;
+            gridbag.setConstraints(label, c);
+            correct.add(label);
+
+            topPanel.add(fake1);
+            topPanel.add(correct);
+            topPanel.add(bu);
+
+            mainPanel.add(topPanel, BorderLayout.NORTH);
+            this.add(mainPanel);
+            this.pack();
+            topPanel.setVisible(true);
+            mainPanel.setVisible(true);
+
+            by.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    message = "1";
+                    sentMessage = true;
+                }
+            });
+            bn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    message = "2";
+                    sentMessage = true;
+                }
+            });
+        }else if(list.get(0).contains("Workers")) {
+            mainPanel.setVisible(false);
+            topPanel.setVisible(false);
+            topPanel.removeAll();
+            mainPanel.remove(topPanel);
+
+            topPanel = new ImagePanel("/top.png", getWidth(), getHeight());
+            topPanel.setLayout(new GridLayout(3,1));
+
+            JButton by = new JButton(list.get(1));
+            JButton bn = new JButton(list.get(2));
+            JPanel bu = new JPanel();
+            bu.setOpaque(false);
+            bu.add(by);
+            bu.add(bn);
+
+            JPanel fake1 = new JPanel();
+            JPanel fake2 = new JPanel();
+            JPanel fake3 = new JPanel();
+            JPanel correct = new JPanel();
+            JPanel fake4 = new JPanel();
+
+            fake1.setOpaque(false);
+            fake2.setOpaque(false);
+            fake3.setOpaque(false);
+            fake4.setOpaque(false);
+            correct.setOpaque(false);
+
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints c = new GridBagConstraints();
+            correct.setLayout(gridbag);
+            c.fill = GridBagConstraints.HORIZONTAL;
+
+            JLabel label = new JLabel(command.substring(5));
+
+            c.gridx = 1;
+            c.gridy = 0;
+            gridbag.setConstraints(label, c);
+            correct.add(label);
+
+            topPanel.add(fake1);
+            topPanel.add(correct);
+            topPanel.add(bu);
+
+            mainPanel.add(topPanel, BorderLayout.NORTH);
+            this.add(mainPanel);
+            this.pack();
+            topPanel.setVisible(true);
+            mainPanel.setVisible(true);
+
+            by.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    message = "1";
+                    sentMessage = true;
+                }
+            });
+            bn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    message = "2";
+                    sentMessage = true;
+                }
+            });
+
+
+        }else{
+            command = command.substring(4);
+            IndexGUI indexGUI = new IndexGUI(list, command.substring(1));
+            Thread indexThread = new Thread(indexGUI);
+            indexThread.start();
+            while (!indexGUI.isIndexObtained());
+            message = "" +indexGUI.getIndex();
+            indexGUI.setVisible(false);
+            sentMessage=true;
         }
-        command = command.substring(4);
-        IndexGUI indexGUI = new IndexGUI(list, command.substring(1));
-        Thread indexThread = new Thread(indexGUI);
-        indexThread.start();
-        while (!indexGUI.isIndexObtained());
-        message = "" +indexGUI.getIndex();
-        indexGUI.setVisible(false);
-        sentMessage=true;
     }
 
     /**
@@ -1177,7 +1305,7 @@ public class GUI extends JFrame implements Runnable{
         JPanel f6 = new JPanel();
         JPanel f7 = new JPanel();
         JPanel f8 = new JPanel();
-        
+
         f1.setOpaque(false);
         f2.setOpaque(false);
         f3.setOpaque(false);
