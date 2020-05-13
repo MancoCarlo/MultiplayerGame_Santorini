@@ -870,6 +870,9 @@ public class GUI extends JFrame implements Runnable{
             case "Charon":
                 img = new ImageIcon(getClass().getResource("/god/15.png"));
                 break;
+            case "Zeus":
+                img = new ImageIcon(getClass().getResource("/god/30.png"));
+                break;
             default:
                 img = new ImageIcon(getClass().getResource("/god/01.png"));
                 break;
