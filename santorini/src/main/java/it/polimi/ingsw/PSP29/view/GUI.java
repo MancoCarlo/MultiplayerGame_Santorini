@@ -1102,8 +1102,23 @@ public class GUI extends JFrame implements Runnable{
         JLabel[] text = new JLabel[players.size()*3];
         int j=0;
         for(int i=0; i<players.size(); i++){
+            Color col;
+            switch(players.get(i).getId()){
+                case 1:
+                    col = Color.RED;
+                    break;
+                case 2:
+                    col = Color.blue;
+                    break;
+                case 3:
+                    col = Color.yellow;
+                    break;
+                default:
+                    col = new Color(224, 213, 200);
+                    break;
+            }
             text[j] = new JLabel(players.get(i).getId()+") "+players.get(i).getNickname()+"\t");
-            text[j].setBackground(new Color(224, 213, 200));
+            text[j].setBackground(col);
             text[j].setOpaque(true);
             listP.add(text[j]);
             j++;
