@@ -57,4 +57,35 @@ public class BoxTest {
         assertEquals(b.level_diff(box), 1);
 
     }
+    @Test
+    public void TestsetLevelledUp_and_getLevelledUp(){
+        Box b = new Box(2,3);
+        assertFalse(b.getlevelledUp());
+        b.setLevelledUp(true);
+        assertTrue(b.getlevelledUp());
+    }
+
+    @Test
+    public void TestprintEmpty_emptyBoxInput(){
+        Match m = new Match();
+        m.inizializeBoard();
+        m.getBoard()[1][4].upgradeLevel();
+        m.getBoard()[1][4].upgradeLevel();
+        assertEquals(m.getBoard()[1][4].printEmpty(m), "02");
+    }
+
+    @Test
+    public void TestprintEmpty_notEmptyBoxInput(){
+        Match m = new Match();
+        m.inizializeBoard();
+        Player p = new Player("mattia", 16, 1);
+        m.addPlayer(p);
+        Worker w = new Worker(1,"mattia");
+        Coordinate c = new Coordinate (1,4);
+        p.putWorker(1, m.getBoard(), c);
+        m.getBoard()[1][4].upgradeLevel();
+        m.getBoard()[1][4].upgradeLevel();
+        m.getBoard()[1][4].upgradeLevel();
+        assertEquals(m.getBoard()[1][4].printEmpty(m), "13");
+    }
 }
