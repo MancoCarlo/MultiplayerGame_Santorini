@@ -1117,7 +1117,7 @@ public class GUI extends JFrame implements Runnable{
                     col = new Color(224, 213, 200);
                     break;
             }
-            text[j] = new JLabel(players.get(i).getId()+") "+players.get(i).getNickname()+"\t");
+            text[j] = new JLabel("- "+players.get(i).getNickname()+"\t");
             text[j].setBackground(col);
             text[j].setOpaque(true);
             listP.add(text[j]);
