@@ -38,10 +38,13 @@ public class TritonTurn extends GodTurn {
         do{
             power = "0";
             coordinates = whereCanMove(m, ch, wID, athenaOn);
-            if(!(coordinates.size() == 0) && (p.getWorker(wID).getPosition().getX()==0 ||p.getWorker(wID).getPosition().getX()==m.getRows() || p.getWorker(wID).getPosition().getY()==0 || p.getWorker(wID).getPosition().getY()==m.getColumns())) {
-                server.write(ch,"serviceMessage", "BORD-"+m.printBoard());
+            if(!(coordinates.size() == 0) && (p.getWorker(wID).getPosition().getX()==0 || p.getWorker(wID).getPosition().getX()==m.getRows()-1 || p.getWorker(wID).getPosition().getY()==0 || p.getWorker(wID).getPosition().getY()==m.getColumns()-1)) {
+                for(ClientHandler clientHandler : server.getClientHandlers()){
+                    server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
+                }
+                server.write(ch, "serviceMessage", "You can use Triton power\n");
                 server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
-                server.write(ch,"interactionServer", "INDX2Your worker is in a border box, would you like to move again?\n1) Yes\n2) No\n");
+                server.write(ch,"interactionServer", "INDX-Would you like to move again? ");
                 power = server.read(ch);
                 if(power.equals("1")) {
                     server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));

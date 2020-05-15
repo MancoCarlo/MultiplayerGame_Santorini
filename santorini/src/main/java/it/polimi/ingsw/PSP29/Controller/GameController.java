@@ -409,9 +409,9 @@ public class GameController {
         if(athenaOn && p.getCard().getName().equals("Athena")){
             athenaOn=false;
         }
-        server.write(ch, "serviceMessage", "Would you use your god in this turn?\n");
+        server.write(ch, "serviceMessage", "MSGE-You can use god power\n");
         server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
-        server.write(ch, "interactionServer", "INDX-Use god power: ");
+        server.write(ch, "interactionServer", "INDX-Use god power in this turn? ");
         String response = server.read(ch);
         if(response==null){
             match.updatePlayers(server.getClientHandlers());

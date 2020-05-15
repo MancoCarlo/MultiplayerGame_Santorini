@@ -34,8 +34,9 @@ public class ArtemisTurn extends GodTurn{
             return true;
         }
         server.write(ch,"serviceMessage", "BORD-"+m.printBoard());
-        server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
-        server.write(ch,"interactionServer", "INDX2Would you move again?\n1) Yes\n2) No\n");
+        server.write(ch, "serviceMessage", "MSGE-You can use Artemis power\n");
+        server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
+        server.write(ch, "interactionServer", "INDX-Would you move again in this turn? ");
         String answer = server.read(ch);
         if(answer.equals("1")){
             ArrayList<Coordinate> coordinates = null;

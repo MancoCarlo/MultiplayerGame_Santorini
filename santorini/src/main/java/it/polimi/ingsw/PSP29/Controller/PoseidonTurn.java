@@ -20,7 +20,7 @@ public class PoseidonTurn extends GodTurn {
     @Override
     public boolean build(Match m, ClientHandler ch, Server server) {
         boolean nopower = super.build(m, ch, server);
-        if(nopower)
+        if(!nopower)
             return false;
         int wID=2;
         Player p = m.getPlayer(ch.getName());
@@ -33,10 +33,14 @@ public class PoseidonTurn extends GodTurn {
                 power = "0";
                 ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
                 if(coordinates.size()!=0) {
-                    server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
-                    server.write(ch, "interactionServer", "INDX2-Would you like to build another block with your other worker?\n1) Yes\n2) No\n");
+                    server.write(ch, "serviceMessage", "You can use Poseidon power\n");
+                    server.write(ch, "serviceMessage", "LIST-1)YES\n2)NO\n");
+                    server.write(ch, "interactionServer", "INDX-Would you like to build another block with your other worker?");
                     power = server.read(ch);
                     if (power.equals("1")) {
+                        for(ClientHandler clientHandler : server.getClientHandlers()){
+                            server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
+                        }
                         Coordinate c = null;
                         server.write(ch, "serviceMessage", "LIST-" + printCoordinates(coordinates));
                         server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
@@ -67,7 +71,7 @@ public class PoseidonTurn extends GodTurn {
                         count = count + 1;
                     }
                 }
-            }while(power.equals("1") || count ==3);
+            }while(power.equals("1") && count <3);
         }
         return true;
     }

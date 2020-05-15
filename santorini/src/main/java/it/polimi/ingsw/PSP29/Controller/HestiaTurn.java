@@ -33,8 +33,9 @@ public class HestiaTurn extends GodTurn{
         }
         if(coordinates.size()!=0) {
             server.write(ch, "serviceMessage", "BORD-" + m.printBoard());
-            server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
-            server.write(ch, "interactionServer", "INDX2Would you like to build again but not in a border box?\n1) Yes\n2) No\n");
+            server.write(ch, "serviceMessage", "You can use Hestia power\n");
+            server.write(ch, "serviceMessage", "LIST-1)YES\n2)NO\n");
+            server.write(ch, "interactionServer", "INDX-Would you like to build again but not in a border box?");
             String answer = server.read(ch);
             if (answer.equals("1")) {
                 Coordinate c1 = null;
