@@ -26,11 +26,7 @@ public class HestiaTurn extends GodTurn{
             return false;
         if(p.getWorker(0).getMoved()) wID = 0;
         if(p.getWorker(1).getMoved()) wID = 1;
-        ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
-        for (Coordinate c: coordinates) {
-            if(c.getY()==m.getColumns() || c.getY()==0 || c.getX()==m.getRows() || c.getX()==0)
-                coordinates.remove(c);
-        }
+        ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID, 2);
         if(coordinates.size()!=0) {
             server.write(ch, "serviceMessage", "BORD-" + m.printBoard());
             server.write(ch, "serviceMessage", "You can use Hestia power\n");
@@ -73,6 +69,34 @@ public class HestiaTurn extends GodTurn{
 
     @Override
     public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
-        return super.whereCanMove(match,ch,id,athenaOn);
+        return super.whereCanMove(match, ch, id, athenaOn);
+    }
+
+    public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id, int n) {
+        ArrayList<Coordinate> coordinates = new ArrayList<>();
+        Player player = match.getPlayer(ch.getName());
+        for (int i = 0; i < match.getRows(); i++) {
+            for (int j = 0; j < match.getColumns(); j++) {
+                Coordinate c = new Coordinate(i, j);
+                if (canBuildIn(match, player.getWorker(id), c, n)) {
+                    coordinates.add(new Coordinate(i, j));
+                }
+            }
+        }
+        return coordinates;
+    }
+
+    public boolean canBuildIn(Match match,Worker w,Coordinate c, int n){
+        if(n==1){
+            return super.canBuildIn(match, w, c);
+        }
+        else {
+            if(!w.getPosition().isNear(c) || match.getBoard()[c.getX()][c.getY()].getLevel()==4 || !match.getBoard()[c.getX()][c.getY()].isEmpty() || c.getY()==match.getColumns()-1 || c.getY()==0 || c.getX()==match.getRows()-1 || c.getX()==0){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
     }
 }
