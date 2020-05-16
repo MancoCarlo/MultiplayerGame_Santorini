@@ -267,6 +267,7 @@ public class GameController {
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Insert Worker n°1\n");
             Coordinate c = getCoordinate();
             if(c==null){
+                /*
                 match.updatePlayers(server.getClientHandlers());
                 if(match.playersInGame()==1){
                     return false;
@@ -275,12 +276,15 @@ public class GameController {
                     i++;
                     continue;
                 }
+                */
+                return false;
             }
             while (!controlMovement(match.getPlayers().get(myturn), 0, c)){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Not valid box\n");
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Insert Worker n°1\n");
                 c = getCoordinate();
                 if(c==null){
+                    /*
                     match.updatePlayers(server.getClientHandlers());
                     if(match.playersInGame()==1){
                         return false;
@@ -289,6 +293,8 @@ public class GameController {
                         i++;
                         continue;
                     }
+                    */
+                    return false;
                 }
             }
 
@@ -298,6 +304,7 @@ public class GameController {
             server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Insert Worker n°2\n");
             c = getCoordinate();
             if(c==null){
+                /*
                 match.updatePlayers(server.getClientHandlers());
                 if(match.playersInGame()==1){
                     return false;
@@ -306,12 +313,15 @@ public class GameController {
                     i++;
                     continue;
                 }
+                */
+                return false;
             }
             while (!controlMovement(match.getPlayers().get(myturn), 1, c)){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Not valid box\n");
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Insert Worker n°2\n");
                 c = getCoordinate();
                 if(c==null){
+                    /*
                     match.updatePlayers(server.getClientHandlers());
                     if(match.playersInGame()==1){
                         return false;
@@ -320,6 +330,8 @@ public class GameController {
                         i++;
                         continue;
                     }
+                    */
+                    return false;
                 }
             }
             i++;
