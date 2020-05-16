@@ -930,14 +930,14 @@ public class GUI extends JFrame implements Runnable{
         }
         lastViewCenter="board";
         mainPanel.setVisible(false);
-        topPanel.setVisible(false);
+        //topPanel.setVisible(false);
         centerPanel.setVisible(false);
 
         mainPanel.setBackground(new Color(209, 198, 185));
         mainPanel.setOpaque(true);
 
         centerPanel.setOpaque(false);
-
+        /*
         mainPanel.remove(topPanel);
         topPanel.removeAll();
 
@@ -970,7 +970,7 @@ public class GUI extends JFrame implements Runnable{
         topPanel.add(fake3);
         topPanel.add(correct);
         topPanel.add(fake4);
-
+        */
         mainPanel.remove(centerPanel);
         centerPanel.removeAll();
         centerPanel.setLayout(new BorderLayout(10,10));
@@ -997,12 +997,12 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.add(X, BorderLayout.WEST);
         centerPanel.add(B, BorderLayout.CENTER);
 
-        mainPanel.add(topPanel, BorderLayout.NORTH);
+        //mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         this.add(mainPanel);
         this.setMinimumSize(new Dimension(1000, 500));
         pack();
-        topPanel.setVisible(true);
+        //topPanel.setVisible(true);
         centerPanel.setVisible(true);
         mainPanel.setVisible(true);
         this.setVisible(true);
