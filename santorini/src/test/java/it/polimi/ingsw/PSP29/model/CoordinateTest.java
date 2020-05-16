@@ -43,6 +43,7 @@ public class CoordinateTest {
     public void equals_nullInput_falseOutput(){
         assertFalse(c1.equals(null));
     }
+
     @Test
     public void equals_wrongInput_falseOutput(){
         int x= 1;
@@ -79,6 +80,12 @@ public class CoordinateTest {
         c2= new Coordinate(2,1);
         c1= new Coordinate(1,4);
         assertEquals(c1.nextCoordinate(m, c2), c2);
+    }
+    @Test
+    public void Test_toString() {
+        Coordinate c = new Coordinate (2,4);
+        String s = c.toString();
+        assertEquals("2,4", s);
     }
 
 }
