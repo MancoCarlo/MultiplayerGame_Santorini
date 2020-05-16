@@ -432,66 +432,50 @@ public class GameController {
         if(athenaOn && p.getCard().getName().equals("Athena")){
             athenaOn=false;
         }
-        server.write(ch, "serviceMessage", "MSGE-You can use god power\n");
-        server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
-        server.write(ch, "interactionServer", "INDX-Use god power in this turn? ");
-        String response = server.read(ch);
-        if(response==null){
-            match.updatePlayers(server.getClientHandlers());
-            return false;
-        }
-        boolean godOn;
-        if(response.equals("1")) godOn = true;
-        else godOn = false;
-        if(!godOn){
-            BaseTurn turn = new BaseTurn();
-            return turnExe(ch, turn);
-        }
-        else{
-            switch (p.getCard().getID()){
-                case 0 :
-                    ApolloTurn turn0 = new ApolloTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn0);
-                case 1 :
-                    ArtemisTurn turn1 = new ArtemisTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn1);
-                case 2 :
-                    AthenaTurn turn2 = new AthenaTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn2);
-                case 3 :
-                    AtlasTurn turn3 = new AtlasTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn3);
-                case 4 :
-                    DemeterTurn turn4 = new DemeterTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn4);
-                case 5 :
-                    HephaestusTurn turn5 = new HephaestusTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn5);
-                case 6 :
-                    MinotaurTurn turn6 = new MinotaurTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn6);
-                case 7 :
-                    PanTurn turn7 = new PanTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn7);
-                case 8 :
-                    PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn8);
-                case 9 :
-                    HestiaTurn turn9 = new HestiaTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn9);
-                case 10 :
-                    PoseidonTurn turn10 = new PoseidonTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn10);
-                case 11 :
-                    TritonTurn turn11 = new TritonTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn11);
-                case 12 :
-                    CharonTurn turn12 = new CharonTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn12);
-                case 13 :
-                    ZeusTurn turn13 = new ZeusTurn(new GodTurn(new BaseTurn()));
-                    return turnExe(ch, turn13);
-            }
+        server.write(ch, "serviceMessage", "MSGE-You can use "+p.getCard().getName()+" power\n");
+        switch (p.getCard().getID()){
+            case 0 :
+                ApolloTurn turn0 = new ApolloTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn0);
+            case 1 :
+                ArtemisTurn turn1 = new ArtemisTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn1);
+            case 2 :
+                AthenaTurn turn2 = new AthenaTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn2);
+            case 3 :
+                AtlasTurn turn3 = new AtlasTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn3);
+            case 4 :
+                DemeterTurn turn4 = new DemeterTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn4);
+            case 5 :
+                HephaestusTurn turn5 = new HephaestusTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn5);
+            case 6 :
+                MinotaurTurn turn6 = new MinotaurTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn6);
+            case 7 :
+                PanTurn turn7 = new PanTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn7);
+            case 8 :
+                PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn8);
+            case 9 :
+                HestiaTurn turn9 = new HestiaTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn9);
+            case 10 :
+                PoseidonTurn turn10 = new PoseidonTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn10);
+            case 11 :
+                TritonTurn turn11 = new TritonTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn11);
+            case 12 :
+                CharonTurn turn12 = new CharonTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn12);
+            case 13 :
+                ZeusTurn turn13 = new ZeusTurn(new GodTurn(new BaseTurn()));
+                return turnExe(ch, turn13);
         }
         return false;
     }

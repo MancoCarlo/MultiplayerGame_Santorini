@@ -25,7 +25,7 @@ public class DemeterTurn extends GodTurn {
         for(ClientHandler clientHandler : server.getClientHandlers()){
             server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
         }
-        server.write(ch, "serviceMessage", "MSGE-You can use Demeter power\n");
+        server.write(ch, "serviceMessage", "MSGE-You can use Demeter's power\n");
         server.write(ch, "serviceMessage", "LIST-1)YES\n2)NO\n");
         server.write(ch,"interactionServer", "INDX-Would you move again in this turn? ");
         String answer = server.read(ch);

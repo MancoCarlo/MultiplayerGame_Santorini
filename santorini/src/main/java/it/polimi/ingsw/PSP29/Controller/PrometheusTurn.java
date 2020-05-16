@@ -65,7 +65,9 @@ public class PrometheusTurn extends GodTurn {
         }
         if(!p.getWorker(wID).canLevelUp(m) || athenaOn){
             String power;
-            server.write(ch, "interactionServer", "INDX2-Would you like to build an additional block before moving you worker?\n1) Yes\n2) No\n");
+            server.write(ch, "serviceMessage", "MSGE-You can use Prometheus power\n");
+            server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
+            server.write(ch, "interactionServer", "INDX2-Would you like to build an additional block before moving you worker? ");
             power = server.read(ch);
             if(power.equals("1"))
             {

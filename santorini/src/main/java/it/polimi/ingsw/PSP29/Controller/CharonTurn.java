@@ -73,15 +73,15 @@ public class CharonTurn extends GodTurn{
         }
         if(coordinatesWorkers.size()!=0)
         {
-            server.write(ch,"serviceMessage", "BORD-"+m.printBoard());
+            server.write(ch, "serviceMessage", "MSGE-You can use Charon's power\n");
             server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
-            server.write(ch,"interactionServer", "INDX2Would you like to move an adjacent enemy worker in the opposite box?\n1) Yes\n2) No\n");
+            server.write(ch,"interactionServer", "INDX2Would you like to move an adjacent enemy worker in the opposite box? ");
             String answer = server.read(ch);
             Coordinate c;
             int id;
             if(answer.equals("1")){
                 server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinatesWorkers));
-                server.write(ch, "interactionServer", "TURN-Choose the position of the worker you would like to move?\n");
+                server.write(ch, "interactionServer", "TURN-Choose the position of the worker you would like to move: \n");
                 while(true){
                     try{
                         String msg = server.read(ch);
@@ -106,6 +106,9 @@ public class CharonTurn extends GodTurn{
                 c = coordinatesWorkers.get(id);
                 m.updateMovement(m.getPlayer(m.getBoard()[c.getX()][c.getY()].getWorkerBox().getIDplayer()), m.getBoard()[c.getX()][c.getY()].getWorkerBox().getID(), c.nextCoordinate(m, p.getWorker(wID).getPosition()));
             }
+        }
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
         }
         Coordinate c = null;
         if(wID==0){
