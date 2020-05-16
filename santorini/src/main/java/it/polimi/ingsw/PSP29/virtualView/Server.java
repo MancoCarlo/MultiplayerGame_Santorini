@@ -35,6 +35,10 @@ public class Server
         gc = new GameController(this);
         launchMatch();
     }
+
+    /**
+     * start the match
+     */
     public void launchMatch()
     {
         while (true) {
@@ -100,20 +104,6 @@ public class Server
                     }
                 }
 
-                gc.getMatch().updatePlayers(clientHandlers);
-
-                if(gc.getMatch().playersInGame()==1){
-                    for(int i=0;i<gc.getMatch().getPlayers().size();i++){
-                        if(gc.getMatch().getPlayers().get(i).getInGame()){
-                            write(clientHandlers.get(i), "serviceMessage" , "WINM-\nYou win!!\n");
-                            newGame();
-                        }
-                    }
-                    break;
-                }
-
-
-
                 System.out.println("printing board");
                 gc.getMatch().inizializeBoard();
                 while (gc.getMatch().getBoard() == null){ }
@@ -123,8 +113,6 @@ public class Server
                     }
                 }
 
-                gc.getMatch().updatePlayers(clientHandlers);
-
                 System.out.println("printing players");
                 for(ClientHandler clientHandler : clientHandlers){
                     if(clientHandler.getConnected()){
@@ -132,29 +120,11 @@ public class Server
                     }
                 }
 
-                gc.getMatch().updatePlayers(clientHandlers);
-
-                if(gc.getMatch().playersInGame()==1){
-                    for(ClientHandler clientHandler : clientHandlers){
-                        if (clientHandler.getName().equals(gc.getMatch().getPlayers().get(0).getNickname())){
-                            write(clientHandler, "serviceMessage" , "WINM-\nYou win!!\n");
-                            newGame();
-                        }
-                    }
-                    break;
-                }
+                controlEndGame();
 
                 System.out.println("Assigning gods");
                 if(!gc.godsAssignement()){
-                    for(ClientHandler clientHandler : clientHandlers){
-                        for(Player player : gc.getMatch().getPlayers()){
-                            if(player.getNickname().equals(clientHandler.getName()) && player.getInGame()){
-                                write(clientHandler, "serviceMessage", "WINM-You win!!\n");
-                                newGame();
-                            }
-                        }
-                    }
-                    break;
+                    controlEndGame();
                 }
 
                 for(ClientHandler clientHandler : clientHandlers){
@@ -165,15 +135,7 @@ public class Server
 
                 System.out.println("Putting workers");
                 if(!gc.putWorkers()){
-                    for(ClientHandler clientHandler : clientHandlers){
-                        for(Player player : gc.getMatch().getPlayers()){
-                            if(player.getNickname().equals(clientHandler.getName()) && player.getInGame()){
-                                write(clientHandler, "serviceMessage", "WINM-You win!!\n");
-                                newGame();
-                            }
-                        }
-                    }
-                    break;
+                    controlEndGame();
                 }
 
 
@@ -182,6 +144,24 @@ public class Server
 
                 newGame();
             }
+        }
+    }
+
+    /**
+     * control if a player disconnected from the server and start a new game
+     */
+    public void controlEndGame(){
+        gc.getMatch().updatePlayers(clientHandlers);
+
+        if(gc.getMatch().playersInGame()!=countPlayers){
+            for(ClientHandler clientHandler : clientHandlers){
+                {
+                    if (clientHandler.getConnected()){
+                        write(clientHandler, "serviceMessage" , "WINM-\nYou win!!\n");
+                    }
+                }
+            }
+            newGame();
         }
     }
 
@@ -214,7 +194,7 @@ public class Server
         clientHandlers = newCH;
         for(int i=0; i<clientHandlers.size();i++){
             write(clientHandlers.get(i), "serviceMessage", "LIST-1) YES\n2) NO\n");
-            write(clientHandlers.get(i),"interactionServer", "INDX-Would you play again?");
+            write(clientHandlers.get(i),"interactionServer", "INDX-Would you like to play again?");
         }
         String again;
         for(int i=0; i<clientHandlers.size();i++){
@@ -239,7 +219,7 @@ public class Server
 
     /**
      *
-     * wait unthil the method is executed
+     * wait until the method is executed
      *
      * @param clientHandler
      * @param meth the method to process

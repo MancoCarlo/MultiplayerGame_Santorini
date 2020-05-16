@@ -122,6 +122,8 @@ public class GameController {
             try {
                 String str = server.read(server.getClientHandlers().get(myturn));
                 if(str==null){
+                    return false;
+                    /*
                     match.updatePlayers(server.getClientHandlers());
                     if(match.playersInGame()!=1){
                         next();
@@ -134,6 +136,7 @@ public class GameController {
                     else{
                         return false;
                     }
+                    */
                 }
                 id=Integer.parseInt(str);
                 if(id<1 || id>match.getGods().size()){
@@ -159,6 +162,7 @@ public class GameController {
                 try {
                     String str = server.read(server.getClientHandlers().get(myturn));
                     if(str==null){
+                        /*
                         match.updatePlayers(server.getClientHandlers());
                         if(match.playersInGame()!=1){
                             next();
@@ -169,7 +173,8 @@ public class GameController {
                         }
                         else{
                             return false;
-                        }
+                        }*/
+                        return false;
                     }
                     id=Integer.parseInt(str);
                     if(id<1 || id>match.getGods().size()){
@@ -209,6 +214,7 @@ public class GameController {
             server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Choose one god from this list: ");
             String str = server.read(server.getClientHandlers().get(myturn));
             if(str==null){
+                /*
                 match.updatePlayers(server.getClientHandlers());
                 if(match.playersInGame()!=1){
                     i++;
@@ -217,6 +223,8 @@ public class GameController {
                 else{
                     return false;
                 }
+                */
+                return false;
             }
             id=Integer.parseInt(str)-1;
             while(id >= match.getGods().size() || id < 0){
@@ -225,6 +233,7 @@ public class GameController {
                 server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Choose one god from this list: ");;
                 str = server.read(server.getClientHandlers().get(myturn));
                 if(str==null){
+                    /*
                     match.updatePlayers(server.getClientHandlers());
                     if(match.playersInGame()!=1){
                         i++;
@@ -233,6 +242,8 @@ public class GameController {
                     else{
                         return false;
                     }
+                    */
+                    return false;
                 }
                 id = Integer.parseInt(str) - 1;
             }
