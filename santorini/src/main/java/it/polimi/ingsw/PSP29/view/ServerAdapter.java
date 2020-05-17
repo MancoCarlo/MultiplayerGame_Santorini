@@ -282,7 +282,7 @@ public class ServerAdapter implements Runnable
                 }
                 cmd=gameboard;
                 System.out.print(cmd);
-            }else if(cmd.startsWith("MGOD")){
+            }else if(cmd.startsWith("MGOD") || cmd.startsWith("STOP")){
             }else{
                 System.out.print(cmd.substring(5));
             }
@@ -314,6 +314,11 @@ public class ServerAdapter implements Runnable
             }
             if(cmd.startsWith("WINM")){
                 gui.win(cmd);
+                while(!gui.didSentMessage()){ }
+                gui.resetSentMessage();
+            }
+            if(cmd.startsWith("STOP")){
+                gui.stop(cmd);
                 while(!gui.didSentMessage()){ }
                 gui.resetSentMessage();
             }

@@ -180,12 +180,6 @@ public class Server
                     } catch (IOException e) {
                         System.out.println("Server closed");
                     }
-                }else{
-                    try{
-                        gc.getMatch().getPlayers().remove(i);
-                    } catch (Exception e) {
-                        System.out.print("");
-                    }
                 }
                 countPlayers--;
                 clientHandlers.get(i).closeConnection();
@@ -195,21 +189,36 @@ public class Server
         for(int i=0; i<clientHandlers.size();i++){
             write(clientHandlers.get(i), "serviceMessage", "LIST-1) YES\n2) NO\n");
             write(clientHandlers.get(i),"interactionServer", "INDX-Would you like to play again?");
-        }
-        String again;
-        for(int i=0; i<clientHandlers.size();i++){
-                try{
-                    again = read(clientHandlers.get(i));
-                    if(!again.equals("1") ){
-                        gc.getMatch().getPlayers().remove(i);
-                        countPlayers--;
-                        clientHandlers.get(i).resetConnected();
-                        clientHandlers.get(i).closeConnection();
-                    }
-                } catch (Exception e) {
-                    System.out.println("No connection");
+            String again;
+            try{
+                again = read(clientHandlers.get(i));
+                System.out.println(again);
+                if(!again.equals("1") ){
+                    //gc.getMatch().getPlayers().remove(i);
+                    countPlayers--;
+                    write(clientHandlers.get(i), "serviceMessage", "STOP");
+                    write(clientHandlers.get(i), "serviceMessage", "CLOSE");
+                    clientHandlers.get(i).resetConnected();
+                    clientHandlers.get(i).closeConnection();
                 }
+            } catch (Exception e) {
+                System.out.println("No connection");
+            }
         }
+
+        ArrayList<ClientHandler> CHs = new ArrayList<>();
+        for(ClientHandler clientHandler : clientHandlers){
+            if(clientHandler.getConnected()){
+                CHs.add(clientHandler);
+            }
+        }
+        clientHandlers = CHs;
+
+        gc.getMatch().getPlayers().clear();
+        for(int i=0; i<clientHandlers.size(); i++){
+            gc.getMatch().getPlayers().add(new Player(clientHandlers.get(i).getName(), clientHandlers.get(i).getAge(), i+1));
+        }
+
         for(int i=0; i<clientHandlers.size();i++){
             write(clientHandlers.get(i),"serviceMessage", "MSGE-Waiting for players\n");
         }

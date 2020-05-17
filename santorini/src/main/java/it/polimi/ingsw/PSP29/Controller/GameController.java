@@ -387,6 +387,14 @@ public class GameController {
     public void gameExe(){
         while(!endGame){
             match.updatePlayers(server.getClientHandlers());
+            if(match.playersInGame()!=numPlayers){
+                for(ClientHandler clientHandler : server.getClientHandlers()){
+                    if(clientHandler.getConnected()){
+                        server.write(clientHandler, "serviceMessage", "WINM-Congratulations you win!\n");
+                    }
+                }
+                break;
+            }
             if(match.getPlayers().get(myturn).getInGame()) {
                 if (match.playersInGame() == 1) {
                     endGame = true;

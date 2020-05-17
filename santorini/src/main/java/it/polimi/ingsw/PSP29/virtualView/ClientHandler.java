@@ -114,6 +114,7 @@ public class ClientHandler implements Runnable
             timer.cancel();
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(name + " - read - client disconnected");
+            timer.cancel();
             message = null;
             resetConnected();
         }

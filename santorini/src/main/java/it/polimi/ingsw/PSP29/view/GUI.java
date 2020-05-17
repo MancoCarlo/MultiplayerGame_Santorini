@@ -194,6 +194,17 @@ public class GUI extends JFrame implements Runnable{
     }
 
     /**
+     * set nextCommand to STOP
+     * @param cmd the string from the server
+     */
+    public synchronized void stop(String cmd)
+    {
+        nextCommand = Commands.STOP;
+        command = cmd;
+        notifyAll();
+    }
+
+    /**
      * run the GUI and wait for new commands
      */
     public synchronized void processGUI(){
@@ -255,7 +266,8 @@ public class GUI extends JFrame implements Runnable{
                     break;
 
                 case STOP:
-                    return;
+                    closeFrame();
+                    break;
             }
         }
     }
@@ -1453,5 +1465,17 @@ public class GUI extends JFrame implements Runnable{
      */
     public Integer reverseConvert(int x, int y) {
         return x * 5 + y;
+    }
+
+
+    public void closeFrame(){
+        this.setVisible(false);
+        topPanel.setVisible(false);
+        rightPanel.setVisible(false);
+        leftPanel.setVisible(false);
+        bottomPanel.setVisible(false);
+        centerPanel.setVisible(false);
+        this.removeAll();
+        sentMessage=true;
     }
 }

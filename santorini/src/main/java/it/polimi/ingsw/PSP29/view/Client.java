@@ -70,6 +70,7 @@ public class Client implements Runnable, ServerObserver
                     } catch (InterruptedException e) { }
                 }
                 Method method1;
+                if(response.startsWith("CLOSE")) break;
                 try {
                     method1 = ServerAdapter.class.getMethod(method, String.class);
                     method1.invoke(serverAdapter, response);
@@ -79,6 +80,8 @@ public class Client implements Runnable, ServerObserver
                 }
             }
         }
+        System.out.println("close");
+        return;
     }
 
 
