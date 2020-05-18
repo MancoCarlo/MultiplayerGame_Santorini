@@ -114,7 +114,14 @@ public class GameController {
         match.loadGods();
         godIndex.clear();
         int id=0;
-        server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Choose " + match.playersInGame() + " gods from this list");
+
+        for(int i = 0; i < server.getClientHandlers().size(); i++){
+            if(i == myturn) {
+                server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Choose " + match.playersInGame() + " gods from this list");
+            }else{
+                server.write(server.getClientHandlers().get(i), "serviceMessage", "MSGE-Wait your turn to choosing your god");
+            }
+        }
         server.write(server.getClientHandlers().get(myturn), "serviceMessage", "LIST-"+match.printGodlist());
         String num = Integer.toString(match.getGods().size());
         server.write(server.getClientHandlers().get(myturn), "interactionServer", "INDX-Insert n°1 god's index: ");

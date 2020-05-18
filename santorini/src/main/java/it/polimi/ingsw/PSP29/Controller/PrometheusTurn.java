@@ -153,8 +153,8 @@ public class PrometheusTurn extends GodTurn {
         }
         else if(wID==1){
             coordinates1 = whereCanMove(m, ch, 1, athenaOn);
-            server.write(ch, "serviceMessage", printCoordinates(coordinates1));
-            server.write(ch, "interactionServer", "Where do you want to move?\n");
+            server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
+            server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
             int id;
             while(true){
                 try{
