@@ -1,6 +1,7 @@
 package it.polimi.ingsw.PSP29.view;
 
 import it.polimi.ingsw.PSP29.model.Player;
+import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -1044,11 +1045,13 @@ public class GUI extends JFrame implements Runnable{
         fake1.setOpaque(false);
         fake2.setOpaque(false);
 
-        JLabel label = new JLabel("Santorini The Game");
+        JLabel lab = new JLabel("Santorini the game");
+
+
 
         bottomPanel.add(fake1);
-        bottomPanel.add(label);
         bottomPanel.add(fake2);
+        bottomPanel.add(lab);
 
         topPanel.add(top);
         leftPanel.add(left);
@@ -1157,10 +1160,52 @@ public class GUI extends JFrame implements Runnable{
      * put the player's god on the frame
      */
     public void viewIconGod(){
+        command = command.substring(5);
+
+        String ownerGUI = "";
+        while(command.charAt(0)!=';'){
+            ownerGUI = ownerGUI + command.charAt(0);
+            command = command.substring(1);
+        }
+        command = command.substring(1);
+        System.out.println(ownerGUI);
+
+        ArrayList<String> names = new ArrayList<>();
+        ArrayList<String> gods = new ArrayList<>();
+
+        String name = "";
+        String god = "";
+
+        while(command.length() > 0){
+            name = "";
+            while(command.charAt(0) != ','){
+                name = name + command.charAt(0);
+                command = command.substring(1);
+            }
+            command = command.substring(1);
+            names.add(name);
+
+            god = "";
+            while(command.charAt(0) != '\n'){
+                god = god + command.charAt(0);
+                command = command.substring(1);
+            }
+            command = command.substring(1);
+            gods.add(god);
+        }
+
         mainPanel.setVisible(false);
         mainPanel.remove(rightPanel);
         rightPanel.setVisible(false);
         rightPanel.removeAll();
+
+        int you = 0;
+
+        for(int i = 0; i < names.size();i++){
+            if(names.get(i).equals(ownerGUI)){
+                you = i;
+            }
+        }
 
         JLabel title = new JLabel("              Your god:          ");
 
@@ -1178,7 +1223,7 @@ public class GUI extends JFrame implements Runnable{
 
         ImageIcon img;
 
-        switch(command.substring(5)){
+        switch(gods.get(you)){
             case "Apollo":
                 img = new ImageIcon(getClass().getResource("/god/01.png"));
                 break;
@@ -1227,15 +1272,90 @@ public class GUI extends JFrame implements Runnable{
         }
 
         Image img1 = img.getImage() ;
-        Image newimg = img1.getScaledInstance( 100, 175,  java.awt.Image.SCALE_SMOOTH ) ;
+        Image newimg = img1.getScaledInstance( 80, 150,  java.awt.Image.SCALE_SMOOTH ) ;
         img = new ImageIcon( newimg );
 
-        JLabel god = new JLabel(img);
+        JLabel god1 = new JLabel(img);
 
         c.gridx = 1;
         c.gridy = 1;
-        gridbag.setConstraints(god, c);
-        rightPanel.add(god);
+        gridbag.setConstraints(god1, c);
+        rightPanel.add(god1);
+
+        names.remove(you);
+        gods.remove(you);
+
+        int y = 2;
+
+        for(int i = 0; i<names.size(); i++){
+
+            JLabel titleN = new JLabel("            -"+names.get(i)+"'s god:");
+
+            c.gridx = 1;
+            c.gridy = y;
+            gridbag.setConstraints(titleN, c);
+            rightPanel.add(titleN);
+
+            switch(gods.get(i)){
+                case "Apollo":
+                    img = new ImageIcon(getClass().getResource("/god/01.png"));
+                    break;
+                case "Arthemis":
+                    img = new ImageIcon(getClass().getResource("/god/02.png"));
+                    break;
+                case "Athena":
+                    img = new ImageIcon(getClass().getResource("/god/03.png"));
+                    break;
+                case "Atlas":
+                    img = new ImageIcon(getClass().getResource("/god/04.png"));
+                    break;
+                case "Demeter":
+                    img = new ImageIcon(getClass().getResource("/god/05.png"));
+                    break;
+                case "Hephaestus":
+                    img = new ImageIcon(getClass().getResource("/god/06.png"));
+                    break;
+                case "Minotaur":
+                    img = new ImageIcon(getClass().getResource("/god/08.png"));
+                    break;
+                case "Pan":
+                    img = new ImageIcon(getClass().getResource("/god/09.png"));
+                    break;
+                case "Prometheus":
+                    img = new ImageIcon(getClass().getResource("/god/10.png"));
+                    break;
+                case "Poseidon":
+                    img = new ImageIcon(getClass().getResource("/god/27.png"));
+                    break;
+                case "Triton":
+                    img = new ImageIcon(getClass().getResource("/god/29.png"));
+                    break;
+                case "Hestia":
+                    img = new ImageIcon(getClass().getResource("/god/21.png"));
+                    break;
+                case "Charon":
+                    img = new ImageIcon(getClass().getResource("/god/15.png"));
+                    break;
+                case "Zeus":
+                    img = new ImageIcon(getClass().getResource("/god/30.png"));
+                    break;
+                default:
+                    img = new ImageIcon(getClass().getResource("/god/01.png"));
+                    break;
+            }
+
+            img1 = img.getImage() ;
+            newimg = img1.getScaledInstance( 50, 80,  java.awt.Image.SCALE_SMOOTH ) ;
+            img = new ImageIcon( newimg );
+
+            JLabel godN = new JLabel(img);
+
+            c.gridx = 2;
+            c.gridy = y;
+            gridbag.setConstraints(godN, c);
+            rightPanel.add(godN);
+            y++;
+        }
 
         mainPanel.add(rightPanel, BorderLayout.EAST);
         pack();

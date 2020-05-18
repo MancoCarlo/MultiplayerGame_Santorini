@@ -127,9 +127,14 @@ public class Server
                     controlEndGame();
                 }
 
+                String rightP = "";
+                for(ClientHandler ch : clientHandlers){
+                    rightP = rightP + ch.getName() + "," + gc.getMatch().getPlayer(ch.getName()).getCard().getName()+ "\n";
+                }
+
                 for(ClientHandler clientHandler : clientHandlers){
                     if(clientHandler.getConnected()){
-                        write(clientHandler, "serviceMessage",  "MGOD-"+gc.getMatch().getPlayer(clientHandler.getName()).getCard().getName());
+                        write(clientHandler, "serviceMessage",  "MGOD-"+clientHandler.getName()+";"+rightP);
                     }
                 }
 
