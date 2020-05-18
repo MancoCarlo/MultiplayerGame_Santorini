@@ -73,6 +73,7 @@ public class PrometheusTurn extends GodTurn {
             {
                int count = 0;
                 ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
+                ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
                 for(Coordinate c : coordinates) {
                     if ( m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() < 3 && m.getBoard()[c.getX()][c.getY()].getLevel() <= m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel())
                         //se il worker ha livello inferiore a 3 e se la casella ha un livello inferirore o uguale a quello del mio worker
@@ -85,25 +86,25 @@ public class PrometheusTurn extends GodTurn {
                             continue;//se worker non può salire di livello ed è al terzo livello e la casella considerata è al 3 livello la includo inizialmente
                         }
                         else
-                            coordinates.remove(c);
+                            finalcoordinates.remove(c);
                     }
                 }
                 if(!athenaOn) {
-                    if (count == 1 && coordinates.size() == 1) //se c'è solo una casella disponibile ed è al terzo livello non posso usare il potere
+                    if (count == 1 && finalcoordinates.size() == 1) //se c'è solo una casella disponibile ed è al terzo livello non posso usare il potere
                         server.write(ch, "serviceMessage", "MSGE-You can't use the power of Prometheus \n");
-                } else if(coordinates.size()== 1 && m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() == m.getBoard()[coordinates.get(0).getX()][coordinates.get(0).getY()].getLevel())
+                } else if(finalcoordinates.size()== 1 && m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() == m.getBoard()[finalcoordinates.get(0).getX()][finalcoordinates.get(0).getY()].getLevel())
                         server.write(ch, "serviceMessage", "MSGE-You can't use the power of Prometheus \n");
                 else{
                     server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
-                    if(coordinates.size()!=0){
+                    if(finalcoordinates.size()!=0){
                         Coordinate c = null;
-                        server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));
+                        server.write(ch, "serviceMessage", "LIST-"+printCoordinates(finalcoordinates));
                         server.write(ch, "interactionServer", "INDX2Where you want to build?\n");
                         int id;
                         while(true){
                             try{
                                 id = Integer.parseInt(server.read(ch));
-                                if(id<0 || id>=coordinates.size()){
+                                if(id<0 || id>=finalcoordinates.size()){
                                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                                     server.write(ch, "interactionServer", "INDX-Try another index: ");
                                     continue;
@@ -114,7 +115,7 @@ public class PrometheusTurn extends GodTurn {
                                 server.write(ch, "interactionServer", "INDX-Try another index: ");
                             }
                         }
-                        c = coordinates.get(id);
+                        c = finalcoordinates.get(id);
                         m.updateBuilding(c);
                     } else{
                         server.write(ch, "serviceMessage", "MSGE-You can't build an additional block\n");
