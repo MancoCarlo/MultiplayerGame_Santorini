@@ -38,6 +38,7 @@ public class ArtemisTurn extends GodTurn{
         server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
         server.write(ch, "interactionServer", "INDX-Would you move again in this turn? ");
         String answer = server.read(ch);
+        if(answer != null)
         if(answer.equals("1")){
             ArrayList<Coordinate> coordinates = null;
             for(Worker w : p.getWorkers()){

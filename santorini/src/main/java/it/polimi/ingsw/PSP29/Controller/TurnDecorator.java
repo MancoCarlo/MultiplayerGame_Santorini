@@ -144,6 +144,7 @@ public abstract class TurnDecorator implements Turn {
         }
         Coordinate c = null;
         if(wID==0){
+            server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
@@ -171,6 +172,7 @@ public abstract class TurnDecorator implements Turn {
             c = coordinates0.get(id);
         }
         else if(wID==1){
+            server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;

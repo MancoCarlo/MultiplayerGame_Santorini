@@ -29,6 +29,7 @@ public class DemeterTurn extends GodTurn {
         server.write(ch, "serviceMessage", "LIST-1)YES\n2)NO\n");
         server.write(ch,"interactionServer", "INDX-Would you build again in this turn? ");
         String answer = server.read(ch);
+        if(answer != null)
         if(answer.equals("1")){
             super.build(m,ch,server);
         }

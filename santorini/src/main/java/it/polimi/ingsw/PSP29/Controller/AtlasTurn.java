@@ -54,10 +54,12 @@ public class AtlasTurn extends GodTurn{
                     server.write(ch, "interactionServer", "INDX-Try another index: ");
                 }
             }
+            server.write(ch, "serviceMessage", "MSGE-You can use Atlas's power\n");
             server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
-            server.write(ch, "interactionServer", "INDX2Would you use Atlas's power?\n1) Yes\n2) No\n ");
+            server.write(ch, "interactionServer", "INDX2Would you use Atlas's power? (You can build a level 4 building) ");
             String response = server.read(ch);
             c = coordinates.get(id);
+            if(response != null)
             if(response.equals("1")){
                 while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){
                     m.updateBuilding(c);

@@ -99,7 +99,7 @@ public class PrometheusTurn extends GodTurn {
                     if(finalcoordinates.size()!=0){
                         Coordinate c = null;
                         server.write(ch, "serviceMessage", "LIST-"+printCoordinates(finalcoordinates));
-                        server.write(ch, "interactionServer", "INDX2Where you want to build?\n");
+                        server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
                         int id;
                         while(true){
                             try{
