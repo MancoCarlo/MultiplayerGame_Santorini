@@ -51,6 +51,7 @@ public class ArtemisTurn extends GodTurn{
             if(coordinates.size()!=0){
                 Coordinate c;
                 int id;
+                server.write(ch, "serviceMessage", "MSGE-Move: \n");
                 server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));
                 server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
                 while(true){

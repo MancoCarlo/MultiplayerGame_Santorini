@@ -64,6 +64,7 @@ public class MinotaurTurn extends GodTurn {
         }
         Coordinate c = null;
         if(wID==0){
+            server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
             server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
             int id;
@@ -91,6 +92,7 @@ public class MinotaurTurn extends GodTurn {
             c = coordinates0.get(id);
         }
         else if(wID==1){
+            server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
             server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
             int id;

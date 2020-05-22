@@ -29,12 +29,13 @@ public class HestiaTurn extends GodTurn{
         ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID, 2);
         if(coordinates.size()!=0) {
             server.write(ch, "serviceMessage", "BORD-" + m.printBoard());
-            server.write(ch, "serviceMessage", "You can use Hestia power\n");
+            server.write(ch, "serviceMessage", "MSGE-You can use Hestia power\n");
             server.write(ch, "serviceMessage", "LIST-1)YES\n2)NO\n");
             server.write(ch, "interactionServer", "INDX-Would you like to build again but not in a border box?");
             String answer = server.read(ch);
             if (answer.equals("1")) {
                 Coordinate c1 = null;
+                server.write(ch, "serviceMessage", "MSGE-Hestia's power activated \n");
                 server.write(ch, "serviceMessage", "LIST-" + printCoordinates(coordinates));
                 server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
                 int id;

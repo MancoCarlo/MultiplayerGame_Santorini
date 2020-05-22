@@ -80,6 +80,7 @@ public class CharonTurn extends GodTurn{
             Coordinate c;
             int id;
             if(answer.equals("1")){
+                server.write(ch, "serviceMessage", "MSGE-Charon's power activated \n");
                 server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinatesWorkers));
                 server.write(ch, "interactionServer", "TURN-Choose the position of the worker you would like to move: \n");
                 while(true){
@@ -112,6 +113,7 @@ public class CharonTurn extends GodTurn{
         }
         Coordinate c = null;
         if(wID==0){
+            server.write(ch, "serviceMessage", "MSGE-Move: \n");
             coordinates0 = whereCanMove(m, ch, 0, athenaOn);
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
@@ -140,6 +142,7 @@ public class CharonTurn extends GodTurn{
             c = coordinates0.get(id);
         }
         else if(wID==1){
+            server.write(ch, "serviceMessage", "MSGE-Move: \n");
             coordinates1 = whereCanMove(m, ch, 0, athenaOn);
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");

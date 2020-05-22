@@ -42,11 +42,12 @@ public class TritonTurn extends GodTurn {
                 for(ClientHandler clientHandler : server.getClientHandlers()){
                     server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
                 }
-                server.write(ch, "serviceMessage", "You can use Triton power\n");
+                server.write(ch, "serviceMessage", "MSGE-You can use Triton power\n");
                 server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
                 server.write(ch,"interactionServer", "INDX-Would you like to move again? ");
                 power = server.read(ch);
                 if(power.equals("1")) {
+                    server.write(ch, "serviceMessage", "MSGE-Triton's power activated \n");
                     server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));
                     server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
                     int id;

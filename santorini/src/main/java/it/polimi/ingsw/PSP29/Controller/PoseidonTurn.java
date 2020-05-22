@@ -33,7 +33,7 @@ public class PoseidonTurn extends GodTurn {
                 power = "0";
                 ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
                 if(coordinates.size()!=0) {
-                    server.write(ch, "serviceMessage", "You can use Poseidon power\n");
+                    server.write(ch, "serviceMessage", "MSGE-You can use Poseidon power\n");
                     server.write(ch, "serviceMessage", "LIST-1)YES\n2)NO\n");
                     server.write(ch, "interactionServer", "INDX-Would you like to build another block with your other worker?");
                     power = server.read(ch);
@@ -42,6 +42,7 @@ public class PoseidonTurn extends GodTurn {
                             server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
                         }
                         Coordinate c = null;
+                        server.write(ch, "serviceMessage", "MSGE-Poseidon's power activated \n");
                         server.write(ch, "serviceMessage", "LIST-" + printCoordinates(coordinates));
                         server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
                         int id;
