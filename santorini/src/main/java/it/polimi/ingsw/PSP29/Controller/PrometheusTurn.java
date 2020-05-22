@@ -24,6 +24,7 @@ public class PrometheusTurn extends GodTurn {
     @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
         int wID=2;
+        String power = "";
         Player p = m.getPlayer(ch.getName());
         ArrayList<Coordinate> coordinates0 = whereCanMove(m, ch, 0, athenaOn);
         ArrayList<Coordinate> coordinates1 = whereCanMove(m, ch, 1, athenaOn);
@@ -64,37 +65,16 @@ public class PrometheusTurn extends GodTurn {
             return false;
         }
         if(!p.getWorker(wID).canLevelUp(m) || athenaOn){
-            String power;
             server.write(ch, "serviceMessage", "MSGE-You can use Prometheus power\n");
             server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
-            server.write(ch, "interactionServer", "INDX2-Would you like to build an additional block before moving you worker? ");
+            server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
             power = server.read(ch);
-            if(power.equals("1"))
-            {
-               int count = 0;
-                ArrayList<Coordinate> coordinates = whereCanBuild(m, ch, wID);
+            if(power.equals("1")) {
                 ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
-                for(Coordinate c : coordinates) {
-                    if ( m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() < 3 && m.getBoard()[c.getX()][c.getY()].getLevel() <= m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel())
-                        //se il worker ha livello inferiore a 3 e se la casella ha un livello inferirore o uguale a quello del mio worker
-                        continue;
-                    else {
-                        if ( m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() == 3 && m.getBoard()[c.getX()][c.getY()].getLevel() < m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel())
-                            continue;//se il worker è al terzo livello e la casella ha un livello inferiore al worker
-                        if (m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() == 3 && m.getBoard()[c.getX()][c.getY()].getLevel() == 3) {
-                            count = count +1;
-                            continue;//se worker non può salire di livello ed è al terzo livello e la casella considerata è al 3 livello la includo inizialmente
-                        }
-                        else
-                            finalcoordinates.remove(c);
-                    }
-                }
-                if(!athenaOn) {
-                    if (count == 1 && finalcoordinates.size() == 1) //se c'è solo una casella disponibile ed è al terzo livello non posso usare il potere
-                        server.write(ch, "serviceMessage", "MSGE-You can't use the power of Prometheus \n");
-                } else if(finalcoordinates.size()== 1 && m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() == m.getBoard()[finalcoordinates.get(0).getX()][finalcoordinates.get(0).getY()].getLevel())
-                        server.write(ch, "serviceMessage", "MSGE-You can't use the power of Prometheus \n");
-                else{
+                if(finalcoordinates.size()==0){
+                    server.write(ch, "serviceMessage", "WINM-You can't use Prometheus power ");
+                    power = "";
+                }else{
                     server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
                     if(finalcoordinates.size()!=0){
                         Coordinate c = null;
@@ -117,15 +97,20 @@ public class PrometheusTurn extends GodTurn {
                         }
                         c = finalcoordinates.get(id);
                         m.updateBuilding(c);
-                    } else{
-                        server.write(ch, "serviceMessage", "MSGE-You can't build an additional block\n");
                     }
                 }
             }
         }
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
+        }
         Coordinate c = null;
         if(wID==0){
-            coordinates0 = whereCanMove(m, ch, 0, athenaOn);
+            if(power.equals("1"))
+                coordinates0 = whereCanMove(m, ch, 0, true);
+            else
+                coordinates0 = whereCanMove(m, ch, 0, athenaOn);
+            server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
@@ -153,7 +138,11 @@ public class PrometheusTurn extends GodTurn {
             c = coordinates0.get(id);
         }
         else if(wID==1){
-            coordinates1 = whereCanMove(m, ch, 1, athenaOn);
+            if(power.equals("1"))
+                coordinates1 = whereCanMove(m, ch, 1, true);
+            else
+                coordinates1 = whereCanMove(m, ch, 1, athenaOn);
+            server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
             server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
             int id;

@@ -18,7 +18,7 @@ public class BoardGUI extends JPanel {
     public void setBoard(String command) {
         command = command.substring(5);
         for(int i=0; i<command.length();i=i+2){
-            JButton button = new JButton(command.substring(i,i+2));
+            JButton button = new JButton();
             switch(command.charAt(i)){
                 case '0':
                     setFloor(button, '0', command.charAt(i+1));
