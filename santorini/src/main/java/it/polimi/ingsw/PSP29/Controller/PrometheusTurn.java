@@ -73,43 +73,37 @@ public class PrometheusTurn extends GodTurn {
                 ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
                 if(finalcoordinates.size()==0){
                     server.write(ch, "serviceMessage", "WINM-You can't use Prometheus power ");
-                    power = "";
                 }else{
                     server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
-                    if(finalcoordinates.size()!=0){
-                        Coordinate c = null;
-                        server.write(ch, "serviceMessage", "LIST-"+printCoordinates(finalcoordinates));
-                        server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
-                        int id;
-                        while(true){
-                            try{
-                                id = Integer.parseInt(server.read(ch));
-                                if(id<0 || id>=finalcoordinates.size()){
-                                    server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                                    server.write(ch, "interactionServer", "INDX-Try another index: ");
-                                    continue;
-                                }
-                                break;
-                            } catch (NumberFormatException e){
+                    Coordinate c = null;
+                    server.write(ch, "serviceMessage", "LIST-"+printCoordinates(finalcoordinates));
+                    server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
+                    int id;
+                    while(true){
+                        try{
+                            id = Integer.parseInt(server.read(ch));
+                            if(id<0 || id>=finalcoordinates.size()){
                                 server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                                 server.write(ch, "interactionServer", "INDX-Try another index: ");
+                                continue;
                             }
+                            break;
+                        } catch (NumberFormatException e){
+                            server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                            server.write(ch, "interactionServer", "INDX-Try another index: ");
                         }
-                        c = finalcoordinates.get(id);
-                        m.updateBuilding(c);
                     }
+                    c = finalcoordinates.get(id);
+                    m.updateBuilding(c);
+                }
+                for(ClientHandler clientHandler : server.getClientHandlers()) {
+                    server.write(clientHandler, "serviceMessage", "BORD-" + m.printBoard());
                 }
             }
         }
-        for(ClientHandler clientHandler : server.getClientHandlers()){
-            server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
-        }
         Coordinate c = null;
         if(wID==0){
-            if(power.equals("1"))
-                coordinates0 = whereCanMove(m, ch, 0, true);
-            else
-                coordinates0 = whereCanMove(m, ch, 0, athenaOn);
+            coordinates0 = whereCanMove(m, ch, 0, athenaOn);
             server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
@@ -138,10 +132,7 @@ public class PrometheusTurn extends GodTurn {
             c = coordinates0.get(id);
         }
         else if(wID==1){
-            if(power.equals("1"))
-                coordinates1 = whereCanMove(m, ch, 1, true);
-            else
-                coordinates1 = whereCanMove(m, ch, 1, athenaOn);
+            coordinates1 = whereCanMove(m, ch, 1, athenaOn);
             server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
             server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
