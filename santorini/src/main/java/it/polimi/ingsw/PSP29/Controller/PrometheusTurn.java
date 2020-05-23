@@ -31,7 +31,7 @@ public class PrometheusTurn extends GodTurn {
         if(coordinates0.size()!=0 && coordinates1.size()!=0){
             server.write(ch, "serviceMessage", "MSGE-It's your turn\n");
             server.write(ch, "serviceMessage", "LIST-"+m.getPlayer(ch.getName()).printWorkers());
-            server.write(ch, "interactionServer", "INDX2Choose the worker to use in this turn: \n");
+            server.write(ch, "interactionServer", "INDX-Choose the worker to use in this turn: \n");
             while(true){
                 try{
                     String msg = server.read(ch);
@@ -64,18 +64,60 @@ public class PrometheusTurn extends GodTurn {
         }else if(coordinates0.size()==0 && coordinates1.size()==0){
             return false;
         }
-        if(!p.getWorker(wID).canLevelUp(m) || athenaOn){
-            server.write(ch, "serviceMessage", "MSGE-You can use Prometheus power\n");
-            server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
-            server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
-            power = server.read(ch);
-            if(power.equals("1")) {
-                ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
-                if(finalcoordinates.size()==0){
-                    server.write(ch, "serviceMessage", "WINM-You can't use Prometheus power ");
-                }else{
+
+        ArrayList<Coordinate> controlCoor = whereCanMove(m,ch,wID,true);
+
+        if(controlCoor.size()==1){
+            //there is only one box where i can build and then maybe move because i'm prometheus
+            if(m.getBoard()[controlCoor.get(0).getX()][controlCoor.get(0).getY()].getLevel() - m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() > -1){
+                //I can build in only one box and that box have not an inferior level than me, so i block me and i have violed prometheus power
+                server.write(ch, "serviceMessage", "MSGE-You can't use Prometheus power\n");
+            }else{
+                //I can build in only one box and that box have an inferior level than me, so i can build and then not move up
+                server.write(ch, "serviceMessage", "MSGE-You can use Prometheus power\n");
+                server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
+                server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
+                power = server.read(ch);
+                if(power.equals("1")) {
+                    ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
                     server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
-                    Coordinate c = null;
+                    Coordinate c;
+                    server.write(ch, "serviceMessage", "LIST-"+printCoordinates(finalcoordinates));
+                    server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
+                    int id;
+                    while(true){
+                        try{
+                            id = Integer.parseInt(server.read(ch));
+                            if(id<0 || id>=finalcoordinates.size()){
+                                server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                                server.write(ch, "interactionServer", "INDX-Try another index: ");
+                                continue;
+                            }
+                            break;
+                        } catch (NumberFormatException e){
+                            server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                            server.write(ch, "interactionServer", "INDX-Try another index: ");
+                        }
+                    }
+                    c = finalcoordinates.get(id);
+                    m.updateBuilding(c);
+                }
+                for(ClientHandler clientHandler : server.getClientHandlers()) {
+                    server.write(clientHandler, "serviceMessage", "BORD-" + m.printBoard());
+                }
+            }
+        }else{
+            if(controlCoor.size() == 0)
+                server.write(ch, "serviceMessage", "MSGE-You can't use Prometheus power\n");
+            else{
+                server.write(ch, "serviceMessage", "MSGE-You can use Prometheus power\n");
+                server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
+                server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
+                power = server.read(ch);
+                if(power.equals("1")) {
+                    ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
+                    server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
+                    Coordinate c;
                     server.write(ch, "serviceMessage", "LIST-"+printCoordinates(finalcoordinates));
                     server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
                     int id;
@@ -101,9 +143,13 @@ public class PrometheusTurn extends GodTurn {
                 }
             }
         }
+
         Coordinate c = null;
         if(wID==0){
-            coordinates0 = whereCanMove(m, ch, 0, athenaOn);
+            if(power.equals("1"))
+                coordinates0 = whereCanMove(m, ch, 0, true);
+            else
+                coordinates0 = whereCanMove(m, ch, 0, athenaOn);
             server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
@@ -132,7 +178,10 @@ public class PrometheusTurn extends GodTurn {
             c = coordinates0.get(id);
         }
         else if(wID==1){
-            coordinates1 = whereCanMove(m, ch, 1, athenaOn);
+            if(power.equals("1"))
+                coordinates1 = whereCanMove(m, ch, 1, true);
+            else
+                coordinates1 = whereCanMove(m, ch, 1, athenaOn);
             server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
             server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
