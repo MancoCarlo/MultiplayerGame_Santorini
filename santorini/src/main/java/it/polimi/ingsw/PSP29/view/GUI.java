@@ -786,7 +786,7 @@ public class GUI extends JFrame implements Runnable{
         }
         centerPanel.setVisible(false);
         for(Integer i : indexes){
-            setButtonBackground(B.getButtons().get(i), B.getButtons().get(i).getName().charAt(1));
+            setButtonBackground(B.getButtons().get(i), B.getButtons().get(i).getName());
         }
         for (final JButton b : B.getButtons()) {
             for(Integer i : indexes){
@@ -814,27 +814,75 @@ public class GUI extends JFrame implements Runnable{
     /**
      * set background of the button
      * @param button the button
-     * @param level the level ot the box represented by the button
+     * @param description the description ot the box represented by the button
      */
-    public void setButtonBackground(JButton button, char level){
+    public void setButtonBackground(JButton button, String description){
         ImageIcon img;
         Image img1;
         Image newimg;
-        switch (level){
-            case '0':
+        switch (description){
+            case "00":
                 img = new ImageIcon(getClass().getResource("/Board/floor0ok.png"));
                 break;
 
-            case '1':
+            case "10":
+                img = new ImageIcon(getClass().getResource("/Board/floor0redOK.png"));
+                break;
+
+            case "20":
+                img = new ImageIcon(getClass().getResource("/Board/floor0blueOK.png"));
+                break;
+
+            case "30":
+                img = new ImageIcon(getClass().getResource("/Board/floor0yellowOK.png"));
+                break;
+
+            case "01":
                 img = new ImageIcon(getClass().getResource("/Board/floor1ok.png"));
                 break;
 
-            case '2':
+            case "11":
+                img = new ImageIcon(getClass().getResource("/Board/floor1redOK.png"));
+                break;
+
+            case "21":
+                img = new ImageIcon(getClass().getResource("/Board/floor1blueOK.png"));
+                break;
+
+            case "31":
+                img = new ImageIcon(getClass().getResource("/Board/floor1yellowOK.png"));
+                break;
+
+            case "02":
                 img = new ImageIcon(getClass().getResource("/Board/floor2ok.png"));
                 break;
 
-            case '3':
+            case "12":
+                img = new ImageIcon(getClass().getResource("/Board/floor2redOK.png"));
+                break;
+
+            case "22":
+                img = new ImageIcon(getClass().getResource("/Board/floor2blueOK.png"));
+                break;
+
+            case "32":
+                img = new ImageIcon(getClass().getResource("/Board/floor2yellowOK.png"));
+                break;
+
+            case "03":
                 img = new ImageIcon(getClass().getResource("/Board/floor3ok.png"));
+                break;
+
+            case "13":
+                img = new ImageIcon(getClass().getResource("/Board/floor3redOK.png"));
+                break;
+
+            case "23":
+                img = new ImageIcon(getClass().getResource("/Board/floor3blueOK.png"));
+                break;
+
+            case "33":
+                img = new ImageIcon(getClass().getResource("/Board/floor3yellowOK.png"));
                 break;
 
             default:
