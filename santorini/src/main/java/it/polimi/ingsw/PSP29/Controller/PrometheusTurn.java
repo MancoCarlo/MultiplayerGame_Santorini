@@ -36,6 +36,9 @@ public class PrometheusTurn extends GodTurn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -68,7 +71,7 @@ public class PrometheusTurn extends GodTurn {
         ArrayList<Coordinate> controlCoor = whereCanMove(m,ch,wID,true);
 
         if(controlCoor.size()==1){
-            //there is only one box where i can build and then maybe move because i'm prometheus
+            //there is only one box where i can build after activate the power and then maybe move because i'm prometheus
             if(m.getBoard()[controlCoor.get(0).getX()][controlCoor.get(0).getY()].getLevel() - m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() > -1){
                 //I can build in only one box and that box have not an inferior level than me, so i block me and i have violed prometheus power
                 server.write(ch, "serviceMessage", "MSGE-You can't use Prometheus power\n");
@@ -78,6 +81,14 @@ public class PrometheusTurn extends GodTurn {
                 server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
                 server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
                 power = server.read(ch);
+                if(power == null) {
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                    }
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }
                 if(power.equals("1")) {
                     ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
                     server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
@@ -87,7 +98,16 @@ public class PrometheusTurn extends GodTurn {
                     int id;
                     while(true){
                         try{
-                            id = Integer.parseInt(server.read(ch));
+                            String msg = server.read(ch);
+                            if(msg == null){
+                                for(ClientHandler chl : server.getClientHandlers()){
+                                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                                }
+                                ch.resetConnected();
+                                ch.closeConnection();
+                                return false;
+                            }
+                            id = Integer.parseInt(msg);
                             if(id<0 || id>=finalcoordinates.size()){
                                 server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                                 server.write(ch, "interactionServer", "INDX-Try another index: ");
@@ -114,6 +134,14 @@ public class PrometheusTurn extends GodTurn {
                 server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
                 server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
                 power = server.read(ch);
+                if(power == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                    }
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }
                 if(power.equals("1")) {
                     ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
                     server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
@@ -123,7 +151,17 @@ public class PrometheusTurn extends GodTurn {
                     int id;
                     while(true){
                         try{
-                            id = Integer.parseInt(server.read(ch));
+                            String msg = server.read(ch);
+                            if(msg == null){
+                                for(ClientHandler chl : server.getClientHandlers()){
+                                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                                }
+                                ch.resetConnected();
+                                ch.closeConnection();
+                                return false;
+                            }
+                            id = Integer.parseInt(msg);
+
                             if(id<0 || id>=finalcoordinates.size()){
                                 server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                                 server.write(ch, "interactionServer", "INDX-Try another index: ");
@@ -158,6 +196,9 @@ public class PrometheusTurn extends GodTurn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -190,6 +231,9 @@ public class PrometheusTurn extends GodTurn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;

@@ -37,6 +37,9 @@ public class AtlasTurn extends GodTurn{
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -59,7 +62,14 @@ public class AtlasTurn extends GodTurn{
             server.write(ch, "interactionServer", "INDX2Would you use Atlas's power? (You can build a level 4 building) ");
             String response = server.read(ch);
             c = coordinates.get(id);
-            if(response != null)
+            if(response == null){
+                for(ClientHandler chl : server.getClientHandlers()){
+                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                }
+                ch.resetConnected();
+                ch.closeConnection();
+                return false;
+            }
             if(response.equals("1")){
                 while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){
                     m.updateBuilding(c);

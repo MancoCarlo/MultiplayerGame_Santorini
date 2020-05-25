@@ -1,6 +1,7 @@
 package it.polimi.ingsw.PSP29.Controller;
 
 import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.view.Client;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
@@ -66,6 +67,14 @@ public class HephaestusTurn extends GodTurn {
                 server.write(ch, "serviceMessage", "LIST-1)YES\n2)NO\n");
                 server.write(ch, "interactionServer", "INDX-Would you like to build another block on your previous one?");
                 power = server.read(ch);
+                if(power == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                    }
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }
                 if (power.equals("1"))
                     m.updateBuilding(c);
             }

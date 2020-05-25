@@ -32,6 +32,9 @@ public class CharonTurn extends GodTurn{
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -76,7 +79,17 @@ public class CharonTurn extends GodTurn{
             server.write(ch, "serviceMessage", "MSGE-You can use Charon's power\n");
             server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
             server.write(ch,"interactionServer", "INDX2Would you like to move an adjacent enemy worker in the opposite box? ");
+
             String answer = server.read(ch);
+            if(answer == null){
+                for(ClientHandler chl : server.getClientHandlers()){
+                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                }
+                ch.resetConnected();
+                ch.closeConnection();
+                return false;
+            }
+
             Coordinate c;
             int id;
             if(answer.equals("1")){
@@ -87,6 +100,9 @@ public class CharonTurn extends GodTurn{
                     try{
                         String msg = server.read(ch);
                         if(msg == null){
+                            for(ClientHandler chl : server.getClientHandlers()){
+                                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                            }
                             ch.resetConnected();
                             ch.closeConnection();
                             return false;
@@ -122,6 +138,9 @@ public class CharonTurn extends GodTurn{
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -151,6 +170,9 @@ public class CharonTurn extends GodTurn{
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;

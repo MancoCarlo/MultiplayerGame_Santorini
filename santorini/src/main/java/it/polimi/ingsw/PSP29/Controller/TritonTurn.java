@@ -36,6 +36,9 @@ public class TritonTurn extends GodTurn {
         String power;
         Coordinate c = null;
         do{
+            if(super.winCondition(m, p)){
+                return true;
+            }
             power = "0";
             coordinates = whereCanMove(m, ch, wID, athenaOn);
             if(!(coordinates.size() == 0) && (p.getWorker(wID).getPosition().getX()==0 || p.getWorker(wID).getPosition().getX()==m.getRows()-1 || p.getWorker(wID).getPosition().getY()==0 || p.getWorker(wID).getPosition().getY()==m.getColumns()-1)) {
@@ -46,6 +49,14 @@ public class TritonTurn extends GodTurn {
                 server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
                 server.write(ch,"interactionServer", "INDX-Would you like to move again? ");
                 power = server.read(ch);
+                if(power == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                    }
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }
                 if(power.equals("1")) {
                     server.write(ch, "serviceMessage", "MSGE-Triton's power activated \n");
                     server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));
@@ -55,6 +66,9 @@ public class TritonTurn extends GodTurn {
                         try{
                             String msg = server.read(ch);
                             if(msg == null){
+                                for(ClientHandler chl : server.getClientHandlers()){
+                                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                                }
                                 ch.resetConnected();
                                 ch.closeConnection();
                                 return false;

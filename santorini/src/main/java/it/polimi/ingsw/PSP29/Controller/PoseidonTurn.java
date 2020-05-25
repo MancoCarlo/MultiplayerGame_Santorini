@@ -37,6 +37,14 @@ public class PoseidonTurn extends GodTurn {
                     server.write(ch, "serviceMessage", "LIST-1)YES\n2)NO\n");
                     server.write(ch, "interactionServer", "INDX-Would you like to build another block with your other worker?");
                     power = server.read(ch);
+                    if(power == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }
                     if (power.equals("1")) {
                         for(ClientHandler clientHandler : server.getClientHandlers()){
                             server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
@@ -50,6 +58,9 @@ public class PoseidonTurn extends GodTurn {
                             try {
                                 String msg = server.read(ch);
                                 if (msg == null) {
+                                    for(ClientHandler chl : server.getClientHandlers()){
+                                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                                    }
                                     ch.resetConnected();
                                     ch.closeConnection();
                                     return false;

@@ -65,6 +65,9 @@ public abstract class TurnDecorator implements Turn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -114,6 +117,9 @@ public abstract class TurnDecorator implements Turn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -152,6 +158,9 @@ public abstract class TurnDecorator implements Turn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -180,6 +189,9 @@ public abstract class TurnDecorator implements Turn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;

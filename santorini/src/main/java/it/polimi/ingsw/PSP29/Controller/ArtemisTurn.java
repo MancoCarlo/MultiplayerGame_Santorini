@@ -38,7 +38,14 @@ public class ArtemisTurn extends GodTurn{
         server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
         server.write(ch, "interactionServer", "INDX-Would you move again in this turn? ");
         String answer = server.read(ch);
-        if(answer != null)
+        if(answer == null){
+            for(ClientHandler chl : server.getClientHandlers()){
+                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+            }
+            ch.resetConnected();
+            ch.closeConnection();
+            return false;
+        }
         if(answer.equals("1")){
             ArrayList<Coordinate> coordinates = null;
             for(Worker w : p.getWorkers()){
@@ -58,6 +65,9 @@ public class ArtemisTurn extends GodTurn{
                     try{
                         String msg = server.read(ch);
                         if(msg == null){
+                            for(ClientHandler chl : server.getClientHandlers()){
+                                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                            }
                             ch.resetConnected();
                             ch.closeConnection();
                             return false;

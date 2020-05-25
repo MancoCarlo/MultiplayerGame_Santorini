@@ -60,6 +60,9 @@ public class BaseTurn implements Turn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -109,6 +112,9 @@ public class BaseTurn implements Turn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -147,6 +153,9 @@ public class BaseTurn implements Turn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
@@ -175,6 +184,9 @@ public class BaseTurn implements Turn {
                 try{
                     String msg = server.read(ch);
                     if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
