@@ -198,13 +198,15 @@ public class Server
             try{
                 again = read(clientHandlers.get(i));
                 System.out.println(again);
-                if(!again.equals("1") ){
-                    //gc.getMatch().getPlayers().remove(i);
+                if(again==null || again.equals("2")){
                     countPlayers--;
                     write(clientHandlers.get(i), "serviceMessage", "STOP");
                     write(clientHandlers.get(i), "serviceMessage", "CLOSE");
                     clientHandlers.get(i).resetConnected();
                     clientHandlers.get(i).closeConnection();
+                }
+                else if(again.equals("1")){
+                    write(clientHandlers.get(i), "serviceMessage", "WINM-Wait for other players");
                 }
             } catch (Exception e) {
                 System.out.println("No connection");

@@ -394,7 +394,13 @@ public class GameController {
     public void gameExe(){
         while(!endGame){
             match.updatePlayers(server.getClientHandlers());
-            if(match.playersInGame()!=numPlayers){
+            int connectedPlayer = 0;
+            for(ClientHandler clientHandler : server.getClientHandlers()){
+                if(clientHandler.getConnected()){
+                    connectedPlayer++;
+                }
+            }
+            if(connectedPlayer!=numPlayers){
                 for(ClientHandler clientHandler : server.getClientHandlers()){
                     if(clientHandler.getConnected()){
                         server.write(clientHandler, "serviceMessage", "WINM-Congratulations you win!\n");

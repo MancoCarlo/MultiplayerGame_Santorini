@@ -528,7 +528,7 @@ public class GUI extends JFrame implements Runnable{
      * print the message on the frame
      */
     public synchronized void viewMessage(){
-        mainPanel.setVisible(false);
+        //mainPanel.setVisible(false);
         topPanel.setVisible(false);
         topPanel.removeAll();
         mainPanel.remove(topPanel);
@@ -578,7 +578,7 @@ public class GUI extends JFrame implements Runnable{
             this.add(mainPanel);
             this.pack();
             topPanel.setVisible(true);
-            mainPanel.setVisible(true);
+            //mainPanel.setVisible(true);
             sentMessage=true;
         }
     }
@@ -588,7 +588,7 @@ public class GUI extends JFrame implements Runnable{
      */
     public synchronized void viewIndex(){
         if(list.get(0).contains("YES") || list.get(0).contains("Yes")){
-            mainPanel.setVisible(false);
+            //mainPanel.setVisible(false);
             topPanel.setVisible(false);
             topPanel.removeAll();
             mainPanel.remove(topPanel);
@@ -635,7 +635,7 @@ public class GUI extends JFrame implements Runnable{
             this.add(mainPanel);
             this.pack();
             topPanel.setVisible(true);
-            mainPanel.setVisible(true);
+            //mainPanel.setVisible(true);
 
             by.addActionListener(new ActionListener() {
                 @Override
@@ -652,7 +652,7 @@ public class GUI extends JFrame implements Runnable{
                 }
             });
         }else if(list.get(0).contains("Workers")) {
-            mainPanel.setVisible(false);
+            //mainPanel.setVisible(false);
             topPanel.setVisible(false);
             topPanel.removeAll();
             mainPanel.remove(topPanel);
@@ -699,7 +699,7 @@ public class GUI extends JFrame implements Runnable{
             this.add(mainPanel);
             this.pack();
             topPanel.setVisible(true);
-            mainPanel.setVisible(true);
+            //mainPanel.setVisible(true);
 
             by.addActionListener(new ActionListener() {
                 @Override
@@ -733,8 +733,8 @@ public class GUI extends JFrame implements Runnable{
      * set the frame for the turn execution
      */
     public synchronized void doTurn() {
-        mainPanel.setVisible(false);
-        topPanel.setVisible(false);
+        //mainPanel.setVisible(false);
+        //topPanel.setVisible(false);
         mainPanel.remove(topPanel);
         if (!lastViewCenter.equals("board")) {
             centerPanel.setVisible(false);
@@ -808,7 +808,7 @@ public class GUI extends JFrame implements Runnable{
         centerPanel.revalidate();
         centerPanel.setVisible(true);
         topPanel.setVisible(true);
-        mainPanel.setVisible(true);
+        //mainPanel.setVisible(true);
     }
 
     /**
@@ -988,16 +988,15 @@ public class GUI extends JFrame implements Runnable{
         B = new BoardGUI();
         if(!lastViewCenter.equals("board")){
             createGameGui();
-        }
-        lastViewCenter="board";
-        mainPanel.setVisible(false);
-        //topPanel.setVisible(false);
-        centerPanel.setVisible(false);
+            lastViewCenter="board";
+            //mainPanel.setVisible(false);
+            //topPanel.setVisible(false);
+            centerPanel.setVisible(false);
 
-        mainPanel.setBackground(new Color(209, 198, 185));
-        mainPanel.setOpaque(true);
+            mainPanel.setBackground(new Color(209, 198, 185));
+            mainPanel.setOpaque(true);
 
-        centerPanel.setOpaque(false);
+            centerPanel.setOpaque(false);
         /*
         mainPanel.remove(topPanel);
         topPanel.removeAll();
@@ -1032,48 +1031,132 @@ public class GUI extends JFrame implements Runnable{
         topPanel.add(correct);
         topPanel.add(fake4);
         */
-        mainPanel.remove(centerPanel);
-        centerPanel.removeAll();
-        centerPanel.setLayout(new BorderLayout(10,10));
-        JPanel Y = new JPanel(new GridLayout(1, 6, 50, 50));
-        Y.setOpaque(false);
-        JPanel X = new JPanel(new GridLayout(5, 1, 50, 50));
-        X.setOpaque(false);
-        B.setBoard(command);
+            mainPanel.remove(centerPanel);
+            centerPanel.removeAll();
+            centerPanel.setLayout(new BorderLayout(10,10));
+            JPanel Y = new JPanel(new GridLayout(1, 6, 50, 50));
+            Y.setOpaque(false);
+            JPanel X = new JPanel(new GridLayout(5, 1, 50, 50));
+            X.setOpaque(false);
+            B.setBoard(command);
 
-        JLabel y[] = new JLabel[6];
-        y[0] = new JLabel("X/Y\t");
-        Y.add(y[0]);
-        for(int i=1; i<6; i++){
-            y[i]= new JLabel((i-1) + "\t");
-            Y.add(y[i]);
+            JLabel y[] = new JLabel[6];
+            y[0] = new JLabel("X/Y\t");
+            Y.add(y[0]);
+            for(int i=1; i<6; i++){
+                y[i]= new JLabel((i-1) + "\t");
+                Y.add(y[i]);
+            }
+
+            JLabel x[] = new JLabel[5];
+            for(int i=0; i<5; i++){
+                x[i]= new JLabel(i + "\t");
+                X.add(x[i]);
+            }
+            centerPanel.add(Y, BorderLayout.NORTH);
+            centerPanel.add(X, BorderLayout.WEST);
+            centerPanel.add(B, BorderLayout.CENTER);
+
+            //mainPanel.add(topPanel, BorderLayout.NORTH);
+            mainPanel.add(centerPanel, BorderLayout.CENTER);
+            this.add(mainPanel);
+            this.setMinimumSize(new Dimension(1000, 500));
+            pack();
+            //topPanel.setVisible(true);
+            centerPanel.setVisible(true);
+            mainPanel.setVisible(true);
+            this.setVisible(true);
+            sentMessage=true;
+        }
+        else{
+            lastViewCenter="board";
+            //mainPanel.setVisible(false);
+            //topPanel.setVisible(false);
+            centerPanel.setVisible(false);
+
+            mainPanel.setBackground(new Color(209, 198, 185));
+            mainPanel.setOpaque(true);
+
+            centerPanel.setOpaque(false);
+        /*
+        mainPanel.remove(topPanel);
+        topPanel.removeAll();
+
+        JLabel label = new JLabel("");
+
+        JPanel fake1 = new JPanel();
+        JPanel fake2 = new JPanel();
+        JPanel fake3 = new JPanel();
+        JPanel correct = new JPanel();
+        JPanel fake4 = new JPanel();
+
+        fake1.setOpaque(false);
+        fake2.setOpaque(false);
+        fake3.setOpaque(false);
+        fake4.setOpaque(false);
+        correct.setOpaque(false);
+
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        correct.setLayout(gridbag);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        c.gridx = 1;
+        c.gridy = 0;
+        gridbag.setConstraints(label, c);
+        correct.add(label);
+
+        topPanel.add(fake1);
+        topPanel.add(fake2);
+        topPanel.add(fake3);
+        topPanel.add(correct);
+        topPanel.add(fake4);
+        */
+            mainPanel.remove(centerPanel);
+            centerPanel.removeAll();
+            centerPanel.setLayout(new BorderLayout(10,10));
+            JPanel Y = new JPanel(new GridLayout(1, 6, 50, 50));
+            Y.setOpaque(false);
+            JPanel X = new JPanel(new GridLayout(5, 1, 50, 50));
+            X.setOpaque(false);
+            B.setBoard(command);
+
+            JLabel y[] = new JLabel[6];
+            y[0] = new JLabel("X/Y\t");
+            Y.add(y[0]);
+            for(int i=1; i<6; i++){
+                y[i]= new JLabel((i-1) + "\t");
+                Y.add(y[i]);
+            }
+
+            JLabel x[] = new JLabel[5];
+            for(int i=0; i<5; i++){
+                x[i]= new JLabel(i + "\t");
+                X.add(x[i]);
+            }
+            centerPanel.add(Y, BorderLayout.NORTH);
+            centerPanel.add(X, BorderLayout.WEST);
+            centerPanel.add(B, BorderLayout.CENTER);
+
+            //mainPanel.add(topPanel, BorderLayout.NORTH);
+            mainPanel.add(centerPanel, BorderLayout.CENTER);
+            this.add(mainPanel);
+            this.setMinimumSize(new Dimension(1000, 500));
+            pack();
+            //topPanel.setVisible(true);
+            centerPanel.setVisible(true);
+            //mainPanel.setVisible(true);
+            //this.setVisible(true);
+            sentMessage=true;
         }
 
-        JLabel x[] = new JLabel[5];
-        for(int i=0; i<5; i++){
-            x[i]= new JLabel(i + "\t");
-            X.add(x[i]);
-        }
-        centerPanel.add(Y, BorderLayout.NORTH);
-        centerPanel.add(X, BorderLayout.WEST);
-        centerPanel.add(B, BorderLayout.CENTER);
-
-        //mainPanel.add(topPanel, BorderLayout.NORTH);
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-        this.add(mainPanel);
-        this.setMinimumSize(new Dimension(1000, 500));
-        pack();
-        //topPanel.setVisible(true);
-        centerPanel.setVisible(true);
-        mainPanel.setVisible(true);
-        this.setVisible(true);
-        sentMessage=true;
     }
 
     /**
      * set the frame for the start of the effective game
      */
     public synchronized  void createGameGui(){
+        this.setVisible(false);
         mainPanel.setVisible(false);
         mainPanel.removeAll();
         topPanel.setVisible(false);
@@ -1083,9 +1166,9 @@ public class GUI extends JFrame implements Runnable{
         centerPanel = new JPanel();
 
         bottomPanel = new ImagePanel("/bottomPanel.png", this.getWidth()*2, this.getHeight()/6);
-        JButton top = new JButton("top");
-        JButton left = new JButton("sx");
-        JButton center = new JButton("center");
+        JButton top = new JButton();
+        JButton left = new JButton();
+        JButton center = new JButton();
         bottomPanel.setLayout(new GridLayout(3,1));
 
         JPanel fake1 = new JPanel();
@@ -1117,7 +1200,8 @@ public class GUI extends JFrame implements Runnable{
         topPanel.setVisible(true);
         centerPanel.setVisible(true);
 
-        mainPanel.setVisible(true);
+        //mainPanel.setVisible(true);
+        //this.setVisible(true);
     }
 
     /**
@@ -1126,7 +1210,7 @@ public class GUI extends JFrame implements Runnable{
     public void viewListPlayer(){
         ArrayList<Player> players = getPlayersFromList(command);
 
-        mainPanel.setVisible(false);
+        //mainPanel.setVisible(false);
         mainPanel.remove(leftPanel);
         leftPanel.setVisible(false);
         leftPanel.removeAll();
@@ -1199,7 +1283,7 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.add(leftPanel, BorderLayout.WEST);
         pack();
         leftPanel.setVisible(true);
-        mainPanel.setVisible(true);
+        //mainPanel.setVisible(true);
 
         sentMessage=true;
     }
@@ -1242,7 +1326,7 @@ public class GUI extends JFrame implements Runnable{
             gods.add(god);
         }
 
-        mainPanel.setVisible(false);
+        //mainPanel.setVisible(false);
         mainPanel.remove(rightPanel);
         rightPanel.setVisible(false);
         rightPanel.removeAll();
@@ -1408,7 +1492,7 @@ public class GUI extends JFrame implements Runnable{
         mainPanel.add(rightPanel, BorderLayout.EAST);
         pack();
         rightPanel.setVisible(true);
-        mainPanel.setVisible(true);
+        //mainPanel.setVisible(true);
 
         sentMessage=true;
     }
