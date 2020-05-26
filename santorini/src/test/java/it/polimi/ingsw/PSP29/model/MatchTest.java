@@ -136,7 +136,7 @@ public class MatchTest {
     @Test
     public void loadGods_vectorSizeCorrect_Return(){
         m.loadGods();
-        assertTrue(m.getGods().size()==10);
+        assertTrue(m.getGods().size()==15);
     }
 
     @Test
@@ -157,14 +157,8 @@ public class MatchTest {
 
     @Test
     public void printMethods_OutputPrint_ReturnString(){
-        assertEquals(m.printBoard(),"Gameboard\n  \t" +
-                "0 \t1 \t2 \t3 \t4 \t\n" +
-                "0 \t00\t00\t00\t00\t00\t\n" +
-                "1 \t00\t00\t00\t00\t00\t\n" +
-                "2 \t00\t00\t00\t00\t00\t\n" +
-                "3 \t00\t00\t00\t00\t00\t\n" +
-                "4 \t00\t00\t00\t00\t00\t\n");
+        assertEquals(m.printBoard(),"00000000000000000000000000000000000000000000000000");
         assertEquals(m.printGodlist(),"Gods: \n1) a, b\n");
-        assertEquals(m.printPlayers(),"Players: \n"+ "- Luca, 23 years old\n" + "- Letizia, 22 years old\n");
+        assertEquals(m.printPlayers(),"Players: \n"+ "- 1, Luca, 23 years old\n" + "- 2, Letizia, 22 years old\n");
     }
 }

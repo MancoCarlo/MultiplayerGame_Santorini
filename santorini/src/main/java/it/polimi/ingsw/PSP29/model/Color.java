@@ -21,13 +21,6 @@ public enum Color
         this.escape = escape;
     }
 
-
-    public String getEscape()
-    {
-        return escape;
-    }
-
-
     @Override
     public String toString()
     {
