@@ -54,9 +54,7 @@ public class WorkerTest {
         worker.setPosition(c1);
         for(int i = 0;i<m.getRows();i++){
             for(int j = 0; j<m.getColumns(); j++){
-                if(i==c1.getX() && j==c1.getY()){
-
-                } else{
+                if(i != c1.getX() || j != c1.getY()){
                     m.getBoard()[i][j].upgradeLevel();
                     m.getBoard()[i][j].upgradeLevel();
                     m.getBoard()[i][j].upgradeLevel();
@@ -73,7 +71,7 @@ public class WorkerTest {
         worker.setPosition(c1);
         for(int i = 0;i<m.getRows();i++){
             for(int j = 0; j<m.getColumns(); j++){
-                if (i != c1.getX() && j != c1.getY()) {
+                if (i != c1.getX() || j != c1.getY()) {
                     m.getBoard()[i][j].upgradeLevel();
                     m.getBoard()[i][j].upgradeLevel();
                     m.getBoard()[i][j].upgradeLevel();
@@ -86,18 +84,24 @@ public class WorkerTest {
 
     @Test
     public void canLevelUp_returnTrue(){
-        Coordinate c1 = new Coordinate(4,4);
+        Coordinate c1 = new Coordinate(3,4);
         worker.setPosition(c1);
         for(int i = 0;i<m.getRows();i++){
             for(int j = 0; j<m.getColumns(); j++){
-                if(i==c1.getX() && j==c1.getY()){
-
-                } else{
+                if(i != c1.getX() || j != c1.getY()){
                     m.getBoard()[i][j].upgradeLevel();
                 }
             }
         }
         assertTrue(worker.canLevelUp(m));
+    }
+    @Test
+    public void canLevelUp_workerInEdgeBoxInput_returnTrue(){
+        m.inizializeBoard();
+        Coordinate c1 = new Coordinate(0,0);
+        worker.setPosition(c1);
+        assertFalse(worker.canLevelUp(m));
+        assertEquals(worker.getPosition().getX() - 1, -1);
     }
 
     @Test
@@ -114,6 +118,14 @@ public class WorkerTest {
         assertTrue(worker.getMoved());
         worker.changeMoved(false);
         assertFalse(worker.getMoved());
+    }
+
+    @Test
+    public void Test_toString() {
+        Coordinate c = new Coordinate (2,4);
+        worker.setPosition(c);
+        String s = worker.toString();
+        assertEquals("Worker{" + "1" + ", " + " position=" + c + " }\n", s);
     }
 
 }
