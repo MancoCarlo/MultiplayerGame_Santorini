@@ -50,6 +50,11 @@ public class PlayerTest {
     }
 
     @Test
+    public void getId_correctOutput(){
+        assertEquals(player.getId(), 1);
+    }
+
+    @Test
     public void getNickname_correctOutput(){
         assertEquals(player.getNickname(), "Luca");
     }
@@ -60,9 +65,22 @@ public class PlayerTest {
     }
 
     @Test
+    public void getInGame_setInGame_CorrectOutput(){
+        assertFalse(player.getInGame());
+        player.setInGame(true);
+        assertTrue(player.getInGame());
+    }
+
+    @Test
     public void getWorker_correctOutput(){
         assertEquals(player.getWorker(0), player.workers.get(0));
         assertEquals(player.getWorker(1), player.workers.get(1));
+    }
+
+    @Test public void printWorkers_correctOutput(){
+        assertEquals(2, player.workers.size());
+        String s = "Workers:\n" + "1) " + player.workers.get(0).toString() + "2) " + player.workers.get(1).toString();
+        assertEquals(s, player.printWorkers());
     }
 
     @Test
