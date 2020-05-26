@@ -342,10 +342,12 @@ public class GameController {
                 }
             }
             i++;
+
+            for(ClientHandler clientHandler : server.getClientHandlers()){
+                server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
+            }
         }
-        for(ClientHandler clientHandler : server.getClientHandlers()){
-            server.write(clientHandler, "serviceMessage", "BORD-"+match.printBoard());
-        }
+
         next();
         return true;
     }
@@ -553,7 +555,7 @@ public class GameController {
      * @param ch loser player
      */
     public void losePlayer(ClientHandler ch){
-        server.write(ch,"serviceMessage", "MSGE-You Lose!");
+        server.write(ch,"serviceMessage", "WINM-You Lose!");
         match.getPlayer(ch.getName()).setInGame(false);
         match.removeWorkers(match.getPlayer(ch.getName()));
     }

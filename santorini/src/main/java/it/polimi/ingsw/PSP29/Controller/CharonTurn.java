@@ -78,16 +78,24 @@ public class CharonTurn extends GodTurn{
         {
             server.write(ch, "serviceMessage", "MSGE-You can use Charon's power\n");
             server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
-            server.write(ch,"interactionServer", "INDX2Would you like to move an adjacent enemy worker in the opposite box? ");
+            server.write(ch,"interactionServer", "INDX-Would you like to move an adjacent enemy worker in the opposite box? ");
 
             String answer = server.read(ch);
-            if(answer == null){
-                for(ClientHandler chl : server.getClientHandlers()){
-                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+
+            while(!answer.equals("1") && !answer.equals("2")){
+                if(answer == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                    }
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }else{
+                    server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                    server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
+                    server.write(ch, "interactionServer", "INDX-Would you like to move an adjacent enemy worker in the opposite box? ");
+                    answer = server.read(ch);
                 }
-                ch.resetConnected();
-                ch.closeConnection();
-                return false;
             }
 
             Coordinate c;

@@ -33,19 +33,27 @@ public class ArtemisTurn extends GodTurn{
         if(super.winCondition(m, p)){
             return true;
         }
-        server.write(ch,"serviceMessage", "BORD-"+m.printBoard());
         server.write(ch, "serviceMessage", "MSGE-You can use Artemis power\n");
-        server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
+        server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
         server.write(ch, "interactionServer", "INDX-Would you move again in this turn? ");
+
         String answer = server.read(ch);
-        if(answer == null){
-            for(ClientHandler chl : server.getClientHandlers()){
-                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+        while(!answer.equals("1") && !answer.equals("2")){
+            if(answer == null){
+                for(ClientHandler chl : server.getClientHandlers()){
+                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                }
+                ch.resetConnected();
+                ch.closeConnection();
+                return false;
+            }else{
+                server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
+                server.write(ch, "interactionServer", "INDX-Would you move again in this turn? ");
+                answer = server.read(ch);
             }
-            ch.resetConnected();
-            ch.closeConnection();
-            return false;
         }
+
         if(answer.equals("1")){
             ArrayList<Coordinate> coordinates = null;
             for(Worker w : p.getWorkers()){
@@ -55,6 +63,16 @@ public class ArtemisTurn extends GodTurn{
                     break;
                 }
             }
+
+            //remove the box where i was before the first movement
+            int i;
+            for(i = 0; i<coordinates.size();i++){
+                if(coordinates.get(i).equals(p.getWorker(wID).getPrev_position())){
+                    break;
+                }
+            }
+            coordinates.remove(i);
+
             if(coordinates.size()!=0){
                 Coordinate c;
                 int id;

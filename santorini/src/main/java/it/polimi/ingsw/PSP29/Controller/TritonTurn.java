@@ -49,14 +49,23 @@ public class TritonTurn extends GodTurn {
                 server.write(ch, "serviceMessage", "LIST-1) YES\n2)NO\n");
                 server.write(ch,"interactionServer", "INDX-Would you like to move again? ");
                 power = server.read(ch);
-                if(power == null){
-                    for(ClientHandler chl : server.getClientHandlers()){
-                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+
+                while(!power.equals("1") && !power.equals("2")){
+                    if(power == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
+                        server.write(ch, "interactionServer", "INDX-Would you like to move again? ");
+                        power = server.read(ch);
                     }
-                    ch.resetConnected();
-                    ch.closeConnection();
-                    return false;
                 }
+
                 if(power.equals("1")) {
                     server.write(ch, "serviceMessage", "MSGE-Triton's power activated \n");
                     server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));

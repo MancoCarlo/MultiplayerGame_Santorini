@@ -78,20 +78,29 @@ public class PrometheusTurn extends GodTurn {
             }else{
                 //I can build in only one box and that box have an inferior level than me, so i can build and then not move up
                 server.write(ch, "serviceMessage", "MSGE-You can use Prometheus power\n");
-                server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
+                server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
                 server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
                 power = server.read(ch);
-                if(power == null) {
-                    for(ClientHandler chl : server.getClientHandlers()){
-                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+
+                while(!power.equals("1") && !power.equals("2")){
+                    if(power == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
+                        server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving your worker? ");
+                        power = server.read(ch);
                     }
-                    ch.resetConnected();
-                    ch.closeConnection();
-                    return false;
                 }
+
                 if(power.equals("1")) {
                     ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
-                    server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
+                    server.write(ch, "serviceMessage", "MSGE-Additional Build: \n");
                     Coordinate c;
                     server.write(ch, "serviceMessage", "LIST-"+printCoordinates(finalcoordinates));
                     server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
@@ -134,17 +143,26 @@ public class PrometheusTurn extends GodTurn {
                 server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
                 server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
                 power = server.read(ch);
-                if(power == null){
-                    for(ClientHandler chl : server.getClientHandlers()){
-                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+
+                while(!power.equals("1") && !power.equals("2")){
+                    if(power == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
+                        server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving your worker? ");
+                        power = server.read(ch);
                     }
-                    ch.resetConnected();
-                    ch.closeConnection();
-                    return false;
                 }
+
                 if(power.equals("1")) {
                     ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
-                    server.write(ch, "serviceMessage", "MSGE-Additional Build: ");
+                    server.write(ch, "serviceMessage", "MSGE-Additional Build: \n");
                     Coordinate c;
                     server.write(ch, "serviceMessage", "LIST-"+printCoordinates(finalcoordinates));
                     server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
