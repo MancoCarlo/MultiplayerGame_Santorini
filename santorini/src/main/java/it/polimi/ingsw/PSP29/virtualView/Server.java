@@ -280,8 +280,8 @@ public class Server
         if(username==null){
             return false;
         }
-        while(gc.getMatch().alreadyIn(username)){
-            if(!write(clientHandler,"interactionServer", "LOGI-Username already in, try again: ")){
+        while(gc.getMatch().alreadyIn(username) || username.contains(",")){
+            if(!write(clientHandler,"interactionServer", "LOGI-Username not valid, try again: ")){
                 return false;
             }
             username = read(clientHandler);
