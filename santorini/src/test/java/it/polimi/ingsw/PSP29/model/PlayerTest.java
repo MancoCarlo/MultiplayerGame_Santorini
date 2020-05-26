@@ -45,8 +45,31 @@ public class PlayerTest {
                 board[i][j]=new Box(i, j);
             }
         }
+        assertTrue(board[c.getX()][c.getY()].isEmpty());
         player.putWorker(0, board, c);
         assertEquals(player.getWorker(0).getPosition(), c);
+        assertFalse(board[c.getX()][c.getY()].isEmpty());
+        assertTrue(c.equals(player.getWorker(0).getPrev_position()));
+    }
+
+    @Test
+    public void putWorker_withPrevPosition_correctOutput(){
+        Coordinate c = new Coordinate(1, 4);
+        Coordinate cnext = new Coordinate(1, 3);
+        Box[][] board = new Box[5][5];
+        for(int i=0; i<5; i++){
+            for(int j=0; j<5; j++){
+                board[i][j]=new Box(i, j);
+            }
+        }
+        player.putWorker(0, board, c);
+        assertFalse(board[c.getX()][c.getY()].isEmpty());
+        player.putWorker(0, board, cnext);
+        assertEquals(player.getWorker(0).getPosition(), cnext);
+        assertTrue(c.equals(player.getWorker(0).getPrev_position()));
+        assertTrue(board[c.getX()][c.getY()].isEmpty());
+        assertFalse(board[cnext.getX()][cnext.getY()].isEmpty());
+
     }
 
     @Test
