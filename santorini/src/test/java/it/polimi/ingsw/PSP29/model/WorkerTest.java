@@ -28,6 +28,15 @@ public class WorkerTest {
     }
 
     @Test
+    public void setPrev_position_correctInput_correctOutput(){
+        Coordinate c=new Coordinate(1, 3);
+        assertNull(worker.getPosition());
+        assertNull(worker.getPrev_position());
+        worker.setPrev_position(c);
+        assertEquals(worker.getPrev_position(), c);
+    }
+
+    @Test
     public void getID_correctOutput(){
         assertEquals(worker.getID(), 1);
         worker.setID(2);
