@@ -1,7 +1,6 @@
 package it.polimi.ingsw.PSP29.view;
 
 import it.polimi.ingsw.PSP29.model.Player;
-import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -373,7 +372,15 @@ public class GUI extends JFrame implements Runnable{
         JLabel label = new JLabel(command.substring(5));
         final JTextField mex = new JTextField();
         mex.setMaximumSize(new Dimension(Short.MAX_VALUE, 30));
+        //JButton button = new JButton("SEND");
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/btnOK.png"));
+        Image img1 = img.getImage() ;
+        Image newimg = img1.getScaledInstance( 18, 18,  Image.SCALE_SMOOTH ) ;
+        img = new ImageIcon( newimg );
         JButton button = new JButton("SEND");
+        button.setIcon(img);
+
 
         fake1.setOpaque(false);
         fake2.setOpaque(false);
@@ -475,7 +482,14 @@ public class GUI extends JFrame implements Runnable{
         buttonG.add(but2);
         but1.setOpaque(false);
         but2.setOpaque(false);
+        //JButton button = new JButton("SEND");
+
+        ImageIcon img = new ImageIcon(getClass().getResource("/btnOK.png"));
+        Image img1 = img.getImage() ;
+        Image newimg = img1.getScaledInstance( 18, 18,  Image.SCALE_SMOOTH ) ;
+        img = new ImageIcon( newimg );
         JButton button = new JButton("SEND");
+        button.setIcon(img);
 
         JPanel radio = new JPanel(new GridLayout(1,2));
         radio.setOpaque(false);
@@ -596,8 +610,24 @@ public class GUI extends JFrame implements Runnable{
             topPanel = new ImagePanel("/top.png", getWidth(), getHeight());
             topPanel.setLayout(new GridLayout(3,1));
 
+            //JButton by = new JButton("YES");
+
+            ImageIcon imgy = new ImageIcon(getClass().getResource("/btnOK.png"));
+            Image img1 = imgy.getImage() ;
+            Image newimg1 = img1.getScaledInstance( 18, 18,  Image.SCALE_SMOOTH ) ;
+            imgy = new ImageIcon( newimg1 );
             JButton by = new JButton("YES");
+            by.setIcon(imgy);
+
+            //JButton bn = new JButton("NO");
+
+            ImageIcon imgn = new ImageIcon(getClass().getResource("/btnKO.png"));
+            Image img2 = imgn.getImage() ;
+            Image newimg2 = img2.getScaledInstance( 18, 18,  Image.SCALE_SMOOTH ) ;
+            imgn = new ImageIcon( newimg2 );
             JButton bn = new JButton("NO");
+            bn.setIcon(imgn);
+
             JPanel bu = new JPanel();
             bu.setOpaque(false);
             bu.add(by);
