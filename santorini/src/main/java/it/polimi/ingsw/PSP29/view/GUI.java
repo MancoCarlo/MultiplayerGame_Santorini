@@ -380,7 +380,8 @@ public class GUI extends JFrame implements Runnable{
         img = new ImageIcon( newimg );
         JButton button = new JButton("SEND");
         button.setIcon(img);
-
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(64, 13, 13));
 
         fake1.setOpaque(false);
         fake2.setOpaque(false);
@@ -490,6 +491,8 @@ public class GUI extends JFrame implements Runnable{
         img = new ImageIcon( newimg );
         JButton button = new JButton("SEND");
         button.setIcon(img);
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(64, 13, 13));
 
         JPanel radio = new JPanel(new GridLayout(1,2));
         radio.setOpaque(false);
@@ -618,6 +621,8 @@ public class GUI extends JFrame implements Runnable{
             imgy = new ImageIcon( newimg1 );
             JButton by = new JButton("YES");
             by.setIcon(imgy);
+            by.setForeground(Color.WHITE);
+            by.setBackground(new Color(64, 13, 13));
 
             //JButton bn = new JButton("NO");
 
@@ -627,6 +632,8 @@ public class GUI extends JFrame implements Runnable{
             imgn = new ImageIcon( newimg2 );
             JButton bn = new JButton("NO");
             bn.setIcon(imgn);
+            bn.setForeground(Color.WHITE);
+            bn.setBackground(new Color(64, 13, 13));
 
             JPanel bu = new JPanel();
             bu.setOpaque(false);
@@ -692,6 +699,10 @@ public class GUI extends JFrame implements Runnable{
 
             JButton by = new JButton(list.get(1));
             JButton bn = new JButton(list.get(2));
+            bn.setForeground(Color.WHITE);
+            bn.setBackground(new Color(64, 13, 13));
+            by.setForeground(Color.WHITE);
+            by.setBackground(new Color(64, 13, 13));
             JPanel bu = new JPanel();
             bu.setOpaque(false);
             bu.add(by);
