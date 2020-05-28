@@ -144,9 +144,7 @@ public class BaseTurn implements Turn {
             return false;
         }
         Coordinate c = null;
-        for(ClientHandler clientHandler : server.getClientHandlers()){
-            server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
-        }
+        server.write(ch, "serviceMessage", "BORD-"+m.printBoard());
         if(wID==0){
             server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));

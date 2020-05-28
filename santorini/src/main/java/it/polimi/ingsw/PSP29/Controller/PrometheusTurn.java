@@ -68,6 +68,8 @@ public class PrometheusTurn extends GodTurn {
             return false;
         }
 
+        server.write(ch, "serviceMessage", "BORD-"+m.printBoard());
+
         ArrayList<Coordinate> controlCoor = whereCanMove(m,ch,wID,true);
 
         if(controlCoor.size()==1){

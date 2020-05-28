@@ -63,6 +63,8 @@ public class CharonTurn extends GodTurn{
         }else if(coordinates0.size()==0 && coordinates1.size()==0){
             return false;
         }
+        server.write(ch, "serviceMessage", "BORD-"+m.printBoard());
+
         ArrayList<Coordinate> coordinatesWorkers = new ArrayList<Coordinate>();
         for (int i = 0; i < m.getRows(); i++) {
             for (int j = 0; j < m.getColumns(); j++) {

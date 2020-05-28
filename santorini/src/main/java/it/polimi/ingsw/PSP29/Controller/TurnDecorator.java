@@ -148,9 +148,9 @@ public abstract class TurnDecorator implements Turn {
         }else if(coordinates0.size()==0 && coordinates1.size()==0){
             return false;
         }
-        for(ClientHandler clientHandler : server.getClientHandlers()){
-            server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
-        }
+
+        server.write(ch, "serviceMessage", "BORD-"+m.printBoard());
+
         Coordinate c = null;
         if(wID==0){
             server.write(ch, "serviceMessage", "MSGE-Move: \n");

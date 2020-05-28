@@ -65,6 +65,8 @@ public class ApolloTurn extends GodTurn{
         }else if(coordinates0.size()==0 && coordinates1.size()==0){
             return false;
         }
+
+        server.write(ch, "serviceMessage", "BORD-"+m.printBoard());
         Coordinate c = null;
         if(wID==0){
             server.write(ch, "serviceMessage", "MSGE-Move: \n");
