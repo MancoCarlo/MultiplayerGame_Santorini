@@ -71,13 +71,13 @@ public class BaseTurn implements Turn {
                     }
                     if(id<0 || id>=coordinates.size()){
                         server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "INDX-Try another index: ");
+                        server.write(ch, "interactionServer", "TURN-Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                    server.write(ch, "interactionServer", "INDX-Try another index: ");
+                    server.write(ch, "interactionServer", "TURN-Try another index: ");
                 }
             }
             c = coordinates.get(id);
@@ -107,7 +107,7 @@ public class BaseTurn implements Turn {
         if(coordinates0.size()!=0 && coordinates1.size()!=0){
             server.write(ch, "serviceMessage", "MSGE-It's your turn\n");
             server.write(ch, "serviceMessage", "LIST-"+m.getPlayer(ch.getName()).printWorkers());
-            server.write(ch, "interactionServer", "INDX2Choose the worker to use in this turn: \n");
+            server.write(ch, "interactionServer", "TURN-Choose the worker to use in this turn: \n");
             while(true){
                 try{
                     String msg = server.read(ch);
@@ -123,13 +123,13 @@ public class BaseTurn implements Turn {
                     }
                     if(wID<0 || wID>1){
                         server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "INDX-Try another index: ");
+                        server.write(ch, "interactionServer", "TURN-Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                    server.write(ch, "interactionServer", "INDX-Try another index: ");
+                    server.write(ch, "interactionServer", "TURN-Try another index: ");
                 }
             }
         }
@@ -144,6 +144,9 @@ public class BaseTurn implements Turn {
             return false;
         }
         Coordinate c = null;
+        for(ClientHandler clientHandler : server.getClientHandlers()){
+            server.write(clientHandler, "serviceMessage", "BORD-"+m.printBoard());
+        }
         if(wID==0){
             server.write(ch, "serviceMessage", "MSGE-Move: \n");
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates0));
@@ -164,13 +167,13 @@ public class BaseTurn implements Turn {
                     }
                     if(id<0 || id>=coordinates0.size()){
                         server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "INDX-Try another index: ");
+                        server.write(ch, "interactionServer", "TURN-Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                    server.write(ch, "interactionServer", "INDX-Try another index: ");
+                    server.write(ch, "interactionServer", "TURN-Try another index: ");
                 }
             }
             c = coordinates0.get(id);
@@ -195,13 +198,13 @@ public class BaseTurn implements Turn {
                     }
                     if(id<0 || id>=coordinates1.size()){
                         server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "INDX-Try another index: ");
+                        server.write(ch, "interactionServer", "TURN-Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                    server.write(ch, "interactionServer", "INDX-Try another index: ");
+                    server.write(ch, "interactionServer", "TURN-Try another index: ");
                 }
             }
             c = coordinates1.get(id);

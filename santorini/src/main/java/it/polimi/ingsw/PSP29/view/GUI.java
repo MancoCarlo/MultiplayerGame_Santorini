@@ -776,76 +776,160 @@ public class GUI extends JFrame implements Runnable{
     public synchronized void doTurn() {
         //mainPanel.setVisible(false);
         //topPanel.setVisible(false);
-        mainPanel.remove(topPanel);
-        if (!lastViewCenter.equals("board")) {
+
+        if(list.get(0).contains("Worker")){
+            String wor1 = "0) "+list.get(1).charAt(23)+","+list.get(1).charAt(25);
+            String wor2 = "1) "+list.get(2).charAt(23)+","+list.get(2).charAt(25);
+            ArrayList<String> corList = new ArrayList<>();
+            corList.add(wor1);
+            corList.add(wor2);
+            list = corList;
+
+            mainPanel.remove(topPanel);
+            if (!lastViewCenter.equals("board")) {
+                centerPanel.setVisible(false);
+                mainPanel.remove(centerPanel);
+                centerPanel.removeAll();
+            }
+            topPanel.removeAll();
+
+            JPanel fake1 = new JPanel();
+            JPanel fake2 = new JPanel();
+            JPanel fake3 = new JPanel();
+            JPanel correct = new JPanel();
+            JPanel fake4 = new JPanel();
+
+            fake1.setOpaque(false);
+            fake2.setOpaque(false);
+            fake3.setOpaque(false);
+            fake4.setOpaque(false);
+            correct.setOpaque(false);
+
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints c = new GridBagConstraints();
+            correct.setLayout(gridbag);
+            c.fill = GridBagConstraints.HORIZONTAL;
+
+            JLabel label = new JLabel(command);
+
+            c.gridx = 1;
+            c.gridy = 0;
+            gridbag.setConstraints(label, c);
+            correct.add(label);
+
+            topPanel.add(fake1);
+            topPanel.add(fake2);
+            topPanel.add(fake3);
+            topPanel.add(correct);
+            topPanel.add(fake4);
+
+            mainPanel.add(topPanel, BorderLayout.NORTH);
+            this.add(mainPanel);
+            this.pack();
+            final ArrayList<Integer> indexes = new ArrayList<>();
+            for(int i = 0; i<list.size();i++){
+                String a = list.get(i).substring(3,4);
+                String b = list.get(i).substring(5);
+                int x = Integer.parseInt(a);
+                int y = Integer.parseInt(b);
+                indexes.add(reverseConvert(x,y));
+            }
             centerPanel.setVisible(false);
-            mainPanel.remove(centerPanel);
-            centerPanel.removeAll();
-        }
-        topPanel.removeAll();
-
-        JPanel fake1 = new JPanel();
-        JPanel fake2 = new JPanel();
-        JPanel fake3 = new JPanel();
-        JPanel correct = new JPanel();
-        JPanel fake4 = new JPanel();
-
-        fake1.setOpaque(false);
-        fake2.setOpaque(false);
-        fake3.setOpaque(false);
-        fake4.setOpaque(false);
-        correct.setOpaque(false);
-
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        correct.setLayout(gridbag);
-        c.fill = GridBagConstraints.HORIZONTAL;
-
-        JLabel label = new JLabel(command);
-
-        c.gridx = 1;
-        c.gridy = 0;
-        gridbag.setConstraints(label, c);
-        correct.add(label);
-
-        topPanel.add(fake1);
-        topPanel.add(fake2);
-        topPanel.add(fake3);
-        topPanel.add(correct);
-        topPanel.add(fake4);
-
-        mainPanel.add(topPanel, BorderLayout.NORTH);
-        this.add(mainPanel);
-        this.pack();
-        final ArrayList<Integer> indexes = new ArrayList<>();
-        for(int i = 0; i<list.size();i++){
-            String a = list.get(i).substring(3,4);
-            String b = list.get(i).substring(5);
-            int x = Integer.parseInt(a);
-            int y = Integer.parseInt(b);
-            indexes.add(reverseConvert(x,y));
-        }
-        centerPanel.setVisible(false);
-        for(Integer i : indexes){
-            setButtonBackground(B.getButtons().get(i), B.getButtons().get(i).getName());
-        }
-        for (final JButton b : B.getButtons()) {
             for(Integer i : indexes){
-                if(i == B.getCoordinate(b)){
-                    b.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            int id = B.getCoordinate(b);
-                            message = getIndex(indexes, id);
-                            sentMessage = true;
-                            for (final JButton b : B.getButtons()){
-                                b.removeActionListener(this);
+                setButtonBackground(B.getButtons().get(i), B.getButtons().get(i).getName());
+            }
+            for (final JButton b : B.getButtons()) {
+                for(Integer i : indexes){
+                    if(i == B.getCoordinate(b)){
+                        b.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                int id = B.getCoordinate(b);
+                                id = Integer.parseInt(getIndex(indexes, id)) + 1;
+                                message = ""+id;
+                                sentMessage = true;
+                                for (final JButton b : B.getButtons()){
+                                    b.removeActionListener(this);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                }
+            }
+
+        }else{
+            mainPanel.remove(topPanel);
+            if (!lastViewCenter.equals("board")) {
+                centerPanel.setVisible(false);
+                mainPanel.remove(centerPanel);
+                centerPanel.removeAll();
+            }
+            topPanel.removeAll();
+
+            JPanel fake1 = new JPanel();
+            JPanel fake2 = new JPanel();
+            JPanel fake3 = new JPanel();
+            JPanel correct = new JPanel();
+            JPanel fake4 = new JPanel();
+
+            fake1.setOpaque(false);
+            fake2.setOpaque(false);
+            fake3.setOpaque(false);
+            fake4.setOpaque(false);
+            correct.setOpaque(false);
+
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints c = new GridBagConstraints();
+            correct.setLayout(gridbag);
+            c.fill = GridBagConstraints.HORIZONTAL;
+
+            JLabel label = new JLabel(command);
+
+            c.gridx = 1;
+            c.gridy = 0;
+            gridbag.setConstraints(label, c);
+            correct.add(label);
+
+            topPanel.add(fake1);
+            topPanel.add(fake2);
+            topPanel.add(fake3);
+            topPanel.add(correct);
+            topPanel.add(fake4);
+
+            mainPanel.add(topPanel, BorderLayout.NORTH);
+            this.add(mainPanel);
+            this.pack();
+            final ArrayList<Integer> indexes = new ArrayList<>();
+            for(int i = 0; i<list.size();i++){
+                String a = list.get(i).substring(3,4);
+                String b = list.get(i).substring(5);
+                int x = Integer.parseInt(a);
+                int y = Integer.parseInt(b);
+                indexes.add(reverseConvert(x,y));
+            }
+            centerPanel.setVisible(false);
+            for(Integer i : indexes){
+                setButtonBackground(B.getButtons().get(i), B.getButtons().get(i).getName());
+            }
+            for (final JButton b : B.getButtons()) {
+                for(Integer i : indexes){
+                    if(i == B.getCoordinate(b)){
+                        b.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                int id = B.getCoordinate(b);
+                                message = getIndex(indexes, id);
+                                sentMessage = true;
+                                for (final JButton b : B.getButtons()){
+                                    b.removeActionListener(this);
+                                }
+                            }
+                        });
+                    }
                 }
             }
         }
+
         centerPanel.revalidate();
         centerPanel.setVisible(true);
         topPanel.setVisible(true);
@@ -1341,7 +1425,6 @@ public class GUI extends JFrame implements Runnable{
             command = command.substring(1);
         }
         command = command.substring(1);
-        System.out.println(ownerGUI);
 
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> gods = new ArrayList<>();

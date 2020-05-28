@@ -48,13 +48,13 @@ public class AtlasTurn extends GodTurn{
                     }
                     if(id<0 || id>=coordinates.size()){
                         server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "INDX-Try another index: ");
+                        server.write(ch, "interactionServer", "TURN-Try another index: ");
                         continue;
                     }
                     break;
                 } catch (NumberFormatException e){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                    server.write(ch, "interactionServer", "INDX-Try another index: ");
+                    server.write(ch, "interactionServer", "TURN-Try another index: ");
                 }
             }
             server.write(ch, "serviceMessage", "MSGE-You can use Atlas's power\n");
