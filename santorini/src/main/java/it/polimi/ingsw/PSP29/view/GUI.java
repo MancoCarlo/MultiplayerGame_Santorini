@@ -1695,6 +1695,7 @@ public class GUI extends JFrame implements Runnable{
      * launch endGame GUI
      */
     public synchronized void viewWin(){
+        rightPanel.removeAll();
         JFrame f = new JFrame();
         f.setMinimumSize(new Dimension(640,640));
         ImagePanel panel = new ImagePanel("/login.png", f.getWidth(), f.getHeight());
