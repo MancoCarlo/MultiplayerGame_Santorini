@@ -29,20 +29,27 @@ public class DemeterTurn extends GodTurn {
         server.write(ch, "serviceMessage", "LIST-1)YES\n2)NO\n");
         server.write(ch,"interactionServer", "INDX-Would you build again in this turn? ");
         String answer = server.read(ch);
-
-        while(!answer.equals("1") && !answer.equals("2")){
-            if(answer == null){
-                for(ClientHandler chl : server.getClientHandlers()){
-                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                }
-                ch.resetConnected();
-                ch.closeConnection();
-                return false;
-            }else{
+        if(answer == null){
+            for(ClientHandler chl : server.getClientHandlers()){
+                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+            }
+            ch.resetConnected();
+            ch.closeConnection();
+            return false;
+        }else{
+            while(!answer.equals("1") && !answer.equals("2")){
                 server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                 server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
                 server.write(ch,"interactionServer", "INDX-Would you build again in this turn? ");
                 answer = server.read(ch);
+                if(answer == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                    }
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }
             }
         }
 

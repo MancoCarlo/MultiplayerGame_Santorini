@@ -33,22 +33,30 @@ public class HestiaTurn extends GodTurn{
             server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
             server.write(ch, "interactionServer", "INDX-Would you like to build again but not in a border box? ");
             String answer = server.read(ch);
-
-            while(!answer.equals("1") && !answer.equals("2")){
-                if(answer == null){
-                    for(ClientHandler chl : server.getClientHandlers()){
-                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                    }
-                    ch.resetConnected();
-                    ch.closeConnection();
-                    return false;
-                }else{
+            if(answer == null){
+                for(ClientHandler chl : server.getClientHandlers()){
+                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                }
+                ch.resetConnected();
+                ch.closeConnection();
+                return false;
+            }else{
+                while(!answer.equals("1") && !answer.equals("2")){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                     server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
                     server.write(ch, "interactionServer", "INDX-Would you like to build again but not in a border box? ");
                     answer = server.read(ch);
+                    if(answer == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }
                 }
             }
+
 
             if (answer.equals("1")) {
                 Coordinate c1 = null;

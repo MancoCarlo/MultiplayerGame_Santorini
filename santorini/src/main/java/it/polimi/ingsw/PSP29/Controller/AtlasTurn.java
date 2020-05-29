@@ -62,23 +62,30 @@ public class AtlasTurn extends GodTurn{
             server.write(ch, "interactionServer", "INDX-Would you use Atlas's power? (You can build a level 4 building) ");
 
             String response = server.read(ch);
-            c = coordinates.get(id);
-
-            while(!response.equals("1") && !response.equals("2")){
-                if(response == null){
-                    for(ClientHandler chl : server.getClientHandlers()){
-                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                    }
-                    ch.resetConnected();
-                    ch.closeConnection();
-                    return false;
-                }else{
+            if(response == null){
+                for(ClientHandler chl : server.getClientHandlers()){
+                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                }
+                ch.resetConnected();
+                ch.closeConnection();
+                return false;
+            }else{
+                while(!response.equals("1") && !response.equals("2")){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                     server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
                     server.write(ch, "interactionServer", "INDX-Would you use Atlas's power? (You can build a level 4 building) ");
                     response = server.read(ch);
+                    if(response == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }
                 }
             }
+            c = coordinates.get(id);
 
             if(response.equals("1")){
                 while(m.getBoard()[c.getX()][c.getY()].getLevel() < 4){

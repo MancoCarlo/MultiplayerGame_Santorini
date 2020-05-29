@@ -145,20 +145,27 @@ public class PrometheusTurn extends GodTurn {
                 server.write(ch, "serviceMessage", "LIST-1)YES\n2) NO\n");
                 server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
                 power = server.read(ch);
-
-                while(!power.equals("1") && !power.equals("2")){
-                    if(power == null){
-                        for(ClientHandler chl : server.getClientHandlers()){
-                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                        }
-                        ch.resetConnected();
-                        ch.closeConnection();
-                        return false;
-                    }else{
+                if(power == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                    }
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }else{
+                    while(!power.equals("1") && !power.equals("2")){
                         server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                         server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
                         server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving your worker? ");
                         power = server.read(ch);
+                        if(power == null){
+                            for(ClientHandler chl : server.getClientHandlers()){
+                                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                            }
+                            ch.resetConnected();
+                            ch.closeConnection();
+                            return false;
+                        }
                     }
                 }
 
