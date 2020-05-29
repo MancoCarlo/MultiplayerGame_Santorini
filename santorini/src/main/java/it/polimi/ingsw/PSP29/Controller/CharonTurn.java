@@ -172,7 +172,7 @@ public class CharonTurn extends GodTurn{
         }
         else if(wID==1){
             server.write(ch, "serviceMessage", "MSGE-Move: \n");
-            coordinates1 = whereCanMove(m, ch, 0, athenaOn);
+            coordinates1 = whereCanMove(m, ch, 1, athenaOn);
             server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates1));
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
