@@ -98,6 +98,16 @@ public class ServerAdapter implements Runnable
         notifyAll();
     }
 
+    /**
+     * set nextCommand to STOP
+     * @param cmd
+     */
+    public synchronized void Stop(String cmd)
+    {
+        nextCommand = Commands.STOP;
+        this.cmd = cmd;
+        notifyAll();
+    }
 
     @Override
     public void run()
@@ -108,7 +118,7 @@ public class ServerAdapter implements Runnable
             handleServerConnection();
         } catch (IOException e) {
             System.out.println("server has died");
-        } catch (ClassCastException | ClassNotFoundException e) {
+        } catch (ClassCastException e) {
             System.out.println("protocol violation");
         }
 
@@ -120,9 +130,8 @@ public class ServerAdapter implements Runnable
     /**
      * control nextCommand and call the others methods
      * @throws IOException if client disconnected
-     * @throws ClassNotFoundException
      */
-    private synchronized void handleServerConnection() throws IOException, ClassNotFoundException
+    private synchronized void handleServerConnection() throws IOException
     {
         /* wait for commands */
         connected = true;
@@ -149,6 +158,7 @@ public class ServerAdapter implements Runnable
                     break;
 
                 case STOP:
+                    doStop();
                     return;
             }
         }
@@ -340,11 +350,19 @@ public class ServerAdapter implements Runnable
      * @throws IOException if client disconnected
      * @throws ClassNotFoundException if cast doesn't work
      */
-    private synchronized void doGetMessage() throws IOException, ClassNotFoundException
+    private synchronized void doGetMessage() throws IOException
     {
         /* send the string to the server and get the new string back */
-        String newStr1 = (String)inputStm.readObject();
-        String newStr2= (String)inputStm.readObject();
+        String newStr1 = null;
+        try {
+            newStr1 = (String)inputStm.readObject();
+        } catch (ClassNotFoundException ignored) {
+        }
+        String newStr2= null;
+        try {
+            newStr2 = (String)inputStm.readObject();
+        } catch (ClassNotFoundException ignored) {
+        }
         /* copy the list of observers in case some observers changes it from inside
          * the notification method */
         List<ServerObserver> observersCpy;
@@ -355,6 +373,20 @@ public class ServerAdapter implements Runnable
         /* notify the observers that we got the string */
         for (ServerObserver observer: observersCpy) {
             observer.didReceiveMessage(newStr1, newStr2);
+        }
+    }
+
+    private synchronized void doStop(){
+        System.out.println(cmd);
+
+        List<ServerObserver> observersCpy;
+        synchronized (observers) {
+            observersCpy = new ArrayList<>(observers);
+        }
+
+        /* notify the observers that we got the string */
+        for (ServerObserver observer: observersCpy) {
+            observer.didInvoke(true);
         }
     }
 

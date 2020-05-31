@@ -31,8 +31,12 @@ public class Client implements Runnable, ServerObserver
     {
         Scanner scanner = new Scanner(System.in);
         boolean CLI = false;
-        System.out.println("What you want to use?\n1) CLI\n2) GUI");
+        System.out.println("What Interface you want to use?\n1) CLI\n2) GUI");
         String answer = scanner.nextLine();
+        while(!answer.equals("1") && !answer.equals("2")){
+            System.out.print("Input not valid, try again: ");
+            answer = scanner.nextLine();
+        }
         if(answer.equals("1")){
             CLI = true;
         }
@@ -70,7 +74,6 @@ public class Client implements Runnable, ServerObserver
                     } catch (InterruptedException e) { }
                 }
                 Method method1;
-                if(response.startsWith("CLOSE")) break;
                 try {
                     method1 = ServerAdapter.class.getMethod(method, String.class);
                     method1.invoke(serverAdapter, response);
@@ -78,10 +81,10 @@ public class Client implements Runnable, ServerObserver
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InterruptedException e) {
                     e.printStackTrace();
                 }
+                if(method.equals("Stop")) break;
             }
         }
         System.out.println("close");
-        return;
     }
 
 

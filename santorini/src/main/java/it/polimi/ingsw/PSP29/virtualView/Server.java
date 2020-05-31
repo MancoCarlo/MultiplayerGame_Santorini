@@ -20,6 +20,7 @@ public class Server
     private int countPlayers = 0;
     private ServerSocket socket;
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+    private boolean playAgain;
 
     /**
      * server execution
@@ -33,6 +34,7 @@ public class Server
             return;
         }
         gc = new GameController(this);
+        playAgain=true;
         launchMatch();
     }
 
@@ -120,12 +122,14 @@ public class Server
                     }
                 }
 
-                controlEndGame();
+                if(!controlEndGame()) continue;
 
                 System.out.println("Assigning gods");
                 if(!gc.godsAssignement()){
-                    controlEndGame();
+                    playAgain=controlEndGame();
                 }
+                if(!playAgain) continue;
+
 
                 String rightP = "";
                 for(ClientHandler ch : clientHandlers){
@@ -140,9 +144,9 @@ public class Server
 
                 System.out.println("Putting workers");
                 if(!gc.putWorkers()){
-                    controlEndGame();
+                    playAgain=controlEndGame();
                 }
-
+                if(!playAgain) continue;
 
                 gc.gameExe();
 
@@ -155,10 +159,16 @@ public class Server
     /**
      * control if a player disconnected from the server and start a new game
      */
-    public void controlEndGame(){
+    public boolean controlEndGame(){
         gc.getMatch().updatePlayers(clientHandlers);
+        int count=0;
+        for(ClientHandler clientHandler : clientHandlers){
+            if(clientHandler.getConnected()){
+                count++;
+            }
+        }
 
-        if(gc.getMatch().playersInGame()!=countPlayers){
+        if(count!=countPlayers){
             for(ClientHandler clientHandler : clientHandlers){
                 {
                     if (clientHandler.getConnected()){
@@ -167,7 +177,9 @@ public class Server
                 }
             }
             newGame();
+            return false;
         }
+        return true;
     }
 
     /**
@@ -201,7 +213,7 @@ public class Server
                 if(again==null || again.equals("2")){
                     countPlayers--;
                     write(clientHandlers.get(i), "serviceMessage", "STOP");
-                    write(clientHandlers.get(i), "serviceMessage", "CLOSE");
+                    write(clientHandlers.get(i), "Stop", "Closing connection");
                     clientHandlers.get(i).resetConnected();
                     clientHandlers.get(i).closeConnection();
                 }
@@ -229,6 +241,14 @@ public class Server
         for(int i=0; i<clientHandlers.size();i++){
             write(clientHandlers.get(i),"serviceMessage", "MSGE-Waiting for players\n");
         }
+
+        if(clientHandlers.size()==0){
+            playAgain = false;
+        }
+        else{
+            playAgain = true;
+        }
+
         launchMatch();
     }
 

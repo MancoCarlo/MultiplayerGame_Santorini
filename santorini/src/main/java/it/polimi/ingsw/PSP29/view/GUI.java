@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 public class GUI extends JFrame implements Runnable{
 
@@ -267,7 +268,8 @@ public class GUI extends JFrame implements Runnable{
 
                 case STOP:
                     closeFrame();
-                    break;
+                    System.out.println("closing frame");
+                    return;
             }
         }
     }
@@ -1853,6 +1855,8 @@ public class GUI extends JFrame implements Runnable{
         bottomPanel.setVisible(false);
         centerPanel.setVisible(false);
         this.removeAll();
+        System.out.println("closing connection");
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         sentMessage=true;
     }
 }
