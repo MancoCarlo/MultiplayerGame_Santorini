@@ -203,6 +203,11 @@ public class Server
             }
         }
         clientHandlers = newCH;
+
+        for(int i=0; i<clientHandlers.size();i++){
+            write(clientHandlers.get(i), "serviceMessage", "MSGE-Wait your turn\n");
+        }
+
         for(int i=0; i<clientHandlers.size();i++){
             write(clientHandlers.get(i), "serviceMessage", "LIST-1) YES\n2) NO\n");
             write(clientHandlers.get(i),"interactionServer", "INDX-Would you like to play again?");
@@ -218,7 +223,7 @@ public class Server
                     clientHandlers.get(i).closeConnection();
                 }
                 else if(again.equals("1")){
-                    write(clientHandlers.get(i), "serviceMessage", "WINM-Wait for other players");
+                    write(clientHandlers.get(i), "serviceMessage", "MSGE-Wait the creation of a new game\n");
                 }
             } catch (Exception e) {
                 System.out.println("No connection");
