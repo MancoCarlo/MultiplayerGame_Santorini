@@ -31,7 +31,7 @@ public class ClientHandler implements Runnable
     ObjectInputStream input;
     private Server server;
 
-    ClientHandler(Socket client, Server server)
+    public void makeCH(Socket client, Server server)
     {
         this.client = client;
         this.server = server;

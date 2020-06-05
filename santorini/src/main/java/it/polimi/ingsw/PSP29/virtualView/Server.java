@@ -401,7 +401,8 @@ public class Server
         Socket client;
         try {
             client = socket.accept();
-            clientHandler = new ClientHandler(client, this);
+            clientHandler = new ClientHandler();
+            clientHandler.makeCH(client, this);
             Thread thread = new Thread(clientHandler , "server_" + client.getInetAddress());
             thread.start();
             process(clientHandler, "getConnected");
