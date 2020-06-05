@@ -42,6 +42,7 @@ public class ApolloTurnTest {
     public void move_correctMoveWithSwap() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/apolloTurn/apolloTest1");
         ch.setName("Luca");
+        server.getClientHandlers().add(ch);
         turn.move(m, ch, server, false);
         assertTrue(m.getPlayer("Luca").getWorker(1).getPosition().equals(new Coordinate(3,3)));
     }
@@ -50,6 +51,7 @@ public class ApolloTurnTest {
     public void move_correctMove() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/apolloTurn/apolloTest2");
         ch.setName("Luca");
+        server.getClientHandlers().add(ch);
         turn.move(m, ch, server, true);
         assertTrue(m.getPlayer("Luca").getWorker(0).getPosition().equals(new Coordinate(0,0)));
     }
@@ -68,6 +70,7 @@ public class ApolloTurnTest {
         m.getBoard()[2][0].upgradeLevel();
         ch = new ClientHandlerTest("src/test/resources/apolloTurn/apolloTest3");
         ch.setName("Luca");
+        server.getClientHandlers().add(ch);
         turn.move(m, ch, server, true);
         assertTrue(m.getPlayer("Luca").getWorker(0).getPosition().equals(new Coordinate(0,0)));
         assertTrue(m.getPlayer("Luca").getWorker(1).getPosition().equals(new Coordinate(2,1)));
@@ -87,6 +90,7 @@ public class ApolloTurnTest {
         m.getBoard()[2][0].upgradeLevel();
         ch = new ClientHandlerTest("src/test/resources/apolloTurn/apolloTest3");
         ch.setName("Luca");
+        server.getClientHandlers().add(ch);
         turn.move(m, ch, server, true);
         assertTrue(m.getPlayer("Luca").getWorker(1).getPosition().equals(new Coordinate(0,0)));
         assertTrue(m.getPlayer("Luca").getWorker(0).getPosition().equals(new Coordinate(2,1)));
@@ -108,6 +112,31 @@ public class ApolloTurnTest {
         m.getBoard()[2][1].upgradeLevel();
         ch = new ClientHandlerTest("src/test/resources/apolloTurn/apolloTest3");
         ch.setName("Luca");
+        server.getClientHandlers().add(ch);
         assertFalse(turn.move(m, ch, server, true));
+    }
+
+    @Test
+    public void move_disconnectionClient(){
+        ch = new ClientHandlerTest("src/test/resources/apolloTurn/apolloTest6");
+        ch.setName("Luca");
+        server.getClientHandlers().add(ch);
+        assertFalse(turn.move(m, ch, server, false));
+    }
+
+    @Test
+    public void move_disconnectionClientWorker1(){
+        ch = new ClientHandlerTest("src/test/resources/apolloTurn/apolloTest5");
+        ch.setName("Luca");
+        server.getClientHandlers().add(ch);
+        assertFalse(turn.move(m, ch, server, false));
+    }
+
+    @Test
+    public void move_disconnectionClientWorker2(){
+        ch = new ClientHandlerTest("src/test/resources/apolloTurn/apolloTest4");
+        ch.setName("Luca");
+        server.getClientHandlers().add(ch);
+        assertFalse(turn.move(m, ch, server, false));
     }
 }

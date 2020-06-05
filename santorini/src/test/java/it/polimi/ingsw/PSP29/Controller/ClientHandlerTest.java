@@ -12,9 +12,13 @@ public class ClientHandlerTest extends ClientHandler {
     private String name = "";
     public BufferedReader b;
 
-    public ClientHandlerTest(String path) throws FileNotFoundException {
-        FileReader fr = new FileReader(path);
-        b=new BufferedReader(fr);
+    public ClientHandlerTest(String path){
+        try{
+            FileReader fr = new FileReader(path);
+            b=new BufferedReader(fr);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void takeMessage()
@@ -43,7 +47,11 @@ public class ClientHandlerTest extends ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return message;
+        if(message.contains("null")){
+            return null;
+        }else{
+            return message;
+        }
     }
 
     public void resetReadMessage(){
