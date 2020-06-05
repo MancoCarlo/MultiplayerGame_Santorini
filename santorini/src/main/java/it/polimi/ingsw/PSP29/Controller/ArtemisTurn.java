@@ -88,28 +88,23 @@ public class ArtemisTurn extends GodTurn{
                 server.write(ch, "serviceMessage", "LIST-"+printCoordinates(coordinates));
                 server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
                 while(true){
-                    try{
-                        String msg = server.read(ch);
-                        if(msg == null){
-                            for(ClientHandler chl : server.getClientHandlers()){
-                                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                            }
-                            ch.resetConnected();
-                            ch.closeConnection();
-                            return false;
-                        }else{
-                            id = Integer.parseInt(msg);
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
                         }
-                        if(id<0 || id>=coordinates.size()){
-                            server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                            server.write(ch, "interactionServer", "TURN-Try another index: ");
-                            continue;
-                        }
-                        break;
-                    } catch (NumberFormatException e){
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        id = Integer.parseInt(msg);
+                    }
+                    if(id<0 || id>=coordinates.size()){
                         server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                         server.write(ch, "interactionServer", "TURN-Try another index: ");
+                        continue;
                     }
+                    break;
                 }
                 c = coordinates.get(id);
                 m.updateMovement(p,wID,c);
