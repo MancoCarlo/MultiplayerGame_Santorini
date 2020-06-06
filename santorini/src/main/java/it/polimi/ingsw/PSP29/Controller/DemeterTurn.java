@@ -53,14 +53,7 @@ public class DemeterTurn extends GodTurn {
             }
         }
 
-        if(answer == null){
-            for(ClientHandler chl : server.getClientHandlers()){
-                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-            }
-            ch.resetConnected();
-            ch.closeConnection();
-            return false;
-        }
+
         if(answer.equals("1")){
             super.build(m,ch,server);
         }
