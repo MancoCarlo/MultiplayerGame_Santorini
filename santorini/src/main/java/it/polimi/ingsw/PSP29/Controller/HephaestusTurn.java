@@ -100,11 +100,6 @@ public class HephaestusTurn extends GodTurn {
     }
 
     @Override
-    public boolean winCondition(Match m, Player p) {
-        return super.winCondition(m, p);
-    }
-
-    @Override
     public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn) {
         return super.move(m, ch, server, athenaOn);
     }

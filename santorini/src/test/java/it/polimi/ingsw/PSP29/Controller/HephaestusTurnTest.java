@@ -1,110 +1,90 @@
 package it.polimi.ingsw.PSP29.Controller;
 
-import it.polimi.ingsw.PSP29.model.Coordinate;
-import it.polimi.ingsw.PSP29.model.Match;
-import it.polimi.ingsw.PSP29.model.Player;
-import it.polimi.ingsw.PSP29.model.Worker;
-import org.junit.After;
+import it.polimi.ingsw.PSP29.model.*;
+import it.polimi.ingsw.PSP29.virtualView.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.io.FileNotFoundException;
+
+import static org.junit.Assert.assertTrue;
+
 public class HephaestusTurnTest {
+
     Match m = null;
     HephaestusTurn turn = null;
+    Server server = null;
+    ClientHandler ch = null;
 
     @Before
-    public void setUp() {
+    public void setUp(){
         m = new Match();
+        server = new Server();
         m.inizializeBoard();
-        m.getPlayers().add(new Player("Luca", 21));
-        m.getPlayers().add(new Player("Carlo", 21));
+        m.getPlayers().add(new Player("Luca", 21, 1));
+        m.getPlayers().add(new Player("Letizia", 21, 2));
+        Coordinate c1 = new Coordinate(1,1);
+        Coordinate c2 = new Coordinate(2,2);
+        Coordinate c3 = new Coordinate(3,3);
+        Coordinate c4 = new Coordinate(4,4);
+        m.updateMovement(m.getPlayer("Luca"), 0, c1);
+        m.updateMovement(m.getPlayer("Luca"), 1, c2);
+        m.updateMovement(m.getPlayer("Letizia"), 0, c3);
+        m.updateMovement(m.getPlayer("Letizia"), 1, c4);
+
         turn = new HephaestusTurn(new GodTurn(new BaseTurn()));
     }
 
-    @After
-    public void TearDown(){ }
-
     @Test
-    public void winCondition_notValidLevelInput_falseOutput(){
-        Coordinate c = new Coordinate(1,1);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, c);
-        wL.changeMoved(true);
-        wL.changeBuilt(true);
-        assertFalse(turn.winCondition(m,m.getPlayers().get(0)));
+    public void build_correctWithPowerON() throws FileNotFoundException {
+        ch = new ClientHandlerTest("src/test/resources/hephaestusTurn/hephaestusTest1");
+        ch.setName("Luca");
+        server.getClientHandlers().add(ch);
+        turn.move(m, ch, server, false);
+        turn.build(m, ch, server);
+        assertTrue(m.getPlayer("Luca").getWorker(0).getPosition().equals(new Coordinate(0,0)));
+        assertTrue(m.getBoard()[0][1].getlevelledUp());
+        assertEquals(m.getBoard()[0][1].getLevel(), 2);
     }
 
     @Test
-    public void build_notValidCoordinateInput_falseOutput() {
-        Coordinate cL = new Coordinate(1,1);
-        Coordinate cC = new Coordinate(0,2);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, cL);
-        m.updateMovement(m.getPlayers().get(1), 0, cC);
-        assertFalse(turn.build(m, wL, cC));
-        assertFalse(wL.getBuilt());
+    public void build_correctWithPowerOFF() throws FileNotFoundException {
+        ch = new ClientHandlerTest("src/test/resources/hephaestusTurn/hephaestusTest2");
+        ch.setName("Luca");
+        server.getClientHandlers().add(ch);
+        turn.move(m, ch, server, false);
+        turn.build(m, ch, server);
+        assertTrue(m.getPlayer("Luca").getWorker(0).getPosition().equals(new Coordinate(0,0)));
+        assertTrue(m.getBoard()[0][1].getlevelledUp());
+        assertEquals(m.getBoard()[0][1].getLevel(), 1);
     }
 
     @Test
-    public void move_correctInput_callSuperMove_trueOutput(){
-        Coordinate c = new Coordinate(1,1);
-        Coordinate cnext = new Coordinate(0,2);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, c);
-        assertTrue(turn.move(m, wL, cnext));
-        assertTrue(wL.getMoved());
-        assertTrue(wL.getPosition().equals(cnext));
-        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
+    public void build_WithDisconnection1() throws FileNotFoundException {
+        ch = new ClientHandlerTest("src/test/resources/hephaestusTurn/hephaestusTest3");
+        ch.setName("Luca");
+        server.getClientHandlers().add(ch);
+        turn.move(m, ch, server, false);
+        assertFalse(turn.build(m, ch, server));
     }
 
     @Test
-    public void move_notEmptyBoxInput_callSuperMove_falseOutput() {
-        Coordinate cL = new Coordinate(1,1);
-        Coordinate cC = new Coordinate(0,2);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, cL);
-        m.updateMovement(m.getPlayers().get(1), 0, cC);
-        assertFalse(turn.move(m, wL, cC));
-        assertFalse(wL.getMoved());
-        assertTrue(wL.getPosition().equals(cL));
-        assertFalse(m.getBoard()[cC.getX()][cC.getY()].isEmpty());
+    public void build_WithDisconnection2() throws FileNotFoundException {
+        ch = new ClientHandlerTest("src/test/resources/hephaestusTurn/hephaestusTest4");
+        ch.setName("Luca");
+        server.getClientHandlers().add(ch);
+        turn.move(m, ch, server, false);
+        assertFalse(turn.build(m, ch, server));
     }
 
     @Test
-    public void limited_move_correctInput_callSuperLimitedMove_trueOutput(){
-        Coordinate c = new Coordinate(1,1);
-        m.updateBuilding(c);
-        Coordinate cnext = new Coordinate(0,0);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, c);
-        assertTrue(turn.limited_move(m, wL, cnext));
-        assertTrue(wL.getMoved());
-        assertTrue(wL.getPosition().equals(cnext));
-        assertTrue(m.getBoard()[c.getX()][c.getY()].isEmpty());
-        assertFalse(m.getBoard()[cnext.getX()][cnext.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);
-    }
-
-    @Test
-    public void limited_move_upperLevelBoxInput_callSuperLimitedMove_falseOutput() {
-        Coordinate c = new Coordinate(1,1);
-        Coordinate c1 = new Coordinate(1,2);
-        m.updateBuilding(c1);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, c);
-        assertTrue(m.getBoard()[c1.getX()][c1.getY()].level_diff(m.getBoard()[wL.getPosition().getX()][wL.getPosition().getY()])>0);
-        assertFalse(turn.limited_move(m, wL, c1));
-        assertFalse(wL.getMoved());
-        assertTrue(wL.getPosition().equals(c));
-    }
-
-    @Test
-    public void cantMove_correctInputs_callSuperCantMove_falseOutput() {
-        Coordinate c = new Coordinate(1,1);
-        Worker wL = m.getPlayers().get(0).getWorker(0);
-        m.updateMovement(m.getPlayers().get(0), 0, c);
-        assertFalse(turn.cantMove(m, wL, false));
-        assertFalse(turn.cantMove(m, wL, true));
+    public void build_WithDisconnection3() throws FileNotFoundException {
+        ch = new ClientHandlerTest("src/test/resources/hephaestusTurn/hephaestusTest5");
+        ch.setName("Luca");
+        server.getClientHandlers().add(ch);
+        turn.move(m, ch, server, false);
+        assertFalse(turn.build(m, ch, server));
     }
 }
