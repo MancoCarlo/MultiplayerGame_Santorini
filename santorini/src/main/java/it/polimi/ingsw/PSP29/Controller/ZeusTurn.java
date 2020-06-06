@@ -34,28 +34,23 @@ public class ZeusTurn extends GodTurn {
             server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
             int id;
             while(true){
-                try{
-                    String msg = server.read(ch);
-                    if(msg == null){
-                        for(ClientHandler chl : server.getClientHandlers()){
-                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                        }
-                        ch.resetConnected();
-                        ch.closeConnection();
-                        return false;
-                    }else{
-                        id = Integer.parseInt(msg);
+                String msg = server.read(ch);
+                if(msg == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
                     }
-                    if(id<0 || id>=coordinates.size()){
-                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "TURN-Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }else{
+                    id = Integer.parseInt(msg);
+                }
+                if(id<0 || id>=coordinates.size()){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                     server.write(ch, "interactionServer", "TURN-Try another index: ");
+                    continue;
                 }
+                break;
             }
             c = coordinates.get(id);
             if(c.equals(p.getWorker(wID).getPosition()))
