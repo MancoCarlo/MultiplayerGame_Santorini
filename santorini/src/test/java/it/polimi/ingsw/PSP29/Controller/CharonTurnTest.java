@@ -38,7 +38,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_correctWithPowerON() throws FileNotFoundException {
+    public void move_correctWithPowerON() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest1");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
@@ -49,7 +49,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_correctWithPowerOFF1() throws FileNotFoundException {
+    public void move_correctWithPowerOFF1() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest2");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
@@ -60,7 +60,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_correctWithPowerOFF2() throws FileNotFoundException {
+    public void move_correctWithPowerOFF2() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest2B");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
@@ -70,7 +70,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_WithDisconnection1() throws FileNotFoundException {
+    public void move_WithDisconnection1() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest3");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
@@ -78,7 +78,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_WithDisconnection2() throws FileNotFoundException {
+    public void move_WithDisconnection2() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest4");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
@@ -86,7 +86,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_WithDisconnection3() throws FileNotFoundException {
+    public void move_WithDisconnection3() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest5");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
@@ -94,7 +94,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_WithDisconnection4() throws FileNotFoundException {
+    public void move_WithDisconnection4() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest6");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
@@ -102,7 +102,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_WithDisconnection5() throws FileNotFoundException {
+    public void move_WithDisconnection5() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest7");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
@@ -110,7 +110,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_WithDisconnection6() throws FileNotFoundException {
+    public void move_WithDisconnection6() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest8");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
@@ -118,7 +118,7 @@ public class CharonTurnTest {
     }
 
     @Test
-    public void build_WithDisconnection7() throws FileNotFoundException {
+    public void move_WithDisconnection7() throws FileNotFoundException {
         ch = new ClientHandlerTest("src/test/resources/charonTurn/charonTest9");
         ch.setName("Luca");
         server.getClientHandlers().add(ch);
