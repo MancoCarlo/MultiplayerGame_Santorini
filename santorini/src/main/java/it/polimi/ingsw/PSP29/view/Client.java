@@ -16,6 +16,7 @@ public class Client implements Runnable, ServerObserver
     private String response = null;
     private String method = null;
     private boolean rsp = false;
+    private String ip;
 
     public static void main( String[] args )
     {
@@ -40,7 +41,8 @@ public class Client implements Runnable, ServerObserver
         if(answer.equals("1")){
             CLI = true;
         }
-        String ip = "127.0.0.8";
+        System.out.println("Insert server's IP");
+        ip = scanner.nextLine();
 
         /* open a connection to the server */
         Socket server;

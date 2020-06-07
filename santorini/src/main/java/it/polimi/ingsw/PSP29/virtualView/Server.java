@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class Server
 {
-    public final static int SOCKET_PORT = 7777;
+    public final static int SOCKET_PORT = 43123;
     private static GameController gc;
     private int numPlayers=0;
     private boolean timeout = false;
