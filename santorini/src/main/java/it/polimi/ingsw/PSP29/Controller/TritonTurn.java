@@ -26,7 +26,7 @@ public class TritonTurn extends GodTurn {
         boolean nopower= super.move(m, ch, server, athenaOn);
         if(!nopower)
             return false;
-        ArrayList<Coordinate> coordinates = null;
+        ArrayList<Coordinate> coordinates;
         for(Worker w : p.getWorkers()){
             if(w.getMoved()){
                 wID = w.getID();
@@ -34,7 +34,7 @@ public class TritonTurn extends GodTurn {
             }
         }
         String power;
-        Coordinate c = null;
+        Coordinate c;
         do{
             if(super.winCondition(m, p)){
                 return true;
@@ -80,28 +80,23 @@ public class TritonTurn extends GodTurn {
                     server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
                     int id;
                     while(true){
-                        try{
-                            String msg = server.read(ch);
-                            if(msg == null){
-                                for(ClientHandler chl : server.getClientHandlers()){
-                                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                                }
-                                ch.resetConnected();
-                                ch.closeConnection();
-                                return false;
-                            }else{
-                                id = Integer.parseInt(msg);
+                        String msg = server.read(ch);
+                        if(msg == null){
+                            for(ClientHandler chl : server.getClientHandlers()){
+                                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
                             }
-                            if(id<0 || id>=coordinates.size()){
-                                server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                                server.write(ch, "interactionServer", "TURN-Try another index: ");
-                                continue;
-                            }
-                            break;
-                        } catch (NumberFormatException e){
+                            ch.resetConnected();
+                            ch.closeConnection();
+                            return false;
+                        }else{
+                            id = Integer.parseInt(msg);
+                        }
+                        if(id<0 || id>=coordinates.size()){
                             server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                             server.write(ch, "interactionServer", "TURN-Try another index: ");
+                            continue;
                         }
+                        break;
                     }
                     c = coordinates.get(id);
                     m.updateMovement(p,wID,c);
