@@ -89,4 +89,151 @@ public class GameControllerTest {
         assertEquals(gc.getMatch().getPlayer("Carlo").getWorker(1).getPosition(), c4);
     }
 
+    @Test
+    public void AthenaConditionTest_PowerActivatedA() throws FileNotFoundException {
+        gc.getMatch().addPlayer(new Player("Luca", 21, 0));
+        gc.getMatch().addPlayer(new Player("Carlo", 21, 1));
+        ClientHandler ch1 = new ClientHandlerTest("src/test/resources/GameController/AthenaTestA");
+        ch1.setName("Luca");
+        ClientHandler ch2 = new ClientHandlerTest("src/test/resources/GameController/putWorkersTestB");
+        ch2.setName("Carlo");
+        Coordinate c1 = new Coordinate(1,1);
+        Coordinate c2 = new Coordinate(2,2);
+        Coordinate c3 = new Coordinate(3,3);
+        Coordinate c4 = new Coordinate(4,4);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 0, c1);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 1, c2);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 0, c3);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 1, c4);
+        gc.getMatch().getBoard()[0][0].upgradeLevel();
+        AthenaTurn turn = new AthenaTurn(new GodTurn(new BaseTurn()));
+        assertTrue(turn.move(gc.getMatch(), ch1, server, false));
+        gc.athenaCondition(ch1);
+        assertTrue(gc.getAthenaOn());
+    }
+
+    @Test
+    public void AthenaConditionTest_PowerNotActivatedA() throws FileNotFoundException {
+        gc.getMatch().addPlayer(new Player("Luca", 21, 0));
+        gc.getMatch().addPlayer(new Player("Carlo", 21, 1));
+        ClientHandler ch1 = new ClientHandlerTest("src/test/resources/GameController/AthenaTestA");
+        ch1.setName("Luca");
+        ClientHandler ch2 = new ClientHandlerTest("src/test/resources/GameController/putWorkersTestB");
+        ch2.setName("Carlo");
+        Coordinate c1 = new Coordinate(1,1);
+        Coordinate c2 = new Coordinate(2,2);
+        Coordinate c3 = new Coordinate(3,3);
+        Coordinate c4 = new Coordinate(4,4);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 0, c1);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 1, c2);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 0, c3);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 1, c4);
+        AthenaTurn turn = new AthenaTurn(new GodTurn(new BaseTurn()));
+        assertTrue(turn.move(gc.getMatch(), ch1, server, false));
+        gc.athenaCondition(ch1);
+        assertFalse(gc.getAthenaOn());
+    }
+
+    @Test
+    public void AthenaConditionTest_PowerActivatedB() throws FileNotFoundException {
+        gc.getMatch().addPlayer(new Player("Luca", 21, 0));
+        gc.getMatch().addPlayer(new Player("Carlo", 21, 1));
+        ClientHandler ch1 = new ClientHandlerTest("src/test/resources/GameController/AthenaTestA");
+        ch1.setName("Luca");
+        ClientHandler ch2 = new ClientHandlerTest("src/test/resources/GameController/putWorkersTestB");
+        ch2.setName("Carlo");
+        Coordinate c1 = new Coordinate(1,1);
+        Coordinate c2 = new Coordinate(2,2);
+        Coordinate c3 = new Coordinate(3,3);
+        Coordinate c4 = new Coordinate(4,4);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 0, c1);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 1, c2);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 0, c3);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 1, c4);
+        gc.getMatch().getBoard()[1][1].upgradeLevel();
+        gc.getMatch().getBoard()[0][0].upgradeLevel();
+        gc.getMatch().getBoard()[1][1].setLevelledUp(true);
+        AthenaTurn turn = new AthenaTurn(new GodTurn(new BaseTurn()));
+        assertTrue(turn.move(gc.getMatch(), ch1, server, false));
+        gc.athenaCondition(ch1);
+        assertTrue(gc.getAthenaOn());
+    }
+
+    @Test
+    public void AthenaConditionTest_PowerNotActivatedB() throws FileNotFoundException {
+        gc.getMatch().addPlayer(new Player("Luca", 21, 0));
+        gc.getMatch().addPlayer(new Player("Carlo", 21, 1));
+        ClientHandler ch1 = new ClientHandlerTest("src/test/resources/GameController/AthenaTestA");
+        ch1.setName("Luca");
+        ClientHandler ch2 = new ClientHandlerTest("src/test/resources/GameController/putWorkersTestB");
+        ch2.setName("Carlo");
+        Coordinate c1 = new Coordinate(1,1);
+        Coordinate c2 = new Coordinate(2,2);
+        Coordinate c3 = new Coordinate(3,3);
+        Coordinate c4 = new Coordinate(4,4);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 0, c1);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 1, c2);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 0, c3);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 1, c4);
+        gc.getMatch().getBoard()[1][1].upgradeLevel();
+        gc.getMatch().getBoard()[1][1].setLevelledUp(true);
+        AthenaTurn turn = new AthenaTurn(new GodTurn(new BaseTurn()));
+        assertTrue(turn.move(gc.getMatch(), ch1, server, false));
+        gc.athenaCondition(ch1);
+        assertFalse(gc.getAthenaOn());
+    }
+
+    @Test
+    public void LosePlayerTest() throws FileNotFoundException {
+        gc.getMatch().addPlayer(new Player("Luca", 21, 0));
+        gc.getMatch().addPlayer(new Player("Carlo", 21, 1));
+        ClientHandler ch1 = new ClientHandlerTest("src/test/resources/GameController/AthenaTestA");
+        ch1.setName("Luca");
+        ClientHandler ch2 = new ClientHandlerTest("src/test/resources/GameController/putWorkersTestB");
+        ch2.setName("Carlo");
+        Coordinate c1 = new Coordinate(1,1);
+        Coordinate c2 = new Coordinate(2,2);
+        Coordinate c3 = new Coordinate(3,3);
+        Coordinate c4 = new Coordinate(4,4);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 0, c1);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 1, c2);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 0, c3);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 1, c4);
+        gc.getMatch().getPlayer("Luca").setInGame(true);
+        gc.getMatch().getPlayer("Carlo").setInGame(true);
+        assertEquals(gc.getMatch().playersInGame(), 2);
+        gc.losePlayer(ch1);
+        assertEquals(gc.getMatch().playersInGame(), 1);
+    }
+
+    @Test
+    public void TurnExeTest() throws FileNotFoundException {
+        gc.getMatch().addPlayer(new Player("Luca", 21, 0));
+        gc.getMatch().addPlayer(new Player("Carlo", 21, 1));
+        ClientHandler ch1 = new ClientHandlerTest("src/test/resources/GameController/turnExeTestA");
+        ch1.setName("Luca");
+        ClientHandler ch2 = new ClientHandlerTest("src/test/resources/GameController/putWorkersTestB");
+        ch2.setName("Carlo");
+        server.getClientHandlers().add(ch1);
+        server.getClientHandlers().add(ch2);
+        Coordinate c1 = new Coordinate(1,1);
+        Coordinate c2 = new Coordinate(2,2);
+        Coordinate c3 = new Coordinate(3,3);
+        Coordinate c4 = new Coordinate(4,4);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 0, c1);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 1, c2);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 0, c3);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 1, c4);
+        gc.getMatch().getPlayer("Luca").setInGame(true);
+        gc.getMatch().getPlayer("Carlo").setInGame(true);
+        gc.getMatch().loadGods();
+        gc.getMatch().getPlayer("Luca").setCard(gc.getMatch().getGods(), 2);
+        AthenaTurn turn = new AthenaTurn(new GodTurn(new BaseTurn()));
+        assertFalse(gc.turnExe(ch1, turn));
+        Coordinate c5 = new Coordinate(0,0);
+        assertEquals(gc.getMatch().getPlayer("Luca").getWorker(0).getPosition(), c5);
+        assertEquals(gc.getMatch().getBoard()[0][1].getLevel(), 1);
+        assertFalse(gc.getAthenaOn());
+    }
+
 }
