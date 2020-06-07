@@ -17,7 +17,7 @@ public class GameController {
     private boolean godOn;
     private ArrayList<Integer> godIndex = new ArrayList<>();
     private boolean athenaOn;
-    private int myturn = 0;
+    private int myturn;
     private int numPlayers;
 
     public GameController(Server s){
@@ -25,7 +25,10 @@ public class GameController {
         endGame=false;
         godOn=false;
         server = s;
+        myturn = 0;
     }
+
+    public int getMyturn() { return myturn; }
 
     public ArrayList<Integer> getGodIndex(){
         return godIndex;
@@ -233,7 +236,11 @@ public class GameController {
                 */
                 return false;
             }
-            id=Integer.parseInt(str)-1;
+            try{
+                id=Integer.parseInt(str)-1;
+            } catch (NumberFormatException e){
+                id=99;
+            }
             while(id >= match.getGods().size() || id < 0){
                 server.write(server.getClientHandlers().get(myturn), "serviceMessage", "MSGE-Index not valid\n");
                 num = Integer.toString(match.getGods().size());
@@ -252,7 +259,11 @@ public class GameController {
                     */
                     return false;
                 }
-                id = Integer.parseInt(str) - 1;
+                try{
+                    id=Integer.parseInt(str)-1;
+                } catch (NumberFormatException e){
+                    id=99;
+                }
             }
             match.getPlayers().get(myturn).setCard(match.getGods(), id);
             match.getGods().remove(id);
