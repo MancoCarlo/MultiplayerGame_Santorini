@@ -33,28 +33,23 @@ public class PrometheusTurn extends GodTurn {
             server.write(ch, "serviceMessage", "LIST-"+m.getPlayer(ch.getName()).printWorkers());
             server.write(ch, "interactionServer", "TURN-Choose the worker to use in this turn: \n");
             while(true){
-                try{
-                    String msg = server.read(ch);
-                    if(msg == null){
-                        for(ClientHandler chl : server.getClientHandlers()){
-                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                        }
-                        ch.resetConnected();
-                        ch.closeConnection();
-                        return false;
-                    }else{
-                        wID= Integer.parseInt(msg) - 1;
+                String msg = server.read(ch);
+                if(msg == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
                     }
-                    if(wID<0 || wID>1){
-                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "TURN-Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }else{
+                    wID= Integer.parseInt(msg) - 1;
+                }
+                if(wID<0 || wID>1){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                     server.write(ch, "interactionServer", "TURN-Try another index: ");
+                    continue;
                 }
+                break;
             }
         }
         else if(coordinates0.size()!=0 && coordinates1.size()==0){
@@ -71,10 +66,11 @@ public class PrometheusTurn extends GodTurn {
         server.write(ch, "serviceMessage", "BORD-"+m.printBoard());
 
         ArrayList<Coordinate> controlCoor = whereCanMove(m,ch,wID,true);
+        ArrayList<Coordinate> controlBCoor = whereCanBuild(m,ch,wID);
 
         if(controlCoor.size()==1){
             //there is only one box where i can build after activate the power and then maybe move because i'm prometheus
-            if(m.getBoard()[controlCoor.get(0).getX()][controlCoor.get(0).getY()].getLevel() - m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() > -1){
+            if(controlBCoor.size()==1 && m.getBoard()[controlCoor.get(0).getX()][controlCoor.get(0).getY()].getLevel() - m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() > -1){
                 //I can build in only one box and that box have not an inferior level than me, so i block me and i have violed prometheus power
                 server.write(ch, "serviceMessage", "MSGE-You can't use Prometheus power\n");
             }else{
@@ -83,8 +79,20 @@ public class PrometheusTurn extends GodTurn {
                 server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
                 server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving you worker? ");
                 power = server.read(ch);
+                if(power == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                    }
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }
 
                 while(!power.equals("1") && !power.equals("2")){
+                    server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                    server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
+                    server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving your worker? ");
+                    power = server.read(ch);
                     if(power == null){
                         for(ClientHandler chl : server.getClientHandlers()){
                             server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
@@ -92,43 +100,44 @@ public class PrometheusTurn extends GodTurn {
                         ch.resetConnected();
                         ch.closeConnection();
                         return false;
-                    }else{
-                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "serviceMessage", "LIST-1) YES\n2) NO\n");
-                        server.write(ch, "interactionServer", "INDX-Would you like to build an additional block before moving your worker? ");
-                        power = server.read(ch);
                     }
                 }
 
                 if(power.equals("1")) {
                     ArrayList<Coordinate> finalcoordinates = whereCanBuild(m, ch, wID);
+
+                    if(m.getBoard()[controlCoor.get(0).getX()][controlCoor.get(0).getY()].getLevel() - m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() > -1){
+                        int coorDelete = -1;
+                        for(int i = 0; i<finalcoordinates.size();i++){
+                            if(finalcoordinates.get(i).equals(controlCoor.get(0)))
+                                coorDelete = i;
+                        }
+
+                        finalcoordinates.remove(coorDelete);
+                    }
+
                     server.write(ch, "serviceMessage", "MSGE-Additional Build: \n");
                     Coordinate c;
                     server.write(ch, "serviceMessage", "LIST-"+printCoordinates(finalcoordinates));
                     server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
                     int id;
                     while(true){
-                        try{
-                            String msg = server.read(ch);
-                            if(msg == null){
-                                for(ClientHandler chl : server.getClientHandlers()){
-                                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                                }
-                                ch.resetConnected();
-                                ch.closeConnection();
-                                return false;
+                        String msg = server.read(ch);
+                        if(msg == null){
+                            for(ClientHandler chl : server.getClientHandlers()){
+                                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
                             }
-                            id = Integer.parseInt(msg);
-                            if(id<0 || id>=finalcoordinates.size()){
-                                server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                                server.write(ch, "interactionServer", "TURN-Try another index: ");
-                                continue;
-                            }
-                            break;
-                        } catch (NumberFormatException e){
+                            ch.resetConnected();
+                            ch.closeConnection();
+                            return false;
+                        }
+                        id = Integer.parseInt(msg);
+                        if(id<0 || id>=finalcoordinates.size()){
                             server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                             server.write(ch, "interactionServer", "TURN-Try another index: ");
+                            continue;
                         }
+                        break;
                     }
                     c = finalcoordinates.get(id);
                     m.updateBuilding(c);
@@ -177,28 +186,23 @@ public class PrometheusTurn extends GodTurn {
                     server.write(ch, "interactionServer", "TURN-Where you want to build?\n");
                     int id;
                     while(true){
-                        try{
-                            String msg = server.read(ch);
-                            if(msg == null){
-                                for(ClientHandler chl : server.getClientHandlers()){
-                                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                                }
-                                ch.resetConnected();
-                                ch.closeConnection();
-                                return false;
+                        String msg = server.read(ch);
+                        if(msg == null){
+                            for(ClientHandler chl : server.getClientHandlers()){
+                                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
                             }
-                            id = Integer.parseInt(msg);
+                            ch.resetConnected();
+                            ch.closeConnection();
+                            return false;
+                        }
+                        id = Integer.parseInt(msg);
 
-                            if(id<0 || id>=finalcoordinates.size()){
-                                server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                                server.write(ch, "interactionServer", "TURN-Try another index: ");
-                                continue;
-                            }
-                            break;
-                        } catch (NumberFormatException e){
+                        if(id<0 || id>=finalcoordinates.size()){
                             server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                             server.write(ch, "interactionServer", "TURN-Try another index: ");
+                            continue;
                         }
+                        break;
                     }
                     c = finalcoordinates.get(id);
                     m.updateBuilding(c);
@@ -220,28 +224,23 @@ public class PrometheusTurn extends GodTurn {
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
-                try{
-                    String msg = server.read(ch);
-                    if(msg == null){
-                        for(ClientHandler chl : server.getClientHandlers()){
-                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                        }
-                        ch.resetConnected();
-                        ch.closeConnection();
-                        return false;
-                    }else{
-                        id = Integer.parseInt(msg);
+                String msg = server.read(ch);
+                if(msg == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
                     }
-                    if(id<0 || id>=coordinates0.size()){
-                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "TURN-Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }else{
+                    id = Integer.parseInt(msg);
+                }
+                if(id<0 || id>=coordinates0.size()){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                     server.write(ch, "interactionServer", "TURN-Try another index: ");
+                    continue;
                 }
+                break;
             }
             c = coordinates0.get(id);
         }
@@ -255,28 +254,23 @@ public class PrometheusTurn extends GodTurn {
             server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
             int id;
             while(true){
-                try{
-                    String msg = server.read(ch);
-                    if(msg == null){
-                        for(ClientHandler chl : server.getClientHandlers()){
-                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
-                        }
-                        ch.resetConnected();
-                        ch.closeConnection();
-                        return false;
-                    }else{
-                        id = Integer.parseInt(msg);
+                String msg = server.read(ch);
+                if(msg == null){
+                    for(ClientHandler chl : server.getClientHandlers()){
+                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
                     }
-                    if(id<0 || id>=coordinates1.size()){
-                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
-                        server.write(ch, "interactionServer", "TURN-Try another index: ");
-                        continue;
-                    }
-                    break;
-                } catch (NumberFormatException e){
+                    ch.resetConnected();
+                    ch.closeConnection();
+                    return false;
+                }else{
+                    id = Integer.parseInt(msg);
+                }
+                if(id<0 || id>=coordinates1.size()){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                     server.write(ch, "interactionServer", "TURN-Try another index: ");
+                    continue;
                 }
+                break;
             }
             c = coordinates1.get(id);
         }
