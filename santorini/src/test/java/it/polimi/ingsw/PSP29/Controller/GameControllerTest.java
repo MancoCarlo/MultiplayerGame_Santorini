@@ -236,4 +236,37 @@ public class GameControllerTest {
         assertFalse(gc.getAthenaOn());
     }
 
+    @Test
+    public void GameExeTest() throws FileNotFoundException {
+        gc.getMatch().addPlayer(new Player("Luca", 21, 0));
+        gc.getMatch().addPlayer(new Player("Carlo", 21, 1));
+        ClientHandler ch1 = new ClientHandlerTest("src/test/resources/GameController/gameExeTestA");
+        ch1.setName("Luca");
+        ClientHandler ch2 = new ClientHandlerTest("src/test/resources/GameController/gameExeTestB");
+        ch2.setName("Carlo");
+        server.getClientHandlers().add(ch1);
+        server.getClientHandlers().add(ch2);
+        Coordinate c1 = new Coordinate(1,1);
+        Coordinate c2 = new Coordinate(2,2);
+        Coordinate c3 = new Coordinate(3,3);
+        Coordinate c4 = new Coordinate(4,4);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 0, c1);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Luca"), 1, c2);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 0, c3);
+        gc.getMatch().updateMovement(gc.getMatch().getPlayer("Carlo"), 1, c4);
+        gc.getMatch().getBoard()[1][1].upgradeLevel();
+        gc.getMatch().getBoard()[1][1].upgradeLevel();
+        gc.getMatch().getBoard()[0][0].upgradeLevel();
+        gc.getMatch().getBoard()[0][0].upgradeLevel();
+        gc.getMatch().getBoard()[0][0].upgradeLevel();
+        gc.getMatch().getPlayer("Luca").setInGame(true);
+        gc.getMatch().getPlayer("Carlo").setInGame(true);
+        gc.getMatch().loadGods();
+        gc.getMatch().getPlayer("Luca").setCard(gc.getMatch().getGods(), 2);
+        gc.getMatch().getPlayer("Carlo").setCard(gc.getMatch().getGods(), 1);
+        gc.setNumPlayers(2);
+        gc.gameExe();
+        assertEquals(gc.getMatch().getPlayer("Luca").getWorker(0).getPosition(), new Coordinate(0,0));
+    }
+
 }
