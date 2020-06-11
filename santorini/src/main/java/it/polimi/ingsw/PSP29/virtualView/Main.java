@@ -1,4 +1,4 @@
-package it.polimi.ingsw.PSP29.Controller;
+package it.polimi.ingsw.PSP29.virtualView;
 
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
