@@ -298,7 +298,7 @@ public class BaseTurn implements Turn {
 
     /**
      * print the list of valid coordinates
-     * @param coordinates
+     * @param coordinates list of coordinates
      * @return the string that print the list
      */
     @Override

@@ -54,7 +54,6 @@ public class Player implements Serializable {
      * @param id the worker identifier
      * @param b the gameboard
      * @param c the coordinate in wich the worker had to be put
-     * @return true if the worker has been put in the coordinate c, else return false
      */
     public void putWorker(int id, Box[][] b, Coordinate c) {
         if (workers.get(id).getPosition() == null) {

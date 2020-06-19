@@ -56,9 +56,6 @@ public class Box implements Serializable {
         return levelledUp;
     }
 
-    /**
-     * change the state of the box if a worker builds in the box during his turn
-     */
     public void setLevelledUp(boolean l) {
         levelledUp=l;
     }
@@ -84,6 +81,8 @@ public class Box implements Serializable {
 
     /**
      * print on monitor the state of box: 0 if empty else 1 and the ID of the player in the box
+     * @param m match played
+     * @return to String of the Box
      */
     public String printEmpty(Match m) {
         String s;

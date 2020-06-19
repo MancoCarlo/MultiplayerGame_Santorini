@@ -158,6 +158,7 @@ public class Server
 
     /**
      * control if a player disconnected from the server and start a new game
+     * @return true if one player is disconnected
      */
     public boolean controlEndGame(){
         gc.getMatch().updatePlayers(clientHandlers);
@@ -262,7 +263,7 @@ public class Server
      *
      * wait until the method is executed
      *
-     * @param clientHandler
+     * @param clientHandler that is interfaced with client
      * @param meth the method to process
      */
     public void process(ClientHandler clientHandler, String meth){
@@ -278,7 +279,7 @@ public class Server
      *
      * reset the variable in clienthandler linked to the method passed
      *
-     * @param clientHandler
+     * @param clientHandler that is interfaced with client
      * @param meth the method to reset
      */
     public void processReset(ClientHandler clientHandler, String meth){
@@ -294,7 +295,8 @@ public class Server
      *
      * accept a client and add him to the players list
      *
-     * @param clientHandler
+     * @param clientHandler that is interfaced with client
+     * @return true if the client is logged correctly, else false
      */
     public boolean loginPlayer(ClientHandler clientHandler){
 
@@ -349,9 +351,10 @@ public class Server
      *
      * write a message to the client
      *
-     * @param clientHandler
+     * @param clientHandler that is interfaced with client
      * @param s the type of message
      * @param msg the message
+     * @return true if the message is sended to Client correctly, else false
      */
     public boolean write(ClientHandler clientHandler, String s, String msg){
         clientHandler.sendMessage(s, msg);
@@ -367,7 +370,7 @@ public class Server
      *
      * read a message from the client
      *
-     * @param clientHandler
+     * @param clientHandler that must read the message from his client
      * @return the message
      */
     public String read(ClientHandler clientHandler){
@@ -394,7 +397,7 @@ public class Server
      * connect a client to the server
      *
      * @param socket the server
-     * @param clientHandler
+     * @param clientHandler that must be connected to client
      * @return the clientHandler linked to the client
      */
     public ClientHandler connection(ServerSocket socket,ClientHandler clientHandler){
@@ -416,7 +419,8 @@ public class Server
      *
      * ask to the player how many players will be in the game
      *
-     * @param clientHandler
+     * @param clientHandler that create the lobby
+     * @return true if the lobby is created succesfully
      */
     public boolean createLobby(ClientHandler clientHandler) {
         if(!write(clientHandler, "interactionServer", "LOBB-How many players 2 or 3? ")){

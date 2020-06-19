@@ -51,14 +51,8 @@ public class Worker implements Serializable {
 
     public boolean getMoved(){ return moved; }
 
-    /**
-     * change if the worker has been moved in this turn
-     */
     public void changeMoved(boolean m){ moved = m; }
 
-    /**
-     * change if the worker has built in this turn
-     */
     public void changeBuilt(boolean b) { built=b;    }
 
     public boolean getBuilt(){ return built; }

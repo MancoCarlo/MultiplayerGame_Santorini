@@ -46,7 +46,7 @@ public class ServerAdapter implements Runnable
 
     /**
      * add an observer to the list
-     * @param observer
+     * @param observer observer
      */
     public void addObserver(ServerObserver observer)
     {
@@ -57,7 +57,7 @@ public class ServerAdapter implements Runnable
 
     /**
      * remove an observer from the list
-     * @param observer
+     * @param observer observer
      */
     public void removeObserver(ServerObserver observer)
     {
@@ -100,7 +100,7 @@ public class ServerAdapter implements Runnable
 
     /**
      * set nextCommand to STOP
-     * @param cmd
+     * @param cmd client's command
      */
     public synchronized void Stop(String cmd)
     {
@@ -348,7 +348,6 @@ public class ServerAdapter implements Runnable
     /**
      * execution of the command GET_MESSAGE
      * @throws IOException if client disconnected
-     * @throws ClassNotFoundException if cast doesn't work
      */
     private synchronized void doGetMessage() throws IOException
     {

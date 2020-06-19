@@ -61,6 +61,8 @@ public class ClientHandler implements Runnable
 
     /**
      * set nextCommand to SEND_MESSAGE
+     * @param met the method that must be called by Server Adapter
+     * @param msg the message that must be sended to client
      */
     public synchronized void sendMessage(String met, String msg)
     {

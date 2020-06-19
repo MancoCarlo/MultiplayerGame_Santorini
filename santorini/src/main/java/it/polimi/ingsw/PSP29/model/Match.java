@@ -33,6 +33,8 @@ public class Match implements Serializable {
 
     /**
      * get a player from his name
+     * @param n Username of the player that must be searched
+     * @return null if there isn't n in players list, else return the Player
      */
     public Player getPlayer(String n){
         for(Player p : this.players){
@@ -45,6 +47,7 @@ public class Match implements Serializable {
 
     /**
      * add players to the match
+     * @param player the player that must be added to players list
      */
     public void addPlayer(Player player){
             players.add(player);
@@ -177,6 +180,7 @@ public class Match implements Serializable {
 
     /**
      * print the board on monitor
+     * @return toString of Board
      */
     public String printBoard(){
         StringBuilder gameboard = new StringBuilder();

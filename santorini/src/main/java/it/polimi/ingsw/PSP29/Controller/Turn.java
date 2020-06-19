@@ -75,7 +75,7 @@ public interface Turn {
 
     /**
      * print the list of valids coordinate
-     * @param coordinates
+     * @param coordinates list of coordinates
      * @return the string that print the list
      */
     public String printCoordinates(ArrayList<Coordinate> coordinates);

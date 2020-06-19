@@ -28,12 +28,6 @@ public class GameController {
         myturn = 0;
     }
 
-    public int getMyturn() { return myturn; }
-
-    public ArrayList<Integer> getGodIndex(){
-        return godIndex;
-    }
-
     public Match getMatch() {
         return match;
     }
@@ -111,6 +105,7 @@ public class GameController {
 
     /**
      * assign one God to each player
+     * @return true if the gods are assigned correctly
      */
     public boolean godsAssignement(){
         match.getGods().clear();
@@ -274,6 +269,7 @@ public class GameController {
 
     /**
      * ask to the client where he want to put his players
+     * @return true if workers are placed succesfully
      */
     public boolean putWorkers(){
         resetWorkerPos();
