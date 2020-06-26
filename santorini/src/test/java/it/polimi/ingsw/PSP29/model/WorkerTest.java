@@ -115,7 +115,7 @@ public class WorkerTest {
 
     @Test
     public void changeBuilt_getBuilt_correctOutput(){
-        worker.setBuilt(true);
+        worker.changeBuilt(true);
         assertTrue(worker.getBuilt());
         worker.changeBuilt(false);
         assertFalse(worker.getBuilt());
@@ -123,7 +123,7 @@ public class WorkerTest {
 
     @Test
     public void changeMoved_getMoved_correctOutput(){
-        worker.setMoved(true);
+        worker.changeMoved(true);
         assertTrue(worker.getMoved());
         worker.changeMoved(false);
         assertFalse(worker.getMoved());

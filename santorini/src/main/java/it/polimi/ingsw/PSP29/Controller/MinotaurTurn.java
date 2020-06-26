@@ -178,16 +178,6 @@ public class MinotaurTurn extends GodTurn {
         }
         return false;
     }
-
-    @Override
-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
-        return super.whereCanMove(match,ch,id,athenaOn);
-    }
-
-    @Override
-    public String printCoordinates(ArrayList<Coordinate> coordinates) {
-        return super.printCoordinates(coordinates);
-    }
 }
 
 

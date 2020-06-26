@@ -370,8 +370,8 @@ public class GameController {
                 p.getWorkers().get(i).setPosition(null);
                 p.getWorkers().get(i).setID(i);
                 p.getWorkers().get(i).setIDplayer(p.getNickname());
-                p.getWorkers().get(i).setMoved(false);
-                p.getWorkers().get(i).setBuilt(false);
+                p.getWorkers().get(i).changeMoved(false);
+                p.getWorkers().get(i).changeBuilt(false);
             }
         }
     }

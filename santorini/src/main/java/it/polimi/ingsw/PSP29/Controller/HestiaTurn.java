@@ -91,11 +91,6 @@ public class HestiaTurn extends GodTurn{
         return nopower;
     }
 
-    @Override
-    public ArrayList<Coordinate> whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn) {
-        return super.whereCanMove(match, ch, id, athenaOn);
-    }
-
     public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id, int n) {
         ArrayList<Coordinate> coordinates = new ArrayList<>();
         Player player = match.getPlayer(ch.getName());
