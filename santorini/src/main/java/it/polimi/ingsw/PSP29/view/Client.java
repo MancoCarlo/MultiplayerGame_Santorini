@@ -18,14 +18,6 @@ public class Client implements Runnable, ServerObserver
     private boolean rsp = false;
     private String ip;
 
-    public static void main( String[] args )
-    {
-        /* Instantiate a new Client which will also receive events from
-         * the server by implementing the ServerObserver interface */
-        Client client = new Client();
-        client.run();
-    }
-
 
     @Override
     public void run()
