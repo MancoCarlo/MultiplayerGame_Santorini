@@ -6,11 +6,29 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Match implements Serializable {
+    /**
+     * the number of columns of the board
+     */
     private static int columns = 5;
+    /**
+     * the number of rows of the board
+     */
     private static int rows = 5;
+    /**
+     * the board
+     */
     private Box[][] board;
+    /**
+     * the list of players
+     */
     private ArrayList<Player> players;
+    /**
+     * the list of gods in this game
+     */
     private ArrayList<God> gods;
+    /**
+     * the list of colors associated to the player
+     */
     private ArrayList<Color> colors;
 
     public Match() {

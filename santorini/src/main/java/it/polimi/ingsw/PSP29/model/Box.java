@@ -5,10 +5,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Box implements Serializable {
+    /**
+     * the position of the box in the board
+     */
     private Coordinate location;
+    /**
+     * the level of the box
+     */
     private int level;
+    /**
+     * true if there's not a worker in the box
+     */
     private boolean empty;
+    /**
+     * the worker in this box
+     */
     private Worker workerBox;
+    /**
+     * true when a box is levelled up in this turn
+     */
     boolean levelledUp;
 
     public Box(int x, int y){

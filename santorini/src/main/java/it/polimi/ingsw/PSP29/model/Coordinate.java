@@ -3,7 +3,13 @@ package it.polimi.ingsw.PSP29.model;
 import java.io.Serializable;
 
 public class Coordinate implements Serializable {
+    /**
+     * the horizontal coordinate
+     */
     private int x;
+    /**
+     * the vertical coordinate
+     */
     private int y;
 
     public Coordinate(int a, int b){

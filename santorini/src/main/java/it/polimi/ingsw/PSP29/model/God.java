@@ -3,8 +3,17 @@ package it.polimi.ingsw.PSP29.model;
 import java.io.Serializable;
 
 public class God implements Serializable {
+    /**
+     * the god's identification number
+     */
     private int ID;
+    /**
+     * the god's name
+     */
     private String name;
+    /**
+     * the description of the god
+     */
     private String description;
 
     public God(int i, String n, String d){
