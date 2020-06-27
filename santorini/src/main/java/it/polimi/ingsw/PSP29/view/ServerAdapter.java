@@ -12,21 +12,59 @@ import it.polimi.ingsw.PSP29.model.Color;
 
 public class ServerAdapter implements Runnable
 {
+    /**
+     * commands that manage the server adapter
+     */
     private enum Commands {
         GET_MESSAGE,
         SERVICE_MESSAGE,
         INTERACTION_SERVER,
         STOP
     }
+
+    /**
+     * the new command for the server adapter
+     */
     private Commands nextCommand;
+
+    /**
+     * the message received from the server
+     */
     private String cmd;
+
+    /**
+     * tell if the serveradapter is connected
+     */
     private boolean connected = false;
+
+    /**
+     * true if the cli is active
+     */
     private boolean CLI = true;
+
+    /**
+     * GUI of the client
+     */
     private GUI gui;
+
+    /**
+     * the server
+     */
     private Socket server;
+
+    /**
+     * output stream
+     */
     private ObjectOutputStream outputStm;
+
+    /**
+     * input stream
+     */
     private ObjectInputStream inputStm;
 
+    /**
+     * observer list
+     */
     private List<ServerObserver> observers = new ArrayList<>();
 
 

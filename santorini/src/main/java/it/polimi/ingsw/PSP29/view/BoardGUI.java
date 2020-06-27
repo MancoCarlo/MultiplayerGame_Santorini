@@ -5,6 +5,10 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class BoardGUI extends JPanel {
+
+    /**
+     * single button is a box of the board
+     */
     private ArrayList<JButton> buttons = new ArrayList<>();
 
     public BoardGUI(){

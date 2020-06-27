@@ -13,9 +13,24 @@ import it.polimi.ingsw.PSP29.model.Color;
 
 public class Client implements Runnable, ServerObserver
 {
+    /**
+     * message from the server
+     */
     private String response = null;
+
+    /**
+     * method that must be invoked
+     */
     private String method = null;
+
+    /**
+     * message that must be sent to the server
+     */
     private boolean rsp = false;
+
+    /**
+     * ip of the server
+     */
     private String ip;
 
 

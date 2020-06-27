@@ -10,9 +10,19 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 public class GUI extends JFrame implements Runnable{
 
-
+    /**
+     * string that contains the message that must be sent
+     */
     private String message;
+
+    /**
+     * true if the message is sent
+     */
     private boolean sentMessage = false;
+
+    /**
+     * true if the gui is loaded
+     */
     private boolean GuiLoaded = false;
     private JPanel topPanel;
     private JPanel bottomPanel;
@@ -22,11 +32,24 @@ public class GUI extends JFrame implements Runnable{
     private JPanel mainPanel;
     private String lastViewCenter;
 
+    /**
+     * list used by support
+     */
     private ArrayList<String> list;
 
+    /**
+     * the new command for the gui
+     */
     private Commands nextCommand;
+
+    /**
+     * string that contains the message from the server
+     */
     private String command;
 
+    /**
+     * the Panel that contains the board
+     */
     private BoardGUI B;
 
     public boolean getGuiLoaded() {

@@ -13,13 +13,44 @@ import java.util.ArrayList;
 
 public class Server
 {
+    /**
+     * Port where the server work
+     */
     public final static int SOCKET_PORT = 43123;
+
+    /**
+     * Controller that manage the game
+     */
     private static GameController gc;
+
+    /**
+     * num of player in the match
+     */
     private int numPlayers=0;
+
+    /**
+     * timeout for the interaction with client
+     */
     private boolean timeout = false;
+
+    /**
+     * players currently logged
+     */
     private int countPlayers = 0;
+
+    /**
+     * socket of the server
+     */
     private ServerSocket socket;
+
+    /**
+     * array of clientHandlers
+     */
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+
+    /**
+     * boolean that tell the server if the client will play another match
+     */
     private boolean playAgain;
 
     /**

@@ -13,22 +13,73 @@ import java.util.Timer;
 
 public class ClientHandler implements Runnable
 {
+    /**
+     * Command that control the clientHandler's thread
+     */
     private enum Commands {
         SEND_MESSAGE,
         TAKE_MESSAGE,
         STOP
     }
+
+    /**
+     * the new command for the thread
+     */
     private Commands nextCommand;
+
+    /**
+     * connection with the client
+     */
     private Socket client;
+
+    /**
+     * name of the client connected
+     */
     private String name;
+
+    /**
+     * age of the client connected
+     */
     private int age;
+
+    /**
+     * message that must be sended or received
+     */
     private String message;
+
+    /**
+     * name of the method that the client must invoke
+     */
     private String method;
+
+    /**
+     * tell if the client is connected
+     */
     private boolean connected;
+
+    /**
+     * tell if the messege is sent
+     */
     private boolean sentMessage;
+
+    /**
+     * tell if the message is readed
+     */
     private boolean readMessage;
+
+    /**
+     * output stream
+     */
     ObjectOutputStream output;
+
+    /**
+     * input stream
+     */
     ObjectInputStream input;
+
+    /**
+     * the server
+     */
     private Server server;
 
     /**

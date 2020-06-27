@@ -9,11 +9,29 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class IndexGUI extends JFrame implements Runnable{
+
+    /**
+     * contains the command
+     */
     private JLabel text;
+
+    /**
+     * list where the client must select the index
+     */
     private ArrayList<String> list;
+
     private JPanel optionPanel;
+
     private ArrayList<JButton> options;
+
+    /**
+     * index selected
+     */
     private int index;
+
+    /**
+     * true if the client have chose the index
+     */
     private boolean indexObtained;
 
     @Override
