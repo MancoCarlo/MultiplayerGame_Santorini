@@ -11,13 +11,37 @@ import java.util.Scanner;
 
 public class GameController {
 
+    /**
+     * the match controlled by the GameController
+     */
     private Match match;
+    /**
+     * the server
+     */
     private Server server;
+    /**
+     * true if a player win
+     */
     private boolean endGame;
+    /**
+     * true when a player use his god in this turn
+     */
     private boolean godOn;
+    /**
+     * the list of the indexes linked to the gods used in this game
+     */
     private ArrayList<Integer> godIndex = new ArrayList<>();
+    /**
+     * true if Athena power is active
+     */
     private boolean athenaOn;
+    /**
+     * the index of the player that play this turn
+     */
     private int myturn;
+    /**
+     * the number of players in this match
+     */
     private int numPlayers;
 
     public GameController(Server s){
