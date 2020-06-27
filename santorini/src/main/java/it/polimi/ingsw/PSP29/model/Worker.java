@@ -3,11 +3,29 @@ package it.polimi.ingsw.PSP29.model;
 import java.io.Serializable;
 
 public class Worker implements Serializable {
+    /**
+     * the worker id
+     */
     private int ID;
+    /**
+     * the worker's player name
+     */
     private String IDplayer;
+    /**
+     * the position of the worker in the board
+     */
     private Coordinate position = null;
+    /**
+     * the previous position of the worker
+     */
     private Coordinate prev_position = null;
+    /**
+     * true if the worker moved in this turn
+     */
     private boolean moved;
+    /**
+     * true if the worker built in this turn
+     */
     private boolean built;
 
     public Worker(int id, String nickP){
