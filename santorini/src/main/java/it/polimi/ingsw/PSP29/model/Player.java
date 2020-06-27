@@ -4,11 +4,34 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Player implements Serializable {
+    /**
+     * nickname of the player
+     */
     private String nickname;
+
+    /**
+     * age of the player
+     */
     private int age;
+
+    /**
+     * id that identify the player
+     */
     private int id;
+
+    /**
+     * player's god card
+     */
     God card;
+
+    /**
+     * player's workers
+     */
     ArrayList<Worker> workers;
+
+    /**
+     * true if is in game, else false
+     */
     private boolean inGame = false;
 
     public Player(String nick, int a, int id) {
@@ -82,7 +105,7 @@ public class Player implements Serializable {
 
     /**
      * return a string that contains player's worker and them position
-     * @return
+     * @return string that contains workers
      */
     public String printWorkers(){
         String s="Workers:\n";

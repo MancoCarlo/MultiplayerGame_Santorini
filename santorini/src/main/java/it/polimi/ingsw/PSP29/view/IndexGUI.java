@@ -370,6 +370,10 @@ public class IndexGUI extends JFrame implements Runnable{
         return index;
     }
 
+    /**
+     * close the frame
+     * @return
+     */
     public synchronized int close(){
         index=1;
         indexObtained=true;
@@ -377,6 +381,7 @@ public class IndexGUI extends JFrame implements Runnable{
     }
 
     /**
+     * return true if the list is a god list
      * @param list list of strings
      * @return true if the list represents a list of gods
      */

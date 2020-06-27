@@ -1628,10 +1628,17 @@ public class GUI extends JFrame implements Runnable{
         return message;
     }
 
+    /**
+     * return true if the message is sent
+     * @return boolean
+     */
     public synchronized boolean didSentMessage(){
         return sentMessage;
     }
 
+    /**
+     * reset sentMessage to false
+     */
     public synchronized void resetSentMessage(){
         sentMessage = false;
     }
@@ -1847,6 +1854,9 @@ public class GUI extends JFrame implements Runnable{
     }
 
 
+    /**
+     * manage the closure of the frame
+     */
     public void closeFrame(){
         this.setVisible(false);
         topPanel.setVisible(false);

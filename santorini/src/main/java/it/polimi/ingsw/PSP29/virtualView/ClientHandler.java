@@ -31,6 +31,11 @@ public class ClientHandler implements Runnable
     ObjectInputStream input;
     private Server server;
 
+    /**
+     * define the server and client attributes
+     * @param client
+     * @param server
+     */
     public void makeCH(Socket client, Server server)
     {
         this.client = client;
@@ -199,6 +204,9 @@ public class ClientHandler implements Runnable
         name=n;
     }
 
+    /**
+     * set connected to false
+     */
     public void resetConnected(){
         connected = false;
     }
