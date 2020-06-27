@@ -54,7 +54,7 @@ public class Match implements Serializable {
     }
 
     /**
-     *
+     * remove a player from the players list
      * @param p player to be removed
      */
     public void removePlayer(Player p){
@@ -104,7 +104,7 @@ public class Match implements Serializable {
     }
 
     /**
-     *
+     * update the position of one worker in game
      * @param p owner of the worker that make the move
      * @param id identifier's worker
      * @param c destination of the worker
@@ -114,6 +114,7 @@ public class Match implements Serializable {
     }
 
     /**
+     * Upgrade the level of one box in the board
      * @param c position of the box that must be upgraded
      */
     public void updateBuilding(Coordinate c){
@@ -121,7 +122,7 @@ public class Match implements Serializable {
     }
 
     /**
-     *
+     * remove the workers of the looser player
      * @param p looser player
      */
     public void removeWorkers(Player p){
@@ -193,6 +194,7 @@ public class Match implements Serializable {
     }
 
     /**
+     * return a string that contains the list of gods
      * @return the string that print the list of gods
      */
     public String printGodlist(){
@@ -204,6 +206,7 @@ public class Match implements Serializable {
     }
 
     /**
+     * return a string that contains the list of the players
      * @return the string that print the list of players
      */
     public String printPlayers(){
@@ -246,7 +249,8 @@ public class Match implements Serializable {
     }
 
     /**
-     * @return the number of players in game
+     * return the number of players in game
+     * @return count of the number of players in game
      */
     public int playersInGame(){
         int count = 0;

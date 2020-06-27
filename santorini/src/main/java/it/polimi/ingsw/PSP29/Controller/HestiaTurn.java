@@ -91,6 +91,14 @@ public class HestiaTurn extends GodTurn{
         return nopower;
     }
 
+    /**
+     * create and arrayList of box where the player can build
+     * @param match game played
+     * @param ch client handler that must build
+     * @param id id of the worker chosen
+     * @param n number of times that player can build
+     * @return arrayList of box
+     */
     public ArrayList<Coordinate> whereCanBuild(Match match, ClientHandler ch, int id, int n) {
         ArrayList<Coordinate> coordinates = new ArrayList<>();
         Player player = match.getPlayer(ch.getName());
@@ -105,6 +113,14 @@ public class HestiaTurn extends GodTurn{
         return coordinates;
     }
 
+    /**
+     *
+     * @param match game played
+     * @param w worker of the player
+     * @param c coordinate where worker should build
+     * @param n number of times that player can build
+     * @return true if the worker can build in c
+     */
     public boolean canBuildIn(Match match,Worker w,Coordinate c, int n){
         if(n==1){
             return super.canBuildIn(match, w, c);

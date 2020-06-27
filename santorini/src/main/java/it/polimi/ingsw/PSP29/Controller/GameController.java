@@ -45,6 +45,7 @@ public class GameController {
     }
 
     /**
+     * control if a movement is possible, and then it does
      * @param p the player
      * @param id worker's id
      * @param c coordinate

@@ -80,6 +80,10 @@ public class Player implements Serializable {
         card=g.get(i);
     }
 
+    /**
+     * return a string that contains player's worker and them position
+     * @return
+     */
     public String printWorkers(){
         String s="Workers:\n";
         for(int i=0; i<workers.size(); i++){

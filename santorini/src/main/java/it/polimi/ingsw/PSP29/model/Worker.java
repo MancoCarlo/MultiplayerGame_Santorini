@@ -43,8 +43,16 @@ public class Worker implements Serializable {
 
     public boolean getMoved(){ return moved; }
 
+    /**
+     * set moved
+     * @param m boolean that set moved
+     */
     public void changeMoved(boolean m){ moved = m; }
 
+    /**
+     * set built
+     * @param b boolean that set built
+     */
     public void changeBuilt(boolean b) { built=b;    }
 
     public boolean getBuilt(){ return built; }
