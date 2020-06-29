@@ -1,0 +1,187 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AtlasTurn</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AtlasTurn (it.polimi.ingsw.PSP29.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AtlasTurn</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,4%
+  </span>
+  <span class="absValue">
+    (61/ 62)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.model.*;
+<i>4</i>&nbsp;import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+<i>5</i>&nbsp;import it.polimi.ingsw.PSP29.virtualView.Server;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.ArrayList;
+<i>8</i>&nbsp;import java.util.Scanner;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;public class AtlasTurn extends GodTurn{
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    public AtlasTurn(Turn turn) {
+<b class="fc"><i>13</i>&nbsp;        super(turn);</b>
+<b class="fc"><i>14</i>&nbsp;    }</b>
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    /**
+<i>17</i>&nbsp;     * call build() of the superclass while level of the box in c is 4 or simply call build()
+<i>18</i>&nbsp;     * @param m match played
+<i>19</i>&nbsp;     * @param ch owner of the turn
+<i>20</i>&nbsp;     * @param server manage the interaction with client
+<i>21</i>&nbsp;     * @return true if w can build in c, else false
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    @Override
+<i>24</i>&nbsp;    public boolean build(Match m, ClientHandler ch, Server server){
+<b class="fc"><i>25</i>&nbsp;        int wID=2;</b>
+<b class="fc"><i>26</i>&nbsp;        Player p = m.getPlayer(ch.getName());</b>
+<b class="fc"><i>27</i>&nbsp;        if(p.getWorker(0).getMoved()) wID = 0;</b>
+<b class="fc"><i>28</i>&nbsp;        if(p.getWorker(1).getMoved()) wID = 1;</b>
+<b class="fc"><i>29</i>&nbsp;        ArrayList&lt;Coordinate&gt; coordinates = whereCanBuild(m, ch, wID);</b>
+<b class="fc"><i>30</i>&nbsp;        server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Build: \n&quot;);</b>
+<b class="fc"><i>31</i>&nbsp;        if(coordinates.size()!=0){</b>
+<b class="fc"><i>32</i>&nbsp;            Coordinate c = null;</b>
+<b class="fc"><i>33</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-&quot;+printCoordinates(coordinates));</b>
+<b class="fc"><i>34</i>&nbsp;            server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Where you want to build?\n&quot;);</b>
+<i>35</i>&nbsp;            int id;
+<i>36</i>&nbsp;            while(true){
+<i>37</i>&nbsp;                try{
+<b class="fc"><i>38</i>&nbsp;                    String msg = server.read(ch);</b>
+<b class="fc"><i>39</i>&nbsp;                    if(msg == null){</b>
+<b class="fc"><i>40</i>&nbsp;                        for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>41</i>&nbsp;                            server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>42</i>&nbsp;                        }</b>
+<b class="fc"><i>43</i>&nbsp;                        ch.resetConnected();</b>
+<b class="fc"><i>44</i>&nbsp;                        ch.closeConnection();</b>
+<b class="fc"><i>45</i>&nbsp;                        return false;</b>
+<i>46</i>&nbsp;                    }else{
+<b class="fc"><i>47</i>&nbsp;                        id = Integer.parseInt(msg);</b>
+<i>48</i>&nbsp;                    }
+<b class="fc"><i>49</i>&nbsp;                    if(id&lt;0 || id&gt;=coordinates.size()){</b>
+<b class="fc"><i>50</i>&nbsp;                        server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>51</i>&nbsp;                        server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Try another index: &quot;);</b>
+<b class="fc"><i>52</i>&nbsp;                        continue;</b>
+<i>53</i>&nbsp;                    }
+<b class="fc"><i>54</i>&nbsp;                    break;</b>
+<b class="fc"><i>55</i>&nbsp;                } catch (NumberFormatException e){</b>
+<b class="fc"><i>56</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>57</i>&nbsp;                    server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Try another index: &quot;);</b>
+<b class="fc"><i>58</i>&nbsp;                }</b>
+<i>59</i>&nbsp;            }
+<b class="fc"><i>60</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-You can use Atlas&#39;s power\n&quot;);</b>
+<b class="fc"><i>61</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-1) YES\n2)NO\n&quot;);</b>
+<b class="fc"><i>62</i>&nbsp;            server.write(ch, &quot;interactionServer&quot;, &quot;INDX-Would you use Atlas&#39;s power? (You can build a level 4 building) &quot;);</b>
+<i>63</i>&nbsp;
+<b class="fc"><i>64</i>&nbsp;            String response = server.read(ch);</b>
+<b class="fc"><i>65</i>&nbsp;            if(response == null){</b>
+<b class="fc"><i>66</i>&nbsp;                for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>67</i>&nbsp;                    server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>68</i>&nbsp;                }</b>
+<b class="fc"><i>69</i>&nbsp;                ch.resetConnected();</b>
+<b class="fc"><i>70</i>&nbsp;                ch.closeConnection();</b>
+<b class="fc"><i>71</i>&nbsp;                return false;</b>
+<i>72</i>&nbsp;            }else{
+<b class="fc"><i>73</i>&nbsp;                while(!response.equals(&quot;1&quot;) &amp;&amp; !response.equals(&quot;2&quot;)){</b>
+<b class="fc"><i>74</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>75</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-1) YES\n2) NO\n&quot;);</b>
+<b class="fc"><i>76</i>&nbsp;                    server.write(ch, &quot;interactionServer&quot;, &quot;INDX-Would you use Atlas&#39;s power? (You can build a level 4 building) &quot;);</b>
+<b class="fc"><i>77</i>&nbsp;                    response = server.read(ch);</b>
+<b class="fc"><i>78</i>&nbsp;                    if(response == null){</b>
+<b class="fc"><i>79</i>&nbsp;                        for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>80</i>&nbsp;                            server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>81</i>&nbsp;                        }</b>
+<b class="fc"><i>82</i>&nbsp;                        ch.resetConnected();</b>
+<b class="fc"><i>83</i>&nbsp;                        ch.closeConnection();</b>
+<b class="fc"><i>84</i>&nbsp;                        return false;</b>
+<i>85</i>&nbsp;                    }
+<i>86</i>&nbsp;                }
+<i>87</i>&nbsp;            }
+<b class="fc"><i>88</i>&nbsp;            c = coordinates.get(id);</b>
+<i>89</i>&nbsp;
+<b class="fc"><i>90</i>&nbsp;            if(response.equals(&quot;1&quot;)){</b>
+<b class="fc"><i>91</i>&nbsp;                while(m.getBoard()[c.getX()][c.getY()].getLevel() &lt; 4){</b>
+<b class="fc"><i>92</i>&nbsp;                    m.updateBuilding(c);</b>
+<i>93</i>&nbsp;                }
+<i>94</i>&nbsp;            }else{
+<b class="fc"><i>95</i>&nbsp;                m.updateBuilding(c);</b>
+<i>96</i>&nbsp;            }
+<b class="fc"><i>97</i>&nbsp;            m.getBoard()[c.getX()][c.getY()].setLevelledUp(true);</b>
+<b class="fc"><i>98</i>&nbsp;            p.getWorker(wID).changeBuilt(true);</b>
+<b class="fc"><i>99</i>&nbsp;            return true;</b>
+<i>100</i>&nbsp;        }else{
+<b class="nc"><i>101</i>&nbsp;            return false;</b>
+<i>102</i>&nbsp;        }
+<i>103</i>&nbsp;    }
+<i>104</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-29 12:21</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,721 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GameController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GameController (it.polimi.ingsw.PSP29.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,9%
+  </span>
+  <span class="absValue">
+    (16/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    77,7%
+  </span>
+  <span class="absValue">
+    (241/ 310)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.model.*;
+<i>4</i>&nbsp;import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+<i>5</i>&nbsp;import it.polimi.ingsw.PSP29.virtualView.Server;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.io.FileNotFoundException;
+<i>8</i>&nbsp;import java.io.IOException;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;import java.util.Scanner;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;public class GameController {
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    /**
+<i>15</i>&nbsp;     * the match controlled by the GameController
+<i>16</i>&nbsp;     */
+<i>17</i>&nbsp;    private Match match;
+<i>18</i>&nbsp;    /**
+<i>19</i>&nbsp;     * the server
+<i>20</i>&nbsp;     */
+<i>21</i>&nbsp;    private Server server;
+<i>22</i>&nbsp;    /**
+<i>23</i>&nbsp;     * true if a player win
+<i>24</i>&nbsp;     */
+<i>25</i>&nbsp;    private boolean endGame;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * true when a player use his god in this turn
+<i>28</i>&nbsp;     */
+<i>29</i>&nbsp;    private boolean godOn;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * the list of the indexes linked to the gods used in this game
+<i>32</i>&nbsp;     */
+<b class="fc"><i>33</i>&nbsp;    private ArrayList&lt;Integer&gt; godIndex = new ArrayList&lt;&gt;();</b>
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * true if Athena power is active
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    private boolean athenaOn;
+<i>38</i>&nbsp;    /**
+<i>39</i>&nbsp;     * the index of the player that play this turn
+<i>40</i>&nbsp;     */
+<i>41</i>&nbsp;    private int myturn;
+<i>42</i>&nbsp;    /**
+<i>43</i>&nbsp;     * the number of players in this match
+<i>44</i>&nbsp;     */
+<i>45</i>&nbsp;    private int numPlayers;
+<i>46</i>&nbsp;
+<b class="fc"><i>47</i>&nbsp;    public GameController(Server s){</b>
+<b class="fc"><i>48</i>&nbsp;        match = new Match();</b>
+<b class="fc"><i>49</i>&nbsp;        endGame=false;</b>
+<b class="fc"><i>50</i>&nbsp;        godOn=false;</b>
+<b class="fc"><i>51</i>&nbsp;        server = s;</b>
+<b class="fc"><i>52</i>&nbsp;        myturn = 0;</b>
+<b class="fc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    public Match getMatch() {
+<b class="fc"><i>56</i>&nbsp;        return match;</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<b class="fc"><i>59</i>&nbsp;    public boolean getAthenaOn() { return athenaOn; }</b>
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;    public void setAthenaOn(boolean b) { athenaOn = b; }</b>
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    public void setNumPlayers(int numPlayers) {
+<b class="fc"><i>64</i>&nbsp;        this.numPlayers = numPlayers;</b>
+<b class="fc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    public int getTurn() {
+<b class="nc"><i>68</i>&nbsp;        return myturn;</b>
+<i>69</i>&nbsp;    }
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /**
+<i>72</i>&nbsp;     * control if a movement is possible, and then it does
+<i>73</i>&nbsp;     * @param p the player
+<i>74</i>&nbsp;     * @param id worker&#39;s id
+<i>75</i>&nbsp;     * @param c coordinate
+<i>76</i>&nbsp;     * @return true if the worker can be put in the coordinate c
+<i>77</i>&nbsp;     */
+<i>78</i>&nbsp;    public boolean controlMovement(Player p, int id, Coordinate c){
+<b class="fc"><i>79</i>&nbsp;        if(c.getX()&gt;4 || c.getY()&gt;4 || c.getX()&lt;0 || c.getY()&lt;0){</b>
+<b class="fc"><i>80</i>&nbsp;            return false;</b>
+<i>81</i>&nbsp;        }
+<i>82</i>&nbsp;        else{
+<b class="fc"><i>83</i>&nbsp;            if(!match.getBoard()[c.getX()][c.getY()].isEmpty()){</b>
+<b class="fc"><i>84</i>&nbsp;                return false;</b>
+<i>85</i>&nbsp;            }
+<i>86</i>&nbsp;            else{
+<b class="fc"><i>87</i>&nbsp;                match.updateMovement(p, id, c);</b>
+<b class="fc"><i>88</i>&nbsp;                return true;</b>
+<i>89</i>&nbsp;            }
+<i>90</i>&nbsp;        }
+<i>91</i>&nbsp;    }
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    /**
+<i>95</i>&nbsp;     * let the player choose their gods
+<i>96</i>&nbsp;     */
+<i>97</i>&nbsp;    public void godSelection(){
+<b class="fc"><i>98</i>&nbsp;        ArrayList&lt;God&gt; gods = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>99</i>&nbsp;        for(Integer i : godIndex){</b>
+<b class="fc"><i>100</i>&nbsp;            gods.add(match.getGods().get(i));</b>
+<b class="fc"><i>101</i>&nbsp;        }</b>
+<i>102</i>&nbsp;
+<b class="fc"><i>103</i>&nbsp;        match.getGods().clear();</b>
+<b class="fc"><i>104</i>&nbsp;        for(God god : gods){</b>
+<b class="fc"><i>105</i>&nbsp;            match.getGods().add(god);</b>
+<b class="fc"><i>106</i>&nbsp;        }</b>
+<b class="fc"><i>107</i>&nbsp;    }</b>
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;    /**
+<i>110</i>&nbsp;     * find the index of the next player
+<i>111</i>&nbsp;     */
+<i>112</i>&nbsp;    public void next(){
+<b class="fc"><i>113</i>&nbsp;        myturn++;</b>
+<b class="fc"><i>114</i>&nbsp;        if(myturn == numPlayers){</b>
+<b class="fc"><i>115</i>&nbsp;            myturn=0;</b>
+<i>116</i>&nbsp;        }
+<b class="fc"><i>117</i>&nbsp;        while(!match.getPlayers().get(myturn).getInGame()){</b>
+<b class="nc"><i>118</i>&nbsp;            myturn++;</b>
+<b class="nc"><i>119</i>&nbsp;            if(myturn == numPlayers){</b>
+<b class="nc"><i>120</i>&nbsp;                myturn=0;</b>
+<i>121</i>&nbsp;            }
+<i>122</i>&nbsp;        }
+<b class="fc"><i>123</i>&nbsp;        for(int i=0;i&lt;server.getClientHandlers().size();i++){</b>
+<b class="fc"><i>124</i>&nbsp;            if(i != myturn)</b>
+<b class="fc"><i>125</i>&nbsp;                server.write(server.getClientHandlers().get(i), &quot;serviceMessage&quot;, &quot;MSGE-Is the turn of &quot;+server.getClientHandlers().get(myturn).getName()+&quot;, wait your turn!!!\n&quot;);</b>
+<b class="fc"><i>126</i>&nbsp;            if(i == myturn)</b>
+<b class="fc"><i>127</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Is your turn!!!\n&quot;);</b>
+<i>128</i>&nbsp;        }
+<b class="fc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    /**
+<i>132</i>&nbsp;     * assign one God to each player
+<i>133</i>&nbsp;     * @return true if the gods are assigned correctly
+<i>134</i>&nbsp;     */
+<i>135</i>&nbsp;    public boolean godsAssignement(){
+<b class="fc"><i>136</i>&nbsp;        match.getGods().clear();</b>
+<b class="fc"><i>137</i>&nbsp;        match.loadGods();</b>
+<b class="fc"><i>138</i>&nbsp;        godIndex.clear();</b>
+<b class="fc"><i>139</i>&nbsp;        int id=0;</b>
+<i>140</i>&nbsp;
+<b class="fc"><i>141</i>&nbsp;        for(int i = 0; i &lt; server.getClientHandlers().size(); i++){</b>
+<b class="fc"><i>142</i>&nbsp;            if(i == myturn) {</b>
+<b class="fc"><i>143</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Choose &quot; + match.playersInGame() + &quot; gods from this list&quot;);</b>
+<i>144</i>&nbsp;            }else{
+<b class="fc"><i>145</i>&nbsp;                server.write(server.getClientHandlers().get(i), &quot;serviceMessage&quot;, &quot;MSGE-Wait your turn to choosing your god&quot;);</b>
+<i>146</i>&nbsp;            }
+<i>147</i>&nbsp;        }
+<b class="fc"><i>148</i>&nbsp;        server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;LIST-&quot;+match.printGodlist());</b>
+<b class="fc"><i>149</i>&nbsp;        String num = Integer.toString(match.getGods().size());</b>
+<b class="fc"><i>150</i>&nbsp;        server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Insert n°1 god&#39;s index: &quot;);</b>
+<i>151</i>&nbsp;        while(true){
+<i>152</i>&nbsp;            try {
+<b class="fc"><i>153</i>&nbsp;                String str = server.read(server.getClientHandlers().get(myturn));</b>
+<b class="fc"><i>154</i>&nbsp;                if(str==null){</b>
+<b class="nc"><i>155</i>&nbsp;                    return false;</b>
+<i>156</i>&nbsp;                    /*
+<i>157</i>&nbsp;                    match.updatePlayers(server.getClientHandlers());
+<i>158</i>&nbsp;                    if(match.playersInGame()!=1){
+<i>159</i>&nbsp;                        next();
+<i>160</i>&nbsp;                        server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Choose &quot; + match.playersInGame() + &quot; gods from this list&quot;);
+<i>161</i>&nbsp;                        server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;LIST-&quot;+match.printGodlist());
+<i>162</i>&nbsp;                        num = Integer.toString(match.getGods().size());
+<i>163</i>&nbsp;                        server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Insert n°2 god&#39;s index: &quot;);
+<i>164</i>&nbsp;                        continue;
+<i>165</i>&nbsp;                    }
+<i>166</i>&nbsp;                    else{
+<i>167</i>&nbsp;                        return false;
+<i>168</i>&nbsp;                    }
+<i>169</i>&nbsp;                    */
+<i>170</i>&nbsp;                }
+<b class="fc"><i>171</i>&nbsp;                id=Integer.parseInt(str);</b>
+<b class="fc"><i>172</i>&nbsp;                if(id&lt;1 || id&gt;match.getGods().size()){</b>
+<b class="fc"><i>173</i>&nbsp;                    server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>174</i>&nbsp;                    num = Integer.toString(match.getGods().size());</b>
+<b class="fc"><i>175</i>&nbsp;                    server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Insert n°1 god&#39;s index: &quot;);</b>
+<b class="fc"><i>176</i>&nbsp;                    continue;</b>
+<i>177</i>&nbsp;                }
+<b class="fc"><i>178</i>&nbsp;                break;</b>
+<b class="fc"><i>179</i>&nbsp;            } catch (NumberFormatException e){</b>
+<b class="fc"><i>180</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>181</i>&nbsp;                num = Integer.toString(match.getGods().size());</b>
+<b class="fc"><i>182</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Insert n°1 god&#39;s index: &quot;);</b>
+<b class="fc"><i>183</i>&nbsp;            }</b>
+<i>184</i>&nbsp;        }
+<b class="fc"><i>185</i>&nbsp;        godIndex.add(id - 1);</b>
+<i>186</i>&nbsp;        boolean find;
+<b class="fc"><i>187</i>&nbsp;        for(int i=1; i&lt;numPlayers; i++){</b>
+<b class="fc"><i>188</i>&nbsp;            num = Integer.toString(match.getGods().size());</b>
+<b class="fc"><i>189</i>&nbsp;            server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Insert n°&quot; + (i+1) + &quot; god&#39;s index: &quot;);</b>
+<i>190</i>&nbsp;            while(true){
+<b class="fc"><i>191</i>&nbsp;                find=false;</b>
+<i>192</i>&nbsp;                try {
+<b class="fc"><i>193</i>&nbsp;                    String str = server.read(server.getClientHandlers().get(myturn));</b>
+<b class="fc"><i>194</i>&nbsp;                    if(str==null){</b>
+<i>195</i>&nbsp;                        /*
+<i>196</i>&nbsp;                        match.updatePlayers(server.getClientHandlers());
+<i>197</i>&nbsp;                        if(match.playersInGame()!=1){
+<i>198</i>&nbsp;                            next();
+<i>199</i>&nbsp;                            server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;LIST-&quot;+match.printGodlist());
+<i>200</i>&nbsp;                            num = Integer.toString(match.getGods().size());
+<i>201</i>&nbsp;                            server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Insert n°&quot; + (i+1) + &quot; god&#39;s index: &quot;);
+<i>202</i>&nbsp;                            continue;
+<i>203</i>&nbsp;                        }
+<i>204</i>&nbsp;                        else{
+<i>205</i>&nbsp;                            return false;
+<i>206</i>&nbsp;                        }*/
+<b class="nc"><i>207</i>&nbsp;                        return false;</b>
+<i>208</i>&nbsp;                    }
+<b class="fc"><i>209</i>&nbsp;                    id=Integer.parseInt(str);</b>
+<b class="fc"><i>210</i>&nbsp;                    if(id&lt;1 || id&gt;match.getGods().size()){</b>
+<b class="fc"><i>211</i>&nbsp;                        server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>212</i>&nbsp;                        num = Integer.toString(match.getGods().size());</b>
+<b class="fc"><i>213</i>&nbsp;                        server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Insert n°&quot; + (i+1) + &quot; god&#39;s index: &quot;);</b>
+<b class="fc"><i>214</i>&nbsp;                        continue;</b>
+<i>215</i>&nbsp;                    }
+<b class="fc"><i>216</i>&nbsp;                    for(int j : godIndex){</b>
+<b class="fc"><i>217</i>&nbsp;                        if(id-1==j){</b>
+<b class="fc"><i>218</i>&nbsp;                            server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-God already selected\n&quot;);</b>
+<b class="fc"><i>219</i>&nbsp;                            num = Integer.toString(match.getGods().size());</b>
+<b class="fc"><i>220</i>&nbsp;                            server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Insert n°&quot; + (i+1) + &quot; god&#39;s index: &quot;);</b>
+<b class="fc"><i>221</i>&nbsp;                            find=true;</b>
+<i>222</i>&nbsp;                        }
+<b class="fc"><i>223</i>&nbsp;                    }</b>
+<b class="fc"><i>224</i>&nbsp;                    if(find){</b>
+<b class="fc"><i>225</i>&nbsp;                        continue;</b>
+<i>226</i>&nbsp;                    }
+<b class="fc"><i>227</i>&nbsp;                    break;</b>
+<b class="fc"><i>228</i>&nbsp;                } catch (NumberFormatException e){</b>
+<b class="fc"><i>229</i>&nbsp;                    server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>230</i>&nbsp;                    num = Integer.toString(match.getGods().size());</b>
+<b class="fc"><i>231</i>&nbsp;                    server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Insert n°&quot; + (i+1) + &quot; god&#39;s index: &quot;);</b>
+<b class="fc"><i>232</i>&nbsp;                }</b>
+<i>233</i>&nbsp;            }
+<b class="fc"><i>234</i>&nbsp;            godIndex.add(id - 1);</b>
+<i>235</i>&nbsp;        }
+<b class="fc"><i>236</i>&nbsp;        godSelection();</b>
+<b class="fc"><i>237</i>&nbsp;        System.out.println(match.printGodlist());</b>
+<b class="fc"><i>238</i>&nbsp;        int i=0;</b>
+<b class="fc"><i>239</i>&nbsp;        int count = match.playersInGame();</b>
+<b class="fc"><i>240</i>&nbsp;        while (i&lt;count){</b>
+<b class="fc"><i>241</i>&nbsp;            next();</b>
+<b class="fc"><i>242</i>&nbsp;            server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;LIST-&quot;+match.printGodlist());</b>
+<b class="fc"><i>243</i>&nbsp;            num = Integer.toString(match.getGods().size());</b>
+<b class="fc"><i>244</i>&nbsp;            server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Choose one god from this list: &quot;);</b>
+<b class="fc"><i>245</i>&nbsp;            String str = server.read(server.getClientHandlers().get(myturn));</b>
+<b class="fc"><i>246</i>&nbsp;            if(str==null){</b>
+<i>247</i>&nbsp;                /*
+<i>248</i>&nbsp;                match.updatePlayers(server.getClientHandlers());
+<i>249</i>&nbsp;                if(match.playersInGame()!=1){
+<i>250</i>&nbsp;                    i++;
+<i>251</i>&nbsp;                    continue;
+<i>252</i>&nbsp;                }
+<i>253</i>&nbsp;                else{
+<i>254</i>&nbsp;                    return false;
+<i>255</i>&nbsp;                }
+<i>256</i>&nbsp;                */
+<b class="nc"><i>257</i>&nbsp;                return false;</b>
+<i>258</i>&nbsp;            }
+<i>259</i>&nbsp;            try{
+<b class="fc"><i>260</i>&nbsp;                id=Integer.parseInt(str)-1;</b>
+<b class="fc"><i>261</i>&nbsp;            } catch (NumberFormatException e){</b>
+<b class="fc"><i>262</i>&nbsp;                id=99;</b>
+<b class="fc"><i>263</i>&nbsp;            }</b>
+<b class="fc"><i>264</i>&nbsp;            while(id &gt;= match.getGods().size() || id &lt; 0){</b>
+<b class="fc"><i>265</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Index not valid\n&quot;);</b>
+<b class="fc"><i>266</i>&nbsp;                num = Integer.toString(match.getGods().size());</b>
+<b class="fc"><i>267</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;INDX-Choose one god from this list: &quot;);;</b>
+<b class="fc"><i>268</i>&nbsp;                str = server.read(server.getClientHandlers().get(myturn));</b>
+<b class="fc"><i>269</i>&nbsp;                if(str==null){</b>
+<i>270</i>&nbsp;                    /*
+<i>271</i>&nbsp;                    match.updatePlayers(server.getClientHandlers());
+<i>272</i>&nbsp;                    if(match.playersInGame()!=1){
+<i>273</i>&nbsp;                        i++;
+<i>274</i>&nbsp;                        continue;
+<i>275</i>&nbsp;                    }
+<i>276</i>&nbsp;                    else{
+<i>277</i>&nbsp;                        return false;
+<i>278</i>&nbsp;                    }
+<i>279</i>&nbsp;                    */
+<b class="nc"><i>280</i>&nbsp;                    return false;</b>
+<i>281</i>&nbsp;                }
+<i>282</i>&nbsp;                try{
+<b class="fc"><i>283</i>&nbsp;                    id=Integer.parseInt(str)-1;</b>
+<b class="fc"><i>284</i>&nbsp;                } catch (NumberFormatException e){</b>
+<b class="fc"><i>285</i>&nbsp;                    id=99;</b>
+<b class="fc"><i>286</i>&nbsp;                }</b>
+<i>287</i>&nbsp;            }
+<b class="fc"><i>288</i>&nbsp;            match.getPlayers().get(myturn).setCard(match.getGods(), id);</b>
+<b class="fc"><i>289</i>&nbsp;            match.getGods().remove(id);</b>
+<b class="fc"><i>290</i>&nbsp;            i++;</b>
+<b class="fc"><i>291</i>&nbsp;        }</b>
+<b class="fc"><i>292</i>&nbsp;        return true;</b>
+<i>293</i>&nbsp;    }
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;    /**
+<i>296</i>&nbsp;     * ask to the client where he want to put his players
+<i>297</i>&nbsp;     * @return true if workers are placed succesfully
+<i>298</i>&nbsp;     */
+<i>299</i>&nbsp;    public boolean putWorkers(){
+<b class="fc"><i>300</i>&nbsp;        resetWorkerPos();</b>
+<b class="fc"><i>301</i>&nbsp;        int i=0;</b>
+<b class="fc"><i>302</i>&nbsp;        int count = match.playersInGame();</b>
+<b class="fc"><i>303</i>&nbsp;        while (i&lt;count){</b>
+<b class="fc"><i>304</i>&nbsp;            next();</b>
+<b class="fc"><i>305</i>&nbsp;            server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;,  &quot;BORD-&quot;+match.printBoard());</b>
+<b class="fc"><i>306</i>&nbsp;            server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Insert Worker n°1\n&quot;);</b>
+<b class="fc"><i>307</i>&nbsp;            Coordinate c = getCoordinate();</b>
+<b class="fc"><i>308</i>&nbsp;            if(c==null){</b>
+<i>309</i>&nbsp;                /*
+<i>310</i>&nbsp;                match.updatePlayers(server.getClientHandlers());
+<i>311</i>&nbsp;                if(match.playersInGame()==1){
+<i>312</i>&nbsp;                    return false;
+<i>313</i>&nbsp;                }
+<i>314</i>&nbsp;                else{
+<i>315</i>&nbsp;                    i++;
+<i>316</i>&nbsp;                    continue;
+<i>317</i>&nbsp;                }
+<i>318</i>&nbsp;                */
+<b class="nc"><i>319</i>&nbsp;                return false;</b>
+<i>320</i>&nbsp;            }
+<b class="fc"><i>321</i>&nbsp;            while (!controlMovement(match.getPlayers().get(myturn), 0, c)){</b>
+<b class="fc"><i>322</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Not valid box\n&quot;);</b>
+<b class="fc"><i>323</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Insert Worker n°1\n&quot;);</b>
+<b class="fc"><i>324</i>&nbsp;                c = getCoordinate();</b>
+<b class="fc"><i>325</i>&nbsp;                if(c==null){</b>
+<i>326</i>&nbsp;                    /*
+<i>327</i>&nbsp;                    match.updatePlayers(server.getClientHandlers());
+<i>328</i>&nbsp;                    if(match.playersInGame()==1){
+<i>329</i>&nbsp;                        return false;
+<i>330</i>&nbsp;                    }
+<i>331</i>&nbsp;                    else{
+<i>332</i>&nbsp;                        i++;
+<i>333</i>&nbsp;                        continue;
+<i>334</i>&nbsp;                    }
+<i>335</i>&nbsp;                    */
+<b class="nc"><i>336</i>&nbsp;                    return false;</b>
+<i>337</i>&nbsp;                }
+<i>338</i>&nbsp;            }
+<i>339</i>&nbsp;
+<b class="fc"><i>340</i>&nbsp;            for(ClientHandler clientHandler : server.getClientHandlers()){</b>
+<b class="fc"><i>341</i>&nbsp;                server.write(clientHandler, &quot;serviceMessage&quot;, &quot;BORD-&quot;+match.printBoard());</b>
+<b class="fc"><i>342</i>&nbsp;            }</b>
+<b class="fc"><i>343</i>&nbsp;            server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Insert Worker n°2\n&quot;);</b>
+<b class="fc"><i>344</i>&nbsp;            c = getCoordinate();</b>
+<b class="fc"><i>345</i>&nbsp;            if(c==null){</b>
+<i>346</i>&nbsp;                /*
+<i>347</i>&nbsp;                match.updatePlayers(server.getClientHandlers());
+<i>348</i>&nbsp;                if(match.playersInGame()==1){
+<i>349</i>&nbsp;                    return false;
+<i>350</i>&nbsp;                }
+<i>351</i>&nbsp;                else{
+<i>352</i>&nbsp;                    i++;
+<i>353</i>&nbsp;                    continue;
+<i>354</i>&nbsp;                }
+<i>355</i>&nbsp;                */
+<b class="nc"><i>356</i>&nbsp;                return false;</b>
+<i>357</i>&nbsp;            }
+<b class="fc"><i>358</i>&nbsp;            while (!controlMovement(match.getPlayers().get(myturn), 1, c)){</b>
+<b class="fc"><i>359</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Not valid box\n&quot;);</b>
+<b class="fc"><i>360</i>&nbsp;                server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;MSGE-Insert Worker n°2\n&quot;);</b>
+<b class="fc"><i>361</i>&nbsp;                c = getCoordinate();</b>
+<b class="fc"><i>362</i>&nbsp;                if(c==null){</b>
+<i>363</i>&nbsp;                    /*
+<i>364</i>&nbsp;                    match.updatePlayers(server.getClientHandlers());
+<i>365</i>&nbsp;                    if(match.playersInGame()==1){
+<i>366</i>&nbsp;                        return false;
+<i>367</i>&nbsp;                    }
+<i>368</i>&nbsp;                    else{
+<i>369</i>&nbsp;                        i++;
+<i>370</i>&nbsp;                        continue;
+<i>371</i>&nbsp;                    }
+<i>372</i>&nbsp;                    */
+<b class="nc"><i>373</i>&nbsp;                    return false;</b>
+<i>374</i>&nbsp;                }
+<i>375</i>&nbsp;            }
+<b class="fc"><i>376</i>&nbsp;            i++;</b>
+<i>377</i>&nbsp;
+<b class="fc"><i>378</i>&nbsp;            for(ClientHandler clientHandler : server.getClientHandlers()){</b>
+<b class="fc"><i>379</i>&nbsp;                server.write(clientHandler, &quot;serviceMessage&quot;, &quot;BORD-&quot;+match.printBoard());</b>
+<b class="fc"><i>380</i>&nbsp;            }</b>
+<b class="fc"><i>381</i>&nbsp;        }</b>
+<i>382</i>&nbsp;
+<b class="fc"><i>383</i>&nbsp;        next();</b>
+<b class="fc"><i>384</i>&nbsp;        return true;</b>
+<i>385</i>&nbsp;    }
+<i>386</i>&nbsp;
+<i>387</i>&nbsp;    /**
+<i>388</i>&nbsp;     * reset workers position in the board
+<i>389</i>&nbsp;     */
+<i>390</i>&nbsp;    private void resetWorkerPos() {
+<b class="fc"><i>391</i>&nbsp;        for(Player p : match.getPlayers()){</b>
+<b class="fc"><i>392</i>&nbsp;            for(int i=0; i&lt;p.getWorkers().size();i++){</b>
+<b class="fc"><i>393</i>&nbsp;                Worker w = new Worker(p.getId(), p.getNickname());</b>
+<b class="fc"><i>394</i>&nbsp;                p.getWorkers().get(i).setPrev_position(null);</b>
+<b class="fc"><i>395</i>&nbsp;                p.getWorkers().get(i).setPosition(null);</b>
+<b class="fc"><i>396</i>&nbsp;                p.getWorkers().get(i).setID(i);</b>
+<b class="fc"><i>397</i>&nbsp;                p.getWorkers().get(i).setIDplayer(p.getNickname());</b>
+<b class="fc"><i>398</i>&nbsp;                p.getWorkers().get(i).changeMoved(false);</b>
+<b class="fc"><i>399</i>&nbsp;                p.getWorkers().get(i).changeBuilt(false);</b>
+<i>400</i>&nbsp;            }
+<b class="fc"><i>401</i>&nbsp;        }</b>
+<b class="fc"><i>402</i>&nbsp;    }</b>
+<i>403</i>&nbsp;
+<i>404</i>&nbsp;    /**
+<i>405</i>&nbsp;     * ask a coordinate to the client
+<i>406</i>&nbsp;     * @return the coordinate
+<i>407</i>&nbsp;     */
+<i>408</i>&nbsp;    public Coordinate getCoordinate(){
+<b class="fc"><i>409</i>&nbsp;        Coordinate c=null;</b>
+<i>410</i>&nbsp;        String str;
+<b class="fc"><i>411</i>&nbsp;        server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;COOR-Insert coordinate: &quot;);</b>
+<b class="fc"><i>412</i>&nbsp;        str = server.read(server.getClientHandlers().get(myturn));</b>
+<b class="fc"><i>413</i>&nbsp;        if(str==null){</b>
+<b class="nc"><i>414</i>&nbsp;            return null;</b>
+<i>415</i>&nbsp;        }
+<i>416</i>&nbsp;        try{
+<b class="fc"><i>417</i>&nbsp;            int x=Integer.parseInt(str.substring(0,1));</b>
+<b class="fc"><i>418</i>&nbsp;            int y=Integer.parseInt(str.substring(1));</b>
+<b class="fc"><i>419</i>&nbsp;            c = new Coordinate(x, y);</b>
+<b class="nc"><i>420</i>&nbsp;        }catch (NumberFormatException | StringIndexOutOfBoundsException e){</b>
+<b class="nc"><i>421</i>&nbsp;            System.out.println(&quot;Not valid input&quot;);</b>
+<b class="fc"><i>422</i>&nbsp;        }</b>
+<b class="fc"><i>423</i>&nbsp;        while(c==null){</b>
+<b class="nc"><i>424</i>&nbsp;            server.write(server.getClientHandlers().get(myturn), &quot;interactionServer&quot;, &quot;COOR-Insert coordinate: &quot;);</b>
+<b class="nc"><i>425</i>&nbsp;            str = server.read(server.getClientHandlers().get(myturn));</b>
+<b class="nc"><i>426</i>&nbsp;            if(str==null){</b>
+<b class="nc"><i>427</i>&nbsp;                return null;</b>
+<i>428</i>&nbsp;            }
+<i>429</i>&nbsp;            try{
+<b class="nc"><i>430</i>&nbsp;                int x=Integer.parseInt(str.substring(0,1));</b>
+<b class="nc"><i>431</i>&nbsp;                int y=Integer.parseInt(str.substring(1));</b>
+<b class="nc"><i>432</i>&nbsp;                c = new Coordinate(x, y);</b>
+<b class="nc"><i>433</i>&nbsp;            }catch (NumberFormatException | StringIndexOutOfBoundsException e){</b>
+<b class="nc"><i>434</i>&nbsp;                System.out.println(&quot;Not valid input&quot;);</b>
+<b class="nc"><i>435</i>&nbsp;            }</b>
+<i>436</i>&nbsp;        }
+<i>437</i>&nbsp;
+<b class="fc"><i>438</i>&nbsp;        return c;</b>
+<i>439</i>&nbsp;    }
+<i>440</i>&nbsp;
+<i>441</i>&nbsp;    /**
+<i>442</i>&nbsp;     *
+<i>443</i>&nbsp;     * used for the execution of the game
+<i>444</i>&nbsp;     *
+<i>445</i>&nbsp;     */
+<i>446</i>&nbsp;    public void gameExe(){
+<b class="fc"><i>447</i>&nbsp;        while(!endGame){</b>
+<b class="fc"><i>448</i>&nbsp;            match.updatePlayers(server.getClientHandlers());</b>
+<b class="fc"><i>449</i>&nbsp;            int connectedPlayer = 0;</b>
+<b class="fc"><i>450</i>&nbsp;            for(ClientHandler clientHandler : server.getClientHandlers()){</b>
+<b class="fc"><i>451</i>&nbsp;                if(clientHandler.getConnected()){</b>
+<b class="fc"><i>452</i>&nbsp;                    connectedPlayer++;</b>
+<i>453</i>&nbsp;                }
+<b class="fc"><i>454</i>&nbsp;            }</b>
+<b class="fc"><i>455</i>&nbsp;            if(connectedPlayer!=numPlayers){</b>
+<b class="nc"><i>456</i>&nbsp;                for(ClientHandler clientHandler : server.getClientHandlers()){</b>
+<b class="nc"><i>457</i>&nbsp;                    if(clientHandler.getConnected()){</b>
+<b class="nc"><i>458</i>&nbsp;                        server.write(clientHandler, &quot;serviceMessage&quot;, &quot;WINM-Congratulations you win!\n&quot;);</b>
+<i>459</i>&nbsp;                    }
+<b class="nc"><i>460</i>&nbsp;                }</b>
+<b class="nc"><i>461</i>&nbsp;                break;</b>
+<i>462</i>&nbsp;            }
+<b class="fc"><i>463</i>&nbsp;            if(match.getPlayers().get(myturn).getInGame()) {</b>
+<b class="fc"><i>464</i>&nbsp;                if (match.playersInGame() == 1) {</b>
+<b class="nc"><i>465</i>&nbsp;                    endGame = true;</b>
+<b class="nc"><i>466</i>&nbsp;                    for (int i = 0; i &lt; server.getClientHandlers().size(); i++) {</b>
+<b class="nc"><i>467</i>&nbsp;                        if (i == myturn)</b>
+<b class="nc"><i>468</i>&nbsp;                            server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;WINM-Congratulations you win!\n&quot;);</b>
+<i>469</i>&nbsp;                        else
+<b class="nc"><i>470</i>&nbsp;                            server.write(server.getClientHandlers().get(i), &quot;serviceMessage&quot;, &quot;WINM-You lose, the winner is &quot; + server.getClientHandlers().get(myturn).getName() + &quot;!\n&quot;);</b>
+<i>471</i>&nbsp;                    }
+<b class="nc"><i>472</i>&nbsp;                    break;</b>
+<i>473</i>&nbsp;                }
+<b class="fc"><i>474</i>&nbsp;                endGame = newTurn(server.getClientHandlers().get(myturn));</b>
+<b class="fc"><i>475</i>&nbsp;                match.resetBoard();</b>
+<b class="fc"><i>476</i>&nbsp;                for (ClientHandler ch : server.getClientHandlers()) {</b>
+<b class="fc"><i>477</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;BORD-&quot;+match.printBoard());</b>
+<b class="fc"><i>478</i>&nbsp;                }</b>
+<b class="fc"><i>479</i>&nbsp;                if (endGame) {</b>
+<b class="fc"><i>480</i>&nbsp;                    for (int i = 0; i &lt; server.getClientHandlers().size(); i++) {</b>
+<b class="fc"><i>481</i>&nbsp;                        if (i == myturn)</b>
+<b class="fc"><i>482</i>&nbsp;                            server.write(server.getClientHandlers().get(myturn), &quot;serviceMessage&quot;, &quot;WINM-Congratulations you win!\n&quot;);</b>
+<i>483</i>&nbsp;                        else
+<b class="fc"><i>484</i>&nbsp;                            server.write(server.getClientHandlers().get(i), &quot;serviceMessage&quot;, &quot;WINM-You lose, the winner is &quot; + server.getClientHandlers().get(myturn).getName() + &quot;!\n&quot;);</b>
+<i>485</i>&nbsp;                    }
+<i>486</i>&nbsp;                }
+<i>487</i>&nbsp;            }
+<b class="fc"><i>488</i>&nbsp;            next();</b>
+<b class="fc"><i>489</i>&nbsp;        }</b>
+<b class="fc"><i>490</i>&nbsp;        endGame = false;</b>
+<b class="fc"><i>491</i>&nbsp;    }</b>
+<i>492</i>&nbsp;
+<i>493</i>&nbsp;
+<i>494</i>&nbsp;
+<i>495</i>&nbsp;
+<i>496</i>&nbsp;    /**
+<i>497</i>&nbsp;     *
+<i>498</i>&nbsp;     * used to create a new turn
+<i>499</i>&nbsp;     *
+<i>500</i>&nbsp;     * @param ch the player that plays the turn
+<i>501</i>&nbsp;     * @return true if player win
+<i>502</i>&nbsp;     */
+<i>503</i>&nbsp;    public boolean newTurn(ClientHandler ch) {
+<b class="fc"><i>504</i>&nbsp;        Player p = match.getPlayer(ch.getName());</b>
+<b class="fc"><i>505</i>&nbsp;        if(athenaOn &amp;&amp; p.getCard().getName().equals(&quot;Athena&quot;)){</b>
+<b class="nc"><i>506</i>&nbsp;            athenaOn=false;</b>
+<i>507</i>&nbsp;        }
+<b class="fc"><i>508</i>&nbsp;        server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-You can use &quot;+p.getCard().getName()+&quot; power\n&quot;);</b>
+<b class="fc"><i>509</i>&nbsp;        switch (p.getCard().getID()){</b>
+<i>510</i>&nbsp;            case 0 :
+<b class="nc"><i>511</i>&nbsp;                ApolloTurn turn0 = new ApolloTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>512</i>&nbsp;                return turnExe(ch, turn0);</b>
+<i>513</i>&nbsp;            case 1 :
+<b class="nc"><i>514</i>&nbsp;                ArtemisTurn turn1 = new ArtemisTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>515</i>&nbsp;                return turnExe(ch, turn1);</b>
+<i>516</i>&nbsp;            case 2 :
+<b class="fc"><i>517</i>&nbsp;                AthenaTurn turn2 = new AthenaTurn(new GodTurn(new BaseTurn()));</b>
+<b class="fc"><i>518</i>&nbsp;                return turnExe(ch, turn2);</b>
+<i>519</i>&nbsp;            case 3 :
+<b class="nc"><i>520</i>&nbsp;                AtlasTurn turn3 = new AtlasTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>521</i>&nbsp;                return turnExe(ch, turn3);</b>
+<i>522</i>&nbsp;            case 4 :
+<b class="nc"><i>523</i>&nbsp;                DemeterTurn turn4 = new DemeterTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>524</i>&nbsp;                return turnExe(ch, turn4);</b>
+<i>525</i>&nbsp;            case 5 :
+<b class="nc"><i>526</i>&nbsp;                HephaestusTurn turn5 = new HephaestusTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>527</i>&nbsp;                return turnExe(ch, turn5);</b>
+<i>528</i>&nbsp;            case 6 :
+<b class="nc"><i>529</i>&nbsp;                MinotaurTurn turn6 = new MinotaurTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>530</i>&nbsp;                return turnExe(ch, turn6);</b>
+<i>531</i>&nbsp;            case 7 :
+<b class="nc"><i>532</i>&nbsp;                PanTurn turn7 = new PanTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>533</i>&nbsp;                return turnExe(ch, turn7);</b>
+<i>534</i>&nbsp;            case 8 :
+<b class="nc"><i>535</i>&nbsp;                PrometheusTurn turn8 = new PrometheusTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>536</i>&nbsp;                return turnExe(ch, turn8);</b>
+<i>537</i>&nbsp;            case 9 :
+<b class="nc"><i>538</i>&nbsp;                HestiaTurn turn9 = new HestiaTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>539</i>&nbsp;                return turnExe(ch, turn9);</b>
+<i>540</i>&nbsp;            case 10 :
+<b class="nc"><i>541</i>&nbsp;                PoseidonTurn turn10 = new PoseidonTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>542</i>&nbsp;                return turnExe(ch, turn10);</b>
+<i>543</i>&nbsp;            case 11 :
+<b class="nc"><i>544</i>&nbsp;                TritonTurn turn11 = new TritonTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>545</i>&nbsp;                return turnExe(ch, turn11);</b>
+<i>546</i>&nbsp;            case 12 :
+<b class="nc"><i>547</i>&nbsp;                CharonTurn turn12 = new CharonTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>548</i>&nbsp;                return turnExe(ch, turn12);</b>
+<i>549</i>&nbsp;            case 13 :
+<b class="nc"><i>550</i>&nbsp;                ZeusTurn turn13 = new ZeusTurn(new GodTurn(new BaseTurn()));</b>
+<b class="nc"><i>551</i>&nbsp;                return turnExe(ch, turn13);</b>
+<i>552</i>&nbsp;        }
+<b class="nc"><i>553</i>&nbsp;        return false;</b>
+<i>554</i>&nbsp;    }
+<i>555</i>&nbsp;
+<i>556</i>&nbsp;
+<i>557</i>&nbsp;    /**
+<i>558</i>&nbsp;     *
+<i>559</i>&nbsp;     * used for the execution of the turn
+<i>560</i>&nbsp;     *
+<i>561</i>&nbsp;     * @param ch the player that plays the turn
+<i>562</i>&nbsp;     * @param turn the turn, can be BaseTurn or one of the gods&#39; turn
+<i>563</i>&nbsp;     * @return the result of winCondition
+<i>564</i>&nbsp;     */
+<i>565</i>&nbsp;    public boolean turnExe(ClientHandler ch, Turn turn){
+<b class="fc"><i>566</i>&nbsp;        for(ClientHandler clientHandler : server.getClientHandlers()){</b>
+<b class="fc"><i>567</i>&nbsp;            server.write(clientHandler, &quot;serviceMessage&quot;, &quot;BORD-&quot;+match.printBoard());</b>
+<b class="fc"><i>568</i>&nbsp;        }</b>
+<i>569</i>&nbsp;
+<b class="fc"><i>570</i>&nbsp;        if(!turn.move(match, ch, server, athenaOn)){</b>
+<b class="nc"><i>571</i>&nbsp;            losePlayer(ch);</b>
+<b class="nc"><i>572</i>&nbsp;            return false;</b>
+<i>573</i>&nbsp;        }
+<i>574</i>&nbsp;
+<b class="fc"><i>575</i>&nbsp;        if(turn.winCondition(match, match.getPlayer(ch.getName()))){</b>
+<b class="fc"><i>576</i>&nbsp;            return true;</b>
+<i>577</i>&nbsp;        }
+<i>578</i>&nbsp;
+<b class="fc"><i>579</i>&nbsp;        if(match.getPlayer(ch.getName()).getCard().getName().equals(&quot;Athena&quot;))</b>
+<b class="fc"><i>580</i>&nbsp;            athenaCondition(ch);</b>
+<i>581</i>&nbsp;
+<b class="fc"><i>582</i>&nbsp;        for(ClientHandler clientHandler : server.getClientHandlers()){</b>
+<b class="fc"><i>583</i>&nbsp;            server.write(clientHandler, &quot;serviceMessage&quot;, &quot;BORD-&quot;+match.printBoard());</b>
+<b class="fc"><i>584</i>&nbsp;        }</b>
+<i>585</i>&nbsp;
+<b class="fc"><i>586</i>&nbsp;        if(!turn.build(match,ch,server)){</b>
+<b class="nc"><i>587</i>&nbsp;            losePlayer(ch);</b>
+<b class="nc"><i>588</i>&nbsp;            return false;</b>
+<i>589</i>&nbsp;        }
+<i>590</i>&nbsp;
+<b class="fc"><i>591</i>&nbsp;        for(ClientHandler clientHandler : server.getClientHandlers()){</b>
+<b class="fc"><i>592</i>&nbsp;            server.write(clientHandler, &quot;serviceMessage&quot;, &quot;BORD-&quot;+match.printBoard());</b>
+<b class="fc"><i>593</i>&nbsp;        }</b>
+<i>594</i>&nbsp;
+<b class="fc"><i>595</i>&nbsp;        match.getPlayer(ch.getName()).getWorkers().get(0).changeBuilt(false);</b>
+<b class="fc"><i>596</i>&nbsp;        match.getPlayer(ch.getName()).getWorkers().get(1).changeBuilt(false);</b>
+<b class="fc"><i>597</i>&nbsp;        match.getPlayer(ch.getName()).getWorkers().get(0).changeMoved(false);</b>
+<b class="fc"><i>598</i>&nbsp;        match.getPlayer(ch.getName()).getWorkers().get(1).changeMoved(false);</b>
+<i>599</i>&nbsp;
+<b class="fc"><i>600</i>&nbsp;        return false;</b>
+<i>601</i>&nbsp;    }
+<i>602</i>&nbsp;
+<i>603</i>&nbsp;    /**
+<i>604</i>&nbsp;     * Exclude the player from the game and remove his workers from the board
+<i>605</i>&nbsp;     * @param ch loser player
+<i>606</i>&nbsp;     */
+<i>607</i>&nbsp;    public void losePlayer(ClientHandler ch){
+<b class="fc"><i>608</i>&nbsp;        server.write(ch,&quot;serviceMessage&quot;, &quot;WINM-You Lose!&quot;);</b>
+<b class="fc"><i>609</i>&nbsp;        match.getPlayer(ch.getName()).setInGame(false);</b>
+<b class="fc"><i>610</i>&nbsp;        match.removeWorkers(match.getPlayer(ch.getName()));</b>
+<b class="fc"><i>611</i>&nbsp;    }</b>
+<i>612</i>&nbsp;
+<i>613</i>&nbsp;    /**
+<i>614</i>&nbsp;     * control if the condition that activate athena is verified
+<i>615</i>&nbsp;     * @param ch the client
+<i>616</i>&nbsp;     */
+<i>617</i>&nbsp;    public void athenaCondition(ClientHandler ch){
+<i>618</i>&nbsp;        Coordinate cprev;
+<i>619</i>&nbsp;        Coordinate c;
+<b class="fc"><i>620</i>&nbsp;        for(Worker w : match.getPlayer(ch.getName()).getWorkers()){</b>
+<b class="fc"><i>621</i>&nbsp;            if(w.getMoved()){</b>
+<b class="fc"><i>622</i>&nbsp;                cprev = w.getPrev_position();</b>
+<b class="fc"><i>623</i>&nbsp;                c = w.getPosition();</b>
+<b class="fc"><i>624</i>&nbsp;                if(match.getBoard()[cprev.getX()][cprev.getY()].getlevelledUp()){</b>
+<b class="fc"><i>625</i>&nbsp;                    if(match.getBoard()[c.getX()][c.getY()].getLevel() - match.getBoard()[cprev.getX()][cprev.getY()].getLevel() &gt;= 0 )</b>
+<b class="fc"><i>626</i>&nbsp;                        athenaOn = true;</b>
+<i>627</i>&nbsp;                    else
+<b class="fc"><i>628</i>&nbsp;                        athenaOn = false;</b>
+<i>629</i>&nbsp;                }else{
+<b class="fc"><i>630</i>&nbsp;                    if(match.getBoard()[c.getX()][c.getY()].getLevel() - match.getBoard()[cprev.getX()][cprev.getY()].getLevel() &gt; 0 )</b>
+<b class="fc"><i>631</i>&nbsp;                        athenaOn = true;</b>
+<i>632</i>&nbsp;                    else
+<b class="fc"><i>633</i>&nbsp;                        athenaOn = false;</b>
+<i>634</i>&nbsp;                }
+<i>635</i>&nbsp;            }
+<b class="fc"><i>636</i>&nbsp;        }</b>
+<b class="fc"><i>637</i>&nbsp;    }</b>
+<i>638</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-29 12:21</div>
+</div>
+</body>
+</html>

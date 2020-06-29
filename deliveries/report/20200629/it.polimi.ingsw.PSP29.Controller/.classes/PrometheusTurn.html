@@ -1,0 +1,365 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PrometheusTurn</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PrometheusTurn (it.polimi.ingsw.PSP29.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PrometheusTurn</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,9%
+  </span>
+  <span class="absValue">
+    (183/ 185)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.model.*;
+<i>4</i>&nbsp;import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+<i>5</i>&nbsp;import it.polimi.ingsw.PSP29.virtualView.Server;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.ArrayList;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public class PrometheusTurn extends GodTurn {
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    public PrometheusTurn(Turn turn) {
+<b class="fc"><i>12</i>&nbsp;        super(turn);</b>
+<b class="fc"><i>13</i>&nbsp;    }</b>
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * allows a player to build before and after moving his worker if in this turn his worker can&#39;t level up
+<i>17</i>&nbsp;     * @param m match played
+<i>18</i>&nbsp;     * @param ch owner of the turn
+<i>19</i>&nbsp;     * @param server manage the interaction with client
+<i>20</i>&nbsp;     * @param athenaOn true if athena is on
+<i>21</i>&nbsp;     * @return true if is moved in c, else false
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    @Override
+<i>25</i>&nbsp;    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn){
+<b class="fc"><i>26</i>&nbsp;        int wID=2;</b>
+<b class="fc"><i>27</i>&nbsp;        String power = &quot;&quot;;</b>
+<b class="fc"><i>28</i>&nbsp;        Player p = m.getPlayer(ch.getName());</b>
+<b class="fc"><i>29</i>&nbsp;        ArrayList&lt;Coordinate&gt; coordinates0 = whereCanMove(m, ch, 0, athenaOn);</b>
+<b class="fc"><i>30</i>&nbsp;        ArrayList&lt;Coordinate&gt; coordinates1 = whereCanMove(m, ch, 1, athenaOn);</b>
+<b class="fc"><i>31</i>&nbsp;        if(coordinates0.size()!=0 &amp;&amp; coordinates1.size()!=0){</b>
+<b class="fc"><i>32</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-It&#39;s your turn\n&quot;);</b>
+<b class="fc"><i>33</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-&quot;+m.getPlayer(ch.getName()).printWorkers());</b>
+<b class="fc"><i>34</i>&nbsp;            server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Choose the worker to use in this turn: \n&quot;);</b>
+<i>35</i>&nbsp;            while(true){
+<b class="fc"><i>36</i>&nbsp;                String msg = server.read(ch);</b>
+<b class="fc"><i>37</i>&nbsp;                if(msg == null){</b>
+<b class="fc"><i>38</i>&nbsp;                    for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>39</i>&nbsp;                        server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>40</i>&nbsp;                    }</b>
+<b class="fc"><i>41</i>&nbsp;                    ch.resetConnected();</b>
+<b class="fc"><i>42</i>&nbsp;                    ch.closeConnection();</b>
+<b class="fc"><i>43</i>&nbsp;                    return false;</b>
+<i>44</i>&nbsp;                }else{
+<b class="fc"><i>45</i>&nbsp;                    wID= Integer.parseInt(msg) - 1;</b>
+<i>46</i>&nbsp;                }
+<b class="fc"><i>47</i>&nbsp;                if(wID&lt;0 || wID&gt;1){</b>
+<b class="fc"><i>48</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>49</i>&nbsp;                    server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Try another index: &quot;);</b>
+<b class="fc"><i>50</i>&nbsp;                    continue;</b>
+<i>51</i>&nbsp;                }
+<i>52</i>&nbsp;                break;
+<i>53</i>&nbsp;            }
+<i>54</i>&nbsp;        }
+<b class="fc"><i>55</i>&nbsp;        else if(coordinates0.size()!=0 &amp;&amp; coordinates1.size()==0){</b>
+<b class="fc"><i>56</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-You can only move one of your worker in these positions: \n&quot;);</b>
+<b class="fc"><i>57</i>&nbsp;            wID = 0;</b>
+<i>58</i>&nbsp;        }
+<b class="fc"><i>59</i>&nbsp;        else if(coordinates0.size()==0 &amp;&amp; coordinates1.size()!=0){</b>
+<b class="fc"><i>60</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-You can only move one of your worker in these positions: \n&quot;);</b>
+<b class="fc"><i>61</i>&nbsp;            wID = 1;</b>
+<b class="fc"><i>62</i>&nbsp;        }else if(coordinates0.size()==0 &amp;&amp; coordinates1.size()==0){</b>
+<b class="fc"><i>63</i>&nbsp;            return false;</b>
+<i>64</i>&nbsp;        }
+<i>65</i>&nbsp;
+<b class="fc"><i>66</i>&nbsp;        server.write(ch, &quot;serviceMessage&quot;, &quot;BORD-&quot;+m.printBoard());</b>
+<i>67</i>&nbsp;
+<b class="fc"><i>68</i>&nbsp;        ArrayList&lt;Coordinate&gt; controlCoor = whereCanMove(m,ch,wID,true);</b>
+<b class="fc"><i>69</i>&nbsp;        ArrayList&lt;Coordinate&gt; controlBCoor = whereCanBuild(m,ch,wID);</b>
+<i>70</i>&nbsp;
+<b class="fc"><i>71</i>&nbsp;        if(controlCoor.size()==1){</b>
+<i>72</i>&nbsp;            //there is only one box where i can build after activate the power and then maybe move because i&#39;m prometheus
+<b class="fc"><i>73</i>&nbsp;            if(controlBCoor.size()==1 &amp;&amp; m.getBoard()[controlCoor.get(0).getX()][controlCoor.get(0).getY()].getLevel() - m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() &gt; -1){</b>
+<i>74</i>&nbsp;                //I can build in only one box and that box have not an inferior level than me, so i block me and i have violed prometheus power
+<b class="nc"><i>75</i>&nbsp;                server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-You can&#39;t use Prometheus power\n&quot;);</b>
+<i>76</i>&nbsp;            }else{
+<i>77</i>&nbsp;                //I can build in only one box and that box have an inferior level than me, so i can build and then not move up
+<b class="fc"><i>78</i>&nbsp;                server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-You can use Prometheus power\n&quot;);</b>
+<b class="fc"><i>79</i>&nbsp;                server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-1) YES\n2) NO\n&quot;);</b>
+<b class="fc"><i>80</i>&nbsp;                server.write(ch, &quot;interactionServer&quot;, &quot;INDX-Would you like to build an additional block before moving you worker? &quot;);</b>
+<b class="fc"><i>81</i>&nbsp;                power = server.read(ch);</b>
+<b class="fc"><i>82</i>&nbsp;                if(power == null){</b>
+<b class="fc"><i>83</i>&nbsp;                    for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>84</i>&nbsp;                        server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>85</i>&nbsp;                    }</b>
+<b class="fc"><i>86</i>&nbsp;                    ch.resetConnected();</b>
+<b class="fc"><i>87</i>&nbsp;                    ch.closeConnection();</b>
+<b class="fc"><i>88</i>&nbsp;                    return false;</b>
+<i>89</i>&nbsp;                }
+<i>90</i>&nbsp;
+<b class="fc"><i>91</i>&nbsp;                while(!power.equals(&quot;1&quot;) &amp;&amp; !power.equals(&quot;2&quot;)){</b>
+<b class="fc"><i>92</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>93</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-1) YES\n2) NO\n&quot;);</b>
+<b class="fc"><i>94</i>&nbsp;                    server.write(ch, &quot;interactionServer&quot;, &quot;INDX-Would you like to build an additional block before moving your worker? &quot;);</b>
+<b class="fc"><i>95</i>&nbsp;                    power = server.read(ch);</b>
+<b class="fc"><i>96</i>&nbsp;                    if(power == null){</b>
+<b class="fc"><i>97</i>&nbsp;                        for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>98</i>&nbsp;                            server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>99</i>&nbsp;                        }</b>
+<b class="fc"><i>100</i>&nbsp;                        ch.resetConnected();</b>
+<b class="fc"><i>101</i>&nbsp;                        ch.closeConnection();</b>
+<b class="fc"><i>102</i>&nbsp;                        return false;</b>
+<i>103</i>&nbsp;                    }
+<i>104</i>&nbsp;                }
+<i>105</i>&nbsp;
+<b class="fc"><i>106</i>&nbsp;                if(power.equals(&quot;1&quot;)) {</b>
+<b class="fc"><i>107</i>&nbsp;                    ArrayList&lt;Coordinate&gt; finalcoordinates = whereCanBuild(m, ch, wID);</b>
+<i>108</i>&nbsp;
+<b class="fc"><i>109</i>&nbsp;                    if(m.getBoard()[controlCoor.get(0).getX()][controlCoor.get(0).getY()].getLevel() - m.getBoard()[p.getWorker(wID).getPosition().getX()][p.getWorker(wID).getPosition().getY()].getLevel() &gt; -1){</b>
+<b class="fc"><i>110</i>&nbsp;                        int coorDelete = -1;</b>
+<b class="fc"><i>111</i>&nbsp;                        for(int i = 0; i&lt;finalcoordinates.size();i++){</b>
+<b class="fc"><i>112</i>&nbsp;                            if(finalcoordinates.get(i).equals(controlCoor.get(0)))</b>
+<b class="fc"><i>113</i>&nbsp;                                coorDelete = i;</b>
+<i>114</i>&nbsp;                        }
+<i>115</i>&nbsp;
+<b class="fc"><i>116</i>&nbsp;                        finalcoordinates.remove(coorDelete);</b>
+<i>117</i>&nbsp;                    }
+<i>118</i>&nbsp;
+<b class="fc"><i>119</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Additional Build: \n&quot;);</b>
+<i>120</i>&nbsp;                    Coordinate c;
+<b class="fc"><i>121</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-&quot;+printCoordinates(finalcoordinates));</b>
+<b class="fc"><i>122</i>&nbsp;                    server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Where you want to build?\n&quot;);</b>
+<i>123</i>&nbsp;                    int id;
+<i>124</i>&nbsp;                    while(true){
+<b class="fc"><i>125</i>&nbsp;                        String msg = server.read(ch);</b>
+<b class="fc"><i>126</i>&nbsp;                        if(msg == null){</b>
+<b class="fc"><i>127</i>&nbsp;                            for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>128</i>&nbsp;                                server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>129</i>&nbsp;                            }</b>
+<b class="fc"><i>130</i>&nbsp;                            ch.resetConnected();</b>
+<b class="fc"><i>131</i>&nbsp;                            ch.closeConnection();</b>
+<b class="fc"><i>132</i>&nbsp;                            return false;</b>
+<i>133</i>&nbsp;                        }
+<b class="fc"><i>134</i>&nbsp;                        id = Integer.parseInt(msg);</b>
+<b class="fc"><i>135</i>&nbsp;                        if(id&lt;0 || id&gt;=finalcoordinates.size()){</b>
+<b class="fc"><i>136</i>&nbsp;                            server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>137</i>&nbsp;                            server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Try another index: &quot;);</b>
+<b class="fc"><i>138</i>&nbsp;                            continue;</b>
+<i>139</i>&nbsp;                        }
+<i>140</i>&nbsp;                        break;
+<i>141</i>&nbsp;                    }
+<b class="fc"><i>142</i>&nbsp;                    c = finalcoordinates.get(id);</b>
+<b class="fc"><i>143</i>&nbsp;                    m.updateBuilding(c);</b>
+<i>144</i>&nbsp;                }
+<b class="fc"><i>145</i>&nbsp;                for(ClientHandler clientHandler : server.getClientHandlers()) {</b>
+<b class="fc"><i>146</i>&nbsp;                    server.write(clientHandler, &quot;serviceMessage&quot;, &quot;BORD-&quot; + m.printBoard());</b>
+<b class="fc"><i>147</i>&nbsp;                }</b>
+<i>148</i>&nbsp;            }
+<i>149</i>&nbsp;        }else{
+<b class="fc"><i>150</i>&nbsp;            if(controlCoor.size() == 0)</b>
+<b class="nc"><i>151</i>&nbsp;                server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-You can&#39;t use Prometheus power\n&quot;);</b>
+<i>152</i>&nbsp;            else{
+<b class="fc"><i>153</i>&nbsp;                server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-You can use Prometheus power\n&quot;);</b>
+<b class="fc"><i>154</i>&nbsp;                server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-1)YES\n2) NO\n&quot;);</b>
+<b class="fc"><i>155</i>&nbsp;                server.write(ch, &quot;interactionServer&quot;, &quot;INDX-Would you like to build an additional block before moving you worker? &quot;);</b>
+<b class="fc"><i>156</i>&nbsp;                power = server.read(ch);</b>
+<b class="fc"><i>157</i>&nbsp;                if(power == null){</b>
+<b class="fc"><i>158</i>&nbsp;                    for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>159</i>&nbsp;                        server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>160</i>&nbsp;                    }</b>
+<b class="fc"><i>161</i>&nbsp;                    ch.resetConnected();</b>
+<b class="fc"><i>162</i>&nbsp;                    ch.closeConnection();</b>
+<b class="fc"><i>163</i>&nbsp;                    return false;</b>
+<i>164</i>&nbsp;                }else{
+<b class="fc"><i>165</i>&nbsp;                    while(!power.equals(&quot;1&quot;) &amp;&amp; !power.equals(&quot;2&quot;)){</b>
+<b class="fc"><i>166</i>&nbsp;                        server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>167</i>&nbsp;                        server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-1) YES\n2) NO\n&quot;);</b>
+<b class="fc"><i>168</i>&nbsp;                        server.write(ch, &quot;interactionServer&quot;, &quot;INDX-Would you like to build an additional block before moving your worker? &quot;);</b>
+<b class="fc"><i>169</i>&nbsp;                        power = server.read(ch);</b>
+<b class="fc"><i>170</i>&nbsp;                        if(power == null){</b>
+<b class="fc"><i>171</i>&nbsp;                            for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>172</i>&nbsp;                                server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>173</i>&nbsp;                            }</b>
+<b class="fc"><i>174</i>&nbsp;                            ch.resetConnected();</b>
+<b class="fc"><i>175</i>&nbsp;                            ch.closeConnection();</b>
+<b class="fc"><i>176</i>&nbsp;                            return false;</b>
+<i>177</i>&nbsp;                        }
+<i>178</i>&nbsp;                    }
+<i>179</i>&nbsp;                }
+<i>180</i>&nbsp;
+<b class="fc"><i>181</i>&nbsp;                if(power.equals(&quot;1&quot;)) {</b>
+<b class="fc"><i>182</i>&nbsp;                    ArrayList&lt;Coordinate&gt; finalcoordinates = whereCanBuild(m, ch, wID);</b>
+<b class="fc"><i>183</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Additional Build: \n&quot;);</b>
+<i>184</i>&nbsp;                    Coordinate c;
+<b class="fc"><i>185</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-&quot;+printCoordinates(finalcoordinates));</b>
+<b class="fc"><i>186</i>&nbsp;                    server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Where you want to build?\n&quot;);</b>
+<i>187</i>&nbsp;                    int id;
+<i>188</i>&nbsp;                    while(true){
+<b class="fc"><i>189</i>&nbsp;                        String msg = server.read(ch);</b>
+<b class="fc"><i>190</i>&nbsp;                        if(msg == null){</b>
+<b class="fc"><i>191</i>&nbsp;                            for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>192</i>&nbsp;                                server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>193</i>&nbsp;                            }</b>
+<b class="fc"><i>194</i>&nbsp;                            ch.resetConnected();</b>
+<b class="fc"><i>195</i>&nbsp;                            ch.closeConnection();</b>
+<b class="fc"><i>196</i>&nbsp;                            return false;</b>
+<i>197</i>&nbsp;                        }
+<b class="fc"><i>198</i>&nbsp;                        id = Integer.parseInt(msg);</b>
+<i>199</i>&nbsp;
+<b class="fc"><i>200</i>&nbsp;                        if(id&lt;0 || id&gt;=finalcoordinates.size()){</b>
+<b class="fc"><i>201</i>&nbsp;                            server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>202</i>&nbsp;                            server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Try another index: &quot;);</b>
+<b class="fc"><i>203</i>&nbsp;                            continue;</b>
+<i>204</i>&nbsp;                        }
+<i>205</i>&nbsp;                        break;
+<i>206</i>&nbsp;                    }
+<b class="fc"><i>207</i>&nbsp;                    c = finalcoordinates.get(id);</b>
+<b class="fc"><i>208</i>&nbsp;                    m.updateBuilding(c);</b>
+<i>209</i>&nbsp;                }
+<b class="fc"><i>210</i>&nbsp;                for(ClientHandler clientHandler : server.getClientHandlers()) {</b>
+<b class="fc"><i>211</i>&nbsp;                    server.write(clientHandler, &quot;serviceMessage&quot;, &quot;BORD-&quot; + m.printBoard());</b>
+<b class="fc"><i>212</i>&nbsp;                }</b>
+<i>213</i>&nbsp;            }
+<i>214</i>&nbsp;        }
+<i>215</i>&nbsp;
+<b class="fc"><i>216</i>&nbsp;        Coordinate c = null;</b>
+<b class="fc"><i>217</i>&nbsp;        if(wID==0){</b>
+<b class="fc"><i>218</i>&nbsp;            if(power.equals(&quot;1&quot;))</b>
+<b class="fc"><i>219</i>&nbsp;                coordinates0 = whereCanMove(m, ch, 0, true);</b>
+<i>220</i>&nbsp;            else
+<b class="fc"><i>221</i>&nbsp;                coordinates0 = whereCanMove(m, ch, 0, athenaOn);</b>
+<b class="fc"><i>222</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Move: \n&quot;);</b>
+<b class="fc"><i>223</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-&quot;+printCoordinates(coordinates0));</b>
+<b class="fc"><i>224</i>&nbsp;            server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Where you want to move?\n&quot;);</b>
+<i>225</i>&nbsp;            int id;
+<i>226</i>&nbsp;            while(true){
+<b class="fc"><i>227</i>&nbsp;                String msg = server.read(ch);</b>
+<b class="fc"><i>228</i>&nbsp;                if(msg == null){</b>
+<b class="fc"><i>229</i>&nbsp;                    for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>230</i>&nbsp;                        server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>231</i>&nbsp;                    }</b>
+<b class="fc"><i>232</i>&nbsp;                    ch.resetConnected();</b>
+<b class="fc"><i>233</i>&nbsp;                    ch.closeConnection();</b>
+<b class="fc"><i>234</i>&nbsp;                    return false;</b>
+<i>235</i>&nbsp;                }else{
+<b class="fc"><i>236</i>&nbsp;                    id = Integer.parseInt(msg);</b>
+<i>237</i>&nbsp;                }
+<b class="fc"><i>238</i>&nbsp;                if(id&lt;0 || id&gt;=coordinates0.size()){</b>
+<b class="fc"><i>239</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>240</i>&nbsp;                    server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Try another index: &quot;);</b>
+<b class="fc"><i>241</i>&nbsp;                    continue;</b>
+<i>242</i>&nbsp;                }
+<i>243</i>&nbsp;                break;
+<i>244</i>&nbsp;            }
+<b class="fc"><i>245</i>&nbsp;            c = coordinates0.get(id);</b>
+<b class="fc"><i>246</i>&nbsp;        }</b>
+<b class="fc"><i>247</i>&nbsp;        else if(wID==1){</b>
+<b class="fc"><i>248</i>&nbsp;            if(power.equals(&quot;1&quot;))</b>
+<b class="fc"><i>249</i>&nbsp;                coordinates1 = whereCanMove(m, ch, 1, true);</b>
+<i>250</i>&nbsp;            else
+<b class="fc"><i>251</i>&nbsp;                coordinates1 = whereCanMove(m, ch, 1, athenaOn);</b>
+<b class="fc"><i>252</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Move: \n&quot;);</b>
+<b class="fc"><i>253</i>&nbsp;            server.write(ch, &quot;serviceMessage&quot;, &quot;LIST-&quot;+printCoordinates(coordinates1));</b>
+<b class="fc"><i>254</i>&nbsp;            server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Where do you want to move?\n&quot;);</b>
+<i>255</i>&nbsp;            int id;
+<i>256</i>&nbsp;            while(true){
+<b class="fc"><i>257</i>&nbsp;                String msg = server.read(ch);</b>
+<b class="fc"><i>258</i>&nbsp;                if(msg == null){</b>
+<b class="fc"><i>259</i>&nbsp;                    for(ClientHandler chl : server.getClientHandlers()){</b>
+<b class="fc"><i>260</i>&nbsp;                        server.write(chl, &quot;serviceMessage&quot;, &quot;WINM-Player disconnected\n&quot;);</b>
+<b class="fc"><i>261</i>&nbsp;                    }</b>
+<b class="fc"><i>262</i>&nbsp;                    ch.resetConnected();</b>
+<b class="fc"><i>263</i>&nbsp;                    ch.closeConnection();</b>
+<b class="fc"><i>264</i>&nbsp;                    return false;</b>
+<i>265</i>&nbsp;                }else{
+<b class="fc"><i>266</i>&nbsp;                    id = Integer.parseInt(msg);</b>
+<i>267</i>&nbsp;                }
+<b class="fc"><i>268</i>&nbsp;                if(id&lt;0 || id&gt;=coordinates1.size()){</b>
+<b class="fc"><i>269</i>&nbsp;                    server.write(ch, &quot;serviceMessage&quot;, &quot;MSGE-Invalid input\n&quot;);</b>
+<b class="fc"><i>270</i>&nbsp;                    server.write(ch, &quot;interactionServer&quot;, &quot;TURN-Try another index: &quot;);</b>
+<b class="fc"><i>271</i>&nbsp;                    continue;</b>
+<i>272</i>&nbsp;                }
+<i>273</i>&nbsp;                break;
+<i>274</i>&nbsp;            }
+<b class="fc"><i>275</i>&nbsp;            c = coordinates1.get(id);</b>
+<i>276</i>&nbsp;        }
+<b class="fc"><i>277</i>&nbsp;        m.updateMovement(p,wID,c);</b>
+<b class="fc"><i>278</i>&nbsp;        p.getWorker(wID).changeMoved(true);</b>
+<b class="fc"><i>279</i>&nbsp;        return true;</b>
+<i>280</i>&nbsp;    }
+<i>281</i>&nbsp;
+<i>282</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-29 12:21</div>
+</div>
+</body>
+</html>

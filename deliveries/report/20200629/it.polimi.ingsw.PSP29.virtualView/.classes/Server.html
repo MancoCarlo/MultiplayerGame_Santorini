@@ -1,0 +1,583 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Server</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.virtualView</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Server (it.polimi.ingsw.PSP29.virtualView)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Server</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (6/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11,9%
+  </span>
+  <span class="absValue">
+    (29/ 243)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.virtualView;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.Controller.*;
+<i>4</i>&nbsp;import it.polimi.ingsw.PSP29.model.*;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.io.IOException;
+<i>7</i>&nbsp;import java.lang.reflect.InvocationTargetException;
+<i>8</i>&nbsp;import java.lang.reflect.Method;
+<i>9</i>&nbsp;import java.net.ServerSocket;
+<i>10</i>&nbsp;import java.net.Socket;
+<i>11</i>&nbsp;import java.util.ArrayList;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;
+<b class="fc"><i>14</i>&nbsp;public class Server</b>
+<i>15</i>&nbsp;{
+<i>16</i>&nbsp;    /**
+<i>17</i>&nbsp;     * Port where the server work
+<i>18</i>&nbsp;     */
+<i>19</i>&nbsp;    public final static int SOCKET_PORT = 43123;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * Controller that manage the game
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    private static GameController gc;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    /**
+<i>27</i>&nbsp;     * num of player in the match
+<i>28</i>&nbsp;     */
+<b class="fc"><i>29</i>&nbsp;    private int numPlayers=0;</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /**
+<i>32</i>&nbsp;     * timeout for the interaction with client
+<i>33</i>&nbsp;     */
+<b class="fc"><i>34</i>&nbsp;    private boolean timeout = false;</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * players currently logged
+<i>38</i>&nbsp;     */
+<b class="fc"><i>39</i>&nbsp;    private int countPlayers = 0;</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    /**
+<i>42</i>&nbsp;     * socket of the server
+<i>43</i>&nbsp;     */
+<i>44</i>&nbsp;    private ServerSocket socket;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /**
+<i>47</i>&nbsp;     * array of clientHandlers
+<i>48</i>&nbsp;     */
+<b class="fc"><i>49</i>&nbsp;    private ArrayList&lt;ClientHandler&gt; clientHandlers = new ArrayList&lt;&gt;();</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    /**
+<i>52</i>&nbsp;     * boolean that tell the server if the client will play another match
+<i>53</i>&nbsp;     */
+<i>54</i>&nbsp;    private boolean playAgain;
+<i>55</i>&nbsp;
+<i>56</i>&nbsp;    /**
+<i>57</i>&nbsp;     * server execution
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    public void launch(){
+<i>60</i>&nbsp;        try {
+<b class="nc"><i>61</i>&nbsp;            socket = new ServerSocket(SOCKET_PORT);</b>
+<b class="nc"><i>62</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>63</i>&nbsp;            System.out.println(&quot;cannot open server socket&quot;);</b>
+<b class="nc"><i>64</i>&nbsp;            System.exit(1);</b>
+<b class="nc"><i>65</i>&nbsp;            return;</b>
+<b class="nc"><i>66</i>&nbsp;        }</b>
+<b class="nc"><i>67</i>&nbsp;        gc = new GameController(this);</b>
+<b class="nc"><i>68</i>&nbsp;        playAgain=true;</b>
+<b class="nc"><i>69</i>&nbsp;        launchMatch();</b>
+<b class="nc"><i>70</i>&nbsp;    }</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    /**
+<i>73</i>&nbsp;     * start the match
+<i>74</i>&nbsp;     */
+<i>75</i>&nbsp;    public void launchMatch()
+<i>76</i>&nbsp;    {
+<i>77</i>&nbsp;        while (true) {
+<b class="nc"><i>78</i>&nbsp;            System.out.println(&quot;server ready&quot;);</b>
+<b class="nc"><i>79</i>&nbsp;            System.out.println(&quot;Creating Lobby&quot;);</b>
+<i>80</i>&nbsp;            while(true){
+<b class="nc"><i>81</i>&nbsp;                while(countPlayers==0){</b>
+<b class="nc"><i>82</i>&nbsp;                    ClientHandler clientHandler=null;</b>
+<b class="nc"><i>83</i>&nbsp;                    clientHandler = connection(socket, clientHandler);</b>
+<b class="nc"><i>84</i>&nbsp;                    if(loginPlayer(clientHandler)){</b>
+<b class="nc"><i>85</i>&nbsp;                        if(createLobby(clientHandler)){</b>
+<b class="nc"><i>86</i>&nbsp;                            while(numPlayers != 2 &amp;&amp; numPlayers != 3){</b>
+<b class="nc"><i>87</i>&nbsp;                                if(!write(clientHandler, &quot;serviceMessage&quot;, &quot;MSGE-Players number not valid\n&quot;)){</b>
+<b class="nc"><i>88</i>&nbsp;                                    break;</b>
+<i>89</i>&nbsp;                                }
+<b class="nc"><i>90</i>&nbsp;                                if(!createLobby(clientHandler)){</b>
+<b class="nc"><i>91</i>&nbsp;                                    break;</b>
+<i>92</i>&nbsp;                                }
+<i>93</i>&nbsp;                            }
+<b class="nc"><i>94</i>&nbsp;                            if(numPlayers==2 || numPlayers==3){</b>
+<b class="nc"><i>95</i>&nbsp;                                write(clientHandler, &quot;serviceMessage&quot;, &quot;MSGE-\nWait for other players\n\n&quot;);</b>
+<b class="nc"><i>96</i>&nbsp;                                clientHandlers.add(clientHandler);</b>
+<b class="nc"><i>97</i>&nbsp;                                countPlayers++;</b>
+<i>98</i>&nbsp;                            }
+<i>99</i>&nbsp;                            else{
+<b class="nc"><i>100</i>&nbsp;                                gc.getMatch().getPlayers().remove(numPlayers);</b>
+<i>101</i>&nbsp;                            }
+<i>102</i>&nbsp;                        }
+<i>103</i>&nbsp;                        else{
+<b class="nc"><i>104</i>&nbsp;                            gc.getMatch().getPlayers().remove(numPlayers);</b>
+<i>105</i>&nbsp;                        }
+<i>106</i>&nbsp;                    }
+<b class="nc"><i>107</i>&nbsp;                }</b>
+<b class="nc"><i>108</i>&nbsp;                System.out.println(&quot;Adding players&quot;);</b>
+<b class="nc"><i>109</i>&nbsp;                while(countPlayers &lt; numPlayers){</b>
+<b class="nc"><i>110</i>&nbsp;                    ClientHandler clientHandler = null;</b>
+<b class="nc"><i>111</i>&nbsp;                    clientHandler = connection(socket, clientHandler);</b>
+<b class="nc"><i>112</i>&nbsp;                    if(!loginPlayer(clientHandler)){</b>
+<b class="nc"><i>113</i>&nbsp;                        continue;</b>
+<i>114</i>&nbsp;                    }
+<b class="nc"><i>115</i>&nbsp;                    if(!write(clientHandler, &quot;serviceMessage&quot;, &quot;MSGE-\nWait for other players\n\n&quot;)){</b>
+<b class="nc"><i>116</i>&nbsp;                        gc.getMatch().getPlayers().remove(countPlayers);</b>
+<b class="nc"><i>117</i>&nbsp;                        continue;</b>
+<i>118</i>&nbsp;                    }
+<b class="nc"><i>119</i>&nbsp;                    clientHandlers.add(clientHandler);</b>
+<b class="nc"><i>120</i>&nbsp;                    countPlayers++;</b>
+<b class="nc"><i>121</i>&nbsp;                }</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;                gc.getMatch().updatePlayers(clientHandlers);</b>
+<i>124</i>&nbsp;
+<b class="nc"><i>125</i>&nbsp;                gc.getMatch().sortPlayers();</b>
+<b class="nc"><i>126</i>&nbsp;                sortClientHandlers();</b>
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;                for(Player p : gc.getMatch().getPlayers()){</b>
+<b class="nc"><i>129</i>&nbsp;                    p.setInGame(true);</b>
+<b class="nc"><i>130</i>&nbsp;                }</b>
+<i>131</i>&nbsp;
+<b class="nc"><i>132</i>&nbsp;                for(ClientHandler clientHandler : clientHandlers){</b>
+<b class="nc"><i>133</i>&nbsp;                    if(clientHandler.getConnected()){</b>
+<b class="nc"><i>134</i>&nbsp;                        if(!write(clientHandler, &quot;serviceMessage&quot;, &quot;MSGE-You&#39;re in\n\n&quot;)){</b>
+<b class="nc"><i>135</i>&nbsp;                            gc.getMatch().getPlayer(clientHandler.getName()).setInGame(false);</b>
+<i>136</i>&nbsp;                        }
+<i>137</i>&nbsp;                    }
+<b class="nc"><i>138</i>&nbsp;                }</b>
+<i>139</i>&nbsp;
+<b class="nc"><i>140</i>&nbsp;                System.out.println(&quot;printing board&quot;);</b>
+<b class="nc"><i>141</i>&nbsp;                gc.getMatch().inizializeBoard();</b>
+<b class="nc"><i>142</i>&nbsp;                while (gc.getMatch().getBoard() == null){ }</b>
+<b class="nc"><i>143</i>&nbsp;                for(ClientHandler clientHandler : clientHandlers){</b>
+<b class="nc"><i>144</i>&nbsp;                    if(clientHandler.getConnected()){</b>
+<b class="nc"><i>145</i>&nbsp;                        write(clientHandler, &quot;serviceMessage&quot;,  &quot;BORD-&quot;+gc.getMatch().printBoard());</b>
+<i>146</i>&nbsp;                    }
+<b class="nc"><i>147</i>&nbsp;                }</b>
+<i>148</i>&nbsp;
+<b class="nc"><i>149</i>&nbsp;                System.out.println(&quot;printing players&quot;);</b>
+<b class="nc"><i>150</i>&nbsp;                for(ClientHandler clientHandler : clientHandlers){</b>
+<b class="nc"><i>151</i>&nbsp;                    if(clientHandler.getConnected()){</b>
+<b class="nc"><i>152</i>&nbsp;                        write(clientHandler, &quot;serviceMessage&quot;, &quot;LSTP-&quot;+gc.getMatch().printPlayers());</b>
+<i>153</i>&nbsp;                    }
+<b class="nc"><i>154</i>&nbsp;                }</b>
+<i>155</i>&nbsp;
+<b class="nc"><i>156</i>&nbsp;                if(!controlEndGame()) continue;</b>
+<i>157</i>&nbsp;
+<b class="nc"><i>158</i>&nbsp;                System.out.println(&quot;Assigning gods&quot;);</b>
+<b class="nc"><i>159</i>&nbsp;                if(!gc.godsAssignement()){</b>
+<b class="nc"><i>160</i>&nbsp;                    playAgain=controlEndGame();</b>
+<i>161</i>&nbsp;                }
+<b class="nc"><i>162</i>&nbsp;                if(!playAgain) continue;</b>
+<i>163</i>&nbsp;
+<i>164</i>&nbsp;
+<b class="nc"><i>165</i>&nbsp;                String rightP = &quot;&quot;;</b>
+<b class="nc"><i>166</i>&nbsp;                for(ClientHandler ch : clientHandlers){</b>
+<b class="nc"><i>167</i>&nbsp;                    rightP = rightP + ch.getName() + &quot;,&quot; + gc.getMatch().getPlayer(ch.getName()).getCard().getName()+ &quot;\n&quot;;</b>
+<b class="nc"><i>168</i>&nbsp;                }</b>
+<i>169</i>&nbsp;
+<b class="nc"><i>170</i>&nbsp;                for(ClientHandler clientHandler : clientHandlers){</b>
+<b class="nc"><i>171</i>&nbsp;                    if(clientHandler.getConnected()){</b>
+<b class="nc"><i>172</i>&nbsp;                        write(clientHandler, &quot;serviceMessage&quot;,  &quot;MGOD-&quot;+clientHandler.getName()+&quot;;&quot;+rightP);</b>
+<i>173</i>&nbsp;                    }
+<b class="nc"><i>174</i>&nbsp;                }</b>
+<i>175</i>&nbsp;
+<b class="nc"><i>176</i>&nbsp;                System.out.println(&quot;Putting workers&quot;);</b>
+<b class="nc"><i>177</i>&nbsp;                if(!gc.putWorkers()){</b>
+<b class="nc"><i>178</i>&nbsp;                    playAgain=controlEndGame();</b>
+<i>179</i>&nbsp;                }
+<b class="nc"><i>180</i>&nbsp;                if(!playAgain) continue;</b>
+<i>181</i>&nbsp;
+<b class="nc"><i>182</i>&nbsp;                gc.gameExe();</b>
+<i>183</i>&nbsp;
+<i>184</i>&nbsp;
+<b class="nc"><i>185</i>&nbsp;                newGame();</b>
+<b class="nc"><i>186</i>&nbsp;            }</b>
+<i>187</i>&nbsp;        }
+<i>188</i>&nbsp;    }
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;    /**
+<i>191</i>&nbsp;     * control if a player disconnected from the server and start a new game
+<i>192</i>&nbsp;     * @return true if one player is disconnected
+<i>193</i>&nbsp;     */
+<i>194</i>&nbsp;    public boolean controlEndGame(){
+<b class="nc"><i>195</i>&nbsp;        gc.getMatch().updatePlayers(clientHandlers);</b>
+<b class="nc"><i>196</i>&nbsp;        int count=0;</b>
+<b class="nc"><i>197</i>&nbsp;        for(ClientHandler clientHandler : clientHandlers){</b>
+<b class="nc"><i>198</i>&nbsp;            if(clientHandler.getConnected()){</b>
+<b class="nc"><i>199</i>&nbsp;                count++;</b>
+<i>200</i>&nbsp;            }
+<b class="nc"><i>201</i>&nbsp;        }</b>
+<i>202</i>&nbsp;
+<b class="nc"><i>203</i>&nbsp;        if(count!=countPlayers){</b>
+<b class="nc"><i>204</i>&nbsp;            for(ClientHandler clientHandler : clientHandlers){</b>
+<i>205</i>&nbsp;                {
+<b class="nc"><i>206</i>&nbsp;                    if (clientHandler.getConnected()){</b>
+<b class="nc"><i>207</i>&nbsp;                        write(clientHandler, &quot;serviceMessage&quot; , &quot;WINM-\nYou win!!\n&quot;);</b>
+<i>208</i>&nbsp;                    }
+<i>209</i>&nbsp;                }
+<b class="nc"><i>210</i>&nbsp;            }</b>
+<b class="nc"><i>211</i>&nbsp;            newGame();</b>
+<b class="nc"><i>212</i>&nbsp;            return false;</b>
+<i>213</i>&nbsp;        }
+<b class="nc"><i>214</i>&nbsp;        return true;</b>
+<i>215</i>&nbsp;    }
+<i>216</i>&nbsp;
+<i>217</i>&nbsp;    /**
+<i>218</i>&nbsp;     * create a new game at the end of the previous one
+<i>219</i>&nbsp;     */
+<i>220</i>&nbsp;    public void newGame(){
+<b class="nc"><i>221</i>&nbsp;        ArrayList&lt;ClientHandler&gt; newCH = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>222</i>&nbsp;        for(int i = 0; i&lt;clientHandlers.size();i++){</b>
+<b class="nc"><i>223</i>&nbsp;            if(clientHandlers.get(i).getConnected()){</b>
+<b class="nc"><i>224</i>&nbsp;                newCH.add(clientHandlers.get(i));</b>
+<i>225</i>&nbsp;            }else{
+<b class="nc"><i>226</i>&nbsp;                if(gc.getMatch().getPlayers().size()==0){</b>
+<i>227</i>&nbsp;                    try {
+<b class="nc"><i>228</i>&nbsp;                        this.socket.close();</b>
+<b class="nc"><i>229</i>&nbsp;                    } catch (IOException e) {</b>
+<b class="nc"><i>230</i>&nbsp;                        System.out.println(&quot;Server closed&quot;);</b>
+<b class="nc"><i>231</i>&nbsp;                    }</b>
+<i>232</i>&nbsp;                }
+<b class="nc"><i>233</i>&nbsp;                countPlayers--;</b>
+<b class="nc"><i>234</i>&nbsp;                clientHandlers.get(i).closeConnection();</b>
+<i>235</i>&nbsp;            }
+<i>236</i>&nbsp;        }
+<b class="nc"><i>237</i>&nbsp;        clientHandlers = newCH;</b>
+<i>238</i>&nbsp;
+<b class="nc"><i>239</i>&nbsp;        for(int i=0; i&lt;clientHandlers.size();i++){</b>
+<b class="nc"><i>240</i>&nbsp;            write(clientHandlers.get(i), &quot;serviceMessage&quot;, &quot;MSGE-Wait your turn\n&quot;);</b>
+<i>241</i>&nbsp;        }
+<i>242</i>&nbsp;
+<b class="nc"><i>243</i>&nbsp;        for(int i=0; i&lt;clientHandlers.size();i++){</b>
+<b class="nc"><i>244</i>&nbsp;            write(clientHandlers.get(i), &quot;serviceMessage&quot;, &quot;LIST-1) YES\n2) NO\n&quot;);</b>
+<b class="nc"><i>245</i>&nbsp;            write(clientHandlers.get(i),&quot;interactionServer&quot;, &quot;INDX-Would you like to play again?&quot;);</b>
+<i>246</i>&nbsp;            String again;
+<i>247</i>&nbsp;            try{
+<b class="nc"><i>248</i>&nbsp;                again = read(clientHandlers.get(i));</b>
+<b class="nc"><i>249</i>&nbsp;                System.out.println(again);</b>
+<b class="nc"><i>250</i>&nbsp;                if(again==null || again.equals(&quot;2&quot;)){</b>
+<b class="nc"><i>251</i>&nbsp;                    countPlayers--;</b>
+<b class="nc"><i>252</i>&nbsp;                    write(clientHandlers.get(i), &quot;serviceMessage&quot;, &quot;STOP&quot;);</b>
+<b class="nc"><i>253</i>&nbsp;                    write(clientHandlers.get(i), &quot;Stop&quot;, &quot;Closing connection&quot;);</b>
+<b class="nc"><i>254</i>&nbsp;                    clientHandlers.get(i).resetConnected();</b>
+<b class="nc"><i>255</i>&nbsp;                    clientHandlers.get(i).closeConnection();</b>
+<i>256</i>&nbsp;                }
+<b class="nc"><i>257</i>&nbsp;                else if(again.equals(&quot;1&quot;)){</b>
+<b class="nc"><i>258</i>&nbsp;                    write(clientHandlers.get(i), &quot;serviceMessage&quot;, &quot;MSGE-Wait the creation of a new game\n&quot;);</b>
+<i>259</i>&nbsp;                }
+<b class="nc"><i>260</i>&nbsp;            } catch (Exception e) {</b>
+<b class="nc"><i>261</i>&nbsp;                System.out.println(&quot;No connection&quot;);</b>
+<b class="nc"><i>262</i>&nbsp;            }</b>
+<i>263</i>&nbsp;        }
+<i>264</i>&nbsp;
+<b class="nc"><i>265</i>&nbsp;        ArrayList&lt;ClientHandler&gt; CHs = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>266</i>&nbsp;        for(ClientHandler clientHandler : clientHandlers){</b>
+<b class="nc"><i>267</i>&nbsp;            if(clientHandler.getConnected()){</b>
+<b class="nc"><i>268</i>&nbsp;                CHs.add(clientHandler);</b>
+<i>269</i>&nbsp;            }
+<b class="nc"><i>270</i>&nbsp;        }</b>
+<b class="nc"><i>271</i>&nbsp;        clientHandlers = CHs;</b>
+<i>272</i>&nbsp;
+<b class="nc"><i>273</i>&nbsp;        gc.getMatch().getPlayers().clear();</b>
+<b class="nc"><i>274</i>&nbsp;        for(int i=0; i&lt;clientHandlers.size(); i++){</b>
+<b class="nc"><i>275</i>&nbsp;            gc.getMatch().getPlayers().add(new Player(clientHandlers.get(i).getName(), clientHandlers.get(i).getAge(), i+1));</b>
+<i>276</i>&nbsp;        }
+<i>277</i>&nbsp;
+<b class="nc"><i>278</i>&nbsp;        for(int i=0; i&lt;clientHandlers.size();i++){</b>
+<b class="nc"><i>279</i>&nbsp;            write(clientHandlers.get(i),&quot;serviceMessage&quot;, &quot;MSGE-Waiting for players\n&quot;);</b>
+<i>280</i>&nbsp;        }
+<i>281</i>&nbsp;
+<b class="nc"><i>282</i>&nbsp;        if(clientHandlers.size()==0){</b>
+<b class="nc"><i>283</i>&nbsp;            playAgain = false;</b>
+<i>284</i>&nbsp;        }
+<i>285</i>&nbsp;        else{
+<b class="nc"><i>286</i>&nbsp;            playAgain = true;</b>
+<i>287</i>&nbsp;        }
+<i>288</i>&nbsp;
+<b class="nc"><i>289</i>&nbsp;        launchMatch();</b>
+<b class="nc"><i>290</i>&nbsp;    }</b>
+<i>291</i>&nbsp;
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;    /**
+<i>294</i>&nbsp;     *
+<i>295</i>&nbsp;     * wait until the method is executed
+<i>296</i>&nbsp;     *
+<i>297</i>&nbsp;     * @param clientHandler that is interfaced with client
+<i>298</i>&nbsp;     * @param meth the method to process
+<i>299</i>&nbsp;     */
+<i>300</i>&nbsp;    public void process(ClientHandler clientHandler, String meth){
+<i>301</i>&nbsp;        try {
+<b class="fc"><i>302</i>&nbsp;            Method method1 = ClientHandler.class.getMethod(meth);</b>
+<b class="fc"><i>303</i>&nbsp;            while(!(boolean)method1.invoke(clientHandler));</b>
+<b class="nc"><i>304</i>&nbsp;        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {</b>
+<b class="nc"><i>305</i>&nbsp;            e.printStackTrace();</b>
+<b class="fc"><i>306</i>&nbsp;        }</b>
+<b class="fc"><i>307</i>&nbsp;    }</b>
+<i>308</i>&nbsp;
+<i>309</i>&nbsp;    /**
+<i>310</i>&nbsp;     *
+<i>311</i>&nbsp;     * reset the variable in clienthandler linked to the method passed
+<i>312</i>&nbsp;     *
+<i>313</i>&nbsp;     * @param clientHandler that is interfaced with client
+<i>314</i>&nbsp;     * @param meth the method to reset
+<i>315</i>&nbsp;     */
+<i>316</i>&nbsp;    public void processReset(ClientHandler clientHandler, String meth){
+<i>317</i>&nbsp;        try {
+<b class="fc"><i>318</i>&nbsp;            Method method1 = ClientHandler.class.getMethod(meth);</b>
+<b class="fc"><i>319</i>&nbsp;            method1.invoke(clientHandler);</b>
+<b class="nc"><i>320</i>&nbsp;        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {</b>
+<b class="nc"><i>321</i>&nbsp;            e.printStackTrace();</b>
+<b class="fc"><i>322</i>&nbsp;        }</b>
+<b class="fc"><i>323</i>&nbsp;    }</b>
+<i>324</i>&nbsp;
+<i>325</i>&nbsp;    /**
+<i>326</i>&nbsp;     *
+<i>327</i>&nbsp;     * accept a client and add him to the players list
+<i>328</i>&nbsp;     *
+<i>329</i>&nbsp;     * @param clientHandler that is interfaced with client
+<i>330</i>&nbsp;     * @return true if the client is logged correctly, else false
+<i>331</i>&nbsp;     */
+<i>332</i>&nbsp;    public boolean loginPlayer(ClientHandler clientHandler){
+<i>333</i>&nbsp;
+<b class="nc"><i>334</i>&nbsp;        if(!write(clientHandler,&quot;interactionServer&quot;, &quot;LOGI-Insert username: &quot;)){</b>
+<b class="nc"><i>335</i>&nbsp;            return false;</b>
+<i>336</i>&nbsp;        }
+<b class="nc"><i>337</i>&nbsp;        String username = read(clientHandler);</b>
+<b class="nc"><i>338</i>&nbsp;        if(username==null){</b>
+<b class="nc"><i>339</i>&nbsp;            return false;</b>
+<i>340</i>&nbsp;        }
+<b class="nc"><i>341</i>&nbsp;        while(gc.getMatch().alreadyIn(username) || username.contains(&quot;,&quot;)){</b>
+<b class="nc"><i>342</i>&nbsp;            if(!write(clientHandler,&quot;interactionServer&quot;, &quot;LOGI-Username not valid, try again: &quot;)){</b>
+<b class="nc"><i>343</i>&nbsp;                return false;</b>
+<i>344</i>&nbsp;            }
+<b class="nc"><i>345</i>&nbsp;            username = read(clientHandler);</b>
+<b class="nc"><i>346</i>&nbsp;            if(username==null){</b>
+<b class="nc"><i>347</i>&nbsp;                return false;</b>
+<i>348</i>&nbsp;            }
+<i>349</i>&nbsp;        }
+<i>350</i>&nbsp;
+<i>351</i>&nbsp;        int age;
+<i>352</i>&nbsp;
+<i>353</i>&nbsp;        while(true){
+<i>354</i>&nbsp;            try{
+<b class="nc"><i>355</i>&nbsp;                if(!write(clientHandler,&quot;interactionServer&quot;, &quot;LOGI-Insert age: &quot;)){</b>
+<b class="nc"><i>356</i>&nbsp;                    return false;</b>
+<i>357</i>&nbsp;                }
+<b class="nc"><i>358</i>&nbsp;                String str = read(clientHandler);</b>
+<b class="nc"><i>359</i>&nbsp;                if(str==null){</b>
+<b class="nc"><i>360</i>&nbsp;                    return false;</b>
+<i>361</i>&nbsp;                }
+<b class="nc"><i>362</i>&nbsp;                age = Integer.parseInt(str);</b>
+<i>363</i>&nbsp;
+<b class="nc"><i>364</i>&nbsp;                break;</b>
+<b class="nc"><i>365</i>&nbsp;            } catch (NumberFormatException e){</b>
+<b class="nc"><i>366</i>&nbsp;                if(!write(clientHandler, &quot;serviceMessage&quot;, &quot;LOGI-Invalid input\n&quot;)){</b>
+<b class="nc"><i>367</i>&nbsp;                    return false;</b>
+<i>368</i>&nbsp;                }
+<b class="nc"><i>369</i>&nbsp;                continue;</b>
+<i>370</i>&nbsp;            }
+<i>371</i>&nbsp;        }
+<i>372</i>&nbsp;
+<b class="nc"><i>373</i>&nbsp;        clientHandler.setName(username);</b>
+<b class="nc"><i>374</i>&nbsp;        clientHandler.setAge(age);</b>
+<b class="nc"><i>375</i>&nbsp;        Player player1 = new Player(username, age, countPlayers+1);</b>
+<b class="nc"><i>376</i>&nbsp;        gc.getMatch().addPlayer(player1);</b>
+<b class="nc"><i>377</i>&nbsp;        gc.getMatch().getPlayer(username).setInGame(true);</b>
+<b class="nc"><i>378</i>&nbsp;        return true;</b>
+<i>379</i>&nbsp;    }
+<i>380</i>&nbsp;
+<i>381</i>&nbsp;    /**
+<i>382</i>&nbsp;     *
+<i>383</i>&nbsp;     * write a message to the client
+<i>384</i>&nbsp;     *
+<i>385</i>&nbsp;     * @param clientHandler that is interfaced with client
+<i>386</i>&nbsp;     * @param s the type of message
+<i>387</i>&nbsp;     * @param msg the message
+<i>388</i>&nbsp;     * @return true if the message is sended to Client correctly, else false
+<i>389</i>&nbsp;     */
+<i>390</i>&nbsp;    public boolean write(ClientHandler clientHandler, String s, String msg){
+<b class="fc"><i>391</i>&nbsp;        clientHandler.sendMessage(s, msg);</b>
+<b class="fc"><i>392</i>&nbsp;        process(clientHandler, &quot;getSentMessage&quot;);</b>
+<b class="fc"><i>393</i>&nbsp;        processReset(clientHandler, &quot;resetSentMessage&quot;);</b>
+<b class="fc"><i>394</i>&nbsp;        if(!clientHandler.getConnected()){</b>
+<b class="nc"><i>395</i>&nbsp;            return false;</b>
+<i>396</i>&nbsp;        }
+<b class="fc"><i>397</i>&nbsp;        return true;</b>
+<i>398</i>&nbsp;    }
+<i>399</i>&nbsp;
+<i>400</i>&nbsp;    /**
+<i>401</i>&nbsp;     *
+<i>402</i>&nbsp;     * read a message from the client
+<i>403</i>&nbsp;     *
+<i>404</i>&nbsp;     * @param clientHandler that must read the message from his client
+<i>405</i>&nbsp;     * @return the message
+<i>406</i>&nbsp;     */
+<i>407</i>&nbsp;    public String read(ClientHandler clientHandler){
+<b class="fc"><i>408</i>&nbsp;        clientHandler.takeMessage();</b>
+<i>409</i>&nbsp;        try {
+<b class="fc"><i>410</i>&nbsp;            Method method1 = ClientHandler.class.getMethod(&quot;getReadMessage&quot;);</b>
+<b class="fc"><i>411</i>&nbsp;            while(!(boolean)method1.invoke(clientHandler) &amp;&amp; !timeout){  }</b>
+<b class="fc"><i>412</i>&nbsp;            if(timeout){</b>
+<b class="nc"><i>413</i>&nbsp;                timeout=false;</b>
+<i>414</i>&nbsp;            }
+<b class="nc"><i>415</i>&nbsp;        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {</b>
+<b class="nc"><i>416</i>&nbsp;            e.printStackTrace();</b>
+<b class="fc"><i>417</i>&nbsp;        }</b>
+<b class="fc"><i>418</i>&nbsp;        processReset(clientHandler, &quot;resetReadMessage&quot;);</b>
+<b class="fc"><i>419</i>&nbsp;        String response = null;</b>
+<b class="fc"><i>420</i>&nbsp;        if(clientHandler.getConnected()){</b>
+<b class="fc"><i>421</i>&nbsp;            response = clientHandler.getMessage();</b>
+<i>422</i>&nbsp;        }
+<b class="fc"><i>423</i>&nbsp;        return response;</b>
+<i>424</i>&nbsp;    }
+<i>425</i>&nbsp;
+<i>426</i>&nbsp;    /**
+<i>427</i>&nbsp;     *
+<i>428</i>&nbsp;     * connect a client to the server
+<i>429</i>&nbsp;     *
+<i>430</i>&nbsp;     * @param socket the server
+<i>431</i>&nbsp;     * @param clientHandler that must be connected to client
+<i>432</i>&nbsp;     * @return the clientHandler linked to the client
+<i>433</i>&nbsp;     */
+<i>434</i>&nbsp;    public ClientHandler connection(ServerSocket socket,ClientHandler clientHandler){
+<i>435</i>&nbsp;        Socket client;
+<i>436</i>&nbsp;        try {
+<b class="nc"><i>437</i>&nbsp;            client = socket.accept();</b>
+<b class="nc"><i>438</i>&nbsp;            clientHandler = new ClientHandler();</b>
+<b class="nc"><i>439</i>&nbsp;            clientHandler.makeCH(client, this);</b>
+<b class="nc"><i>440</i>&nbsp;            Thread thread = new Thread(clientHandler , &quot;server_&quot; + client.getInetAddress());</b>
+<b class="nc"><i>441</i>&nbsp;            thread.start();</b>
+<b class="nc"><i>442</i>&nbsp;            process(clientHandler, &quot;getConnected&quot;);</b>
+<b class="nc"><i>443</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>444</i>&nbsp;            e.printStackTrace();</b>
+<b class="nc"><i>445</i>&nbsp;        }</b>
+<b class="nc"><i>446</i>&nbsp;        return clientHandler;</b>
+<i>447</i>&nbsp;    }
+<i>448</i>&nbsp;
+<i>449</i>&nbsp;    /**
+<i>450</i>&nbsp;     *
+<i>451</i>&nbsp;     * ask to the player how many players will be in the game
+<i>452</i>&nbsp;     *
+<i>453</i>&nbsp;     * @param clientHandler that create the lobby
+<i>454</i>&nbsp;     * @return true if the lobby is created succesfully
+<i>455</i>&nbsp;     */
+<i>456</i>&nbsp;    public boolean createLobby(ClientHandler clientHandler) {
+<b class="nc"><i>457</i>&nbsp;        if(!write(clientHandler, &quot;interactionServer&quot;, &quot;LOBB-How many players 2 or 3? &quot;)){</b>
+<b class="nc"><i>458</i>&nbsp;            return false;</b>
+<i>459</i>&nbsp;        }
+<i>460</i>&nbsp;        try{
+<b class="nc"><i>461</i>&nbsp;            String str = read(clientHandler);</b>
+<b class="nc"><i>462</i>&nbsp;            if(str==null){</b>
+<b class="nc"><i>463</i>&nbsp;                return false;</b>
+<i>464</i>&nbsp;            }
+<b class="nc"><i>465</i>&nbsp;            numPlayers = Integer.parseInt(str);</b>
+<b class="nc"><i>466</i>&nbsp;        } catch (NumberFormatException e){</b>
+<b class="nc"><i>467</i>&nbsp;            write(clientHandler, &quot;serviceMessage&quot;, &quot;LOBB-Invalid input\n&quot;);</b>
+<b class="nc"><i>468</i>&nbsp;            createLobby(clientHandler);</b>
+<b class="nc"><i>469</i>&nbsp;        }</b>
+<b class="nc"><i>470</i>&nbsp;        gc.setNumPlayers(numPlayers);</b>
+<b class="nc"><i>471</i>&nbsp;        return true;</b>
+<i>472</i>&nbsp;    }
+<i>473</i>&nbsp;
+<i>474</i>&nbsp;    /**
+<i>475</i>&nbsp;     * sort the list of clienHandlers
+<i>476</i>&nbsp;     */
+<i>477</i>&nbsp;    public void sortClientHandlers(){
+<b class="nc"><i>478</i>&nbsp;        boolean change=true;</b>
+<i>479</i>&nbsp;        ClientHandler ch;
+<b class="nc"><i>480</i>&nbsp;        while(change){</b>
+<b class="nc"><i>481</i>&nbsp;            change=false;</b>
+<b class="nc"><i>482</i>&nbsp;            for(int i=0; i&lt;clientHandlers.size()-1; i++){</b>
+<b class="nc"><i>483</i>&nbsp;                if(clientHandlers.get(i).getAge()&gt;clientHandlers.get(i+1).getAge()){</b>
+<b class="nc"><i>484</i>&nbsp;                    ch=clientHandlers.get(i);</b>
+<b class="nc"><i>485</i>&nbsp;                    clientHandlers.set(i, clientHandlers.get(i+1));</b>
+<b class="nc"><i>486</i>&nbsp;                    clientHandlers.set(i+1, ch);</b>
+<b class="nc"><i>487</i>&nbsp;                    change=true;</b>
+<i>488</i>&nbsp;                }
+<i>489</i>&nbsp;            }
+<i>490</i>&nbsp;        }
+<b class="nc"><i>491</i>&nbsp;    }</b>
+<i>492</i>&nbsp;
+<i>493</i>&nbsp;    public ArrayList&lt;ClientHandler&gt; getClientHandlers() {
+<b class="fc"><i>494</i>&nbsp;        return clientHandlers;</b>
+<i>495</i>&nbsp;    }
+<i>496</i>&nbsp;
+<i>497</i>&nbsp;    public void setTimeout(boolean t){
+<b class="nc"><i>498</i>&nbsp;        timeout = t;</b>
+<b class="nc"><i>499</i>&nbsp;    }</b>
+<i>500</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-29 12:21</div>
+</div>
+</body>
+</html>

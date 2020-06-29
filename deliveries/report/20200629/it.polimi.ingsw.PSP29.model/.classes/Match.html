@@ -1,0 +1,365 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Match</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Match (it.polimi.ingsw.PSP29.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Match</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (24/ 24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    99,1%
+  </span>
+  <span class="absValue">
+    (109/ 110)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.io.Serializable;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;public class Match implements Serializable {
+<i>9</i>&nbsp;    /**
+<i>10</i>&nbsp;     * the number of columns of the board
+<i>11</i>&nbsp;     */
+<b class="fc"><i>12</i>&nbsp;    private static int columns = 5;</b>
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * the number of rows of the board
+<i>15</i>&nbsp;     */
+<b class="fc"><i>16</i>&nbsp;    private static int rows = 5;</b>
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * the board
+<i>19</i>&nbsp;     */
+<i>20</i>&nbsp;    private Box[][] board;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * the list of players
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    private ArrayList&lt;Player&gt; players;
+<i>25</i>&nbsp;    /**
+<i>26</i>&nbsp;     * the list of gods in this game
+<i>27</i>&nbsp;     */
+<i>28</i>&nbsp;    private ArrayList&lt;God&gt; gods;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * the list of colors associated to the player
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    private ArrayList&lt;Color&gt; colors;
+<i>33</i>&nbsp;
+<b class="fc"><i>34</i>&nbsp;    public Match() {</b>
+<b class="fc"><i>35</i>&nbsp;        board = new Box[rows][columns];</b>
+<b class="fc"><i>36</i>&nbsp;        players = new ArrayList&lt;Player&gt;();</b>
+<b class="fc"><i>37</i>&nbsp;        gods = new ArrayList&lt;God&gt;();</b>
+<b class="fc"><i>38</i>&nbsp;        colors = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>39</i>&nbsp;        colors.add(Color.ANSI_BLUE);</b>
+<b class="fc"><i>40</i>&nbsp;        colors.add(Color.ANSI_RED);</b>
+<b class="fc"><i>41</i>&nbsp;        colors.add(Color.ANSI_YELLOW);</b>
+<b class="fc"><i>42</i>&nbsp;    }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    public Box[][] getBoard() {
+<b class="fc"><i>45</i>&nbsp;        return board;</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    public ArrayList&lt;Player&gt; getPlayers() {
+<b class="fc"><i>49</i>&nbsp;        return players;</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * get a player from his name
+<i>54</i>&nbsp;     * @param n Username of the player that must be searched
+<i>55</i>&nbsp;     * @return null if there isn&#39;t n in players list, else return the Player
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    public Player getPlayer(String n){
+<b class="fc"><i>58</i>&nbsp;        for(Player p : this.players){</b>
+<b class="fc"><i>59</i>&nbsp;            if(p.getNickname().equals(n)){</b>
+<b class="fc"><i>60</i>&nbsp;                return p;</b>
+<i>61</i>&nbsp;            }
+<b class="fc"><i>62</i>&nbsp;        }</b>
+<b class="fc"><i>63</i>&nbsp;        return null;</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    /**
+<i>67</i>&nbsp;     * add players to the match
+<i>68</i>&nbsp;     * @param player the player that must be added to players list
+<i>69</i>&nbsp;     */
+<i>70</i>&nbsp;    public void addPlayer(Player player){
+<b class="fc"><i>71</i>&nbsp;            players.add(player);</b>
+<b class="fc"><i>72</i>&nbsp;    }</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    /**
+<i>75</i>&nbsp;     * remove a player from the players list
+<i>76</i>&nbsp;     * @param p player to be removed
+<i>77</i>&nbsp;     */
+<i>78</i>&nbsp;    public void removePlayer(Player p){
+<b class="fc"><i>79</i>&nbsp;        for(Player player : players){</b>
+<b class="fc"><i>80</i>&nbsp;            if(player.equals(p)){</b>
+<b class="fc"><i>81</i>&nbsp;                removeWorkers(player);</b>
+<b class="fc"><i>82</i>&nbsp;                players.remove(player);</b>
+<i>83</i>&nbsp;            }
+<b class="fc"><i>84</i>&nbsp;        }</b>
+<b class="fc"><i>85</i>&nbsp;    }</b>
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    public int getColumns() {
+<b class="fc"><i>88</i>&nbsp;        return columns;</b>
+<i>89</i>&nbsp;    }
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    public int getRows() {
+<b class="fc"><i>92</i>&nbsp;        return rows;</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    public ArrayList&lt;God&gt; getGods(){
+<b class="fc"><i>96</i>&nbsp;        return gods;</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    public God getGod(int id){
+<b class="fc"><i>100</i>&nbsp;        return gods.get(id);</b>
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    /**
+<i>104</i>&nbsp;     * instantiates each box of the board and assigns the coordinate
+<i>105</i>&nbsp;     */
+<i>106</i>&nbsp;    public void inizializeBoard(){
+<b class="fc"><i>107</i>&nbsp;        for(int i=0; i&lt;rows;i++){</b>
+<b class="fc"><i>108</i>&nbsp;            for(int j=0; j&lt;columns;j++)</b>
+<b class="fc"><i>109</i>&nbsp;                board[i][j] = new Box(i,j);</b>
+<i>110</i>&nbsp;        }
+<b class="fc"><i>111</i>&nbsp;    }</b>
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;    /**
+<i>114</i>&nbsp;     * reset the levelledUp variable in every box at the end of the turn
+<i>115</i>&nbsp;     */
+<i>116</i>&nbsp;    public void resetBoard(){
+<b class="fc"><i>117</i>&nbsp;        for(int i=0; i&lt;rows; i++){</b>
+<b class="fc"><i>118</i>&nbsp;            for(int j=0; j&lt;columns; j++){</b>
+<b class="fc"><i>119</i>&nbsp;                    board[i][j].setLevelledUp(false);</b>
+<i>120</i>&nbsp;            }
+<i>121</i>&nbsp;        }
+<b class="fc"><i>122</i>&nbsp;    }</b>
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    /**
+<i>125</i>&nbsp;     * update the position of one worker in game
+<i>126</i>&nbsp;     * @param p owner of the worker that make the move
+<i>127</i>&nbsp;     * @param id identifier&#39;s worker
+<i>128</i>&nbsp;     * @param c destination of the worker
+<i>129</i>&nbsp;     */
+<i>130</i>&nbsp;    public void updateMovement(Player p, int id, Coordinate c){
+<b class="fc"><i>131</i>&nbsp;        p.putWorker(id, board, c);</b>
+<b class="fc"><i>132</i>&nbsp;    }</b>
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    /**
+<i>135</i>&nbsp;     * Upgrade the level of one box in the board
+<i>136</i>&nbsp;     * @param c position of the box that must be upgraded
+<i>137</i>&nbsp;     */
+<i>138</i>&nbsp;    public void updateBuilding(Coordinate c){
+<b class="fc"><i>139</i>&nbsp;        board[c.getX()][c.getY()].upgradeLevel();</b>
+<b class="fc"><i>140</i>&nbsp;    }</b>
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;    /**
+<i>143</i>&nbsp;     * remove the workers of the looser player
+<i>144</i>&nbsp;     * @param p looser player
+<i>145</i>&nbsp;     */
+<i>146</i>&nbsp;    public void removeWorkers(Player p){
+<b class="fc"><i>147</i>&nbsp;        Coordinate c1 = p.getWorker(0).getPosition();</b>
+<b class="fc"><i>148</i>&nbsp;        Coordinate c2 = p.getWorker(1).getPosition();</b>
+<b class="fc"><i>149</i>&nbsp;        if(c1 != null) {</b>
+<b class="fc"><i>150</i>&nbsp;            board[c1.getX()][c1.getY()].changeState();</b>
+<b class="fc"><i>151</i>&nbsp;            board[c1.getX()][c1.getY()].setWorkerBox(null);</b>
+<b class="fc"><i>152</i>&nbsp;            p.getWorker(0).setPosition(null);</b>
+<i>153</i>&nbsp;        }
+<b class="fc"><i>154</i>&nbsp;        if(c2 != null){</b>
+<b class="fc"><i>155</i>&nbsp;            board[c2.getX()][c2.getY()].changeState();</b>
+<b class="fc"><i>156</i>&nbsp;            board[c1.getX()][c1.getY()].setWorkerBox(null);</b>
+<b class="fc"><i>157</i>&nbsp;            p.getWorker(1).setPosition(null);</b>
+<i>158</i>&nbsp;        }
+<b class="fc"><i>159</i>&nbsp;    }</b>
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    /**
+<i>162</i>&nbsp;     * sort the player by their age
+<i>163</i>&nbsp;     */
+<i>164</i>&nbsp;    public void sortPlayers(){
+<b class="fc"><i>165</i>&nbsp;        boolean change=true;</b>
+<i>166</i>&nbsp;        Player p;
+<b class="fc"><i>167</i>&nbsp;        while(change){</b>
+<b class="fc"><i>168</i>&nbsp;            change=false;</b>
+<b class="fc"><i>169</i>&nbsp;            for(int i=0; i&lt;players.size()-1; i++){</b>
+<b class="fc"><i>170</i>&nbsp;                if(players.get(i).getAge()&gt;players.get(i+1).getAge()){</b>
+<b class="fc"><i>171</i>&nbsp;                    p=players.get(i);</b>
+<b class="fc"><i>172</i>&nbsp;                    players.set(i, players.get(i+1));</b>
+<b class="fc"><i>173</i>&nbsp;                    players.set(i+1, p);</b>
+<b class="fc"><i>174</i>&nbsp;                    change=true;</b>
+<i>175</i>&nbsp;                }
+<i>176</i>&nbsp;            }
+<i>177</i>&nbsp;        }
+<b class="fc"><i>178</i>&nbsp;    }</b>
+<i>179</i>&nbsp;
+<i>180</i>&nbsp;    /**
+<i>181</i>&nbsp;     * creates the list of gods
+<i>182</i>&nbsp;     */
+<i>183</i>&nbsp;    public void loadGods() {
+<b class="fc"><i>184</i>&nbsp;        gods.add(new God(0, &quot;Apollo&quot;, &quot;God of Music&quot;));</b>
+<b class="fc"><i>185</i>&nbsp;        gods.add(new God(1, &quot;Arthemis&quot;, &quot;Goddess of the Hunt&quot;));</b>
+<b class="fc"><i>186</i>&nbsp;        gods.add(new God(2, &quot;Athena&quot;, &quot;Goddess of Wisdom&quot;));</b>
+<b class="fc"><i>187</i>&nbsp;        gods.add(new God(3, &quot;Atlas&quot;, &quot;Titan Shouldering the Heavens&quot;));</b>
+<b class="fc"><i>188</i>&nbsp;        gods.add(new God(4, &quot;Demeter&quot;, &quot;Goddess of the Harvest&quot;));</b>
+<b class="fc"><i>189</i>&nbsp;        gods.add(new God(5, &quot;Hephaestus&quot;, &quot;God of Blacksmiths&quot;));</b>
+<b class="fc"><i>190</i>&nbsp;        gods.add(new God(6, &quot;Minotaur&quot;, &quot;Bull-headed Monster&quot;));</b>
+<b class="fc"><i>191</i>&nbsp;        gods.add(new God(7, &quot;Pan&quot;, &quot;God of the Wild&quot;));</b>
+<b class="fc"><i>192</i>&nbsp;        gods.add(new God(8, &quot;Prometheus&quot;, &quot;Titan Benefactor of Mankind&quot;));</b>
+<b class="fc"><i>193</i>&nbsp;        gods.add(new God(9, &quot;Hestia&quot;, &quot;Goddess of Heart h and Home&quot;));</b>
+<b class="fc"><i>194</i>&nbsp;        gods.add(new God(10, &quot;Poseidon&quot;, &quot;God of the Sea&quot;));</b>
+<b class="fc"><i>195</i>&nbsp;        gods.add(new God(11, &quot;Triton&quot;, &quot;God of the Waves&quot;));</b>
+<b class="fc"><i>196</i>&nbsp;        gods.add(new God(12, &quot;Charon&quot;, &quot;Ferryman to the Underworld&quot;));</b>
+<b class="fc"><i>197</i>&nbsp;        gods.add(new God(13, &quot;Zeus&quot;, &quot;God of the sky&quot;));</b>
+<b class="fc"><i>198</i>&nbsp;    }</b>
+<i>199</i>&nbsp;
+<i>200</i>&nbsp;    /**
+<i>201</i>&nbsp;     * print the board on monitor
+<i>202</i>&nbsp;     * @return toString of Board
+<i>203</i>&nbsp;     */
+<i>204</i>&nbsp;    public String printBoard(){
+<b class="fc"><i>205</i>&nbsp;        StringBuilder gameboard = new StringBuilder();</b>
+<b class="fc"><i>206</i>&nbsp;        for(int i=0; i&lt;rows; i++){</b>
+<b class="fc"><i>207</i>&nbsp;            for(int j=0; j&lt;columns; j++){</b>
+<b class="fc"><i>208</i>&nbsp;                gameboard.append(board[i][j].printEmpty(this));</b>
+<i>209</i>&nbsp;            }
+<i>210</i>&nbsp;        }
+<b class="fc"><i>211</i>&nbsp;        return gameboard.toString();</b>
+<i>212</i>&nbsp;    }
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    /**
+<i>215</i>&nbsp;     * return a string that contains the list of gods
+<i>216</i>&nbsp;     * @return the string that print the list of gods
+<i>217</i>&nbsp;     */
+<i>218</i>&nbsp;    public String printGodlist(){
+<b class="fc"><i>219</i>&nbsp;        String g = &quot;Gods: \n&quot;;</b>
+<b class="fc"><i>220</i>&nbsp;        for (int i=0; i&lt;gods.size(); i++){</b>
+<b class="fc"><i>221</i>&nbsp;            g = g + (i+1) + &quot;) &quot; + gods.get(i).getName() + &quot;, &quot; + gods.get(i).getDescription() + &quot;\n&quot;;</b>
+<i>222</i>&nbsp;        }
+<b class="fc"><i>223</i>&nbsp;        return g;</b>
+<i>224</i>&nbsp;    }
+<i>225</i>&nbsp;
+<i>226</i>&nbsp;    /**
+<i>227</i>&nbsp;     * return a string that contains the list of the players
+<i>228</i>&nbsp;     * @return the string that print the list of players
+<i>229</i>&nbsp;     */
+<i>230</i>&nbsp;    public String printPlayers(){
+<b class="fc"><i>231</i>&nbsp;        String pl= &quot;Players: \n&quot;;</b>
+<b class="fc"><i>232</i>&nbsp;        for (Player p : players){</b>
+<b class="fc"><i>233</i>&nbsp;            pl = pl + &quot;- &quot;+ p.getId()+&quot;, &quot; + p.getNickname() + &quot;, &quot; + p.getAge() + &quot; years old\n&quot;;</b>
+<b class="fc"><i>234</i>&nbsp;        }</b>
+<b class="fc"><i>235</i>&nbsp;        return pl;</b>
+<i>236</i>&nbsp;    }
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;    /**
+<i>239</i>&nbsp;     * control if the username is already taken
+<i>240</i>&nbsp;     * @param username the username
+<i>241</i>&nbsp;     * @return true if the username is already taken
+<i>242</i>&nbsp;     */
+<i>243</i>&nbsp;    public boolean alreadyIn(String username){
+<b class="fc"><i>244</i>&nbsp;        if(players.size()==0){</b>
+<b class="fc"><i>245</i>&nbsp;            return false;</b>
+<i>246</i>&nbsp;        }
+<i>247</i>&nbsp;        else{
+<b class="fc"><i>248</i>&nbsp;            for(Player player : players){</b>
+<b class="fc"><i>249</i>&nbsp;                if(player.getNickname().equals(username)){</b>
+<b class="fc"><i>250</i>&nbsp;                    return true;</b>
+<i>251</i>&nbsp;                }
+<b class="fc"><i>252</i>&nbsp;            }</b>
+<i>253</i>&nbsp;        }
+<b class="fc"><i>254</i>&nbsp;        return false;</b>
+<i>255</i>&nbsp;    }
+<i>256</i>&nbsp;
+<i>257</i>&nbsp;    /**
+<i>258</i>&nbsp;     * remove a player from the game if disconnected
+<i>259</i>&nbsp;     * @param clientHandlers list of clients
+<i>260</i>&nbsp;     */
+<i>261</i>&nbsp;    public void updatePlayers(ArrayList&lt;ClientHandler&gt; clientHandlers){
+<b class="fc"><i>262</i>&nbsp;        for(ClientHandler clientHandler : clientHandlers){</b>
+<b class="fc"><i>263</i>&nbsp;            if(!clientHandler.getConnected()){</b>
+<b class="nc"><i>264</i>&nbsp;                getPlayer(clientHandler.getName()).setInGame(false);</b>
+<i>265</i>&nbsp;            }
+<b class="fc"><i>266</i>&nbsp;        }</b>
+<b class="fc"><i>267</i>&nbsp;    }</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;    /**
+<i>270</i>&nbsp;     * return the number of players in game
+<i>271</i>&nbsp;     * @return count of the number of players in game
+<i>272</i>&nbsp;     */
+<i>273</i>&nbsp;    public int playersInGame(){
+<b class="fc"><i>274</i>&nbsp;        int count = 0;</b>
+<b class="fc"><i>275</i>&nbsp;        for(Player p : players){</b>
+<b class="fc"><i>276</i>&nbsp;            if(p.getInGame()){</b>
+<b class="fc"><i>277</i>&nbsp;                count++;</b>
+<i>278</i>&nbsp;            }
+<b class="fc"><i>279</i>&nbsp;        }</b>
+<b class="fc"><i>280</i>&nbsp;        return count;</b>
+<i>281</i>&nbsp;    }
+<i>282</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-29 12:21</div>
+</div>
+</body>
+</html>

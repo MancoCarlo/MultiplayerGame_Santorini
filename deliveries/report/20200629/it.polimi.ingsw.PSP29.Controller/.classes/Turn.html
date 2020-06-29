@@ -1,0 +1,130 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Turn</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Turn (it.polimi.ingsw.PSP29.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Turn</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.PSP29.model.*;
+<i>4</i>&nbsp;import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
+<i>5</i>&nbsp;import it.polimi.ingsw.PSP29.virtualView.Server;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.ArrayList;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public interface Turn {
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    /**
+<i>12</i>&nbsp;     * let the worker build
+<i>13</i>&nbsp;     * @param m match played
+<i>14</i>&nbsp;     * @param ch owner of the turn
+<i>15</i>&nbsp;     * @param server manage the interaction with client
+<i>16</i>&nbsp;     * @return true if w has built at least once
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    public boolean build(Match m, ClientHandler ch, Server server);
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * move the worker
+<i>22</i>&nbsp;     * @param m match played
+<i>23</i>&nbsp;     * @param ch owner of the turn
+<i>24</i>&nbsp;     * @param server manage the interaction with client
+<i>25</i>&nbsp;     * @param athenaOn true if athena is on
+<i>26</i>&nbsp;     * @return true if is moved in c, else false
+<i>27</i>&nbsp;     */
+<i>28</i>&nbsp;    public boolean move(Match m, ClientHandler ch, Server server, boolean athenaOn);
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * control if the player win
+<i>32</i>&nbsp;     * @param m match played
+<i>33</i>&nbsp;     * @param p player that plays the turn
+<i>34</i>&nbsp;     * @return true if p win the game, else false
+<i>35</i>&nbsp;     */
+<i>36</i>&nbsp;    public boolean winCondition(Match m, Player p);
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    /**
+<i>39</i>&nbsp;     * control if the worker can move
+<i>40</i>&nbsp;     * @param m match played
+<i>41</i>&nbsp;     * @param w worker that can be moved
+<i>42</i>&nbsp;     * @param athena true if the athena power is on, else false
+<i>43</i>&nbsp;     * @param c coordinate that must be checked
+<i>44</i>&nbsp;     * @return true if w can&#39;t move to another location, else false
+<i>45</i>&nbsp;     */
+<i>46</i>&nbsp;    public boolean canMoveTo(Match m,Worker w, Coordinate c, boolean athena);
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    /**
+<i>49</i>&nbsp;            * control if the worker can build
+<i>50</i>&nbsp;     * @param match match played
+<i>51</i>&nbsp;     * @param w worker that must build
+<i>52</i>&nbsp;     * @param c coordinate that must be checked
+<i>53</i>&nbsp;     * @return true if w can&#39;t build to another location, else false
+<i>54</i>&nbsp;            */
+<i>55</i>&nbsp;    public boolean canBuildIn(Match match,Worker w,Coordinate c);
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    /**
+<i>58</i>&nbsp;     * create an arrayList with all the coordinates in wich the worker can move
+<i>59</i>&nbsp;     * @param match match played
+<i>60</i>&nbsp;     * @param ch owner of turn
+<i>61</i>&nbsp;     * @param id the worker id
+<i>62</i>&nbsp;     * @param athenaOn true if athena is on
+<i>63</i>&nbsp;     * @return the list
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    public ArrayList&lt;Coordinate&gt; whereCanMove(Match match, ClientHandler ch, int id, boolean athenaOn);
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    /**
+<i>68</i>&nbsp;     * create an arrayList with all the coordinates in wich the worker can build
+<i>69</i>&nbsp;     * @param match match played
+<i>70</i>&nbsp;     * @param ch owner of turn
+<i>71</i>&nbsp;     * @param id the worker id
+<i>72</i>&nbsp;     * @return the list
+<i>73</i>&nbsp;     */
+<i>74</i>&nbsp;    public ArrayList&lt;Coordinate&gt; whereCanBuild(Match match, ClientHandler ch, int id);
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    /**
+<i>77</i>&nbsp;     * print the list of valids coordinate
+<i>78</i>&nbsp;     * @param coordinates list of coordinates
+<i>79</i>&nbsp;     * @return the string that print the list
+<i>80</i>&nbsp;     */
+<i>81</i>&nbsp;    public String printCoordinates(ArrayList&lt;Coordinate&gt; coordinates);
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-29 12:21</div>
+</div>
+</body>
+</html>

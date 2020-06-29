@@ -1,0 +1,123 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ImagePanel</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.view</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ImagePanel (it.polimi.ingsw.PSP29.view)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ImagePanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.view;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.*;
+<i>4</i>&nbsp;import java.awt.*;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;public class ImagePanel extends JPanel {
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;    /**
+<i>9</i>&nbsp;     * background of the panel
+<i>10</i>&nbsp;     */
+<i>11</i>&nbsp;    private Image img;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * width of the panel
+<i>15</i>&nbsp;     */
+<i>16</i>&nbsp;    private int width;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    /**
+<i>19</i>&nbsp;     * height of the panel
+<i>20</i>&nbsp;     */
+<i>21</i>&nbsp;    private int height;
+<i>22</i>&nbsp;
+<b class="nc"><i>23</i>&nbsp;    public ImagePanel(String path, int width, int height) {</b>
+<b class="nc"><i>24</i>&nbsp;        ImageIcon image = new ImageIcon(getClass().getResource(path));</b>
+<b class="nc"><i>25</i>&nbsp;        img = image .getImage();</b>
+<b class="nc"><i>26</i>&nbsp;        this.width = width;</b>
+<b class="nc"><i>27</i>&nbsp;        this.height = height;</b>
+<b class="nc"><i>28</i>&nbsp;        this.setVisible(true);</b>
+<i>29</i>&nbsp;    }
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /**
+<i>32</i>&nbsp;     * add an image as background of the panel
+<i>33</i>&nbsp;     * @param g is the Graphics&#39;s Object
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    @Override
+<i>36</i>&nbsp;    protected void paintComponent(Graphics g) {
+<b class="nc"><i>37</i>&nbsp;        super.paintComponent(g);</b>
+<b class="nc"><i>38</i>&nbsp;        g.drawImage(img, 0, 0, width, height,null);</b>
+<i>39</i>&nbsp;    }
+<i>40</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-29 12:21</div>
+</div>
+</body>
+</html>
