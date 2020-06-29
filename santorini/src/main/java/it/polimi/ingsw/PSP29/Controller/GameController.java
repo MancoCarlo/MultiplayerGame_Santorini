@@ -406,17 +406,35 @@ public class GameController {
      * @return the coordinate
      */
     public Coordinate getCoordinate(){
-        Coordinate c;
+        Coordinate c=null;
         String str;
         server.write(server.getClientHandlers().get(myturn), "interactionServer", "COOR-Insert coordinate: ");
         str = server.read(server.getClientHandlers().get(myturn));
         if(str==null){
             return null;
         }
-        int x=Integer.parseInt(str.substring(0,1));
-        int y=Integer.parseInt(str.substring(1));
+        try{
+            int x=Integer.parseInt(str.substring(0,1));
+            int y=Integer.parseInt(str.substring(1));
+            c = new Coordinate(x, y);
+        }catch (NumberFormatException | StringIndexOutOfBoundsException e){
+            System.out.println("Not valid input");
+        }
+        while(c==null){
+            server.write(server.getClientHandlers().get(myturn), "interactionServer", "COOR-Insert coordinate: ");
+            str = server.read(server.getClientHandlers().get(myturn));
+            if(str==null){
+                return null;
+            }
+            try{
+                int x=Integer.parseInt(str.substring(0,1));
+                int y=Integer.parseInt(str.substring(1));
+                c = new Coordinate(x, y);
+            }catch (NumberFormatException | StringIndexOutOfBoundsException e){
+                System.out.println("Not valid input");
+            }
+        }
 
-        c = new Coordinate(x, y);
         return c;
     }
 

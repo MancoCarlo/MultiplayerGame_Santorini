@@ -33,12 +33,13 @@ public class UserTimerTask extends TimerTask {
      */
     public void run(){
         if(seconds<=turnSeconds){
-            System.out.println(turnSeconds - seconds+ " seconds remaining");
+            System.out.println(ch.getName() + " " + (turnSeconds - seconds) + " seconds remaining");
             seconds++;
         }else{
             server.setTimeout(true);
             ch.resetConnected();
             ch.closeConnection();
+            Thread.currentThread().interrupt();
             this.cancel();
         }
     }
