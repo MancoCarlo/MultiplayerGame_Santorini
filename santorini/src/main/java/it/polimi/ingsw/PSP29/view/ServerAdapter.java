@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import it.polimi.ingsw.PSP29.model.Color;
+import it.polimi.ingsw.PSP29.view.GUI.GUI;
 
 
 public class ServerAdapter implements Runnable
