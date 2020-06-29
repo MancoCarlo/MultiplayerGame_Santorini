@@ -84,8 +84,8 @@ public class ClientHandler implements Runnable
 
     /**
      * define the server and client attributes
-     * @param client
-     * @param server
+     * @param client the client
+     * @param server the server
      */
     public void makeCH(Socket client, Server server)
     {

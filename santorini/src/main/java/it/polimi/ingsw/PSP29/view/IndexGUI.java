@@ -390,7 +390,7 @@ public class IndexGUI extends JFrame implements Runnable{
 
     /**
      * close the frame
-     * @return
+     * @return 0
      */
     public synchronized int close(){
         index=1;
