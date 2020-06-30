@@ -64,7 +64,6 @@ public class Server
             System.exit(1);
             return;
         }
-        gc = new GameController(this);
         playAgain=true;
         launchMatch();
     }
@@ -78,6 +77,8 @@ public class Server
             System.out.println("server ready");
             System.out.println("Creating Lobby");
             while(true){
+                playAgain=true;
+                gc = new GameController(this);
                 while(countPlayers==0){
                     ClientHandler clientHandler=null;
                     clientHandler = connection(socket, clientHandler);
@@ -246,7 +247,6 @@ public class Server
             String again;
             try{
                 again = read(clientHandlers.get(i));
-                System.out.println(again);
                 if(again==null || again.equals("2")){
                     countPlayers--;
                     write(clientHandlers.get(i), "serviceMessage", "STOP");

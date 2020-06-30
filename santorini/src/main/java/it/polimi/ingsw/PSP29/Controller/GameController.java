@@ -232,7 +232,6 @@ public class GameController {
             godIndex.add(id - 1);
         }
         godSelection();
-        System.out.println(match.printGodlist());
         int i=0;
         int count = match.playersInGame();
         while (i<count){
