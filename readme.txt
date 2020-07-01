@@ -1,11 +1,11 @@
 Progetto Ingegneria del Software Anno 2019/2020
 
-Componenti del gruppo
+Members:
 - Manco Carlo
 - Martiri Luca
 - Grassi Letizia
 
-Documentazione
+Documentation:
 UML
 - UML: https://github.com/CarloManco/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/uml
 JavaDoc
@@ -15,8 +15,7 @@ Jars
 Coverage Report
 - Report: https://github.com/CarloManco/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/report
 
-Funzionalità
-Funzionalità sviluppate
+Functionality:
 - Regole Complete
 - CLI
 - GUI
@@ -26,9 +25,9 @@ Funzionalità sviluppate
 Funzionalità aggiuntive sviluppate
 - Divinità Avanzate
 
-Esecuzione dei JAR
-Per eseguire il jar basta posizionarsi nella cartella contenente il jar ed eseguire il seguente comando da linea di comando:
+Execution of the JAR
+To run the jar just go to the folder containing the jar and run the following command:
 
 java -jar ing-sw-2019-Grassi-Manco-Martiri.jar
 
-Appena avviato sarà chiesto di eseguire un client o un server
+As soon as it starts it will ask you to run a client or a server.
