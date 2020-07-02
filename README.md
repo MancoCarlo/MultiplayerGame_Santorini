@@ -25,6 +25,6 @@ Funzionalità aggiuntive sviluppate
 
 To run the jar just go to the folder containing the jar and run the following command:
 
-java -jar ing-sw-2019-Grassi-Manco-Martiri.jar
+java -jar santorini.jar
 
 As soon as it starts it will ask you to run a client or a server.
