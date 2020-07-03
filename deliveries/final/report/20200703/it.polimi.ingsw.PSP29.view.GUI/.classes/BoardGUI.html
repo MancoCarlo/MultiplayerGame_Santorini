@@ -1,0 +1,212 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BoardGUI</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.view.GUI</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BoardGUI (it.polimi.ingsw.PSP29.view.GUI)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BoardGUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 59)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.view.GUI;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import javax.swing.*;
+<i>4</i>&nbsp;import java.awt.*;
+<i>5</i>&nbsp;import java.util.ArrayList;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * @author Luca Martiri
+<i>9</i>&nbsp; */
+<i>10</i>&nbsp;public class BoardGUI extends JPanel {
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    /**
+<i>13</i>&nbsp;     * single button is a box of the board
+<i>14</i>&nbsp;     */
+<b class="nc"><i>15</i>&nbsp;    private ArrayList&lt;JButton&gt; buttons = new ArrayList&lt;&gt;();</b>
+<i>16</i>&nbsp;
+<b class="nc"><i>17</i>&nbsp;    public BoardGUI(){</b>
+<b class="nc"><i>18</i>&nbsp;        this.setLayout(new GridLayout(5,5));</b>
+<i>19</i>&nbsp;    }
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * set the board for the GUI
+<i>23</i>&nbsp;     * @param command the string that represent the board
+<i>24</i>&nbsp;     */
+<i>25</i>&nbsp;    public void setBoard(String command) {
+<b class="nc"><i>26</i>&nbsp;        command = command.substring(5);</b>
+<b class="nc"><i>27</i>&nbsp;        for(int i=0; i&lt;command.length();i=i+2){</b>
+<b class="nc"><i>28</i>&nbsp;            JButton button = new JButton();</b>
+<b class="nc"><i>29</i>&nbsp;            switch(command.charAt(i)){</b>
+<i>30</i>&nbsp;                case &#39;0&#39;:
+<b class="nc"><i>31</i>&nbsp;                    setFloor(button, &#39;0&#39;, command.charAt(i+1));</b>
+<b class="nc"><i>32</i>&nbsp;                    break;</b>
+<i>33</i>&nbsp;                case &#39;1&#39;:
+<b class="nc"><i>34</i>&nbsp;                    setFloor(button, &#39;1&#39;, command.charAt(i+1));</b>
+<b class="nc"><i>35</i>&nbsp;                    break;</b>
+<i>36</i>&nbsp;                case &#39;2&#39;:
+<b class="nc"><i>37</i>&nbsp;                    setFloor(button, &#39;2&#39;, command.charAt(i+1));</b>
+<b class="nc"><i>38</i>&nbsp;                    break;</b>
+<i>39</i>&nbsp;                case &#39;3&#39;:
+<b class="nc"><i>40</i>&nbsp;                    setFloor(button, &#39;3&#39;, command.charAt(i+1));</b>
+<b class="nc"><i>41</i>&nbsp;                    break;</b>
+<i>42</i>&nbsp;                case &#39;4&#39;:
+<b class="nc"><i>43</i>&nbsp;                    setFloor(button, &#39;3&#39;, command.charAt(i+1));</b>
+<b class="nc"><i>44</i>&nbsp;                    break;</b>
+<i>45</i>&nbsp;                default:
+<i>46</i>&nbsp;                    break;
+<i>47</i>&nbsp;            }
+<b class="nc"><i>48</i>&nbsp;            buttons.add(button);</b>
+<b class="nc"><i>49</i>&nbsp;            this.add(button);</b>
+<i>50</i>&nbsp;        }
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * @param b the button
+<i>55</i>&nbsp;     * @return the position of the button in the ArrayList
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    public int getCoordinate(JButton b){
+<i>58</i>&nbsp;        int i;
+<b class="nc"><i>59</i>&nbsp;        for(i = 0; i &lt; buttons.size(); i++){</b>
+<b class="nc"><i>60</i>&nbsp;            if(b.equals(buttons.get(i)))</b>
+<b class="nc"><i>61</i>&nbsp;                break;</b>
+<i>62</i>&nbsp;        }
+<b class="nc"><i>63</i>&nbsp;        return i;</b>
+<i>64</i>&nbsp;    }
+<i>65</i>&nbsp;
+<i>66</i>&nbsp;    public ArrayList&lt;JButton&gt; getButtons() {
+<b class="nc"><i>67</i>&nbsp;        return buttons;</b>
+<i>68</i>&nbsp;    }
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;    /**
+<i>71</i>&nbsp;     * set the image of the button
+<i>72</i>&nbsp;     * @param button the button
+<i>73</i>&nbsp;     * @param player char that represent the player
+<i>74</i>&nbsp;     * @param floor char that represent the level of the box
+<i>75</i>&nbsp;     */
+<i>76</i>&nbsp;    public void setFloor(JButton button, char player, char floor){
+<i>77</i>&nbsp;        ImageIcon img;
+<i>78</i>&nbsp;        Image img1;
+<i>79</i>&nbsp;        Image newimg;
+<b class="nc"><i>80</i>&nbsp;        switch (player){</b>
+<i>81</i>&nbsp;            case &#39;0&#39;:
+<b class="nc"><i>82</i>&nbsp;                if(floor==&#39;0&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor0.png&quot;));</b>
+<b class="nc"><i>83</i>&nbsp;                else if(floor==&#39;1&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor1.png&quot;));</b>
+<b class="nc"><i>84</i>&nbsp;                else if(floor==&#39;2&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor2.png&quot;));</b>
+<b class="nc"><i>85</i>&nbsp;                else if(floor==&#39;3&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor3.png&quot;));</b>
+<b class="nc"><i>86</i>&nbsp;                else img = new ImageIcon(getClass().getResource(&quot;/Board/floor4.png&quot;));</b>
+<b class="nc"><i>87</i>&nbsp;                break;</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;            case &#39;1&#39;:
+<b class="nc"><i>90</i>&nbsp;                if(floor==&#39;0&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor0red.png&quot;));</b>
+<b class="nc"><i>91</i>&nbsp;                else if(floor==&#39;1&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor1red.png&quot;));</b>
+<b class="nc"><i>92</i>&nbsp;                else if(floor==&#39;2&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor2red.png&quot;));</b>
+<b class="nc"><i>93</i>&nbsp;                else img = new ImageIcon(getClass().getResource(&quot;/Board/floor3red.png&quot;));</b>
+<b class="nc"><i>94</i>&nbsp;                break;</b>
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;            case &#39;2&#39;:
+<b class="nc"><i>97</i>&nbsp;                if(floor==&#39;0&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor0blue.png&quot;));</b>
+<b class="nc"><i>98</i>&nbsp;                else if(floor==&#39;1&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor1blue.png&quot;));</b>
+<b class="nc"><i>99</i>&nbsp;                else if(floor==&#39;2&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor2blue.png&quot;));</b>
+<b class="nc"><i>100</i>&nbsp;                else img = new ImageIcon(getClass().getResource(&quot;/Board/floor3blue.png&quot;));</b>
+<b class="nc"><i>101</i>&nbsp;                break;</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;            case &#39;3&#39;:
+<b class="nc"><i>104</i>&nbsp;                if(floor==&#39;0&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor0yellow.png&quot;));</b>
+<b class="nc"><i>105</i>&nbsp;                else if(floor==&#39;1&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor1yellow.png&quot;));</b>
+<b class="nc"><i>106</i>&nbsp;                else if(floor==&#39;2&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor2yellow.png&quot;));</b>
+<b class="nc"><i>107</i>&nbsp;                else img = new ImageIcon(getClass().getResource(&quot;/Board/floor3yellow.png&quot;));</b>
+<b class="nc"><i>108</i>&nbsp;                break;</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;            default:
+<b class="nc"><i>111</i>&nbsp;                if(floor==&#39;0&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor0.png&quot;));</b>
+<b class="nc"><i>112</i>&nbsp;                else if(floor==&#39;1&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor1.png&quot;));</b>
+<b class="nc"><i>113</i>&nbsp;                else if(floor==&#39;2&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor2.png&quot;));</b>
+<b class="nc"><i>114</i>&nbsp;                else if(floor==&#39;3&#39;) img = new ImageIcon(getClass().getResource(&quot;/Board/floor3.png&quot;));</b>
+<b class="nc"><i>115</i>&nbsp;                else img = new ImageIcon(getClass().getResource(&quot;/Board/floor4.png&quot;));</b>
+<i>116</i>&nbsp;                break;
+<i>117</i>&nbsp;        }
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;        img1 = img.getImage() ;</b>
+<b class="nc"><i>120</i>&nbsp;        newimg = img1.getScaledInstance( 80, 80,  java.awt.Image.SCALE_SMOOTH ) ;</b>
+<b class="nc"><i>121</i>&nbsp;        img = new ImageIcon( newimg );</b>
+<i>122</i>&nbsp;
+<b class="nc"><i>123</i>&nbsp;        button.setName(&quot;&quot;+player+floor);</b>
+<b class="nc"><i>124</i>&nbsp;        button.setIcon(img);</b>
+<b class="nc"><i>125</i>&nbsp;        button.setOpaque(false);</b>
+<b class="nc"><i>126</i>&nbsp;        button.setBorder(null);</b>
+<b class="nc"><i>127</i>&nbsp;        button.setContentAreaFilled(false);</b>
+<i>128</i>&nbsp;    }
+<i>129</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 17:36</div>
+</div>
+</body>
+</html>

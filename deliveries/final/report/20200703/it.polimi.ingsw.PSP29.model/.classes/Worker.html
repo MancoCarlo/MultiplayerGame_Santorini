@@ -1,0 +1,221 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Worker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.PSP29.model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Worker (it.polimi.ingsw.PSP29.model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Worker</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (38/ 38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.PSP29.model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.Serializable;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * @author Luca Martiri
+<i>7</i>&nbsp; */
+<i>8</i>&nbsp;public class Worker implements Serializable {
+<i>9</i>&nbsp;    /**
+<i>10</i>&nbsp;     * the worker id
+<i>11</i>&nbsp;     */
+<i>12</i>&nbsp;    private int ID;
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * the worker&#39;s player name
+<i>15</i>&nbsp;     */
+<i>16</i>&nbsp;    private String IDplayer;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * the position of the worker in the board
+<i>19</i>&nbsp;     */
+<b class="fc"><i>20</i>&nbsp;    private Coordinate position = null;</b>
+<i>21</i>&nbsp;    /**
+<i>22</i>&nbsp;     * the previous position of the worker
+<i>23</i>&nbsp;     */
+<b class="fc"><i>24</i>&nbsp;    private Coordinate prev_position = null;</b>
+<i>25</i>&nbsp;    /**
+<i>26</i>&nbsp;     * true if the worker moved in this turn
+<i>27</i>&nbsp;     */
+<i>28</i>&nbsp;    private boolean moved;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * true if the worker built in this turn
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    private boolean built;
+<i>33</i>&nbsp;
+<b class="fc"><i>34</i>&nbsp;    public Worker(int id, String nickP){</b>
+<b class="fc"><i>35</i>&nbsp;        ID=id;</b>
+<b class="fc"><i>36</i>&nbsp;        IDplayer=nickP;</b>
+<b class="fc"><i>37</i>&nbsp;        position=null;</b>
+<b class="fc"><i>38</i>&nbsp;        prev_position=null;</b>
+<b class="fc"><i>39</i>&nbsp;        moved = false;</b>
+<b class="fc"><i>40</i>&nbsp;        built = false;</b>
+<b class="fc"><i>41</i>&nbsp;    }</b>
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    public void setID(int ID) {
+<b class="fc"><i>44</i>&nbsp;        this.ID = ID;</b>
+<b class="fc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    public void setIDplayer(String IDplayer) {
+<b class="fc"><i>48</i>&nbsp;        this.IDplayer = IDplayer;</b>
+<b class="fc"><i>49</i>&nbsp;    }</b>
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    public int getID() {
+<b class="fc"><i>52</i>&nbsp;        return ID;</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    public String getIDplayer() {
+<b class="fc"><i>56</i>&nbsp;        return IDplayer;</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    public Coordinate getPosition(){
+<b class="fc"><i>60</i>&nbsp;        return position;</b>
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<b class="fc"><i>63</i>&nbsp;    public Coordinate getPrev_position() { return prev_position; }</b>
+<i>64</i>&nbsp;
+<b class="fc"><i>65</i>&nbsp;    public boolean getMoved(){ return moved; }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    /**
+<i>68</i>&nbsp;     * set moved
+<i>69</i>&nbsp;     * @param m boolean that set moved
+<i>70</i>&nbsp;     */
+<b class="fc"><i>71</i>&nbsp;    public void changeMoved(boolean m){ moved = m; }</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    /**
+<i>74</i>&nbsp;     * set built
+<i>75</i>&nbsp;     * @param b boolean that set built
+<i>76</i>&nbsp;     */
+<b class="fc"><i>77</i>&nbsp;    public void changeBuilt(boolean b) { built=b;    }</b>
+<i>78</i>&nbsp;
+<b class="fc"><i>79</i>&nbsp;    public boolean getBuilt(){ return built; }</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /**
+<i>82</i>&nbsp;     *  set the position of the worker in the coordinate c
+<i>83</i>&nbsp;     * @param c the coordinate
+<i>84</i>&nbsp;     */
+<i>85</i>&nbsp;    public void setPosition(Coordinate c){
+<b class="fc"><i>86</i>&nbsp;        position=c;</b>
+<b class="fc"><i>87</i>&nbsp;    }</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    /**
+<i>90</i>&nbsp;     * set the previous position of the worker in the coordinate c
+<i>91</i>&nbsp;     * @param c the coordinate
+<i>92</i>&nbsp;     */
+<b class="fc"><i>93</i>&nbsp;    public void setPrev_position(Coordinate c) { prev_position=c; }</b>
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    /**
+<i>96</i>&nbsp;     * checks if the worker can upgrade his level before doing a move
+<i>97</i>&nbsp;     * @param match the match in which the worker is in
+<i>98</i>&nbsp;     * @return true if the worker can upgrade his level
+<i>99</i>&nbsp;     */
+<i>100</i>&nbsp;    public boolean canLevelUp (Match match) {
+<b class="fc"><i>101</i>&nbsp;        for(int i=-1; i&lt;=1; i++)</b>
+<i>102</i>&nbsp;        {
+<b class="fc"><i>103</i>&nbsp;            if(this.getPosition().getX() + i==-1 || this.getPosition().getX() + i == match.getRows()) continue;</b>
+<b class="fc"><i>104</i>&nbsp;            for(int j=-1; j&lt;=1; j++)</b>
+<i>105</i>&nbsp;            {
+<b class="fc"><i>106</i>&nbsp;                if(this.getPosition().getY()+j==-1 || this.getPosition().getY() + j ==match.getColumns()) continue;</b>
+<i>107</i>&nbsp;
+<b class="fc"><i>108</i>&nbsp;                if(match.getBoard()[this.getPosition().getX()][this.getPosition().getY()].level_diff(match.getBoard()[this.getPosition().getX()+i][this.getPosition().getY()+j])==-1 &amp;&amp; match.getBoard()[this.getPosition().getX()][this.getPosition().getY()].getLevel() &lt;3)</b>
+<b class="fc"><i>109</i>&nbsp;                    return true;</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;            }
+<i>112</i>&nbsp;        }
+<b class="fc"><i>113</i>&nbsp;        return false;</b>
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    }
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    /**
+<i>118</i>&nbsp;     * control if the worker can build
+<i>119</i>&nbsp;     * @param m the match
+<i>120</i>&nbsp;     * @return true if the worker can build
+<i>121</i>&nbsp;     */
+<i>122</i>&nbsp;    public boolean canBuild(Match m){
+<b class="fc"><i>123</i>&nbsp;        for(int i=0; i&lt;m.getRows(); i++){</b>
+<b class="fc"><i>124</i>&nbsp;            for(int j=0; j&lt;m.getColumns(); j++){</b>
+<b class="fc"><i>125</i>&nbsp;                if(m.getBoard()[i][j].getLocation().isNear(position) &amp;&amp; m.getBoard()[i][j].isEmpty() &amp;&amp; m.getBoard()[i][j].getLevel()!=4){</b>
+<b class="fc"><i>126</i>&nbsp;                    return true;</b>
+<i>127</i>&nbsp;                }
+<i>128</i>&nbsp;            }
+<i>129</i>&nbsp;        }
+<b class="fc"><i>130</i>&nbsp;        return false;</b>
+<i>131</i>&nbsp;    }
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    @Override
+<i>134</i>&nbsp;    public String toString() {
+<b class="fc"><i>135</i>&nbsp;        return &quot;Worker{&quot; + ID +&quot;, &quot;+</b>
+<i>136</i>&nbsp;                &quot; position=&quot; + position + &quot; }\n&quot;;
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 17:36</div>
+</div>
+</body>
+</html>
