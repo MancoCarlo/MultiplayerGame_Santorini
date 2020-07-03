@@ -82,23 +82,28 @@ public class TritonTurn extends GodTurn {
                     server.write(ch, "interactionServer", "TURN-Where do you want to move?\n");
                     int id;
                     while(true){
-                        String msg = server.read(ch);
-                        if(msg == null){
-                            for(ClientHandler chl : server.getClientHandlers()){
-                                server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        try{
+                            String msg = server.read(ch);
+                            if(msg == null){
+                                for(ClientHandler chl : server.getClientHandlers()){
+                                    server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                                }
+                                ch.resetConnected();
+                                ch.closeConnection();
+                                return false;
+                            }else{
+                                id = Integer.parseInt(msg);
                             }
-                            ch.resetConnected();
-                            ch.closeConnection();
-                            return false;
-                        }else{
-                            id = Integer.parseInt(msg);
-                        }
-                        if(id<0 || id>=coordinates.size()){
+                            if(id<0 || id>=coordinates.size()){
+                                server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                                server.write(ch, "interactionServer", "TURN-Try another index: ");
+                                continue;
+                            }
+                            break;
+                        }catch (NumberFormatException e){
                             server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                             server.write(ch, "interactionServer", "TURN-Try another index: ");
-                            continue;
                         }
-                        break;
                     }
                     c = coordinates.get(id);
                     m.updateMovement(p,wID,c);
