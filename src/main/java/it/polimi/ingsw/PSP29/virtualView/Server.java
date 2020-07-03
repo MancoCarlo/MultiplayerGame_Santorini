@@ -422,6 +422,12 @@ public class Server
         if(clientHandler.getConnected()){
             response = clientHandler.getMessage();
         }
+        if(response!=null){
+            while(response.equals("")){
+                write(clientHandler, "interactionServer", "ERRORNot valid input, try another input: ");
+                response = read(clientHandler);
+            }
+        }
         return response;
     }
 
