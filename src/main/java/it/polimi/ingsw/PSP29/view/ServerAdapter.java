@@ -208,9 +208,10 @@ public class ServerAdapter implements Runnable
     /**
      * execution of the command INTERACTION_SERVER
      */
-    public synchronized void doInteractionServer(){
+    public synchronized void doInteractionServer() throws IOException {
         String rsp = null;
         if(CLI){
+            System.in.read(new byte[System.in.available()]);
             Scanner s = new Scanner(System.in);
             if(cmd.startsWith("COOR")){
                 System.out.println(cmd.substring(5));
