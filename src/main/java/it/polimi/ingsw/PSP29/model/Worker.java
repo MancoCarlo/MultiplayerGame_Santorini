@@ -2,6 +2,9 @@ package it.polimi.ingsw.PSP29.model;
 
 import java.io.Serializable;
 
+/**
+ * @author Luca Martiri
+ */
 public class Worker implements Serializable {
     /**
      * the worker id

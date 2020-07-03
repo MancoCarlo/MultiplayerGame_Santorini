@@ -6,6 +6,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
+/**
+ * @author Carlo Manco
+ */
 public class ApolloTurn extends GodTurn{
 
     public ApolloTurn(Turn turn) {

@@ -2,6 +2,9 @@ package it.polimi.ingsw.PSP29.virtualView;
 
 import java.util.TimerTask;
 
+/**
+ * @author Luca Martiri, Carlo Manco
+ */
 public class UserTimerTask extends TimerTask {
     /**
      * second passed

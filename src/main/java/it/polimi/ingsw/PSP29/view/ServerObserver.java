@@ -1,7 +1,9 @@
 package it.polimi.ingsw.PSP29.view;
 
 
-
+/**
+ * @author Luca Martiri, Carlo Manco
+ */
 public interface ServerObserver
 {
     /**

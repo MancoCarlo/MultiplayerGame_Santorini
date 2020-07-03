@@ -10,7 +10,9 @@ import java.util.Scanner;
 import it.polimi.ingsw.PSP29.model.Color;
 import it.polimi.ingsw.PSP29.view.GUI.GUI;
 
-
+/**
+ * @author Luca Martiri, Carlo Manco
+ */
 public class ServerAdapter implements Runnable
 {
     /**

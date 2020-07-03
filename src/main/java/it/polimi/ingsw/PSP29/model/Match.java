@@ -5,6 +5,9 @@ import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * @author Luca Martiri, Carlo Manco
+ */
 public class Match implements Serializable {
     /**
      * the number of columns of the board

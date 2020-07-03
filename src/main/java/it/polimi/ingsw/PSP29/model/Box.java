@@ -4,6 +4,9 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * @author Letizia Grassi
+ */
 public class Box implements Serializable {
     /**
      * the position of the box in the board

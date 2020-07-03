@@ -6,6 +6,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
+/**
+ * @author Letizia Grassi
+ */
 public class MinotaurTurn extends GodTurn {
 
     public MinotaurTurn(Turn turn) {

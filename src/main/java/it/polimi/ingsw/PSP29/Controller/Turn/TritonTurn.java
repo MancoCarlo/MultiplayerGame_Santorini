@@ -6,7 +6,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
-
+/**
+ * @author Letizia Grassi
+ */
 public class TritonTurn extends GodTurn {
 
     public TritonTurn(Turn turn) {super(turn);}

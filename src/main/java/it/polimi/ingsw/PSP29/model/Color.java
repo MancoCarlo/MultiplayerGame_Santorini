@@ -1,5 +1,8 @@
 package it.polimi.ingsw.PSP29.model;
 
+/**
+ * @author Carlo Manco
+ */
 public enum Color
 {
     ANSI_LEVEL1("\u001B[38;5;102m"),

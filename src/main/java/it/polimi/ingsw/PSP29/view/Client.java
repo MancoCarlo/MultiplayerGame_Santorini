@@ -10,7 +10,9 @@ import java.util.Scanner;
 
 import it.polimi.ingsw.PSP29.model.Color;
 
-
+/**
+ * @author Luca Martiri, Carlo Manco
+ */
 public class Client implements Runnable, ServerObserver
 {
     /**

@@ -6,6 +6,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
+/**
+ * @author Letizia Grassi, Carlo Manco
+ */
 public class PoseidonTurn extends GodTurn {
 
     public PoseidonTurn(Turn turn){super(turn);}

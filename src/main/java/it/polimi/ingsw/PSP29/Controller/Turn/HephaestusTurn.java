@@ -6,6 +6,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
+/**
+ * @author Letizia Grassi
+ */
 public class HephaestusTurn extends GodTurn {
 
     public HephaestusTurn(Turn turn) {

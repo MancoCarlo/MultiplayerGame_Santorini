@@ -3,6 +3,9 @@ package it.polimi.ingsw.PSP29.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * @author Luca Martiri
+ */
 public class Player implements Serializable {
     /**
      * nickname of the player

@@ -3,6 +3,9 @@ package it.polimi.ingsw.PSP29.view.GUI;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * @author Carlo Manco
+ */
 public class ImagePanel extends JPanel {
 
     /**

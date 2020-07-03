@@ -4,6 +4,9 @@ import it.polimi.ingsw.PSP29.model.*;
 import it.polimi.ingsw.PSP29.virtualView.ClientHandler;
 import it.polimi.ingsw.PSP29.virtualView.Server;
 
+/**
+ * @author Carlo Manco
+ */
 public class DemeterTurn extends GodTurn {
 
 

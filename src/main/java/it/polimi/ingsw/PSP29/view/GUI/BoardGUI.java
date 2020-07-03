@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * @author Luca Martiri
+ */
 public class BoardGUI extends JPanel {
 
     /**

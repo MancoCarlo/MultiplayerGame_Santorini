@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+/**
+ * @author Carlo Manco
+ */
 public class IndexGUI extends JFrame implements Runnable{
 
     /**

@@ -6,6 +6,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
+/**
+ * @author Letizia Grassi
+ */
 public class ZeusTurn extends GodTurn {
 
     public ZeusTurn(Turn turn) {

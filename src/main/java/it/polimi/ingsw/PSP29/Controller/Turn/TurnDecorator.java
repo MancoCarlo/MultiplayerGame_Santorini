@@ -6,7 +6,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
-
+/**
+ * @author Luca Martiri
+ */
 public abstract class TurnDecorator implements Turn {
 
     private final Turn turn;

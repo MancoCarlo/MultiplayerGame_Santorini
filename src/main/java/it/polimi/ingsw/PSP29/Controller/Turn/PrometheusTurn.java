@@ -6,6 +6,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
+/**
+ * @author Carlo Manco, Letizia Grassi
+ */
 public class PrometheusTurn extends GodTurn {
 
     public PrometheusTurn(Turn turn) {

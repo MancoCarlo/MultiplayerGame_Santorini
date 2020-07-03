@@ -2,6 +2,9 @@ package it.polimi.ingsw.PSP29.Controller.Turn;
 
 import it.polimi.ingsw.PSP29.model.*;
 
+/**
+ * @author Letizia Grassi
+ */
 public class PanTurn extends GodTurn {
 
     public PanTurn(Turn turn) {

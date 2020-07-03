@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"it.polimi.ingsw.PSP29.Controller"},{"l":"it.polimi.ingsw.PSP29.model"},{"l":"it.polimi.ingsw.PSP29.view"},{"l":"it.polimi.ingsw.PSP29.virtualView"}]

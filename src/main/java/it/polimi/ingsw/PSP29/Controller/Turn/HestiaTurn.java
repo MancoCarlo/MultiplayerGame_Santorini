@@ -6,6 +6,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
+/**
+ * @author Letizia Grassi, Luca Martiri
+ */
 public class HestiaTurn extends GodTurn{
 
     public HestiaTurn(Turn turn) { super(turn);}

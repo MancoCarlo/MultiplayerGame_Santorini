@@ -10,7 +10,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-
+/**
+ * @author Luca Martiri, Carlo Manco
+ */
 public class Server
 {
     /**

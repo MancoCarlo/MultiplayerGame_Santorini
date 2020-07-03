@@ -10,7 +10,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Timer;
 
-
+/**
+ * @author Luca Martiri, Carlo Manco
+ */
 public class ClientHandler implements Runnable
 {
     /**

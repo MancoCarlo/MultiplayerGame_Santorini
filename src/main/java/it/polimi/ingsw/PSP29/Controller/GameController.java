@@ -7,6 +7,9 @@ import it.polimi.ingsw.PSP29.virtualView.Server;
 
 import java.util.ArrayList;
 
+/**
+ * @author Luca Martiri, Carlo Manco
+ */
 public class GameController {
 
     /**

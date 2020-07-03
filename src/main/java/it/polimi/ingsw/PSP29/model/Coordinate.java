@@ -2,6 +2,9 @@ package it.polimi.ingsw.PSP29.model;
 
 import java.io.Serializable;
 
+/**
+ * @author Letizia Grassi
+ */
 public class Coordinate implements Serializable {
     /**
      * the horizontal coordinate
