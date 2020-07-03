@@ -34,23 +34,28 @@ public class ApolloTurn extends GodTurn{
             server.write(ch, "serviceMessage", "LIST-"+m.getPlayer(ch.getName()).printWorkers());
             server.write(ch, "interactionServer", "TURN-Choose the worker to use in this turn: \n");
             while(true){
-                String msg = server.read(ch);
-                if(msg == null){
-                    for(ClientHandler chl : server.getClientHandlers()){
-                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                try{
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        wID = Integer.parseInt(msg) - 1;
                     }
-                    ch.resetConnected();
-                    ch.closeConnection();
-                    return false;
-                }else{
-                    wID = Integer.parseInt(msg) - 1;
-                }
-                if(wID<0 || wID>1){
+                    if(wID<0 || wID>1){
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "interactionServer", "TURN-Try another index: ");
+                        continue;
+                    }
+                    break;
+                }catch (NumberFormatException e){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                     server.write(ch, "interactionServer", "TURN-Try another index: ");
-                    continue;
                 }
-                break;
             }
         }
         else if(coordinates0.size()!=0 && coordinates1.size()==0){
@@ -72,23 +77,28 @@ public class ApolloTurn extends GodTurn{
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
-                String msg = server.read(ch);
-                if(msg == null){
-                    for(ClientHandler chl : server.getClientHandlers()){
-                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                try{
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        id = Integer.parseInt(msg);
                     }
-                    ch.resetConnected();
-                    ch.closeConnection();
-                    return false;
-                }else{
-                    id = Integer.parseInt(msg);
-                }
-                if(id<0 || id>=coordinates0.size()){
+                    if(id<0 || id>=coordinates0.size()){
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "interactionServer", "TURN-Try another index: ");
+                        continue;
+                    }
+                    break;
+                }catch (NumberFormatException e){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                     server.write(ch, "interactionServer", "TURN-Try another index: ");
-                    continue;
                 }
-                break;
             }
             c = coordinates0.get(id);
         }
@@ -98,23 +108,28 @@ public class ApolloTurn extends GodTurn{
             server.write(ch, "interactionServer", "TURN-Where you want to move?\n");
             int id;
             while(true){
-                String msg = server.read(ch);
-                if(msg == null){
-                    for(ClientHandler chl : server.getClientHandlers()){
-                        server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                try{
+                    String msg = server.read(ch);
+                    if(msg == null){
+                        for(ClientHandler chl : server.getClientHandlers()){
+                            server.write(chl, "serviceMessage", "WINM-Player disconnected\n");
+                        }
+                        ch.resetConnected();
+                        ch.closeConnection();
+                        return false;
+                    }else{
+                        id = Integer.parseInt(msg);
                     }
-                    ch.resetConnected();
-                    ch.closeConnection();
-                    return false;
-                }else{
-                    id = Integer.parseInt(msg);
-                }
-                if(id<0 || id>=coordinates1.size()){
+                    if(id<0 || id>=coordinates1.size()){
+                        server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
+                        server.write(ch, "interactionServer", "TURN-Try another index: ");
+                        continue;
+                    }
+                    break;
+                }catch (NumberFormatException e){
                     server.write(ch, "serviceMessage", "MSGE-Invalid input\n");
                     server.write(ch, "interactionServer", "TURN-Try another index: ");
-                    continue;
                 }
-                break;
             }
             c = coordinates1.get(id);
         }
