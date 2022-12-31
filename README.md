@@ -7,9 +7,9 @@
 
 #### **Documentation:**
 - UML: https://github.com/MancoCarlo/ing-sw-2019-Manco-Martiri/tree/master/deliveries/final/uml
-- Javadoc: https://github.com/MancoCarlo/ing-sw-2019-Manco-Martiri/tree/master/deliveries/javadoc
-- Jars: https://github.com/MancoCarlo/ing-sw-2019-Manco-Martiri/tree/master/deliveries/jar
-- Report: https://github.com/MancoCarlo/ing-sw-2019-Manco-Martiri/tree/master/deliveries/report
+- Javadoc: https://github.com/MancoCarlo/ing-sw-2019-Manco-Martiri/tree/master/deliveries/final/javadoc
+- Jars: https://github.com/MancoCarlo/ing-sw-2019-Manco-Martiri/tree/master/deliveries/final/jar
+- Report: https://github.com/MancoCarlo/ing-sw-2019-Manco-Martiri/tree/master/deliveries/final/report
 
 #### **Functionality:**
 - Regole Complete
