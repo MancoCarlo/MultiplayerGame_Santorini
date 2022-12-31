@@ -6,10 +6,10 @@
 - Grassi Letizia
 
 #### **Documentation:**
-- UML: https://github.com/CarloManco/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/uml
-- Javadoc: https://github.com/CarloManco/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/javadoc
-- Jars: https://github.com/CarloManco/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/jar
-- Report: https://github.com/CarloManco/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/report
+- UML: https://github.com/MancoCarlo/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/uml
+- Javadoc: https://github.com/MancoCarlo/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/javadoc
+- Jars: https://github.com/MancoCarlo/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/jar
+- Report: https://github.com/MancoCarlo/ing-sw-2019-Grassi-Manco-Martiri/tree/master/deliveries/report
 
 #### **Functionality:**
 - Regole Complete
