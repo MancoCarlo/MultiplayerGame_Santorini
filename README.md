@@ -23,7 +23,7 @@ Funzionalità aggiuntive sviluppate
 
 #### **Execution of the JAR**
 
-To run the jar just go to the folder containing the jar and run the following command:
+To run the jar just download the repository and go under the folder containing the jar and run the following command:
 
 java -jar santorini.jar
 
